@@ -5,22 +5,32 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls,
-  Vcl.Imaging.pngimage, Vcl.Imaging.jpeg;
+  Vcl.Imaging.pngimage, Vcl.Imaging.jpeg, FormCadastroMain;
 
 type
   TFormLogin = class(TForm)
     pRight: TPanel;
     lblLogin: TLabel;
-    bSair: TPanel;
-    bRegister: TPanel;
-    bLogin: TPanel;
     Panel1: TPanel;
     iLoginLeft: TImage;
-    Shape1: TShape;
-    pEmailLogin: TPanel;
+    pLR: TPanel;
+    bLogin: TPanel;
+    lblTituloMain: TLabel;
+    eSenha: TEdit;
     eEmail: TEdit;
+    lblSenha: TLabel;
+    lblEmail: TLabel;
+    lblAntesTroca: TLabel;
+    lblTroca: TLabel;
+    shpLR: TShape;
+    Shape1: TShape;
+    Label1: TLabel;
+    pSair: TPanel;
+    shSair: TShape;
+    lblSair: TLabel;
     procedure bFormLoginSairClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
+    procedure pSairClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -62,4 +72,10 @@ end;
 
 
 end;
+procedure TFormLogin.pSairClick(Sender: TObject);
+begin
+
+  self.Close;
+end;
+
 end.

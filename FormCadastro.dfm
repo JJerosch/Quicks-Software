@@ -1,225 +1,28 @@
-object FormLogin: TFormLogin
+object Form1: TForm1
   Left = 0
   Top = 0
-  Anchors = [akLeft, akTop, akRight, akBottom]
-  BorderStyle = bsSingle
-  Caption = 'FormLogin'
+  Caption = 'Form1'
   ClientHeight = 642
   ClientWidth = 1248
-  Color = clBackground
+  Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
-  Position = poScreenCenter
-  OnCreate = FormCreate
   TextHeight = 15
-  object pRight: TPanel
-    AlignWithMargins = True
-    Left = 736
-    Top = 0
-    Width = 512
-    Height = 642
-    Margins.Left = 0
-    Margins.Top = 0
-    Margins.Right = 0
-    Margins.Bottom = 0
-    Align = alRight
-    Color = clCoral
-    ParentBackground = False
-    TabOrder = 0
-    ExplicitTop = -5
-    object lblLogin: TLabel
-      AlignWithMargins = True
-      Left = 4
-      Top = 51
-      Width = 504
-      Height = 87
-      Margins.Top = 50
-      Margins.Bottom = 30
-      Align = alTop
-      Alignment = taCenter
-      Caption = 'Quicks'#174
-      Color = clOrangered
-      Font.Charset = ANSI_CHARSET
-      Font.Color = clWhite
-      Font.Height = -64
-      Font.Name = 'Palatino Linotype'
-      Font.Style = [fsBold]
-      ParentColor = False
-      ParentFont = False
-      ExplicitWidth = 256
-    end
-    object pLR: TPanel
-      AlignWithMargins = True
-      Left = 51
-      Top = 171
-      Width = 410
-      Height = 327
-      Margins.Left = 50
-      Margins.Right = 50
-      Margins.Bottom = 150
-      Align = alTop
-      BevelOuter = bvNone
-      Color = clCoral
-      ParentBackground = False
-      TabOrder = 0
-      ExplicitTop = 170
-      object shpLR: TShape
-        Left = 0
-        Top = 0
-        Width = 410
-        Height = 327
-        Align = alClient
-        Pen.Color = clCream
-        Shape = stRoundRect
-        ExplicitLeft = 32
-        ExplicitTop = 130
-      end
-      object lblTituloMain: TLabel
-        AlignWithMargins = True
-        Left = 100
-        Top = 34
-        Width = 221
-        Height = 45
-        Margins.Top = 20
-        Margins.Bottom = 30
-        Alignment = taCenter
-        Caption = 'Fa'#231'a seu login'
-        Color = clOrangered
-        Font.Charset = ANSI_CHARSET
-        Font.Color = clGray
-        Font.Height = -37
-        Font.Name = 'Candara'
-        Font.Style = [fsBold]
-        ParentColor = False
-        ParentFont = False
-      end
-      object lblSenha: TLabel
-        Left = 86
-        Top = 143
-        Width = 90
-        Height = 15
-        Caption = 'Digite sua Senha:'
-      end
-      object lblEmail: TLabel
-        Left = 86
-        Top = 104
-        Width = 87
-        Height = 15
-        Caption = 'Digite seu Email:'
-      end
-      object lblAntesTroca: TLabel
-        Left = 108
-        Top = 264
-        Width = 128
-        Height = 15
-        Caption = 'Ainda n'#227'o se cadastrou?'
-      end
-      object lblTroca: TLabel
-        Left = 238
-        Top = 264
-        Width = 91
-        Height = 15
-        Caption = 'Cadastre-se aqui.'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clRed
-        Font.Height = -12
-        Font.Name = 'Segoe UI'
-        Font.Style = []
-        ParentFont = False
-      end
-      object bLogin: TPanel
-        Left = 168
-        Top = 194
-        Width = 73
-        Height = 40
-        BevelOuter = bvNone
-        Caption = 'Confirmar'
-        Color = clCream
-        ParentBackground = False
-        TabOrder = 0
-        object Shape1: TShape
-          Left = 0
-          Top = 0
-          Width = 73
-          Height = 40
-          Align = alClient
-          Brush.Color = clCoral
-          Pen.Color = clCoral
-          Shape = stRoundRect
-          ExplicitTop = 24
-        end
-        object Label1: TLabel
-          Left = 10
-          Top = 13
-          Width = 54
-          Height = 15
-          Caption = 'Confirmar'
-        end
-      end
-      object eSenha: TEdit
-        Left = 182
-        Top = 140
-        Width = 147
-        Height = 23
-        TabOrder = 1
-      end
-      object eEmail: TEdit
-        Left = 182
-        Top = 101
-        Width = 147
-        Height = 23
-        BevelInner = bvNone
-        BevelOuter = bvNone
-        ParentShowHint = False
-        ShowHint = True
-        TabOrder = 2
-      end
-    end
-    object pSair: TPanel
-      Left = 440
-      Top = 592
-      Width = 63
-      Height = 42
-      BevelOuter = bvNone
-      Color = clCoral
-      ParentBackground = False
-      TabOrder = 1
-      object shSair: TShape
-        Left = 0
-        Top = 0
-        Width = 63
-        Height = 42
-        Align = alClient
-        Brush.Color = clCream
-        Pen.Color = clCoral
-        Shape = stRoundRect
-        ExplicitLeft = -16
-        ExplicitTop = 13
-        ExplicitWidth = 40
-        ExplicitHeight = 510
-      end
-      object lblSair: TLabel
-        Left = 22
-        Top = 14
-        Width = 19
-        Height = 15
-        Caption = 'Sair'
-        OnClick = pSairClick
-      end
-    end
-  end
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 736
+    Width = 1248
     Height = 642
     Align = alClient
     BevelOuter = bvNone
     Caption = 'Panel1'
-    TabOrder = 1
+    TabOrder = 0
+    ExplicitLeft = -112
+    ExplicitTop = -201
+    ExplicitWidth = 736
     object iLoginLeft: TImage
       AlignWithMargins = True
       Left = 0
@@ -20320,9 +20123,203 @@ object FormLogin: TFormLogin
         4AC9C4E05C395D9D790540786BB5A90510AC1C52EA5AE90221C666598B6812EA
         34B00AC84692CA92045C4215C751A74F48FF1F51785DC81E4A2D4A0000000049
         454E44AE426082}
-      OnClick = pSairClick
       ExplicitLeft = 1
       ExplicitWidth = 824
+    end
+    object pRight: TPanel
+      AlignWithMargins = True
+      Left = 736
+      Top = 0
+      Width = 512
+      Height = 642
+      Margins.Left = 0
+      Margins.Top = 0
+      Margins.Right = 0
+      Margins.Bottom = 0
+      Align = alRight
+      Color = clCoral
+      ParentBackground = False
+      TabOrder = 0
+      ExplicitLeft = 760
+      ExplicitTop = 24
+      object lblLogin: TLabel
+        AlignWithMargins = True
+        Left = 4
+        Top = 51
+        Width = 504
+        Height = 87
+        Margins.Top = 50
+        Margins.Bottom = 30
+        Align = alTop
+        Alignment = taCenter
+        Caption = 'Quicks'#174
+        Color = clOrangered
+        Font.Charset = ANSI_CHARSET
+        Font.Color = clWhite
+        Font.Height = -64
+        Font.Name = 'Palatino Linotype'
+        Font.Style = [fsBold]
+        ParentColor = False
+        ParentFont = False
+        ExplicitLeft = 3
+      end
+      object pLR: TPanel
+        AlignWithMargins = True
+        Left = 51
+        Top = 171
+        Width = 410
+        Height = 327
+        Margins.Left = 50
+        Margins.Right = 50
+        Margins.Bottom = 150
+        Align = alTop
+        BevelOuter = bvNone
+        Color = clCoral
+        ParentBackground = False
+        TabOrder = 0
+        object shpLR: TShape
+          Left = 0
+          Top = 0
+          Width = 410
+          Height = 327
+          Align = alClient
+          Pen.Color = clCream
+          Shape = stRoundRect
+          ExplicitLeft = 32
+          ExplicitTop = 130
+        end
+        object lblTituloMain: TLabel
+          AlignWithMargins = True
+          Left = 100
+          Top = 34
+          Width = 221
+          Height = 45
+          Margins.Top = 20
+          Margins.Bottom = 30
+          Alignment = taCenter
+          Caption = 'Fa'#231'a seu login'
+          Color = clOrangered
+          Font.Charset = ANSI_CHARSET
+          Font.Color = clGray
+          Font.Height = -37
+          Font.Name = 'Candara'
+          Font.Style = [fsBold]
+          ParentColor = False
+          ParentFont = False
+        end
+        object lblSenha: TLabel
+          Left = 86
+          Top = 143
+          Width = 90
+          Height = 15
+          Caption = 'Digite sua Senha:'
+        end
+        object lblEmail: TLabel
+          Left = 86
+          Top = 104
+          Width = 87
+          Height = 15
+          Caption = 'Digite seu Email:'
+        end
+        object lblAntesTroca: TLabel
+          Left = 108
+          Top = 264
+          Width = 128
+          Height = 15
+          Caption = 'Ainda n'#227'o se cadastrou?'
+        end
+        object lblTroca: TLabel
+          Left = 242
+          Top = 264
+          Width = 91
+          Height = 15
+          Caption = 'Cadastre-se aqui.'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clRed
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = []
+          ParentFont = False
+        end
+        object bLogin: TPanel
+          Left = 176
+          Top = 194
+          Width = 73
+          Height = 40
+          BevelOuter = bvNone
+          Caption = 'Confirmar'
+          Color = clCream
+          ParentBackground = False
+          TabOrder = 0
+          object shConfirmar: TShape
+            Left = 0
+            Top = 0
+            Width = 73
+            Height = 40
+            Align = alClient
+            Brush.Color = clCoral
+            Pen.Color = clCoral
+            Shape = stRoundRect
+            ExplicitTop = 24
+          end
+          object lblConfirmar: TLabel
+            Left = 10
+            Top = 13
+            Width = 54
+            Height = 15
+            Caption = 'Confirmar'
+          end
+        end
+        object eSenha: TEdit
+          Left = 182
+          Top = 140
+          Width = 147
+          Height = 23
+          TabOrder = 1
+        end
+        object eEmail: TEdit
+          Left = 182
+          Top = 101
+          Width = 147
+          Height = 23
+          BevelInner = bvNone
+          BevelOuter = bvNone
+          ParentShowHint = False
+          ShowHint = True
+          TabOrder = 2
+        end
+      end
+      object pSair: TPanel
+        Left = 440
+        Top = 592
+        Width = 63
+        Height = 42
+        BevelOuter = bvNone
+        Color = clCoral
+        ParentBackground = False
+        TabOrder = 1
+        object shSair: TShape
+          Left = 0
+          Top = 0
+          Width = 63
+          Height = 42
+          Align = alClient
+          Brush.Color = clCream
+          Pen.Color = clCoral
+          Shape = stRoundRect
+          ExplicitLeft = -16
+          ExplicitTop = 13
+          ExplicitWidth = 40
+          ExplicitHeight = 510
+        end
+        object lblSair: TLabel
+          Left = 22
+          Top = 14
+          Width = 19
+          Height = 15
+          Caption = 'Sair'
+        end
+      end
     end
   end
 end
