@@ -29,7 +29,6 @@ object FormLogin: TFormLogin
     Color = clCoral
     ParentBackground = False
     TabOrder = 0
-    ExplicitTop = -5
     object lblLogin: TLabel
       AlignWithMargins = True
       Left = 4
@@ -65,7 +64,6 @@ object FormLogin: TFormLogin
       Color = clCoral
       ParentBackground = False
       TabOrder = 0
-      ExplicitTop = 170
       object shpLR: TShape
         Left = 0
         Top = 0
@@ -129,6 +127,7 @@ object FormLogin: TFormLogin
         Font.Name = 'Segoe UI'
         Font.Style = []
         ParentFont = False
+        OnClick = lblTrocaClick
       end
       object bLogin: TPanel
         Left = 168

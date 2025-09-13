@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls,
-  Vcl.Imaging.pngimage, Vcl.Imaging.jpeg, FormCadastroMain;
+  Vcl.Imaging.pngimage, Vcl.Imaging.jpeg;
 
 type
   TFormLogin = class(TForm)
@@ -31,6 +31,7 @@ type
     procedure bFormLoginSairClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure pSairClick(Sender: TObject);
+    procedure lblTrocaClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -41,7 +42,8 @@ var
   FormLogin: TFormLogin;
 
 implementation
-
+uses
+FormCadastroMain;
 {$R *.dfm}
 
 procedure TFormLogin.bFormLoginSairClick(Sender: TObject);
@@ -72,10 +74,16 @@ end;
 
 
 end;
+procedure TFormLogin.lblTrocaClick(Sender: TObject);
+begin
+Self.Hide;
+FormCadastro.ShowModal;
+Self.Show;
+end;
+
 procedure TFormLogin.pSairClick(Sender: TObject);
 begin
-
-  self.Close;
+FormLogin.Close;
 end;
 
 end.

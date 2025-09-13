@@ -19,10 +19,9 @@ object FormCadastro: TFormCadastro
     Align = alClient
     BevelOuter = bvNone
     Caption = 'Panel1'
+    Color = clBlack
+    ParentBackground = False
     TabOrder = 0
-    ExplicitLeft = -112
-    ExplicitTop = -201
-    ExplicitWidth = 736
     object iLoginLeft: TImage
       AlignWithMargins = True
       Left = 0
@@ -34,6 +33,7 @@ object FormCadastro: TFormCadastro
       Margins.Right = 0
       Margins.Bottom = 0
       Align = alClient
+      Center = True
       Picture.Data = {
         0954506E67496D61676589504E470D0A1A0A0000000D49484452000006000000
         04000802000000A81305150000D989636142580000D9896A756D620000001E6A
@@ -20123,8 +20123,9 @@ object FormCadastro: TFormCadastro
         4AC9C4E05C395D9D790540786BB5A90510AC1C52EA5AE90221C666598B6812EA
         34B00AC84692CA92045C4215C751A74F48FF1F51785DC81E4A2D4A0000000049
         454E44AE426082}
-      ExplicitLeft = 1
-      ExplicitWidth = 824
+      Proportional = True
+      ExplicitWidth = 1536
+      ExplicitHeight = 1024
     end
     object pRight: TPanel
       AlignWithMargins = True
@@ -20140,8 +20141,6 @@ object FormCadastro: TFormCadastro
       Color = clCoral
       ParentBackground = False
       TabOrder = 0
-      ExplicitLeft = 760
-      ExplicitTop = 24
       object lblLogin: TLabel
         AlignWithMargins = True
         Left = 4
@@ -20161,7 +20160,7 @@ object FormCadastro: TFormCadastro
         Font.Style = [fsBold]
         ParentColor = False
         ParentFont = False
-        ExplicitLeft = 3
+        ExplicitWidth = 256
       end
       object pLR: TPanel
         AlignWithMargins = True
@@ -20192,8 +20191,8 @@ object FormCadastro: TFormCadastro
           AlignWithMargins = True
           Left = 72
           Top = 34
-          Width = 277
-          Height = 45
+          Width = 272
+          Height = 44
           Margins.Top = 20
           Margins.Bottom = 30
           Alignment = taCenter
@@ -20201,7 +20200,7 @@ object FormCadastro: TFormCadastro
           Color = clOrangered
           Font.Charset = ANSI_CHARSET
           Font.Color = clGray
-          Font.Height = -37
+          Font.Height = -36
           Font.Name = 'Candara'
           Font.Style = [fsBold]
           ParentColor = False
@@ -20222,14 +20221,14 @@ object FormCadastro: TFormCadastro
           Caption = 'Digite seu Email:'
         end
         object lblAntesTroca: TLabel
-          Left = 166
+          Left = 150
           Top = 376
           Width = 87
           Height = 15
           Caption = 'J'#225' tem cadastro?'
         end
         object lblTroca: TLabel
-          Left = 254
+          Left = 243
           Top = 376
           Width = 30
           Height = 15
@@ -20240,12 +20239,13 @@ object FormCadastro: TFormCadastro
           Font.Name = 'Segoe UI'
           Font.Style = []
           ParentFont = False
+          OnClick = lblTrocaClick
         end
         object lblCPF: TLabel
           Left = 86
           Top = 182
           Width = 79
-          Height = 20
+          Height = 15
           Caption = 'Digite seu CPF:'
         end
         object lblNome: TLabel
@@ -20255,8 +20255,21 @@ object FormCadastro: TFormCadastro
           Height = 30
           Caption = 'Digite seu nome '#13#10'completo:'
         end
+        object lblTipoConta: TLabel
+          Left = 40
+          Top = 267
+          Width = 344
+          Height = 23
+          Caption = 'Selecione seus interesses no Quicks e seja:'
+          Font.Charset = ANSI_CHARSET
+          Font.Color = clGray
+          Font.Height = -19
+          Font.Name = 'Candara'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
         object bLogin: TPanel
-          Left = 190
+          Left = 174
           Top = 330
           Width = 73
           Height = 40
@@ -20274,7 +20287,7 @@ object FormCadastro: TFormCadastro
             Brush.Color = clCoral
             Pen.Color = clCoral
             Shape = stRoundRect
-            ExplicitTop = 34
+            ExplicitLeft = -15
           end
           object lblConfirmar: TLabel
             Left = 10
@@ -20316,27 +20329,28 @@ object FormCadastro: TFormCadastro
           Height = 23
           TabOrder = 4
         end
-        object CheckBox1: TCheckBox
+        object cbComercio: TCheckBox
+          Left = 147
+          Top = 296
+          Width = 122
+          Height = 17
+          Caption = 'Dono de Com'#233'rcio'
+          TabOrder = 5
+        end
+        object cbEntregador: TCheckBox
           Left = 64
           Top = 296
           Width = 81
           Height = 17
           Caption = 'Entregador'
-          TabOrder = 5
-        end
-        object CheckBox2: TCheckBox
-          Left = 151
-          Top = 296
-          Width = 122
-          Height = 17
-          Caption = 'Dono de Com'#233'rcio'
           TabOrder = 6
         end
-        object CheckBox3: TCheckBox
-          Left = 279
+        object cbConsumidor: TCheckBox
+          Left = 269
           Top = 296
           Width = 97
           Height = 17
+          Caption = 'Consumidor'
           TabOrder = 7
         end
       end
@@ -20349,6 +20363,7 @@ object FormCadastro: TFormCadastro
         Color = clCoral
         ParentBackground = False
         TabOrder = 1
+        OnClick = pSairClick
         object shSair: TShape
           Left = 0
           Top = 0

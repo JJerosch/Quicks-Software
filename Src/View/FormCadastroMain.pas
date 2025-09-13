@@ -31,10 +31,13 @@ type
     eCPF: TEdit;
     lblNome: TLabel;
     Edit1: TEdit;
+    cbComercio: TCheckBox;
+    cbEntregador: TCheckBox;
+    cbConsumidor: TCheckBox;
+    lblTipoConta: TLabel;
     shConfirmar: TShape;
-    CheckBox1: TCheckBox;
-    CheckBox2: TCheckBox;
-    CheckBox3: TCheckBox;
+    procedure pSairClick(Sender: TObject);
+    procedure lblTrocaClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -47,5 +50,17 @@ var
 implementation
 
 {$R *.dfm}
+
+uses FormLoginMain;
+
+procedure TFormCadastro.lblTrocaClick(Sender: TObject);
+begin
+FormCadastro.Close;
+end;
+
+procedure TFormCadastro.pSairClick(Sender: TObject);
+begin
+FormCadastro.Close;
+end;
 
 end.
