@@ -4,15 +4,15 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Imaging.pngimage, Vcl.ExtCtrls,
-  Vcl.StdCtrls;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Imaging.pngimage, Vcl.ExtCtrls,Vcl.StdCtrls,
+  Vcl.Mask;
 
 type
   TFormCadastro = class(TForm)
     Panel1: TPanel;
-    iLoginLeft: TImage;
+    iCadastroLeft: TImage;
     pRight: TPanel;
-    lblLogin: TLabel;
+    lblQuicks: TLabel;
     pLR: TPanel;
     shpLR: TShape;
     lblTituloMain: TLabel;
@@ -21,23 +21,29 @@ type
     lblAntesTroca: TLabel;
     lblTroca: TLabel;
     bLogin: TPanel;
-    lblConfirmar: TLabel;
     eEmail: TEdit;
     eNome: TEdit;
-    pSair: TPanel;
-    lblSair: TLabel;
-    shSair: TShape;
     lblCPF: TLabel;
     eCPF: TEdit;
     lblNome: TLabel;
-    Edit1: TEdit;
-    cbComercio: TCheckBox;
-    cbEntregador: TCheckBox;
-    cbConsumidor: TCheckBox;
-    lblTipoConta: TLabel;
+    pSair: TPanel;
+    shSair: TShape;
+    lblSair: TLabel;
+    meCPF: TMaskEdit;
+    lblConfirmar: TLabel;
     shConfirmar: TShape;
+    meSenha: TMaskEdit;
     procedure pSairClick(Sender: TObject);
     procedure lblTrocaClick(Sender: TObject);
+    procedure FormResize(Sender: TObject);
+    procedure shConfirmarMouseEnter(Sender: TObject);
+    procedure shConfirmarMouseLeave(Sender: TObject);
+    procedure eCPFChange(Sender: TObject);
+    procedure lblSairMouseEnter(Sender: TObject);
+    procedure lblSairMouseLeave(Sender: TObject);
+    procedure FormCreate(Sender: TObject);
+    procedure lblTrocaMouseEnter(Sender: TObject);
+    procedure lblTrocaMouseLeave(Sender: TObject);
   private
     { Private declarations }
   public
@@ -53,14 +59,79 @@ implementation
 
 uses FormLoginMain;
 
+procedure TFormCadastro.shConfirmarMouseEnter(Sender: TObject);
+begin
+  shConfirmar.Brush.Color:=$00003AD5;
+  lblConfirmar.Font.Color:=clwhite;
+  lblConfirmar.Font.Style := [fsBold];
+end;
+
+procedure TFormCadastro.lblSairMouseEnter(Sender: TObject);
+begin
+  shSair.Brush.Color:=$00A7A7A7;
+  lblSair.Font.Color:=$00FFF4F4;
+  lblsair.Font.Style := [fsBold];
+end;
+
+procedure TFormCadastro.lblSairMouseLeave(Sender: TObject);
+begin
+  shSair.Brush.Color:=clwhite;
+  lblSair.Font.Color:=clblack;
+  lblSair.Font.Style := [];
+end;
+
 procedure TFormCadastro.lblTrocaClick(Sender: TObject);
 begin
 FormCadastro.Close;
 end;
 
+procedure TFormCadastro.lblTrocaMouseEnter(Sender: TObject);
+begin
+  lblTroca.Font.Style := [fsUnderline];
+end;
+
+procedure TFormCadastro.lblTrocaMouseLeave(Sender: TObject);
+begin
+  lblTroca.Font.Style := [];
+end;
+
 procedure TFormCadastro.pSairClick(Sender: TObject);
 begin
 FormCadastro.Close;
+end;
+
+procedure TFormCadastro.shConfirmarMouseLeave(Sender: TObject);
+begin
+  shConfirmar.Brush.Color:=$005383FF;
+  lblConfirmar.Font.Color:=clblack;
+  lblConfirmar.Font.Style := [];
+end;
+
+procedure TFormCadastro.eCPFChange(Sender: TObject);
+begin
+  eCPF.Hide;
+  meCPF.SetFocus;
+end;
+
+procedure TFormCadastro.FormCreate(Sender: TObject);
+begin
+iCadastroLeft.Stretch:=True;
+  iCadastroLeft.Proportional:=True;
+  iCadastroLeft.Center:=True;
+  if WindowState = wsMaximized then begin
+    iCadastroLeft.Width := 1800;
+  end else begin
+    iCadastroLeft.Width := 800;
+  end;
+end;
+
+procedure TFormCadastro.FormResize(Sender: TObject);
+begin
+if WindowState = wsMaximized then begin
+    lblQuicks.Margins.Top := 250;
+  end else begin
+    lblQuicks.Margins.Top := 50;
+  end;
 end;
 
 end.

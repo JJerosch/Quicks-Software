@@ -14,6 +14,7 @@ object FormLogin: TFormLogin
   Font.Style = []
   Position = poScreenCenter
   OnCreate = FormCreate
+  OnResize = FormResize
   TextHeight = 15
   object pRight: TPanel
     AlignWithMargins = True
@@ -26,19 +27,23 @@ object FormLogin: TFormLogin
     Margins.Right = 0
     Margins.Bottom = 0
     Align = alRight
+    Anchors = []
     Color = clCoral
     ParentBackground = False
     TabOrder = 0
+    ExplicitLeft = 704
+    ExplicitTop = 5
     object lblLogin: TLabel
       AlignWithMargins = True
       Left = 4
-      Top = 51
+      Top = 81
       Width = 504
-      Height = 87
-      Margins.Top = 50
+      Height = 80
+      Margins.Top = 80
       Margins.Bottom = 30
       Align = alTop
       Alignment = taCenter
+      Anchors = []
       Caption = 'Quicks'#174
       Color = clOrangered
       Font.Charset = ANSI_CHARSET
@@ -48,12 +53,13 @@ object FormLogin: TFormLogin
       Font.Style = [fsBold]
       ParentColor = False
       ParentFont = False
-      ExplicitWidth = 256
+      ExplicitLeft = -4
+      ExplicitTop = -37
     end
     object pLR: TPanel
       AlignWithMargins = True
       Left = 51
-      Top = 171
+      Top = 194
       Width = 410
       Height = 327
       Margins.Left = 50
@@ -64,6 +70,7 @@ object FormLogin: TFormLogin
       Color = clCoral
       ParentBackground = False
       TabOrder = 0
+      ExplicitTop = 171
       object shpLR: TShape
         Left = 0
         Top = 0
@@ -128,6 +135,8 @@ object FormLogin: TFormLogin
         Font.Style = []
         ParentFont = False
         OnClick = lblTrocaClick
+        OnMouseEnter = lblTrocaMouseEnter
+        OnMouseLeave = lblTrocaMouseLeave
       end
       object bLogin: TPanel
         Left = 168
@@ -139,7 +148,7 @@ object FormLogin: TFormLogin
         Color = clCream
         ParentBackground = False
         TabOrder = 0
-        object Shape1: TShape
+        object shConfirmar: TShape
           Left = 0
           Top = 0
           Width = 73
@@ -148,22 +157,19 @@ object FormLogin: TFormLogin
           Brush.Color = clCoral
           Pen.Color = clCoral
           Shape = stRoundRect
+          OnMouseEnter = lblConfirmarMouseEnter
+          OnMouseLeave = lblConfirmarMouseLeave
           ExplicitTop = 24
         end
-        object Label1: TLabel
+        object lblConfirmar: TLabel
           Left = 10
           Top = 13
           Width = 54
           Height = 15
           Caption = 'Confirmar'
+          OnMouseEnter = lblConfirmarMouseEnter
+          OnMouseLeave = lblConfirmarMouseLeave
         end
-      end
-      object eSenha: TEdit
-        Left = 182
-        Top = 140
-        Width = 147
-        Height = 23
-        TabOrder = 1
       end
       object eEmail: TEdit
         Left = 182
@@ -174,27 +180,49 @@ object FormLogin: TFormLogin
         BevelOuter = bvNone
         ParentShowHint = False
         ShowHint = True
+        TabOrder = 1
+        StyleName = 'Windows'
+      end
+      object meSenha: TMaskEdit
+        Left = 182
+        Top = 140
+        Width = 147
+        Height = 23
+        PasswordChar = '*'
         TabOrder = 2
+        Text = ''
+        StyleName = 'Windows'
       end
     end
     object pSair: TPanel
-      Left = 440
-      Top = 592
-      Width = 63
+      AlignWithMargins = True
+      Left = 445
+      Top = 596
+      Width = 61
       Height = 42
+      Margins.Left = 444
+      Margins.Right = 5
+      Align = alBottom
       BevelOuter = bvNone
       Color = clCoral
       ParentBackground = False
       TabOrder = 1
+      OnClick = pSairClick
+      OnResize = pSairResize
+      ExplicitLeft = 440
+      ExplicitTop = 592
+      ExplicitWidth = 63
       object shSair: TShape
         Left = 0
         Top = 0
-        Width = 63
+        Width = 61
         Height = 42
         Align = alClient
         Brush.Color = clCream
         Pen.Color = clCoral
         Shape = stRoundRect
+        OnMouseEnter = lblSairMouseEnter
+        OnMouseLeave = lblSairMouseLeave
         ExplicitLeft = -16
         ExplicitTop = 13
         ExplicitWidth = 40
@@ -207,6 +235,8 @@ object FormLogin: TFormLogin
         Height = 15
         Caption = 'Sair'
         OnClick = pSairClick
+        OnMouseEnter = lblSairMouseEnter
+        OnMouseLeave = lblSairMouseLeave
       end
     end
   end
@@ -230,6 +260,7 @@ object FormLogin: TFormLogin
       Margins.Right = 0
       Margins.Bottom = 0
       Align = alClient
+      Anchors = []
       Picture.Data = {
         0954506E67496D61676589504E470D0A1A0A0000000D49484452000006000000
         04000802000000A81305150000D989636142580000D9896A756D620000001E6A

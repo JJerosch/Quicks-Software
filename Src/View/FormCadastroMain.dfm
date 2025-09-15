@@ -3,18 +3,20 @@ object FormCadastro: TFormCadastro
   Top = 0
   Caption = 'FormCadastro'
   ClientHeight = 642
-  ClientWidth = 1248
+  ClientWidth = 1206
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
   Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
+  OnCreate = FormCreate
+  OnResize = FormResize
   TextHeight = 15
   object Panel1: TPanel
     Left = 0
     Top = 0
-    Width = 1248
+    Width = 1206
     Height = 642
     Align = alClient
     BevelOuter = bvNone
@@ -22,11 +24,12 @@ object FormCadastro: TFormCadastro
     Color = clBlack
     ParentBackground = False
     TabOrder = 0
-    object iLoginLeft: TImage
+    ExplicitWidth = 1248
+    object iCadastroLeft: TImage
       AlignWithMargins = True
       Left = 0
       Top = 0
-      Width = 736
+      Width = 694
       Height = 642
       Margins.Left = 0
       Margins.Top = 0
@@ -20124,12 +20127,13 @@ object FormCadastro: TFormCadastro
         34B00AC84692CA92045C4215C751A74F48FF1F51785DC81E4A2D4A0000000049
         454E44AE426082}
       Proportional = True
+      OnMouseEnter = shConfirmarMouseEnter
       ExplicitWidth = 1536
       ExplicitHeight = 1024
     end
     object pRight: TPanel
       AlignWithMargins = True
-      Left = 736
+      Left = 694
       Top = 0
       Width = 512
       Height = 642
@@ -20141,13 +20145,14 @@ object FormCadastro: TFormCadastro
       Color = clCoral
       ParentBackground = False
       TabOrder = 0
-      object lblLogin: TLabel
+      ExplicitLeft = 736
+      object lblQuicks: TLabel
         AlignWithMargins = True
         Left = 4
-        Top = 51
+        Top = 81
         Width = 504
         Height = 87
-        Margins.Top = 50
+        Margins.Top = 80
         Margins.Bottom = 30
         Align = alTop
         Alignment = taCenter
@@ -20160,14 +20165,15 @@ object FormCadastro: TFormCadastro
         Font.Style = [fsBold]
         ParentColor = False
         ParentFont = False
+        ExplicitTop = 51
         ExplicitWidth = 256
       end
       object pLR: TPanel
         AlignWithMargins = True
         Left = 51
-        Top = 171
+        Top = 201
         Width = 410
-        Height = 414
+        Height = 350
         Margins.Left = 50
         Margins.Right = 50
         Margins.Bottom = 150
@@ -20176,16 +20182,16 @@ object FormCadastro: TFormCadastro
         Color = clCoral
         ParentBackground = False
         TabOrder = 0
+        ExplicitTop = 171
         object shpLR: TShape
           Left = 0
           Top = 0
           Width = 410
-          Height = 414
+          Height = 350
           Align = alClient
           Pen.Color = clCream
           Shape = stRoundRect
-          ExplicitLeft = -128
-          ExplicitHeight = 350
+          ExplicitHeight = 361
         end
         object lblTituloMain: TLabel
           AlignWithMargins = True
@@ -20222,14 +20228,14 @@ object FormCadastro: TFormCadastro
         end
         object lblAntesTroca: TLabel
           Left = 150
-          Top = 376
+          Top = 312
           Width = 87
           Height = 15
           Caption = 'J'#225' tem cadastro?'
         end
         object lblTroca: TLabel
           Left = 243
-          Top = 376
+          Top = 312
           Width = 30
           Height = 15
           Caption = 'Login'
@@ -20240,6 +20246,8 @@ object FormCadastro: TFormCadastro
           Font.Style = []
           ParentFont = False
           OnClick = lblTrocaClick
+          OnMouseEnter = lblTrocaMouseEnter
+          OnMouseLeave = lblTrocaMouseLeave
         end
         object lblCPF: TLabel
           Left = 86
@@ -20255,22 +20263,21 @@ object FormCadastro: TFormCadastro
           Height = 30
           Caption = 'Digite seu nome '#13#10'completo:'
         end
-        object lblTipoConta: TLabel
-          Left = 40
-          Top = 267
-          Width = 344
+        object meCPF: TMaskEdit
+          Left = 182
+          Top = 179
+          Width = 147
           Height = 23
-          Caption = 'Selecione seus interesses no Quicks e seja:'
-          Font.Charset = ANSI_CHARSET
-          Font.Color = clGray
-          Font.Height = -19
-          Font.Name = 'Candara'
-          Font.Style = [fsBold]
-          ParentFont = False
+          EditMask = '999.999.999-99;1;_'
+          MaxLength = 14
+          TabOrder = 4
+          Text = '   .   .   -  '
+          StyleName = 'Windows'
         end
         object bLogin: TPanel
+          AlignWithMargins = True
           Left = 174
-          Top = 330
+          Top = 266
           Width = 73
           Height = 40
           BevelOuter = bvNone
@@ -20284,9 +20291,11 @@ object FormCadastro: TFormCadastro
             Width = 73
             Height = 40
             Align = alClient
-            Brush.Color = clCoral
+            Brush.Color = 5473279
             Pen.Color = clCoral
             Shape = stRoundRect
+            OnMouseEnter = shConfirmarMouseEnter
+            OnMouseLeave = shConfirmarMouseLeave
             ExplicitLeft = -15
           end
           object lblConfirmar: TLabel
@@ -20295,6 +20304,8 @@ object FormCadastro: TFormCadastro
             Width = 54
             Height = 15
             Caption = 'Confirmar'
+            OnMouseEnter = shConfirmarMouseEnter
+            OnMouseLeave = shConfirmarMouseLeave
           end
         end
         object eEmail: TEdit
@@ -20303,6 +20314,7 @@ object FormCadastro: TFormCadastro
           Width = 147
           Height = 23
           TabOrder = 1
+          StyleName = 'Windows'
         end
         object eNome: TEdit
           Left = 182
@@ -20314,6 +20326,7 @@ object FormCadastro: TFormCadastro
           ParentShowHint = False
           ShowHint = True
           TabOrder = 2
+          StyleName = 'Windows'
         end
         object eCPF: TEdit
           Left = 182
@@ -20321,58 +20334,48 @@ object FormCadastro: TFormCadastro
           Width = 147
           Height = 23
           TabOrder = 3
+          StyleName = 'Windows'
+          OnChange = eCPFChange
+          OnClick = eCPFChange
         end
-        object Edit1: TEdit
+        object meSenha: TMaskEdit
           Left = 182
-          Top = 219
+          Top = 216
           Width = 147
           Height = 23
-          TabOrder = 4
-        end
-        object cbComercio: TCheckBox
-          Left = 147
-          Top = 296
-          Width = 122
-          Height = 17
-          Caption = 'Dono de Com'#233'rcio'
+          PasswordChar = '*'
           TabOrder = 5
-        end
-        object cbEntregador: TCheckBox
-          Left = 64
-          Top = 296
-          Width = 81
-          Height = 17
-          Caption = 'Entregador'
-          TabOrder = 6
-        end
-        object cbConsumidor: TCheckBox
-          Left = 269
-          Top = 296
-          Width = 97
-          Height = 17
-          Caption = 'Consumidor'
-          TabOrder = 7
+          Text = ''
+          StyleName = 'Windows'
         end
       end
       object pSair: TPanel
-        Left = 440
-        Top = 592
-        Width = 63
+        AlignWithMargins = True
+        Left = 445
+        Top = 596
+        Width = 61
         Height = 42
+        Margins.Left = 444
+        Margins.Right = 5
+        Align = alBottom
         BevelOuter = bvNone
         Color = clCoral
         ParentBackground = False
         TabOrder = 1
         OnClick = pSairClick
+        ExplicitLeft = 440
+        ExplicitTop = 592
+        ExplicitWidth = 63
         object shSair: TShape
           Left = 0
           Top = 0
-          Width = 63
+          Width = 61
           Height = 42
           Align = alClient
-          Brush.Color = clCream
           Pen.Color = clCoral
           Shape = stRoundRect
+          OnMouseEnter = lblSairMouseEnter
+          OnMouseLeave = lblSairMouseLeave
           ExplicitLeft = -16
           ExplicitTop = 13
           ExplicitWidth = 40
@@ -20384,6 +20387,11 @@ object FormCadastro: TFormCadastro
           Width = 19
           Height = 15
           Caption = 'Sair'
+          Color = clCoral
+          ParentColor = False
+          OnClick = pSairClick
+          OnMouseEnter = lblSairMouseEnter
+          OnMouseLeave = lblSairMouseLeave
         end
       end
     end
