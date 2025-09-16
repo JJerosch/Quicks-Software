@@ -131,6 +131,16 @@
             <Form>FormCadastro</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="Src\Model\uConn.pas">
+            <Form>DM</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
+        <DCCReference Include="Src\Model\uDTMDL.pas">
+            <Form>DataModule1</Form>
+            <FormType>dfm</FormType>
+            <DesignClass>TDataModule</DesignClass>
+        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

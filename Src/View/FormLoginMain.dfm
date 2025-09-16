@@ -31,14 +31,12 @@ object FormLogin: TFormLogin
     Color = clCoral
     ParentBackground = False
     TabOrder = 0
-    ExplicitLeft = 704
-    ExplicitTop = 5
     object lblLogin: TLabel
       AlignWithMargins = True
       Left = 4
       Top = 81
       Width = 504
-      Height = 80
+      Height = 87
       Margins.Top = 80
       Margins.Bottom = 30
       Align = alTop
@@ -53,13 +51,12 @@ object FormLogin: TFormLogin
       Font.Style = [fsBold]
       ParentColor = False
       ParentFont = False
-      ExplicitLeft = -4
-      ExplicitTop = -37
+      ExplicitWidth = 256
     end
     object pLR: TPanel
       AlignWithMargins = True
       Left = 51
-      Top = 194
+      Top = 201
       Width = 410
       Height = 327
       Margins.Left = 50
@@ -70,7 +67,6 @@ object FormLogin: TFormLogin
       Color = clCoral
       ParentBackground = False
       TabOrder = 0
-      ExplicitTop = 171
       object shpLR: TShape
         Left = 0
         Top = 0
@@ -148,6 +144,15 @@ object FormLogin: TFormLogin
         Color = clCream
         ParentBackground = False
         TabOrder = 0
+        object lblConfirmar: TLabel
+          Left = 10
+          Top = 13
+          Width = 54
+          Height = 15
+          Caption = 'Confirmar'
+          OnMouseEnter = lblConfirmarMouseEnter
+          OnMouseLeave = lblConfirmarMouseLeave
+        end
         object shConfirmar: TShape
           Left = 0
           Top = 0
@@ -159,16 +164,20 @@ object FormLogin: TFormLogin
           Shape = stRoundRect
           OnMouseEnter = lblConfirmarMouseEnter
           OnMouseLeave = lblConfirmarMouseLeave
-          ExplicitTop = 24
+          ExplicitLeft = 16
+          ExplicitTop = 16
         end
-        object lblConfirmar: TLabel
-          Left = 10
-          Top = 13
-          Width = 54
-          Height = 15
-          Caption = 'Confirmar'
-          OnMouseEnter = lblConfirmarMouseEnter
-          OnMouseLeave = lblConfirmarMouseLeave
+        object SpeedButton1: TSpeedButton
+          Left = 0
+          Top = 0
+          Width = 73
+          Height = 40
+          Align = alClient
+          OnClick = SpeedButton1Click
+          ExplicitLeft = 50
+          ExplicitTop = -10
+          ExplicitWidth = 23
+          ExplicitHeight = 50
         end
       end
       object eEmail: TEdit
@@ -209,9 +218,6 @@ object FormLogin: TFormLogin
       TabOrder = 1
       OnClick = pSairClick
       OnResize = pSairResize
-      ExplicitLeft = 440
-      ExplicitTop = 592
-      ExplicitWidth = 63
       object shSair: TShape
         Left = 0
         Top = 0
@@ -20350,7 +20356,6 @@ object FormLogin: TFormLogin
         4AC9C4E05C395D9D790540786BB5A90510AC1C52EA5AE90221C666598B6812EA
         34B00AC84692CA92045C4215C751A74F48FF1F51785DC81E4A2D4A0000000049
         454E44AE426082}
-      OnClick = pSairClick
       ExplicitLeft = 1
       ExplicitWidth = 824
     end

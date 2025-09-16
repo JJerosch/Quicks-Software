@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls,
-  Vcl.Imaging.pngimage, Vcl.Imaging.jpeg, Vcl.Mask;
+  Vcl.Imaging.pngimage, Vcl.Imaging.jpeg, Vcl.Mask, Vcl.Buttons, uDTMDL;
 
 type
   TFormLogin = class(TForm)
@@ -22,12 +22,13 @@ type
     lblAntesTroca: TLabel;
     lblTroca: TLabel;
     shpLR: TShape;
-    shConfirmar: TShape;
     lblConfirmar: TLabel;
     pSair: TPanel;
     shSair: TShape;
     lblSair: TLabel;
     meSenha: TMaskEdit;
+    shConfirmar: TShape;
+    SpeedButton1: TSpeedButton;
     procedure bFormLoginSairClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure pSairClick(Sender: TObject);
@@ -40,6 +41,7 @@ type
     procedure lblConfirmarMouseLeave(Sender: TObject);
     procedure lblTrocaMouseLeave(Sender: TObject);
     procedure lblTrocaMouseEnter(Sender: TObject);
+    procedure SpeedButton1Click(Sender: TObject);
   private
     { Private declarations }
   public
@@ -131,6 +133,15 @@ begin
   end else begin
     lblLogin.Margins.Top := 50;
   end;
+end;
+
+procedure TFormLogin.SpeedButton1Click(Sender: TObject);
+var config: TDataMdl;
+
+begin
+  meSenha.Text:=config.senha;
+  eEmail.Text:=config.email;
+
 end;
 
 procedure TFormLogin.lblConfirmarMouseLeave(Sender: TObject);
