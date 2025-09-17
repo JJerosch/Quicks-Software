@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls,
-  Vcl.Imaging.pngimage, Vcl.Imaging.jpeg, Vcl.Mask, Vcl.Buttons, uDTMDL;
+  Vcl.Imaging.pngimage, Vcl.Imaging.jpeg, Vcl.Mask, Vcl.Buttons, LoginModel, LoginController;
 
 type
   TFormLogin = class(TForm)
@@ -28,7 +28,7 @@ type
     lblSair: TLabel;
     meSenha: TMaskEdit;
     shConfirmar: TShape;
-    SpeedButton1: TSpeedButton;
+    sbConfirmar: TSpeedButton;
     procedure bFormLoginSairClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure pSairClick(Sender: TObject);
@@ -41,7 +41,7 @@ type
     procedure lblConfirmarMouseLeave(Sender: TObject);
     procedure lblTrocaMouseLeave(Sender: TObject);
     procedure lblTrocaMouseEnter(Sender: TObject);
-    procedure SpeedButton1Click(Sender: TObject);
+    procedure sbConfirmarClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -135,19 +135,28 @@ begin
   end;
 end;
 
-procedure TFormLogin.SpeedButton1Click(Sender: TObject);
-var config: TDataMdl;
-
+procedure TFormLogin.sbConfirmarClick(Sender: TObject);
+var
+  Login: TLoginCfg;
+  Controller: TLoginController;
 begin
-  meSenha.Text:=config.senha;
-  eEmail.Text:=config.email;
+  Login := TLoginCfg.Create;
+  Controller := TLoginController.Create;
+  try
+    Login.Email := eEmail.Text;
+    Login.Senha := meSenha.Text;
+    Controller.SalvarLogin(Login)
+  finally
+    Login.Free;
+    Controller.Free;
+  end;
 
 end;
 
 procedure TFormLogin.lblConfirmarMouseLeave(Sender: TObject);
 begin
-  shConfirmar.Brush.Color:=$005383FF;
-  lblConfirmar.Font.Color:=clblack;
+  shConfirmar.Brush.Color:=$00003AD5;
+  lblConfirmar.Font.Color:=clblack; shConfirmar.Brush.Color:=$005383FF;
   lblConfirmar.Font.Style := [];
 end;
 

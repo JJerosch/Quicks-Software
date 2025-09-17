@@ -5,7 +5,11 @@ uses
   FormLoginMain in 'Src\View\FormLoginMain.pas' {FormLogin},
   FormCadastroMain in 'Src\View\FormCadastroMain.pas' {FormCadastro},
   uConn in 'Src\Model\uConn.pas' {DM: TDataModule},
-  uDTMDL in 'Src\Model\uDTMDL.pas' {DataModule1: TDataModule};
+  LoginModel in 'Src\Model\LoginModel.pas',
+  LoginService in 'Src\Service\LoginService.pas',
+  LoginController in 'Src\Controller\LoginController.pas',
+  LoginRepository in 'Src\Repository\LoginRepository.pas',
+  DTOLC in 'Src\DTO\DTOLC.pas';
 
 {$R *.res}
 
@@ -15,6 +19,5 @@ begin
   Application.CreateForm(TFormLogin, FormLogin);
   Application.CreateForm(TFormCadastro, FormCadastro);
   Application.CreateForm(TDM, DM);
-  Application.CreateForm(TDataModule1, DataModule1);
   Application.Run;
 end.

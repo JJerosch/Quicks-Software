@@ -136,11 +136,11 @@
             <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
-        <DCCReference Include="Src\Model\uDTMDL.pas">
-            <Form>DataModule1</Form>
-            <FormType>dfm</FormType>
-            <DesignClass>TDataModule</DesignClass>
-        </DCCReference>
+        <DCCReference Include="Src\Model\LoginModel.pas"/>
+        <DCCReference Include="Src\Service\LoginService.pas"/>
+        <DCCReference Include="Src\Controller\LoginController.pas"/>
+        <DCCReference Include="Src\Repository\LoginRepository.pas"/>
+        <DCCReference Include="Src\DTO\DTOLC.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

@@ -13,7 +13,10 @@ object FormLogin: TFormLogin
   Font.Name = 'Segoe UI'
   Font.Style = []
   Position = poScreenCenter
+  OnClick = sbConfirmarClick
   OnCreate = FormCreate
+  OnMouseEnter = lblConfirmarMouseEnter
+  OnMouseLeave = lblConfirmarMouseLeave
   OnResize = FormResize
   TextHeight = 15
   object pRight: TPanel
@@ -144,15 +147,6 @@ object FormLogin: TFormLogin
         Color = clCream
         ParentBackground = False
         TabOrder = 0
-        object lblConfirmar: TLabel
-          Left = 10
-          Top = 13
-          Width = 54
-          Height = 15
-          Caption = 'Confirmar'
-          OnMouseEnter = lblConfirmarMouseEnter
-          OnMouseLeave = lblConfirmarMouseLeave
-        end
         object shConfirmar: TShape
           Left = 0
           Top = 0
@@ -167,17 +161,26 @@ object FormLogin: TFormLogin
           ExplicitLeft = 16
           ExplicitTop = 16
         end
-        object SpeedButton1: TSpeedButton
+        object sbConfirmar: TSpeedButton
           Left = 0
           Top = 0
           Width = 73
           Height = 40
           Align = alClient
-          OnClick = SpeedButton1Click
+          OnClick = sbConfirmarClick
           ExplicitLeft = 50
           ExplicitTop = -10
           ExplicitWidth = 23
           ExplicitHeight = 50
+        end
+        object lblConfirmar: TLabel
+          Left = 10
+          Top = 13
+          Width = 54
+          Height = 15
+          Caption = 'Confirmar'
+          OnMouseEnter = lblConfirmarMouseEnter
+          OnMouseLeave = lblConfirmarMouseLeave
         end
       end
       object eEmail: TEdit
