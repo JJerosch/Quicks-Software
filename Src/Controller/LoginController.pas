@@ -19,5 +19,4 @@ procedure TLoginController.SalvarLogin(const ALoginCfg: TLoginCfg);
 begin
   FService.SalvarLogin(ALoginCfg);
 end;
-
 end.
