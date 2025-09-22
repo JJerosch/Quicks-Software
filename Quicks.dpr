@@ -9,7 +9,11 @@ uses
   LoginService in 'Src\Service\LoginService.pas',
   LoginController in 'Src\Controller\LoginController.pas',
   LoginRepository in 'Src\Repository\LoginRepository.pas',
-  DTOLC in 'Src\DTO\DTOLC.pas';
+  DTOLC in 'Src\DTO\DTOLC.pas',
+  CadastroModel in 'Src\Model\CadastroModel.pas',
+  CadastroService in 'Src\Service\CadastroService.pas',
+  CadastroRepository in 'Src\Repository\CadastroRepository.pas',
+  CadastroController in 'Src\Controller\CadastroController.pas';
 
 {$R *.res}
 

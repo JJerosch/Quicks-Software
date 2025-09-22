@@ -13,18 +13,17 @@ object FormCadastro: TFormCadastro
   OnCreate = FormCreate
   OnResize = FormResize
   TextHeight = 15
-  object Panel1: TPanel
+  object pLeft: TPanel
     Left = 0
     Top = 0
     Width = 1206
     Height = 642
     Align = alClient
     BevelOuter = bvNone
-    Caption = 'Panel1'
+    Caption = 'pLeft'
     Color = clBlack
     ParentBackground = False
     TabOrder = 0
-    ExplicitWidth = 1248
     object iCadastroLeft: TImage
       AlignWithMargins = True
       Left = 0
@@ -20127,6 +20126,7 @@ object FormCadastro: TFormCadastro
         34B00AC84692CA92045C4215C751A74F48FF1F51785DC81E4A2D4A0000000049
         454E44AE426082}
       Proportional = True
+      OnClick = bCadastroClick
       OnMouseEnter = shConfirmarMouseEnter
       ExplicitWidth = 1536
       ExplicitHeight = 1024
@@ -20145,7 +20145,6 @@ object FormCadastro: TFormCadastro
       Color = clCoral
       ParentBackground = False
       TabOrder = 0
-      ExplicitLeft = 736
       object lblQuicks: TLabel
         AlignWithMargins = True
         Left = 4
@@ -20165,7 +20164,6 @@ object FormCadastro: TFormCadastro
         Font.Style = [fsBold]
         ParentColor = False
         ParentFont = False
-        ExplicitTop = 51
         ExplicitWidth = 256
       end
       object pLR: TPanel
@@ -20173,7 +20171,7 @@ object FormCadastro: TFormCadastro
         Left = 51
         Top = 201
         Width = 410
-        Height = 350
+        Height = 392
         Margins.Left = 50
         Margins.Right = 50
         Margins.Bottom = 150
@@ -20182,16 +20180,16 @@ object FormCadastro: TFormCadastro
         Color = clCoral
         ParentBackground = False
         TabOrder = 0
-        ExplicitTop = 171
         object shpLR: TShape
           Left = 0
           Top = 0
           Width = 410
-          Height = 350
+          Height = 392
           Align = alClient
           Pen.Color = clCream
           Shape = stRoundRect
-          ExplicitHeight = 361
+          ExplicitLeft = 48
+          ExplicitTop = 94
         end
         object lblTituloMain: TLabel
           AlignWithMargins = True
@@ -20228,14 +20226,14 @@ object FormCadastro: TFormCadastro
         end
         object lblAntesTroca: TLabel
           Left = 150
-          Top = 312
+          Top = 352
           Width = 87
           Height = 15
           Caption = 'J'#225' tem cadastro?'
         end
         object lblTroca: TLabel
           Left = 243
-          Top = 312
+          Top = 352
           Width = 30
           Height = 15
           Caption = 'Login'
@@ -20263,6 +20261,13 @@ object FormCadastro: TFormCadastro
           Height = 30
           Caption = 'Digite seu nome '#13#10'completo:'
         end
+        object lblNPhone: TLabel
+          Left = 88
+          Top = 257
+          Width = 97
+          Height = 30
+          Caption = 'Digite seu n'#250'mero'#13#10'de telefone:'
+        end
         object meCPF: TMaskEdit
           Left = 182
           Top = 179
@@ -20274,10 +20279,10 @@ object FormCadastro: TFormCadastro
           Text = '   .   .   -  '
           StyleName = 'Windows'
         end
-        object bLogin: TPanel
+        object bCadastro: TPanel
           AlignWithMargins = True
           Left = 174
-          Top = 266
+          Top = 306
           Width = 73
           Height = 40
           BevelOuter = bvNone
@@ -20285,6 +20290,7 @@ object FormCadastro: TFormCadastro
           Color = clCream
           ParentBackground = False
           TabOrder = 0
+          OnClick = bCadastroClick
           object shConfirmar: TShape
             Left = 0
             Top = 0
@@ -20296,7 +20302,7 @@ object FormCadastro: TFormCadastro
             Shape = stRoundRect
             OnMouseEnter = shConfirmarMouseEnter
             OnMouseLeave = shConfirmarMouseLeave
-            ExplicitLeft = -15
+            ExplicitTop = 32
           end
           object lblConfirmar: TLabel
             Left = 10
@@ -20304,6 +20310,7 @@ object FormCadastro: TFormCadastro
             Width = 54
             Height = 15
             Caption = 'Confirmar'
+            OnClick = bCadastroClick
             OnMouseEnter = shConfirmarMouseEnter
             OnMouseLeave = shConfirmarMouseLeave
           end
@@ -20348,6 +20355,27 @@ object FormCadastro: TFormCadastro
           Text = ''
           StyleName = 'Windows'
         end
+        object meNPhone: TMaskEdit
+          Left = 191
+          Top = 262
+          Width = 136
+          Height = 23
+          EditMask = '(99)99999-9999;1;_'
+          MaxLength = 14
+          TabOrder = 6
+          Text = '(  )     -    '
+          StyleName = 'Windows'
+        end
+        object eNPhone: TEdit
+          Left = 191
+          Top = 262
+          Width = 138
+          Height = 23
+          TabOrder = 7
+          StyleName = 'Windows'
+          OnChange = eNPhoneChange
+          OnClick = eNPhoneChange
+        end
       end
       object pSair: TPanel
         AlignWithMargins = True
@@ -20363,9 +20391,6 @@ object FormCadastro: TFormCadastro
         ParentBackground = False
         TabOrder = 1
         OnClick = pSairClick
-        ExplicitLeft = 440
-        ExplicitTop = 592
-        ExplicitWidth = 63
         object shSair: TShape
           Left = 0
           Top = 0

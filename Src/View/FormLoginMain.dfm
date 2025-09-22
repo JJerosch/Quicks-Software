@@ -168,10 +168,10 @@ object FormLogin: TFormLogin
           Height = 40
           Align = alClient
           OnClick = sbConfirmarClick
-          ExplicitLeft = 50
-          ExplicitTop = -10
-          ExplicitWidth = 23
-          ExplicitHeight = 50
+          OnMouseEnter = lblConfirmarMouseEnter
+          OnMouseLeave = lblConfirmarMouseLeave
+          ExplicitLeft = -48
+          ExplicitTop = -25
         end
         object lblConfirmar: TLabel
           Left = 10
@@ -179,6 +179,7 @@ object FormLogin: TFormLogin
           Width = 54
           Height = 15
           Caption = 'Confirmar'
+          OnClick = sbConfirmarClick
           OnMouseEnter = lblConfirmarMouseEnter
           OnMouseLeave = lblConfirmarMouseLeave
         end
@@ -249,14 +250,14 @@ object FormLogin: TFormLogin
       end
     end
   end
-  object Panel1: TPanel
+  object pLeft: TPanel
     Left = 0
     Top = 0
     Width = 736
     Height = 642
     Align = alClient
     BevelOuter = bvNone
-    Caption = 'Panel1'
+    Caption = 'pLeft'
     TabOrder = 1
     object iLoginLeft: TImage
       AlignWithMargins = True

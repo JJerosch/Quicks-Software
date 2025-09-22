@@ -11,7 +11,7 @@ type
   TFormLogin = class(TForm)
     pRight: TPanel;
     lblLogin: TLabel;
-    Panel1: TPanel;
+    pLeft: TPanel;
     iLoginLeft: TImage;
     pLR: TPanel;
     bLogin: TPanel;

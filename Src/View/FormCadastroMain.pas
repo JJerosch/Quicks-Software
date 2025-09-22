@@ -5,11 +5,11 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Imaging.pngimage, Vcl.ExtCtrls,Vcl.StdCtrls,
-  Vcl.Mask;
+  Vcl.Mask, CadastroModel, CadastroController;
 
 type
   TFormCadastro = class(TForm)
-    Panel1: TPanel;
+    pLeft: TPanel;
     iCadastroLeft: TImage;
     pRight: TPanel;
     lblQuicks: TLabel;
@@ -20,7 +20,7 @@ type
     lblEmail: TLabel;
     lblAntesTroca: TLabel;
     lblTroca: TLabel;
-    bLogin: TPanel;
+    bCadastro: TPanel;
     eEmail: TEdit;
     eNome: TEdit;
     lblCPF: TLabel;
@@ -31,8 +31,11 @@ type
     lblSair: TLabel;
     meCPF: TMaskEdit;
     lblConfirmar: TLabel;
-    shConfirmar: TShape;
     meSenha: TMaskEdit;
+    shConfirmar: TShape;
+    lblNPhone: TLabel;
+    meNPhone: TMaskEdit;
+    eNPhone: TEdit;
     procedure pSairClick(Sender: TObject);
     procedure lblTrocaClick(Sender: TObject);
     procedure FormResize(Sender: TObject);
@@ -44,6 +47,8 @@ type
     procedure FormCreate(Sender: TObject);
     procedure lblTrocaMouseEnter(Sender: TObject);
     procedure lblTrocaMouseLeave(Sender: TObject);
+    procedure bCadastroClick(Sender: TObject);
+    procedure eNPhoneChange(Sender: TObject);
   private
     { Private declarations }
   public
@@ -107,10 +112,39 @@ begin
   lblConfirmar.Font.Style := [];
 end;
 
+procedure TFormCadastro.bCadastroClick(Sender: TObject);
+var
+  Cadastro: TCadastroCfg;
+begin
+  Cadastro := TCadastroCfg.Create;
+  try
+    Cadastro.Nome := eNome.Text;
+    Cadastro.Email := eEmail.Text;
+    Cadastro.CPF := eCPF.Text;
+    Cadastro.Senha := meSenha.Text;
+    Cadastro.NPhone := meNPhone.Text;
+    TCadastroController.ProcessoCadastro(Cadastro);
+
+    eNome.Clear;
+    eEmail.Clear;
+    meCPF.Clear;
+    meSenha.Clear;
+    meNPhone.Clear;
+  finally
+    Cadastro.Free;
+  end;
+end;
+
 procedure TFormCadastro.eCPFChange(Sender: TObject);
 begin
   eCPF.Hide;
   meCPF.SetFocus;
+end;
+
+procedure TFormCadastro.eNPhoneChange(Sender: TObject);
+begin
+  eNPhone.Hide;
+  meNPhone.SetFocus;
 end;
 
 procedure TFormCadastro.FormCreate(Sender: TObject);

@@ -15,8 +15,8 @@ implementation
     begin
       FService := TLoginService.Create;
     end;
-procedure TLoginController.SalvarLogin(const ALoginCfg: TLoginCfg);
-begin
-  FService.SalvarLogin(ALoginCfg);
-end;
+  procedure TLoginController.SalvarLogin(const ALoginCfg: TLoginCfg);
+    begin
+      FService.SalvarLogin(ALoginCfg);
+    end;
 end.

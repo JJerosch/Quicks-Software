@@ -141,6 +141,10 @@
         <DCCReference Include="Src\Controller\LoginController.pas"/>
         <DCCReference Include="Src\Repository\LoginRepository.pas"/>
         <DCCReference Include="Src\DTO\DTOLC.pas"/>
+        <DCCReference Include="Src\Model\CadastroModel.pas"/>
+        <DCCReference Include="Src\Service\CadastroService.pas"/>
+        <DCCReference Include="Src\Repository\CadastroRepository.pas"/>
+        <DCCReference Include="Src\Controller\CadastroController.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
