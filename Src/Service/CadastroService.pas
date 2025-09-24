@@ -7,19 +7,39 @@ uses
 type
   TCadastroService = class
   public
+    //class procedure LerCB(const Cadastro: TCadastroCfg);
     class procedure Salvar(const Cadastro: TCadastroCfg);
   end;
 
 implementation
+uses CadastroRepository;
 
-uses
-  CadastroRepository;
+//class procedure TCadastroService.LerCB(const Cadastro: TCadastroCfg);
+//var escolhacb: string;
+//begin
+//  escolhacb:= Cadastro.TipoUsuario;
+//  if escolhacb = 'Dono de Comércio' then begin
+//    TCadastroRepository.AddUserDonoComercio();
+//  end else if escolhacb = 'Entregador' then begin
+//    TCadastroRepository.AddUserEntregador();
+//  end else if escolhacb = 'Cliente' then begin
+//    TCadastroRepository.AdduserCliente();
+//  end else begin
+//    raise Exception.Create(' Faça sua escolha sobre quais funcionalidades sua conta vai executar e tente novamente.');
+//  end;
+//end;
 
 class procedure TCadastroService.Salvar(const cadastro: TCadastroCfg);
 var
   Repository: TCadastroRepository;
+  IdGerado: Integer;
 begin
-  if (Cadastro.Email = '') or (Cadastro.Senha = '') or (Cadastro.CPF = '') or (Cadastro.NPhone = '') or (Cadastro.Nome = '') then
+  if (Cadastro.Nome = '') or
+     (Cadastro.Email = '') or
+     (Cadastro.Senha = '') or
+     (Cadastro.CPF = '') or
+     (Cadastro.NPhone = '') or
+     (Cadastro.TipoUsuario = '') then
     begin
       raise Exception.Create(' Preencha todos os campos e tente novamente.');
     end;
@@ -28,11 +48,12 @@ begin
     if Repository.VerificarEmail(Cadastro.Email) then
       begin
         raise Exception.Create(' Este e-mail já está cadastrado. Por favor, use outro.');
+      end else begin
+        IdGerado := Repository.AddUser(Cadastro.Nome, Cadastro.Email, Cadastro.Senha, Cadastro.CPF, Cadastro.NPhone);
       end;
   finally
     Repository.Free;
   end;
   ShowMessage('Usuário ' + Cadastro.Nome + ' salvo com sucesso!');
 end;
-
 end.

@@ -20225,14 +20225,14 @@ object FormCadastro: TFormCadastro
           Caption = 'Digite seu Email:'
         end
         object lblAntesTroca: TLabel
-          Left = 150
+          Left = 146
           Top = 352
           Width = 87
           Height = 15
           Caption = 'J'#225' tem cadastro?'
         end
         object lblTroca: TLabel
-          Left = 243
+          Left = 236
           Top = 352
           Width = 30
           Height = 15
@@ -20281,7 +20281,7 @@ object FormCadastro: TFormCadastro
         end
         object bCadastro: TPanel
           AlignWithMargins = True
-          Left = 174
+          Left = 86
           Top = 306
           Width = 73
           Height = 40
@@ -20302,7 +20302,7 @@ object FormCadastro: TFormCadastro
             Shape = stRoundRect
             OnMouseEnter = shConfirmarMouseEnter
             OnMouseLeave = shConfirmarMouseLeave
-            ExplicitTop = 32
+            ExplicitTop = 8
           end
           object lblConfirmar: TLabel
             Left = 10
@@ -20358,12 +20358,12 @@ object FormCadastro: TFormCadastro
         object meNPhone: TMaskEdit
           Left = 191
           Top = 262
-          Width = 136
+          Width = 132
           Height = 23
-          EditMask = '(99)99999-9999;1;_'
-          MaxLength = 14
+          EditMask = '(99) 99999-9999;1;_'
+          MaxLength = 15
           TabOrder = 6
-          Text = '(  )     -    '
+          Text = '(  )      -    '
           StyleName = 'Windows'
         end
         object eNPhone: TEdit
@@ -20375,6 +20375,20 @@ object FormCadastro: TFormCadastro
           StyleName = 'Windows'
           OnChange = eNPhoneChange
           OnClick = eNPhoneChange
+        end
+        object cbOpcoes: TComboBox
+          Left = 177
+          Top = 315
+          Width = 164
+          Height = 23
+          CanUndoSelText = True
+          TabOrder = 8
+          Text = 'Selecione uma das op'#231#245'es'
+          StyleName = 'Windows'
+          Items.Strings = (
+            'Dono de Com'#233'rcio'
+            'Entregador'
+            'Cliente')
         end
       end
       object pSair: TPanel

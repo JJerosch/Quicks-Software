@@ -32,10 +32,11 @@ type
     meCPF: TMaskEdit;
     lblConfirmar: TLabel;
     meSenha: TMaskEdit;
-    shConfirmar: TShape;
     lblNPhone: TLabel;
     meNPhone: TMaskEdit;
     eNPhone: TEdit;
+    shConfirmar: TShape;
+    cbOpcoes: TComboBox;
     procedure pSairClick(Sender: TObject);
     procedure lblTrocaClick(Sender: TObject);
     procedure FormResize(Sender: TObject);
@@ -117,19 +118,22 @@ var
   Cadastro: TCadastroCfg;
 begin
   Cadastro := TCadastroCfg.Create;
+
   try
     Cadastro.Nome := eNome.Text;
     Cadastro.Email := eEmail.Text;
-    Cadastro.CPF := eCPF.Text;
+    Cadastro.CPF := meCPF.Text;
     Cadastro.Senha := meSenha.Text;
     Cadastro.NPhone := meNPhone.Text;
+    Cadastro.TipoUsuario := cbOpcoes.Text;
     TCadastroController.ProcessoCadastro(Cadastro);
-
+    //TCadastroController.VerificarCB(Cadastro);
     eNome.Clear;
     eEmail.Clear;
     meCPF.Clear;
     meSenha.Clear;
     meNPhone.Clear;
+    cbOpcoes.ItemIndex := 0;
   finally
     Cadastro.Free;
   end;

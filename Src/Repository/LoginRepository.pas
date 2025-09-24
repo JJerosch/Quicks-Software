@@ -13,7 +13,7 @@ implementation
     var Qr: TFDQuery;
     begin
       Result := False;
-      Qr:=TFDQuery.Create(nil);
+      Qr := TFDQuery.Create(nil);
       try
         Qr.Connection:=DM.FDConn;
         Qr.SQL.Text:='SELECT 1 FROM usuarios WHERE email_user = :email AND senha_user = :senha';
