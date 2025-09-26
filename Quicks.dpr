@@ -13,13 +13,15 @@ uses
   CadastroModel in 'Src\Model\CadastroModel.pas',
   CadastroService in 'Src\Service\CadastroService.pas',
   CadastroRepository in 'Src\Repository\CadastroRepository.pas',
-  CadastroController in 'Src\Controller\CadastroController.pas';
+  CadastroController in 'Src\Controller\CadastroController.pas',
+  FormHomeClientes in 'Src\View\FormHomeClientes.pas' {FormHomeClie};
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TFormHomeClie, FormHomeClie);
   Application.CreateForm(TFormLogin, FormLogin);
   Application.CreateForm(TFormCadastro, FormCadastro);
   Application.CreateForm(TDM, DM);
