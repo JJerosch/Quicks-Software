@@ -4,6 +4,7 @@ interface
   Type
     TCadastroCfg = class
     private
+      FId: string;
       FNome: string;
       FEmail: string;
       FCPF: string;
@@ -11,6 +12,7 @@ interface
       FNPhone: string;
       FTipoUsuario: string;
     public
+      property Id: string read FId write FId;
       property Nome: string read FNome write FNome;
       property Email: string read FEmail write FEmail;
       property CPF: string read FCPF write FCPF;

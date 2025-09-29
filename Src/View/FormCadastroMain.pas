@@ -48,7 +48,7 @@ type
     procedure FormCreate(Sender: TObject);
     procedure lblTrocaMouseEnter(Sender: TObject);
     procedure lblTrocaMouseLeave(Sender: TObject);
-    procedure bCadastroClick(Sender: TObject);
+    function bCadastroClick(Sender: TObject): Boolean;
     procedure eNPhoneChange(Sender: TObject);
   private
     { Private declarations }
@@ -113,12 +113,13 @@ begin
   lblConfirmar.Font.Style := [];
 end;
 
-procedure TFormCadastro.bCadastroClick(Sender: TObject);
+function TFormCadastro.bCadastroClick(Sender: TObject): Boolean;
 var
   Cadastro: TCadastroCfg;
+  Controller: TCadastroController;
 begin
   Cadastro := TCadastroCfg.Create;
-
+  Controller:=TCadastroController.Create;
   try
     Cadastro.Nome := eNome.Text;
     Cadastro.Email := eEmail.Text;
@@ -126,7 +127,8 @@ begin
     Cadastro.Senha := meSenha.Text;
     Cadastro.NPhone := meNPhone.Text;
     Cadastro.TipoUsuario := cbOpcoes.Text;
-    TCadastroController.ProcessoCadastro(Cadastro);
+    Controller.ProcessoCadastro(Cadastro);  // Chamando na instância;
+
     //TCadastroController.VerificarCB(Cadastro);
     eNome.Clear;
     eEmail.Clear;
@@ -136,6 +138,7 @@ begin
     cbOpcoes.ItemIndex := 0;
   finally
     Cadastro.Free;
+    Controller.Free;
   end;
 end;
 

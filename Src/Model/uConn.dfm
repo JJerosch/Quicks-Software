@@ -1,31 +1,30 @@
 object DM: TDM
-  Height = 485
-  Width = 647
-  PixelsPerInch = 97
+  Height = 480
+  Width = 640
   object FDConn: TFDConnection
     Params.Strings = (
       'Database=quicks'
       'User_Name=postgres'
       'Password=root'
       'DriverID=PG')
-    Left = 437
-    Top = 146
+    Left = 432
+    Top = 144
   end
   object FDQr: TFDQuery
     Connection = FDConn
-    Left = 170
-    Top = 291
+    Left = 168
+    Top = 288
   end
   object DS: TDataSource
     DataSet = FDQr
-    Left = 170
-    Top = 137
+    Left = 168
+    Top = 136
   end
   object DL: TFDPhysPgDriverLink
     VendorLib = 
-      'C:\Users\jpjer\OneDrive\Documentos\GitHub\Quicks-Software\lib\li' +
-      'bpq.dll'
-    Left = 428
-    Top = 283
+      'C:\Users\Jo'#227'o Jerosch\OneDrive\Documentos\Embarcadero\Studio\Pro' +
+      'jects\Quicks\lib\libpq.dll'
+    Left = 424
+    Top = 280
   end
 end

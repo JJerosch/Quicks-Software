@@ -7,7 +7,7 @@ Type TCadastroController = class
     FService: TCadastroService;
   public
     constructor Create;
-    class procedure ProcessoCadastro(const Cadastro: TCadastroCfg);
+    function ProcessoCadastro(const Cadastro: TCadastroCfg): Boolean;
     //class procedure VerificarCB(const Cadastro: TCadastroCfg);
   end;
 
@@ -18,10 +18,11 @@ constructor TCadastroController.Create;
       FService := TCadastroService.Create;
     end;
 
-  class procedure TCadastroController.ProcessoCadastro(const Cadastro: TCadastroCfg);
+  function TCadastroController.ProcessoCadastro(const Cadastro: TCadastroCfg): Boolean;
       begin
         try
-          TCadastroService.Salvar(Cadastro);
+          FService.Cadastrar(Cadastro);
+          Result := True;
         except
           on E: Exception do
           begin

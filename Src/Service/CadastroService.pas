@@ -7,8 +7,9 @@ uses
 type
   TCadastroService = class
   public
+    constructor Create;
     //class procedure LerCB(const Cadastro: TCadastroCfg);
-    class procedure Salvar(const Cadastro: TCadastroCfg);
+    function Cadastrar(const Cadastro: TCadastroCfg): Boolean;
   end;
 
 implementation
@@ -29,7 +30,7 @@ uses CadastroRepository;
 //  end;
 //end;
 
-class procedure TCadastroService.Salvar(const cadastro: TCadastroCfg);
+function TCadastroService.Cadastrar(const cadastro: TCadastroCfg): Boolean;
 var
   Repository: TCadastroRepository;
   IdGerado: Integer;
@@ -50,10 +51,16 @@ begin
         raise Exception.Create(' Este e-mail já está cadastrado. Por favor, use outro.');
       end else begin
         IdGerado := Repository.AddUser(Cadastro.Nome, Cadastro.Email, Cadastro.Senha, Cadastro.CPF, Cadastro.NPhone);
+        Result := True;
       end;
   finally
     Repository.Free;
   end;
   ShowMessage('Usuário ' + Cadastro.Nome + ' salvo com sucesso!');
 end;
+constructor TCadastroService.Create;
+begin
+
+end;
+
 end.

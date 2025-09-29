@@ -30,6 +30,7 @@ type
     pBusca: TPanel;
     Image1: TImage;
     eBuscaMain: TEdit;
+    TabSheet2: TTabSheet;
     procedure iButton1Click(Sender: TObject);
   private
     { Private declarations }
