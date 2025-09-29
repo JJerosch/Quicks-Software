@@ -1,4 +1,4 @@
-unit FormHomeDono;
+unit FormHomeEntregador;
 
 interface
 
@@ -8,29 +8,24 @@ uses
   Vcl.ComCtrls, Vcl.Imaging.pngimage;
 
 type
-  TForm1 = class(TForm)
+  TForm2 = class(TForm)
     pHomeBackground: TPanel;
     pBarraMenuLeft: TPanel;
-    iButton1: TImage;
-    iButton3: TImage;
-    iButton2: TImage;
-    iButton6: TImage;
+    iButton1Menu: TImage;
+    iButton3Pedidos: TImage;
+    iButton4Perfil: TImage;
+    iButtonLeave: TImage;
     lblButton1: TLabel;
-    lblButton2: TLabel;
     lblButton3: TLabel;
     lblButton4: TLabel;
-    iBUtton4: TImage;
-    iButton5: TImage;
-    lblButton5: TLabel;
     pListViewMain: TPanel;
-    PageControl1: TPageControl;
-    TabSheet1: TTabSheet;
-    pText: TPanel;
+    scbxMain: TScrollBox;
+    lvMain: TListView;
+    pTextCarrinho: TPanel;
     lblText: TLabel;
+    pHeader: TPanel;
     pBusca: TPanel;
-    Image1: TImage;
-    eBuscaMain: TEdit;
-    procedure iButton1Click(Sender: TObject);
+    procedure iButton1MenuClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -38,16 +33,16 @@ type
   end;
 
 var
-  Form1: TForm1;
+  Form2: TForm2;
 
 implementation
 
 {$R *.dfm}
 
-procedure TForm1.iButton1Click(Sender: TObject);
+procedure TForm2.iButton1MenuClick(Sender: TObject);
 begin
    if pBarraMenuLeft.Width = 89 then begin
-    pBarraMenuLeft.Width := 200;
+    pBarraMenuLeft.Width := 190;
   end else begin
     pBarraMenuLeft.Width := 89;
   end;
