@@ -151,6 +151,10 @@
             <Form>FormHomeClie</Form>
             <FormType>dfm</FormType>
         </DCCReference>
+        <DCCReference Include="Src\View\FormHomeDono.pas">
+            <Form>Form1</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
