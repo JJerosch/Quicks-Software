@@ -8,7 +8,7 @@ uses
   Vcl.Imaging.pngimage, Vcl.ComCtrls;
 
 type
-  TFormHomeClie = class(TForm)
+  TFormHomeC = class(TForm)
     pHomeBackground: TPanel;
     pBarraMenuLeft: TPanel;
     iButton1: TImage;
@@ -42,13 +42,13 @@ type
   end;
 
 var
-  FormHomeClie: TFormHomeClie;
+  FormHomeC: TFormHomeC;
 
 implementation
 
 {$R *.dfm}
 
-procedure TFormHomeClie.iButton1Click(Sender: TObject);
+procedure TFormHomeC.iButton1Click(Sender: TObject);
 begin
   if pBarraMenuLeft.Width = 89 then begin
     pBarraMenuLeft.Width := 190;

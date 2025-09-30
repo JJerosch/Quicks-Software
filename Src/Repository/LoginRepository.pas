@@ -24,7 +24,6 @@ implementation
         Qr.Open;
 
         Result:=not Qr.IsEmpty;
-        Result := true;
       finally
         Qr.Free;
       end;

@@ -1,15 +1,21 @@
-unit FormHomeDono;
+unit FormHomeAdmin;
 
 interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls,
-  Vcl.ComCtrls, Vcl.Imaging.pngimage;
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Imaging.pngimage, Vcl.ExtCtrls,
+  Vcl.StdCtrls, Vcl.ComCtrls;
 
 type
-  TFormHomeD = class(TForm)
+  TFormHomeA = class(TForm)
     pHomeBackground: TPanel;
+    pListViewMain: TPanel;
+    PageControl1: TPageControl;
+    pctab1Selecione: TTabSheet;
+    pText: TPanel;
+    lblText: TLabel;
+    pctab2Relatorios: TTabSheet;
     pBarraMenuLeft: TPanel;
     iButton1: TImage;
     iButton3: TImage;
@@ -19,16 +25,13 @@ type
     lblButton2: TLabel;
     lblButton3: TLabel;
     lblButton4: TLabel;
-    iButton4: TImage;
     iButton5: TImage;
     lblButton5: TLabel;
-    pListViewMain: TPanel;
-    PageControl1: TPageControl;
-    TabSheet1: TTabSheet;
-    pText: TPanel;
-    lblText: TLabel;
+    iButton4: TImage;
+    pctab3Pedidos: TTabSheet;
+    pctab4Usuarios: TTabSheet;
+    pctab5Perfil: TTabSheet;
     pBusca: TPanel;
-    TabSheet2: TTabSheet;
     procedure iButton1Click(Sender: TObject);
   private
     { Private declarations }
@@ -37,15 +40,15 @@ type
   end;
 
 var
-  FormHomeD: TFormHomeD;
+  FormHomeA: TFormHomeA;
 
 implementation
 
 {$R *.dfm}
 
-procedure TFormHomeD.iButton1Click(Sender: TObject);
+procedure TFormHomeA.iButton1Click(Sender: TObject);
 begin
-   if pBarraMenuLeft.Width = 89 then begin
+ if pBarraMenuLeft.Width = 89 then begin
     pBarraMenuLeft.Width := 200;
   end else begin
     pBarraMenuLeft.Width := 89;

@@ -1,7 +1,7 @@
-object FormHomeClie: TFormHomeClie
+object FormHomeC: TFormHomeC
   Left = 0
   Top = 0
-  Caption = 'FormHomeClie'
+  Caption = 'FormHomeC'
   ClientHeight = 644
   ClientWidth = 1248
   Color = clBtnFace
@@ -1986,8 +1986,6 @@ object FormHomeClie: TFormHomeClie
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 1
-      ExplicitLeft = 177
-      ExplicitWidth = 1071
       object scbxMain: TScrollBox
         AlignWithMargins = True
         Left = 25
@@ -2010,8 +2008,6 @@ object FormHomeClie: TFormHomeClie
           BorderStyle = bsNone
           Columns = <>
           TabOrder = 0
-          ExplicitLeft = 14
-          ExplicitTop = 96
         end
       end
       object pExploreCarrinho: TPanel

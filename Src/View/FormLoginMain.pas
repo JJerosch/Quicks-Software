@@ -145,7 +145,7 @@ begin
   try
     Login.Email := eEmail.Text;
     Login.Senha := meSenha.Text;
-    Controller.SalvarLogin(Login)
+    Controller.VerificarLogin(Login)
   finally
     Login.Free;
     Controller.Free;

@@ -14,20 +14,22 @@ uses
   CadastroService in 'Src\Service\CadastroService.pas',
   CadastroRepository in 'Src\Repository\CadastroRepository.pas',
   CadastroController in 'Src\Controller\CadastroController.pas',
-  FormHomeClientes in 'Src\View\FormHomeClientes.pas' {FormHomeClie},
-  FormHomeDono in 'Src\View\FormHomeDono.pas' {Form1},
-  FormHomeEntregador in 'Src\View\FormHomeEntregador.pas' {Form2};
+  FormHomeClientes in 'Src\View\FormHomeClientes.pas' {FormHomeC},
+  FormHomeDono in 'Src\View\FormHomeDono.pas' {FormHomeD},
+  FormHomeEntregador in 'Src\View\FormHomeEntregador.pas' {FormHomeE},
+  FormHomeAdmin in 'Src\View\FormHomeAdmin.pas' {FormHomeA};
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
-  Application.CreateForm(TFormCadastro, FormCadastro);
   Application.CreateForm(TFormLogin, FormLogin);
-  Application.CreateForm(TForm1, Form1);
-  Application.CreateForm(TFormHomeClie, FormHomeClie);
+  Application.CreateForm(TFormHomeA, FormHomeA);
+  Application.CreateForm(TFormCadastro, FormCadastro);
+  Application.CreateForm(TFormHomeD, FormHomeD);
+  Application.CreateForm(TFormHomeC, FormHomeC);
   Application.CreateForm(TDM, DM);
-  Application.CreateForm(TForm2, Form2);
+  Application.CreateForm(TFormHomeE, FormHomeE);
   Application.Run;
 end.

@@ -12,6 +12,7 @@ type
     function AddUserDonoComercio(Cadastro: TCadastroCfg): Boolean;
     function AddUserEntregador(Cadastro: TCadastroCfg): Boolean;
     function AddUserCliente(Cadastro: TCadastroCfg): Boolean;
+    function AddUserAdministrador(Cadastro: TCadastroCfg): Boolean;
   end;
 
 implementation
@@ -101,6 +102,29 @@ function TCadastroRepository.AddUserEntregador(Cadastro: TCadastroCfg): Boolean;
       end;
     end;
   end;
+
+function TCadastroRepository.AddUserAdministrador(Cadastro: TCadastroCfg): Boolean;
+  var
+  Qr: TFDQuery;
+  IdUsuario: Int64;
+begin
+  Result := False;
+  IdUsuario := AddUser(Cadastro.Nome, Cadastro.Email, Cadastro.CPF, Cadastro.Senha, Cadastro.NPhone);
+  if IdUsuario > 0 then
+  begin
+    Qr := TFDQuery.Create(nil);
+    try
+      Qr.Connection := DM.FDConn;
+      Qr.SQL.Text := 'INSERT INTO administradores (id_user, nivel_acesso) VALUES (:id_user, :nivel)';
+      Qr.ParamByName('id_user').AsLargeInt := IdUsuario;
+      Qr.ParamByName('nivel').AsString := 'admin'; // ou capturar de outro campo
+      Qr.ExecSQL;
+      Result := True;
+    finally
+      Qr.Free;
+    end;
+  end;
+end;
 
 function TCadastroRepository.AddUserCliente(Cadastro: TCadastroCfg): Boolean;
   var

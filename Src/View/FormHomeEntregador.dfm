@@ -1,7 +1,7 @@
-object Form2: TForm2
+object FormHomeE: TFormHomeE
   Left = 0
   Top = 0
-  Caption = 'Form2'
+  Caption = 'FormHomeE'
   ClientHeight = 644
   ClientWidth = 1232
   Color = clBtnFace
@@ -21,9 +21,6 @@ object Form2: TForm2
     Color = clWhite
     ParentBackground = False
     TabOrder = 0
-    ExplicitLeft = -624
-    ExplicitTop = -203
-    ExplicitWidth = 1248
     object pBarraMenuLeft: TPanel
       AlignWithMargins = True
       Left = 0
@@ -1552,7 +1549,6 @@ object Form2: TForm2
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 1
-      ExplicitLeft = 92
       object scbxMain: TScrollBox
         AlignWithMargins = True
         Left = 25
@@ -1566,8 +1562,6 @@ object Form2: TForm2
         Align = alTop
         BorderStyle = bsNone
         TabOrder = 0
-        ExplicitTop = 296
-        ExplicitWidth = 1109
         object lvMain: TListView
           Left = 0
           Top = 0
@@ -1577,7 +1571,6 @@ object Form2: TForm2
           BorderStyle = bsNone
           Columns = <>
           TabOrder = 0
-          ExplicitWidth = 1109
         end
       end
       object pTextCarrinho: TPanel
@@ -1594,7 +1587,6 @@ object Form2: TForm2
         ParentBackground = False
         TabOrder = 1
         StyleName = 'Windows'
-        ExplicitWidth = 1131
         object lblText: TLabel
           AlignWithMargins = True
           Left = 20

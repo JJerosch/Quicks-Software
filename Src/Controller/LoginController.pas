@@ -7,7 +7,7 @@ Type TLoginController = class
     FService: TLoginService;
   public
     constructor Create;
-    procedure SalvarLogin(const ALoginCfg: TLoginCfg);
+    procedure VerificarLogin(const ALoginCfg: TLoginCfg);
 end;
 
 implementation
@@ -15,8 +15,8 @@ implementation
     begin
       FService := TLoginService.Create;
     end;
-  procedure TLoginController.SalvarLogin(const ALoginCfg: TLoginCfg);
+  procedure TLoginController.VerificarLogin(const ALoginCfg: TLoginCfg);
     begin
-      FService.SalvarLogin(ALoginCfg);
+      FService.VerificarLogin(ALoginCfg);
     end;
 end.

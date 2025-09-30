@@ -148,15 +148,19 @@
         <DCCReference Include="Src\Repository\CadastroRepository.pas"/>
         <DCCReference Include="Src\Controller\CadastroController.pas"/>
         <DCCReference Include="Src\View\FormHomeClientes.pas">
-            <Form>FormHomeClie</Form>
+            <Form>FormHomeC</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="Src\View\FormHomeDono.pas">
-            <Form>Form1</Form>
+            <Form>FormHomeD</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="Src\View\FormHomeEntregador.pas">
-            <Form>Form2</Form>
+            <Form>FormHomeE</Form>
+            <FormType>dfm</FormType>
+        </DCCReference>
+        <DCCReference Include="Src\View\FormHomeAdmin.pas">
+            <Form>FormHomeA</Form>
             <FormType>dfm</FormType>
         </DCCReference>
         <BuildConfiguration Include="Base">

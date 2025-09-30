@@ -20381,12 +20381,12 @@ object FormCadastro: TFormCadastro
           Height = 23
           CanUndoSelText = True
           TabOrder = 8
-          Text = 'Selecione uma das op'#231#245'es'
+          TextHint = 'Selecione umas das op'#231#245'es'
           StyleName = 'Windows'
           Items.Strings = (
+            'Cliente'
             'Dono de Com'#233'rcio'
-            'Entregador'
-            'Cliente')
+            'Entregador')
         end
       end
       object pSair: TPanel
