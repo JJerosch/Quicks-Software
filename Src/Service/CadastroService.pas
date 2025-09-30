@@ -1,66 +1,53 @@
 unit CadastroService;
 
 interface
-
 uses
-  CadastroModel,SysUtils,vcl.Dialogs;
+  CadastroModel, SysUtils, vcl.Dialogs, CadastroRepository;
+
 type
   TCadastroService = class
+  private
+    Repository: TCadastroRepository;
   public
     constructor Create;
-    //class procedure LerCB(const Cadastro: TCadastroCfg);
+    destructor Destroy; override;
     function Cadastrar(const Cadastro: TCadastroCfg): Boolean;
   end;
 
 implementation
-uses CadastroRepository;
 
-//class procedure TCadastroService.LerCB(const Cadastro: TCadastroCfg);
-//var escolhacb: string;
-//begin
-//  escolhacb:= Cadastro.TipoUsuario;
-//  if escolhacb = 'Dono de Comércio' then begin
-//    TCadastroRepository.AddUserDonoComercio();
-//  end else if escolhacb = 'Entregador' then begin
-//    TCadastroRepository.AddUserEntregador();
-//  end else if escolhacb = 'Cliente' then begin
-//    TCadastroRepository.AdduserCliente();
-//  end else begin
-//    raise Exception.Create(' Faça sua escolha sobre quais funcionalidades sua conta vai executar e tente novamente.');
-//  end;
-//end;
-
-function TCadastroService.Cadastrar(const cadastro: TCadastroCfg): Boolean;
-var
-  Repository: TCadastroRepository;
-  IdGerado: Integer;
-begin
-  if (Cadastro.Nome = '') or
-     (Cadastro.Email = '') or
-     (Cadastro.Senha = '') or
-     (Cadastro.CPF = '') or
-     (Cadastro.NPhone = '') or
-     (Cadastro.TipoUsuario = '') then
-    begin
-      raise Exception.Create(' Preencha todos os campos e tente novamente.');
-    end;
-  Repository := TCadastroRepository.Create;
-  try
-    if Repository.VerificarEmail(Cadastro.Email) then
-      begin
-        raise Exception.Create(' Este e-mail já está cadastrado. Por favor, use outro.');
-      end else begin
-        IdGerado := Repository.AddUser(Cadastro.Nome, Cadastro.Email, Cadastro.Senha, Cadastro.CPF, Cadastro.NPhone);
-        Result := True;
-      end;
-  finally
-    Repository.Free;
-  end;
-  ShowMessage('Usuário ' + Cadastro.Nome + ' salvo com sucesso!');
-end;
 constructor TCadastroService.Create;
-begin
+  begin
+    inherited;
+    Repository := TCadastroRepository.Create;
+  end;
 
-end;
+destructor TCadastroService.Destroy;
+  begin
+    Repository.Free;
+    inherited;
+  end;
 
+function TCadastroService.Cadastrar(const Cadastro: TCadastroCfg): Boolean;
+  begin
+    Result := False;
+    if (Cadastro.Nome = '') or (Cadastro.Email = '') or (Cadastro.Senha = '') or (Cadastro.CPF = '') or (Cadastro.NPhone = '') or (Cadastro.TipoUsuario = '') then
+    begin
+      raise Exception.Create('Preencha todos os campos e tente novamente.');
+    end;
+    if Repository.VerificarEmail(Cadastro.Email) then
+    begin
+      raise Exception.Create('Este e-mail já está cadastrado. Por favor, use outro.');
+    end;
+    if Cadastro.TipoUsuario = 'Cliente' then
+      Result := Repository.AddUserCliente(Cadastro)
+    else if Cadastro.TipoUsuario = 'Entregador' then
+      Result := Repository.AddUserEntregador(Cadastro)
+    else if Cadastro.TipoUsuario = 'Dono de Comércio' then
+      Result := Repository.AddUserDonoComercio(Cadastro)
+    else
+      raise Exception.Create('Tipo de usuário inválido. Escolha Cliente, Entregador ou Dono de comércio.');
+    if Result then
+      ShowMessage('Usuário ' + Cadastro.Nome + ' salvo com sucesso!');
+  end;
 end.

@@ -20126,7 +20126,6 @@ object FormCadastro: TFormCadastro
         34B00AC84692CA92045C4215C751A74F48FF1F51785DC81E4A2D4A0000000049
         454E44AE426082}
       Proportional = True
-      OnClick = bCadastroClick
       OnMouseEnter = shConfirmarMouseEnter
       ExplicitWidth = 1536
       ExplicitHeight = 1024
@@ -20290,7 +20289,6 @@ object FormCadastro: TFormCadastro
           Color = clCream
           ParentBackground = False
           TabOrder = 0
-          OnClick = bCadastroClick
           object shConfirmar: TShape
             Left = 0
             Top = 0
@@ -20310,7 +20308,7 @@ object FormCadastro: TFormCadastro
             Width = 54
             Height = 15
             Caption = 'Confirmar'
-            OnClick = bCadastroClick
+            OnClick = lblConfirmarClick
             OnMouseEnter = shConfirmarMouseEnter
             OnMouseLeave = shConfirmarMouseLeave
           end

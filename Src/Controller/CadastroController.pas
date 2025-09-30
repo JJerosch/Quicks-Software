@@ -1,39 +1,43 @@
 unit CadastroController;
 
 interface
-uses CadastroModel, CadastroService, SysUtils, vcl.Dialogs;
-Type TCadastroController = class
+uses
+  CadastroModel, CadastroService, SysUtils, vcl.Dialogs;
+
+type
+  TCadastroController = class
   private
     FService: TCadastroService;
   public
     constructor Create;
+    destructor Destroy; override;
     function ProcessoCadastro(const Cadastro: TCadastroCfg): Boolean;
-    //class procedure VerificarCB(const Cadastro: TCadastroCfg);
   end;
 
 implementation
 
 constructor TCadastroController.Create;
-    begin
-      FService := TCadastroService.Create;
-    end;
+  begin
+    inherited;
+    FService := TCadastroService.Create;
+  end;
 
-  function TCadastroController.ProcessoCadastro(const Cadastro: TCadastroCfg): Boolean;
+destructor TCadastroController.Destroy;
+  begin
+    FService.Free;
+    inherited;
+  end;
+
+function TCadastroController.ProcessoCadastro(const Cadastro: TCadastroCfg): Boolean;
+  begin
+    try
+      Result := FService.Cadastrar(Cadastro);
+    except
+      on E: Exception do
       begin
-        try
-          FService.Cadastrar(Cadastro);
-          Result := True;
-        except
-          on E: Exception do
-          begin
-            ShowMessage('Falha no cadastro: ' + E.Message);
-          end;
-        end;
+        ShowMessage('Falha no cadastro: ' + E.Message);
+        Result := False;
       end;
-//class procedure TCadastroController.VerificarCB(const Cadastro: TCadastroCfg);
-//begin
-  //TCadastroService.LerCB(Cadastro);
-//end;
-
+    end;
+  end;
 end.
-

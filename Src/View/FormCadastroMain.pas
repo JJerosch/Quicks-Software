@@ -48,8 +48,8 @@ type
     procedure FormCreate(Sender: TObject);
     procedure lblTrocaMouseEnter(Sender: TObject);
     procedure lblTrocaMouseLeave(Sender: TObject);
-    function bCadastroClick(Sender: TObject): Boolean;
     procedure eNPhoneChange(Sender: TObject);
+    procedure lblConfirmarClick(Sender: TObject);
   private
     { Private declarations }
   public
@@ -70,6 +70,35 @@ begin
   shConfirmar.Brush.Color:=$00003AD5;
   lblConfirmar.Font.Color:=clwhite;
   lblConfirmar.Font.Style := [fsBold];
+end;
+
+procedure TFormCadastro.lblConfirmarClick(Sender: TObject);
+var
+  Cadastro: TCadastroCfg;
+  Controller: TCadastroController;
+begin
+  Cadastro := TCadastroCfg.Create;
+  Controller := TCadastroController.Create;
+  try
+    Cadastro.Nome := eNome.Text;
+    Cadastro.Email := eEmail.Text;
+    Cadastro.CPF := meCPF.Text;
+    Cadastro.Senha := meSenha.Text;
+    Cadastro.NPhone := meNPhone.Text;
+    Cadastro.TipoUsuario := cbOpcoes.Text;
+    if Controller.ProcessoCadastro(Cadastro) then
+    begin
+      eNome.Clear;
+      eEmail.Clear;
+      meCPF.Clear;
+      meSenha.Clear;
+      meNPhone.Clear;
+      cbOpcoes.ItemIndex := 0;
+    end;
+  finally
+    Cadastro.Free;
+    Controller.Free;
+  end;
 end;
 
 procedure TFormCadastro.lblSairMouseEnter(Sender: TObject);
@@ -111,35 +140,6 @@ begin
   shConfirmar.Brush.Color:=$005383FF;
   lblConfirmar.Font.Color:=clblack;
   lblConfirmar.Font.Style := [];
-end;
-
-function TFormCadastro.bCadastroClick(Sender: TObject): Boolean;
-var
-  Cadastro: TCadastroCfg;
-  Controller: TCadastroController;
-begin
-  Cadastro := TCadastroCfg.Create;
-  Controller:=TCadastroController.Create;
-  try
-    Cadastro.Nome := eNome.Text;
-    Cadastro.Email := eEmail.Text;
-    Cadastro.CPF := meCPF.Text;
-    Cadastro.Senha := meSenha.Text;
-    Cadastro.NPhone := meNPhone.Text;
-    Cadastro.TipoUsuario := cbOpcoes.Text;
-    Controller.ProcessoCadastro(Cadastro);  // Chamando na instância;
-
-    //TCadastroController.VerificarCB(Cadastro);
-    eNome.Clear;
-    eEmail.Clear;
-    meCPF.Clear;
-    meSenha.Clear;
-    meNPhone.Clear;
-    cbOpcoes.ItemIndex := 0;
-  finally
-    Cadastro.Free;
-    Controller.Free;
-  end;
 end;
 
 procedure TFormCadastro.eCPFChange(Sender: TObject);
