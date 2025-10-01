@@ -40,8 +40,6 @@ object FormHomeD: TFormHomeD
         TabOrder = 0
         Touch.ParentTabletOptions = False
         Touch.TabletOptions = [toPressAndHold]
-        ExplicitLeft = -4
-        ExplicitWidth = 1039
         object TabSheet1: TTabSheet
           Caption = 'TabSheet1'
           object pText: TPanel
@@ -90,7 +88,7 @@ object FormHomeD: TFormHomeD
         Width = 1184
         Height = 49
         BevelOuter = bvNone
-        Color = 44287
+        Color = clCoral
         ParentBackground = False
         TabOrder = 1
         StyleName = 'Windows'
@@ -108,7 +106,7 @@ object FormHomeD: TFormHomeD
       Margins.Bottom = 0
       Align = alLeft
       BevelOuter = bvNone
-      Color = 44287
+      Color = clCoral
       ParentBackground = False
       TabOrder = 0
       object iButton1: TImage

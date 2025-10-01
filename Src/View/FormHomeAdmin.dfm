@@ -10,6 +10,7 @@ object FormHomeA: TFormHomeA
   Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
+  OnCreate = FormCreate
   TextHeight = 15
   object pHomeBackground: TPanel
     Left = 0
@@ -29,7 +30,7 @@ object FormHomeA: TFormHomeA
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 1
-      object PageControl1: TPageControl
+      object pcMain: TPageControl
         Left = 0
         Top = 0
         Width = 1143
@@ -60,12 +61,12 @@ object FormHomeA: TFormHomeA
               AlignWithMargins = True
               Left = 20
               Top = 20
-              Width = 421
+              Width = 1084
               Height = 588
               Margins.Left = 20
               Margins.Top = 20
               Margins.Bottom = 0
-              Align = alLeft
+              Align = alClient
               Caption = 'Selecione a '#225'rea de seu desejo no menu.'
               Font.Charset = DEFAULT_CHARSET
               Font.Color = clBlack
@@ -73,7 +74,8 @@ object FormHomeA: TFormHomeA
               Font.Name = 'Segoe UI'
               Font.Style = [fsBold]
               ParentFont = False
-              ExplicitHeight = 243
+              ExplicitWidth = 414
+              ExplicitHeight = 30
             end
           end
         end
@@ -88,6 +90,211 @@ object FormHomeA: TFormHomeA
         object pctab4Usuarios: TTabSheet
           Caption = 'pctab4Usuarios'
           ImageIndex = 3
+          object pMainUsuarios: TPanel
+            Left = 0
+            Top = 0
+            Width = 1135
+            Height = 611
+            Align = alClient
+            Color = clWhite
+            ParentBackground = False
+            TabOrder = 0
+            ExplicitLeft = -1
+            object pMainGrid: TPanel
+              AlignWithMargins = True
+              Left = 61
+              Top = 76
+              Width = 1013
+              Height = 474
+              Margins.Left = 60
+              Margins.Top = 75
+              Margins.Right = 60
+              Margins.Bottom = 60
+              Align = alClient
+              BevelOuter = bvNone
+              Color = clCoral
+              ParentBackground = False
+              TabOrder = 0
+              object pBusca: TPanel
+                Left = 48
+                Top = 96
+                Width = 593
+                Height = 42
+                BevelOuter = bvNone
+                Color = clCoral
+                ParentBackground = False
+                TabOrder = 0
+                StyleName = 'Windows'
+              end
+              object DBGridUsuarios: TDBGrid
+                Left = 32
+                Top = 78
+                Width = 497
+                Height = 372
+                TabOrder = 1
+                TitleFont.Charset = DEFAULT_CHARSET
+                TitleFont.Color = clWindowText
+                TitleFont.Height = -12
+                TitleFont.Name = 'Segoe UI'
+                TitleFont.Style = []
+              end
+              object pButton2Excluir: TPanel
+                Left = 628
+                Top = 27
+                Width = 66
+                Height = 30
+                Caption = 'Excluir'
+                Color = clWhite
+                ParentBackground = False
+                TabOrder = 2
+                OnClick = pButton2ExcluirClick
+              end
+              object pButton3Atualizar: TPanel
+                Left = 700
+                Top = 27
+                Width = 66
+                Height = 30
+                Caption = 'Atualizar'
+                Color = clWhite
+                ParentBackground = False
+                TabOrder = 3
+                OnClick = pButton3AtualizarClick
+              end
+              object pButton4Restaurar: TPanel
+                Left = 774
+                Top = 27
+                Width = 66
+                Height = 30
+                Caption = 'Restaurar'
+                Color = clWhite
+                ParentBackground = False
+                TabOrder = 4
+                OnClick = pButton4RestaurarClick
+              end
+              object pButton5Pesquisar: TPanel
+                Left = 847
+                Top = 27
+                Width = 66
+                Height = 30
+                Caption = 'Pesquisar'
+                Color = clWhite
+                ParentBackground = False
+                TabOrder = 5
+                OnClick = pButton5PesquisarClick
+              end
+              object pButton1Adicionar: TPanel
+                Left = 552
+                Top = 27
+                Width = 66
+                Height = 30
+                Caption = 'Adicionar'
+                Color = clWhite
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clBlack
+                Font.Height = -12
+                Font.Name = 'Segoe UI'
+                Font.Style = []
+                ParentBackground = False
+                ParentFont = False
+                TabOrder = 6
+                OnClick = pButton1AdicionarClick
+              end
+              object pButton6Cancelar: TPanel
+                Left = 919
+                Top = 27
+                Width = 66
+                Height = 30
+                Caption = 'Cancelar'
+                Color = clWhite
+                ParentBackground = False
+                TabOrder = 7
+                OnClick = pButton6CancelarClick
+              end
+              object pcButtons: TPageControl
+                Left = 552
+                Top = 56
+                Width = 433
+                Height = 393
+                ActivePage = pctab0Clique
+                TabOrder = 8
+                object pctab0Clique: TTabSheet
+                  Caption = 'pctab0Clique'
+                  object pMainPTab0: TPanel
+                    Left = 0
+                    Top = 0
+                    Width = 425
+                    Height = 363
+                    Align = alClient
+                    BevelOuter = bvNone
+                    Color = clCoral
+                    ParentBackground = False
+                    TabOrder = 0
+                    StyleName = 'Windows'
+                    object lblClique: TLabel
+                      Left = 96
+                      Top = 155
+                      Width = 265
+                      Height = 50
+                      Alignment = taCenter
+                      Caption = 'Clique nos bot'#245'es acima para '#13#10'realizar a a'#231#227'o descrita neles.'
+                      Font.Charset = DEFAULT_CHARSET
+                      Font.Color = clMaroon
+                      Font.Height = -19
+                      Font.Name = 'Segoe UI'
+                      Font.Style = [fsBold]
+                      ParentFont = False
+                    end
+                  end
+                end
+                object pctab1Add: TTabSheet
+                  Caption = 'pctab1Add'
+                  ImageIndex = 1
+                end
+                object pctab2Ex: TTabSheet
+                  Caption = 'pctab2Ex'
+                  ImageIndex = 2
+                end
+                object pctab3Up: TTabSheet
+                  Caption = 'pctab3Up'
+                  ImageIndex = 3
+                end
+                object pctab4Res: TTabSheet
+                  Caption = 'pctab4Res'
+                  ImageIndex = 4
+                end
+                object pctab5Pesq: TTabSheet
+                  Caption = 'pctab5Pesq'
+                  ImageIndex = 5
+                end
+                object pctab6Canc: TTabSheet
+                  Caption = 'pctab6Canc'
+                  ImageIndex = 6
+                end
+              end
+              object eBuscaMain: TEdit
+                Left = 32
+                Top = 27
+                Width = 497
+                Height = 23
+                BevelInner = bvNone
+                BevelOuter = bvNone
+                TabOrder = 9
+                TextHint = 'Para digitar clique no bot'#227'o "Pesquisar"'
+                StyleName = 'Windows'
+              end
+              object pHideTSbar: TPanel
+                Left = 31
+                Top = 56
+                Width = 954
+                Height = 23
+                BevelOuter = bvNone
+                Color = clCoral
+                ParentBackground = False
+                TabOrder = 10
+                StyleName = 'Windows'
+              end
+            end
+          end
         end
         object pctab5Perfil: TTabSheet
           Caption = 'pctab5Perfil'
@@ -107,7 +314,7 @@ object FormHomeA: TFormHomeA
       Margins.Bottom = 0
       Align = alLeft
       BevelOuter = bvNone
-      Color = 44287
+      Color = clCoral
       ParentBackground = False
       TabOrder = 0
       object iButton1: TImage
@@ -2532,13 +2739,13 @@ object FormHomeA: TFormHomeA
       end
     end
   end
-  object pBusca: TPanel
+  object pHeader: TPanel
     Left = 88
     Top = 0
     Width = 1184
     Height = 49
     BevelOuter = bvNone
-    Color = 44287
+    Color = clCoral
     ParentBackground = False
     TabOrder = 1
     StyleName = 'Windows'

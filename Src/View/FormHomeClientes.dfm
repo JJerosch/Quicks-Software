@@ -34,7 +34,7 @@ object FormHomeC: TFormHomeC
       Margins.Bottom = 0
       Align = alLeft
       BevelOuter = bvNone
-      Color = 44287
+      Color = clCoral
       ParentBackground = False
       TabOrder = 0
       object iButton1: TImage
@@ -2030,7 +2030,7 @@ object FormHomeC: TFormHomeC
           Width = 1159
           Height = 46
           BevelOuter = bvNone
-          Color = 44287
+          Color = clCoral
           ParentBackground = False
           TabOrder = 0
           StyleName = 'Windows'
@@ -2558,7 +2558,7 @@ object FormHomeC: TFormHomeC
             Margins.Right = 0
             Margins.Bottom = 0
             Align = alClient
-            Brush.Color = 44287
+            Brush.Color = clCoral
             Pen.Style = psClear
             Shape = stRoundRect
             ExplicitLeft = 8

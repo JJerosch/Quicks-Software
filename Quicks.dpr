@@ -24,12 +24,12 @@ uses
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
-  Application.CreateForm(TFormLogin, FormLogin);
-  Application.CreateForm(TFormHomeA, FormHomeA);
   Application.CreateForm(TFormCadastro, FormCadastro);
+  Application.CreateForm(TDM, DM);
+  Application.CreateForm(TFormHomeA, FormHomeA);
+  Application.CreateForm(TFormLogin, FormLogin);
   Application.CreateForm(TFormHomeD, FormHomeD);
   Application.CreateForm(TFormHomeC, FormHomeC);
-  Application.CreateForm(TDM, DM);
   Application.CreateForm(TFormHomeE, FormHomeE);
   Application.Run;
 end.

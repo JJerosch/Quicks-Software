@@ -33,7 +33,7 @@ object FormHomeE: TFormHomeE
       Margins.Bottom = 0
       Align = alLeft
       BevelOuter = bvNone
-      Color = 44287
+      Color = clCoral
       ParentBackground = False
       TabOrder = 0
       object iButton1Menu: TImage
@@ -1627,7 +1627,7 @@ object FormHomeE: TFormHomeE
           Width = 1159
           Height = 46
           BevelOuter = bvNone
-          Color = 44287
+          Color = clCoral
           ParentBackground = False
           TabOrder = 0
           StyleName = 'Windows'

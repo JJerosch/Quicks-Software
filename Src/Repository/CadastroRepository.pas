@@ -45,7 +45,7 @@ function TCadastroRepository.AddUser(const ANome, AEmail, ACpf, ASenha, ANPhone:
     Qr := TFDQuery.Create(nil);
     try
       Qr.Connection := DM.FDConn;
-      Qr.SQL.Text := 'INSERT INTO usuarios (nome_user, email_user, cpf_user, senha_user, nphone_user) ' + 'VALUES (:nome, :email, :cpf, :senha, :nphone) RETURNING id_user';
+      Qr.SQL.Text := 'INSERT INTO usuarios (nome_user, email_user, cpf_user, senha_user, nphone_user, ativo) ' + 'VALUES (:nome, :email, :cpf, :senha, :nphone, ''true'') RETURNING id_user';
       Qr.ParamByName('nome').AsString := ANome;
       Qr.ParamByName('email').AsString := AEmail;
       Qr.ParamByName('cpf').AsString := ACpf;

@@ -7,6 +7,7 @@ object DM: TDM
       'User_Name=postgres'
       'Password=root'
       'DriverID=PG')
+    Connected = True
     Left = 432
     Top = 144
   end
@@ -18,13 +19,13 @@ object DM: TDM
   object DS: TDataSource
     DataSet = FDQr
     Left = 168
-    Top = 136
+    Top = 144
   end
   object DL: TFDPhysPgDriverLink
     VendorLib = 
       'C:\Users\Jo'#227'o Jerosch\OneDrive\Documentos\Embarcadero\Studio\Pro' +
       'jects\Quicks\lib\libpq.dll'
-    Left = 424
-    Top = 280
+    Left = 432
+    Top = 288
   end
 end
