@@ -17,16 +17,17 @@ uses
   FormHomeClientes in 'Src\View\FormHomeClientes.pas' {FormHomeC},
   FormHomeDono in 'Src\View\FormHomeDono.pas' {FormHomeD},
   FormHomeEntregador in 'Src\View\FormHomeEntregador.pas' {FormHomeE},
-  FormHomeAdmin in 'Src\View\FormHomeAdmin.pas' {FormHomeA};
+  FormHomeAdmin in 'Src\View\FormHomeAdmin.pas' {FormHomeA},
+  ACRUDModel in 'Src\Model\ACRUDModel.pas';
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TDM, DM);
   Application.CreateForm(TFormHomeA, FormHomeA);
   Application.CreateForm(TFormCadastro, FormCadastro);
-  Application.CreateForm(TDM, DM);
   Application.CreateForm(TFormLogin, FormLogin);
   Application.CreateForm(TFormHomeD, FormHomeD);
   Application.CreateForm(TFormHomeC, FormHomeC);

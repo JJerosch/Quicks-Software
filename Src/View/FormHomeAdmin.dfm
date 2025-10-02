@@ -11,6 +11,7 @@ object FormHomeA: TFormHomeA
   Font.Name = 'Segoe UI'
   Font.Style = []
   OnCreate = FormCreate
+  OnShow = FormShow
   TextHeight = 15
   object pHomeBackground: TPanel
     Left = 0
@@ -61,8 +62,8 @@ object FormHomeA: TFormHomeA
               AlignWithMargins = True
               Left = 20
               Top = 20
-              Width = 1084
-              Height = 588
+              Width = 414
+              Height = 30
               Margins.Left = 20
               Margins.Top = 20
               Margins.Bottom = 0
@@ -74,8 +75,6 @@ object FormHomeA: TFormHomeA
               Font.Name = 'Segoe UI'
               Font.Style = [fsBold]
               ParentFont = False
-              ExplicitWidth = 414
-              ExplicitHeight = 30
             end
           end
         end
@@ -99,7 +98,6 @@ object FormHomeA: TFormHomeA
             Color = clWhite
             ParentBackground = False
             TabOrder = 0
-            ExplicitLeft = -1
             object pMainGrid: TPanel
               AlignWithMargins = True
               Left = 61
@@ -131,6 +129,8 @@ object FormHomeA: TFormHomeA
                 Top = 78
                 Width = 497
                 Height = 372
+                DataSource = DM.DS
+                ReadOnly = True
                 TabOrder = 1
                 TitleFont.Charset = DEFAULT_CHARSET
                 TitleFont.Color = clWindowText
