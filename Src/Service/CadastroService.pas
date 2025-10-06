@@ -31,7 +31,7 @@ destructor TCadastroService.Destroy;
 function TCadastroService.Cadastrar(const Cadastro: TCadastroCfg): Boolean;
   begin
     Result := False;
-    if (Cadastro.Nome = '') or (Cadastro.Email = '') or (Cadastro.Senha = '') or (Cadastro.CPF = '') or (Cadastro.NPhone = '') or (Cadastro.TipoUsuario = '') then
+    while (Cadastro.Nome = '') or (Cadastro.Email = '') or (Cadastro.Senha = '') or (Cadastro.CPF = '') or (Cadastro.NPhone = '') or (Cadastro.TipoUsuario = '') do
     begin
       raise Exception.Create('Preencha todos os campos e tente novamente.');
     end;

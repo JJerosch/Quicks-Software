@@ -217,7 +217,7 @@ object FormHomeA: TFormHomeA
                 Top = 56
                 Width = 433
                 Height = 393
-                ActivePage = pctab1Add
+                ActivePage = pctab4Res
                 TabOrder = 8
                 object pctab0Clique: TTabSheet
                   Caption = 'pctab0Clique'
@@ -253,56 +253,81 @@ object FormHomeA: TFormHomeA
                   ImageIndex = 1
                   object pLR: TPanel
                     AlignWithMargins = True
-                    Left = 0
-                    Top = 3
-                    Width = 425
-                    Height = 358
-                    Margins.Left = 50
-                    Margins.Right = 50
-                    Margins.Bottom = 150
+                    Left = 5
+                    Top = 5
+                    Width = 415
+                    Height = 353
+                    Margins.Left = 5
+                    Margins.Top = 5
+                    Margins.Right = 5
+                    Margins.Bottom = 5
+                    Align = alClient
                     BevelOuter = bvNone
                     Color = clCoral
                     ParentBackground = False
                     TabOrder = 0
+                    ExplicitLeft = 0
+                    ExplicitTop = 27
+                    ExplicitWidth = 425
+                    ExplicitHeight = 358
                     object lblSenha: TLabel
                       Left = 78
-                      Top = 174
+                      Top = 198
                       Width = 90
                       Height = 15
                       Caption = 'Digite sua Senha:'
                     end
                     object lblEmail: TLabel
                       Left = 79
-                      Top = 78
+                      Top = 128
                       Width = 87
                       Height = 15
                       Caption = 'Digite seu Email:'
                     end
                     object lblCPF: TLabel
                       Left = 78
-                      Top = 124
+                      Top = 159
                       Width = 79
                       Height = 15
                       Caption = 'Digite seu CPF:'
                     end
                     object lblNome: TLabel
                       Left = 79
-                      Top = 24
+                      Top = 86
                       Width = 89
                       Height = 30
                       Caption = 'Digite seu nome '#13#10'completo:'
                     end
                     object lblNPhone: TLabel
                       Left = 79
-                      Top = 209
+                      Top = 225
                       Width = 97
                       Height = 30
                       Caption = 'Digite seu n'#250'mero'#13#10'de telefone:'
                     end
+                    object lblTituloMain: TLabel
+                      AlignWithMargins = True
+                      Left = 72
+                      Top = 26
+                      Width = 288
+                      Height = 44
+                      Margins.Top = 20
+                      Margins.Bottom = 30
+                      Alignment = taCenter
+                      Caption = 'Preencha os dados'
+                      Color = clOrangered
+                      Font.Charset = ANSI_CHARSET
+                      Font.Color = clWhite
+                      Font.Height = -36
+                      Font.Name = 'Candara'
+                      Font.Style = [fsBold]
+                      ParentColor = False
+                      ParentFont = False
+                    end
                     object meCPF: TMaskEdit
-                      Left = 181
-                      Top = 121
-                      Width = 148
+                      Left = 185
+                      Top = 159
+                      Width = 147
                       Height = 23
                       EditMask = '999.999.999-99;1;_'
                       MaxLength = 14
@@ -312,8 +337,8 @@ object FormHomeA: TFormHomeA
                     end
                     object bCadastro: TPanel
                       AlignWithMargins = True
-                      Left = 78
-                      Top = 258
+                      Left = 94
+                      Top = 274
                       Width = 73
                       Height = 40
                       BevelOuter = bvNone
@@ -324,16 +349,16 @@ object FormHomeA: TFormHomeA
                       OnClick = bCadastroClick
                     end
                     object eEmail: TEdit
-                      Left = 182
-                      Top = 75
+                      Left = 185
+                      Top = 125
                       Width = 147
                       Height = 23
                       TabOrder = 1
                       StyleName = 'Windows'
                     end
                     object eNome: TEdit
-                      Left = 182
-                      Top = 31
+                      Left = 185
+                      Top = 92
                       Width = 147
                       Height = 23
                       BevelInner = bvNone
@@ -344,8 +369,8 @@ object FormHomeA: TFormHomeA
                       StyleName = 'Windows'
                     end
                     object meSenha: TMaskEdit
-                      Left = 182
-                      Top = 169
+                      Left = 185
+                      Top = 193
                       Width = 147
                       Height = 23
                       PasswordChar = '*'
@@ -355,7 +380,7 @@ object FormHomeA: TFormHomeA
                     end
                     object cbOpcoes: TComboBox
                       Left = 185
-                      Top = 267
+                      Top = 283
                       Width = 164
                       Height = 23
                       CanUndoSelText = True
@@ -369,8 +394,8 @@ object FormHomeA: TFormHomeA
                         'Administrador')
                     end
                     object meNPhone: TMaskEdit
-                      Left = 182
-                      Top = 214
+                      Left = 185
+                      Top = 226
                       Width = 147
                       Height = 23
                       EditMask = '(99) 99999-9999;1;_'
@@ -380,8 +405,8 @@ object FormHomeA: TFormHomeA
                       StyleName = 'Windows'
                     end
                     object eNPhone: TEdit
-                      Left = 182
-                      Top = 214
+                      Left = 185
+                      Top = 226
                       Width = 147
                       Height = 23
                       TabOrder = 7
@@ -390,8 +415,8 @@ object FormHomeA: TFormHomeA
                       OnClick = eNPhoneChange
                     end
                     object eCPF: TEdit
-                      Left = 182
-                      Top = 121
+                      Left = 185
+                      Top = 159
                       Width = 147
                       Height = 23
                       TabOrder = 8
@@ -412,6 +437,69 @@ object FormHomeA: TFormHomeA
                 object pctab4Res: TTabSheet
                   Caption = 'pctab4Res'
                   ImageIndex = 4
+                  object pConfirmarRestore: TPanel
+                    AlignWithMargins = True
+                    Left = 5
+                    Top = 5
+                    Width = 415
+                    Height = 353
+                    Margins.Left = 5
+                    Margins.Top = 5
+                    Margins.Right = 5
+                    Margins.Bottom = 5
+                    Align = alClient
+                    BevelOuter = bvNone
+                    Color = clCoral
+                    ParentBackground = False
+                    TabOrder = 0
+                    ExplicitLeft = 152
+                    ExplicitTop = 184
+                    ExplicitWidth = 185
+                    ExplicitHeight = 41
+                    object pButtonConfirmarRestore: TPanel
+                      Left = 144
+                      Top = 264
+                      Width = 145
+                      Height = 41
+                      Caption = 'Confirmar Restaura'#231#227'o'
+                      TabOrder = 0
+                    end
+                    object lblUserSelection: TPanel
+                      Left = 120
+                      Top = 62
+                      Width = 185
+                      Height = 175
+                      TabOrder = 1
+                      object lblDescUserSelect: TLabel
+                        Left = 35
+                        Top = 10
+                        Width = 120
+                        Height = 50
+                        Alignment = taCenter
+                        Caption = 'O usu'#225'rio '#13#10'selecionado '#233':'
+                        Font.Charset = DEFAULT_CHARSET
+                        Font.Color = clGray
+                        Font.Height = -19
+                        Font.Name = 'Segoe UI'
+                        Font.Style = []
+                        ParentFont = False
+                      end
+                      object lblUserSelectRestore: TLabel
+                        Left = 0
+                        Top = 80
+                        Width = 185
+                        Height = 25
+                        Alignment = taCenter
+                        Caption = 'lblUserSelectRestore'
+                        Font.Charset = DEFAULT_CHARSET
+                        Font.Color = clRed
+                        Font.Height = -19
+                        Font.Name = 'Segoe UI'
+                        Font.Style = []
+                        ParentFont = False
+                      end
+                    end
+                  end
                 end
                 object pctab5Pesq: TTabSheet
                   Caption = 'pctab5Pesq'

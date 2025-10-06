@@ -70,6 +70,12 @@ type
     meNPhone: TMaskEdit;
     eNPhone: TEdit;
     eCPF: TEdit;
+    lblTituloMain: TLabel;
+    pConfirmarRestore: TPanel;
+    pButtonConfirmarRestore: TPanel;
+    lblUserSelection: TPanel;
+    lblDescUserSelect: TLabel;
+    lblUserSelectRestore: TLabel;
     procedure iButton1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure pButton1AdicionarClick(Sender: TObject);
@@ -391,52 +397,70 @@ procedure TFormHomeA.pButton3AtualizarClick(Sender: TObject);
 
 procedure TFormHomeA.pButton4RestaurarClick(Sender: TObject);
   var
-    IdUsuario: Integer;
-    NomeUsuario: string;
+  IdUsuario: Integer;
+  NomeUsuario: string;
+begin
+  // Verifica se o DM existe
+  if not Assigned(DM) or not Assigned(DM.FDQr) then
   begin
-    if not Assigned(DM) or not Assigned(DM.FDQr) then
+    ShowMessage('DataModule não disponível.');
+    Exit;
+  end;
+
+  // Verifica se há um registro selecionado
+  if DM.FDQr.IsEmpty then
+  begin
+    ShowMessage('Selecione um usuário para restaurar.');
+    Exit;
+  end;
+
+  try
+    with DM.FDQr do
     begin
-      ShowMessage('DataModule não disponível.');
-      Exit;
-    end;
-    if DM.FDQr.IsEmpty then
-    begin
-      ShowMessage('Selecione um usuário para restaurar.');
-      Exit;
-    end;
-    try
-      with DM.FDQr do
+      // Obtém o ID do usuário selecionado
+      IdUsuario := FieldByName('id_user').AsInteger;
+      NomeUsuario := FieldByName('nome_user').AsString;
+
+      // Verifica se o usuário está inativo
+      if FieldByName('ativo').AsBoolean then
       begin
-        IdUsuario := FieldByName('id_user').AsInteger;
-        NomeUsuario := FieldByName('nome_user').AsString;
-        if FieldByName('ativo').AsBoolean then
-        begin
-          ShowMessage('Este usuário já está ativo.');
-          Exit;
-        end;
-        if MessageDlg(Format('Deseja restaurar o usuário "%s"?', [NomeUsuario]),
-                      mtConfirmation, [mbYes, mbNo], 0) = mrYes then
-        begin
-          try
-            Edit;
-            FieldByName('ativo').AsBoolean := True;
-            Post;
-            AtualizarGrid;
-            ShowMessage('Usuário restaurado com sucesso!');
-          except
-            on E: Exception do
-            begin
-              Cancel;
-              ShowMessage('Erro ao restaurar usuário: ' + E.Message);
-            end;
+        ShowMessage('Este usuário já está ativo.');
+        Exit;
+      end;
+
+      // Confirma a restauração
+      if MessageDlg(Format('Deseja restaurar o usuário "%s"?', [NomeUsuario]),
+                    mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+      begin
+        try
+          // Coloca em modo de edição
+          Edit;
+
+          // Ativa o usuário
+          FieldByName('ativo').AsBoolean := True;
+
+          // Salva as alterações
+          Post;
+
+          // Atualiza o grid
+          AtualizarGrid;
+
+          ShowMessage('Usuário restaurado com sucesso!');
+        except
+          on E: Exception do
+          begin
+            // Em caso de erro, cancela a edição
+            Cancel;
+            ShowMessage('Erro ao restaurar usuário: ' + E.Message);
           end;
         end;
       end;
-    except
-      on E: Exception do
-        ShowMessage('Erro: ' + E.Message);
     end;
+  except
+    on E: Exception do
+      ShowMessage('Erro: ' + E.Message);
   end;
+end;
 
 procedure TFormHomeA.pButton5PesquisarClick(Sender: TObject);
   begin
