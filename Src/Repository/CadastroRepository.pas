@@ -71,7 +71,7 @@ function TCadastroRepository.AddUserDonoComercio(Cadastro: TCadastroCfg): Boolea
       Qr := TFDQuery.Create(nil);
       try
         Qr.Connection := DM.FDConn;
-        Qr.SQL.Text := 'INSERT INTO comerciantes (id_user) VALUES (:id_user)';
+        Qr.SQL.Text := 'INSERT INTO usuarios_cargos (id_user, id_cargo) VALUES (:id_user, ''4'')';
         Qr.ParamByName('id_user').AsLargeInt := IdUsuario;
         Qr.ExecSQL;
         Result := True;
@@ -93,7 +93,7 @@ function TCadastroRepository.AddUserEntregador(Cadastro: TCadastroCfg): Boolean;
       Qr := TFDQuery.Create(nil);
       try
         Qr.Connection := DM.FDConn;
-        Qr.SQL.Text := 'INSERT INTO entregadores (id_user) VALUES (:id_user)';
+        Qr.SQL.Text := 'INSERT INTO usuarios_cargos (id_user, id_cargo) VALUES (:id_user, ''3'')';
         Qr.ParamByName('id_user').AsLargeInt := IdUsuario;
         Qr.ExecSQL;
         Result := True;
@@ -115,9 +115,8 @@ begin
     Qr := TFDQuery.Create(nil);
     try
       Qr.Connection := DM.FDConn;
-      Qr.SQL.Text := 'INSERT INTO administradores (id_user, nivel_acesso) VALUES (:id_user, :nivel)';
+      Qr.SQL.Text := 'INSERT INTO usuarios_cargos (id_user, id_cargo) VALUES (:id_user, ''1'')';
       Qr.ParamByName('id_user').AsLargeInt := IdUsuario;
-      Qr.ParamByName('nivel').AsString := 'admin'; // ou capturar de outro campo
       Qr.ExecSQL;
       Result := True;
     finally
@@ -138,7 +137,7 @@ function TCadastroRepository.AddUserCliente(Cadastro: TCadastroCfg): Boolean;
       Qr := TFDQuery.Create(nil);
       try
         Qr.Connection := DM.FDConn;
-        Qr.SQL.Text := 'INSERT INTO clientes (id_user) VALUES (:id_user)';
+        Qr.SQL.Text := 'INSERT INTO usuarios_cargos (id_user, id_cargo) VALUES (:id_user, ''2'')';
         Qr.ParamByName('id_user').AsLargeInt := IdUsuario;
         Qr.ExecSQL;
         Result := True;

@@ -20375,10 +20375,11 @@ object FormCadastro: TFormCadastro
           OnClick = eNPhoneChange
         end
         object cbOpcoes: TComboBox
-          Left = 177
+          Left = 165
           Top = 315
-          Width = 164
+          Width = 168
           Height = 23
+          Style = csDropDownList
           CanUndoSelText = True
           TabOrder = 8
           TextHint = 'Selecione umas das op'#231#245'es'

@@ -88,8 +88,8 @@ type
     lblPreenchaUpdate: TLabel;
     meCPFUpdate: TMaskEdit;
     pButtonConfirmarUpdate: TPanel;
-    e2EmailUpdate: TEdit;
-    e1NomeUpdate: TEdit;
+    eEmailUpdate: TEdit;
+    eNomeUpdate: TEdit;
     cbUpdate: TComboBox;
     meNPhoneUpdate: TMaskEdit;
     Panel3: TPanel;
@@ -347,8 +347,8 @@ begin
   try
     with DM.FDQr do
     begin
-      e1NomeUpdate.Text := FieldByName('nome_user').AsString;
-      e2EmailUpdate.Text := FieldByName('email_user').AsString;
+      eNomeUpdate.Text := FieldByName('nome_user').AsString;
+      eEmailUpdate.Text := FieldByName('email_user').AsString;
       meCPFUpdate.Text := FieldByName('cpf_user').AsString;
       meNPhoneUpdate.Text := FieldByName('nphone_user').AsString;
     end;
@@ -417,6 +417,8 @@ procedure TFormHomeA.FiltrarGrid(const TextoBusca: string);
 
 procedure TFormHomeA.FormCreate(Sender: TObject);
   begin
+    if Assigned(pcMain) then
+      pcMain.ActivePageIndex := 3;
     eBuscaMain.Clear;
     eBuscaMain.TextHint := 'Para digitar clique no botão "Pesquisar"';
   end;
@@ -446,8 +448,8 @@ procedure TFormHomeA.iButton1Click(Sender: TObject);
 
 procedure TFormHomeA.LimparCamposUpdate;
   begin
-    e1NomeUpdate.Clear;
-    e2EmailUpdate.Clear;
+    eNomeUpdate.Clear;
+    eEmailUpdate.Clear;
     meCPFUpdate.Clear;
     meNPhoneUpdate.Clear;
     cbUpdate.ItemIndex:=-1;
@@ -639,8 +641,8 @@ begin
   end;
 
   // Capturar os valores dos campos
-  NomeUsuario := Trim(e1NomeUpdate.Text);
-  EmailUsuario := Trim(e2EmailUpdate.Text);
+  NomeUsuario := Trim(eNomeUpdate.Text);
+  EmailUsuario := Trim(eEmailUpdate.Text);
   CpfUsuario := meCPFUpdate.Text;
   NPhoneUsuario := meNPhoneUpdate.Text;
 
@@ -648,14 +650,14 @@ begin
   if NomeUsuario = '' then
   begin
     ShowMessage('O nome não pode estar vazio.');
-    e1NomeUpdate.SetFocus;
+    eNomeUpdate.SetFocus;
     Exit;
   end;
 
   if EmailUsuario = '' then
   begin
     ShowMessage('O email não pode estar vazio.');
-    e2EmailUpdate.SetFocus;
+    eEmailUpdate.SetFocus;
     Exit;
   end;
 

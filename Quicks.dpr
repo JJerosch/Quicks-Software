@@ -27,8 +27,8 @@ begin
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TDM, DM);
   Application.CreateForm(TFormHomeA, FormHomeA);
-  Application.CreateForm(TFormCadastro, FormCadastro);
   Application.CreateForm(TFormLogin, FormLogin);
+  Application.CreateForm(TFormCadastro, FormCadastro);
   Application.CreateForm(TFormHomeD, FormHomeD);
   Application.CreateForm(TFormHomeC, FormHomeC);
   Application.CreateForm(TFormHomeE, FormHomeE);

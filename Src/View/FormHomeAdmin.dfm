@@ -36,7 +36,7 @@ object FormHomeA: TFormHomeA
         Top = 0
         Width = 1143
         Height = 644
-        ActivePage = pctab4Usuarios
+        ActivePage = pctab1Selecione
         Align = alClient
         Style = tsFlatButtons
         TabOrder = 0
@@ -590,7 +590,7 @@ object FormHomeA: TFormHomeA
                       TabOrder = 0
                       OnClick = pButtonConfirmarUpdateClick
                     end
-                    object e2EmailUpdate: TEdit
+                    object eEmailUpdate: TEdit
                       Left = 185
                       Top = 125
                       Width = 147
@@ -598,7 +598,7 @@ object FormHomeA: TFormHomeA
                       TabOrder = 1
                       StyleName = 'Windows'
                     end
-                    object e1NomeUpdate: TEdit
+                    object eNomeUpdate: TEdit
                       Left = 185
                       Top = 92
                       Width = 147
