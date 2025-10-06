@@ -100,6 +100,7 @@ object FormHomeA: TFormHomeA
             Color = clWhite
             ParentBackground = False
             TabOrder = 0
+            ExplicitLeft = -1
             object pMainGrid: TPanel
               AlignWithMargins = True
               Left = 61
@@ -115,6 +116,8 @@ object FormHomeA: TFormHomeA
               Color = clCoral
               ParentBackground = False
               TabOrder = 0
+              ExplicitLeft = 309
+              ExplicitTop = 116
               object pBusca: TPanel
                 Left = 48
                 Top = 96
@@ -139,6 +142,7 @@ object FormHomeA: TFormHomeA
                 TitleFont.Height = -12
                 TitleFont.Name = 'Segoe UI'
                 TitleFont.Style = []
+                OnCellClick = DBGridUsuariosCellClick
               end
               object pButton2Excluir: TPanel
                 Left = 628
@@ -217,7 +221,7 @@ object FormHomeA: TFormHomeA
                 Top = 56
                 Width = 433
                 Height = 393
-                ActivePage = pctab4Res
+                ActivePage = pctab3Up
                 TabOrder = 8
                 object pctab0Clique: TTabSheet
                   Caption = 'pctab0Clique'
@@ -252,11 +256,10 @@ object FormHomeA: TFormHomeA
                   Caption = 'pctab1Add'
                   ImageIndex = 1
                   object pLR: TPanel
-                    AlignWithMargins = True
-                    Left = 5
-                    Top = 5
-                    Width = 415
-                    Height = 353
+                    Left = 0
+                    Top = 0
+                    Width = 425
+                    Height = 363
                     Margins.Left = 5
                     Margins.Top = 5
                     Margins.Right = 5
@@ -266,13 +269,13 @@ object FormHomeA: TFormHomeA
                     Color = clCoral
                     ParentBackground = False
                     TabOrder = 0
-                    ExplicitLeft = 0
-                    ExplicitTop = 27
-                    ExplicitWidth = 425
-                    ExplicitHeight = 358
+                    ExplicitLeft = 5
+                    ExplicitTop = 5
+                    ExplicitWidth = 415
+                    ExplicitHeight = 353
                     object lblSenha: TLabel
                       Left = 78
-                      Top = 198
+                      Top = 196
                       Width = 90
                       Height = 15
                       Caption = 'Digite sua Senha:'
@@ -286,7 +289,7 @@ object FormHomeA: TFormHomeA
                     end
                     object lblCPF: TLabel
                       Left = 78
-                      Top = 159
+                      Top = 162
                       Width = 79
                       Height = 15
                       Caption = 'Digite seu CPF:'
@@ -337,7 +340,7 @@ object FormHomeA: TFormHomeA
                     end
                     object bCadastro: TPanel
                       AlignWithMargins = True
-                      Left = 94
+                      Left = 86
                       Top = 274
                       Width = 73
                       Height = 40
@@ -379,10 +382,11 @@ object FormHomeA: TFormHomeA
                       StyleName = 'Windows'
                     end
                     object cbOpcoes: TComboBox
-                      Left = 185
+                      Left = 173
                       Top = 283
-                      Width = 164
+                      Width = 172
                       Height = 23
+                      Style = csDropDownList
                       CanUndoSelText = True
                       TabOrder = 5
                       TextHint = 'Selecione umas das op'#231#245'es'
@@ -429,20 +433,11 @@ object FormHomeA: TFormHomeA
                 object pctab2Ex: TTabSheet
                   Caption = 'pctab2Ex'
                   ImageIndex = 2
-                end
-                object pctab3Up: TTabSheet
-                  Caption = 'pctab3Up'
-                  ImageIndex = 3
-                end
-                object pctab4Res: TTabSheet
-                  Caption = 'pctab4Res'
-                  ImageIndex = 4
-                  object pConfirmarRestore: TPanel
-                    AlignWithMargins = True
-                    Left = 5
-                    Top = 5
-                    Width = 415
-                    Height = 353
+                  object pBackgroundExcluir: TPanel
+                    Left = 0
+                    Top = 0
+                    Width = 425
+                    Height = 363
                     Margins.Left = 5
                     Margins.Top = 5
                     Margins.Right = 5
@@ -452,25 +447,30 @@ object FormHomeA: TFormHomeA
                     Color = clCoral
                     ParentBackground = False
                     TabOrder = 0
-                    ExplicitLeft = 152
-                    ExplicitTop = 184
-                    ExplicitWidth = 185
-                    ExplicitHeight = 41
-                    object pButtonConfirmarRestore: TPanel
+                    ExplicitLeft = 5
+                    ExplicitTop = 5
+                    ExplicitWidth = 415
+                    ExplicitHeight = 353
+                    object pButtonConfirmarExcluir: TPanel
                       Left = 144
                       Top = 264
                       Width = 145
                       Height = 41
-                      Caption = 'Confirmar Restaura'#231#227'o'
+                      Caption = 'Confirmar Exclus'#227'o'
+                      Color = clWhite
+                      ParentBackground = False
                       TabOrder = 0
+                      OnClick = pButtonConfirmarExcluirClick
                     end
-                    object lblUserSelection: TPanel
+                    object pUserSelectionEx: TPanel
                       Left = 120
                       Top = 62
                       Width = 185
                       Height = 175
+                      Color = clWhite
+                      ParentBackground = False
                       TabOrder = 1
-                      object lblDescUserSelect: TLabel
+                      object lblDescUserSelectEx: TLabel
                         Left = 35
                         Top = 10
                         Width = 120
@@ -484,13 +484,221 @@ object FormHomeA: TFormHomeA
                         Font.Style = []
                         ParentFont = False
                       end
-                      object lblUserSelectRestore: TLabel
+                      object lblUserSelectEx: TLabel
                         Left = 0
                         Top = 80
                         Width = 185
                         Height = 25
                         Alignment = taCenter
-                        Caption = 'lblUserSelectRestore'
+                        Caption = 'lblUserSelectEx'
+                        Font.Charset = DEFAULT_CHARSET
+                        Font.Color = clRed
+                        Font.Height = -19
+                        Font.Name = 'Segoe UI'
+                        Font.Style = []
+                        ParentFont = False
+                      end
+                    end
+                  end
+                end
+                object pctab3Up: TTabSheet
+                  Caption = 'pctab3Up'
+                  ImageIndex = 3
+                  object pBackgroundUpdate: TPanel
+                    Left = 0
+                    Top = 0
+                    Width = 425
+                    Height = 363
+                    Margins.Left = 5
+                    Margins.Top = 5
+                    Margins.Right = 5
+                    Margins.Bottom = 5
+                    Align = alClient
+                    BevelOuter = bvNone
+                    Color = clCoral
+                    ParentBackground = False
+                    TabOrder = 0
+                    ExplicitTop = 5
+                    object lblEmailUpdate: TLabel
+                      Left = 79
+                      Top = 128
+                      Width = 87
+                      Height = 15
+                      Caption = 'Digite seu Email:'
+                    end
+                    object lblCPFUpdate: TLabel
+                      Left = 78
+                      Top = 159
+                      Width = 79
+                      Height = 15
+                      Caption = 'Digite seu CPF:'
+                    end
+                    object lblNomeUpdate: TLabel
+                      Left = 79
+                      Top = 86
+                      Width = 89
+                      Height = 30
+                      Caption = 'Digite seu nome '#13#10'completo:'
+                    end
+                    object lblNPhoneUpdate: TLabel
+                      Left = 79
+                      Top = 188
+                      Width = 97
+                      Height = 30
+                      Caption = 'Digite seu n'#250'mero'#13#10'de telefone:'
+                    end
+                    object lblPreenchaUpdate: TLabel
+                      AlignWithMargins = True
+                      Left = 72
+                      Top = 26
+                      Width = 288
+                      Height = 44
+                      Margins.Top = 20
+                      Margins.Bottom = 30
+                      Alignment = taCenter
+                      Caption = 'Preencha os dados'
+                      Color = clOrangered
+                      Font.Charset = ANSI_CHARSET
+                      Font.Color = clWhite
+                      Font.Height = -36
+                      Font.Name = 'Candara'
+                      Font.Style = [fsBold]
+                      ParentColor = False
+                      ParentFont = False
+                    end
+                    object meCPFUpdate: TMaskEdit
+                      Left = 185
+                      Top = 159
+                      Width = 147
+                      Height = 23
+                      EditMask = '999.999.999-99;1;_'
+                      MaxLength = 14
+                      TabOrder = 3
+                      Text = '   .   .   -  '
+                      StyleName = 'Windows'
+                    end
+                    object pButtonConfirmarUpdate: TPanel
+                      AlignWithMargins = True
+                      Left = 94
+                      Top = 250
+                      Width = 73
+                      Height = 40
+                      BevelOuter = bvNone
+                      Caption = 'Confirmar'
+                      Color = clCream
+                      ParentBackground = False
+                      TabOrder = 0
+                      OnClick = pButtonConfirmarUpdateClick
+                    end
+                    object e2EmailUpdate: TEdit
+                      Left = 185
+                      Top = 125
+                      Width = 147
+                      Height = 23
+                      TabOrder = 1
+                      StyleName = 'Windows'
+                    end
+                    object e1NomeUpdate: TEdit
+                      Left = 185
+                      Top = 92
+                      Width = 147
+                      Height = 23
+                      BevelInner = bvNone
+                      BevelOuter = bvNone
+                      ParentShowHint = False
+                      ShowHint = True
+                      TabOrder = 2
+                      StyleName = 'Windows'
+                    end
+                    object cbUpdate: TComboBox
+                      Left = 185
+                      Top = 259
+                      Width = 164
+                      Height = 23
+                      CanUndoSelText = True
+                      TabOrder = 4
+                      TextHint = 'Selecione umas das op'#231#245'es'
+                      StyleName = 'Windows'
+                      Items.Strings = (
+                        'Cliente'
+                        'Dono de Com'#233'rcio'
+                        'Entregador'
+                        'Administrador')
+                    end
+                    object meNPhoneUpdate: TMaskEdit
+                      Left = 185
+                      Top = 193
+                      Width = 147
+                      Height = 23
+                      EditMask = '(99) 99999-9999;1;_'
+                      MaxLength = 15
+                      TabOrder = 5
+                      Text = '(  )      -    '
+                      StyleName = 'Windows'
+                    end
+                  end
+                end
+                object pctab4Res: TTabSheet
+                  Caption = 'pctab4Res'
+                  ImageIndex = 4
+                  object pConfirmarRestore: TPanel
+                    Left = 0
+                    Top = 0
+                    Width = 425
+                    Height = 363
+                    Margins.Left = 5
+                    Margins.Top = 5
+                    Margins.Right = 5
+                    Margins.Bottom = 5
+                    Align = alClient
+                    BevelOuter = bvNone
+                    Color = clCoral
+                    ParentBackground = False
+                    TabOrder = 0
+                    ExplicitLeft = 5
+                    ExplicitTop = 5
+                    ExplicitWidth = 415
+                    ExplicitHeight = 353
+                    object pButtonConfirmarRestore: TPanel
+                      Left = 142
+                      Top = 264
+                      Width = 145
+                      Height = 41
+                      Caption = 'Confirmar Restaura'#231#227'o'
+                      Color = clWhite
+                      ParentBackground = False
+                      TabOrder = 0
+                      OnClick = pButtonConfirmarRestoreClick
+                    end
+                    object pUserSelectionRestore: TPanel
+                      Left = 120
+                      Top = 62
+                      Width = 185
+                      Height = 175
+                      Color = clWhite
+                      ParentBackground = False
+                      TabOrder = 1
+                      object lblDescUserSelectRes: TLabel
+                        Left = 35
+                        Top = 10
+                        Width = 120
+                        Height = 50
+                        Alignment = taCenter
+                        Caption = 'O usu'#225'rio '#13#10'selecionado '#233':'
+                        Font.Charset = DEFAULT_CHARSET
+                        Font.Color = clGray
+                        Font.Height = -19
+                        Font.Name = 'Segoe UI'
+                        Font.Style = []
+                        ParentFont = False
+                      end
+                      object lblUserSelectRes: TLabel
+                        Left = 0
+                        Top = 80
+                        Width = 185
+                        Height = 25
+                        Alignment = taCenter
+                        Caption = 'lblUserSelectRes'
                         Font.Charset = DEFAULT_CHARSET
                         Font.Color = clRed
                         Font.Height = -19
@@ -504,19 +712,42 @@ object FormHomeA: TFormHomeA
                 object pctab5Pesq: TTabSheet
                   Caption = 'pctab5Pesq'
                   ImageIndex = 5
-                end
-                object pctab6Canc: TTabSheet
-                  Caption = 'pctab6Canc'
-                  ImageIndex = 6
+                  object Panel3: TPanel
+                    Left = 0
+                    Top = 0
+                    Width = 425
+                    Height = 363
+                    Align = alClient
+                    BevelOuter = bvNone
+                    Color = clCoral
+                    ParentBackground = False
+                    TabOrder = 0
+                    StyleName = 'Windows'
+                    object Label7: TLabel
+                      Left = 96
+                      Top = 155
+                      Width = 247
+                      Height = 50
+                      Alignment = taCenter
+                      Caption = 'Digite na barra de pesquisa '#13#10'que est'#225' logo acima.'
+                      Font.Charset = DEFAULT_CHARSET
+                      Font.Color = clMaroon
+                      Font.Height = -19
+                      Font.Name = 'Segoe UI'
+                      Font.Style = [fsBold]
+                      ParentFont = False
+                    end
+                  end
                 end
               end
               object eBuscaMain: TEdit
-                Left = 32
+                Left = 31
                 Top = 27
                 Width = 497
                 Height = 23
                 BevelInner = bvNone
                 BevelOuter = bvNone
+                Enabled = False
                 TabOrder = 9
                 TextHint = 'Para digitar clique no bot'#227'o "Pesquisar"'
                 StyleName = 'Windows'
