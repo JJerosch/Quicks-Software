@@ -62,8 +62,8 @@ object FormHomeA: TFormHomeA
               AlignWithMargins = True
               Left = 20
               Top = 20
-              Width = 414
-              Height = 30
+              Width = 1084
+              Height = 588
               Margins.Left = 20
               Margins.Top = 20
               Margins.Bottom = 0
@@ -75,6 +75,8 @@ object FormHomeA: TFormHomeA
               Font.Name = 'Segoe UI'
               Font.Style = [fsBold]
               ParentFont = False
+              ExplicitWidth = 414
+              ExplicitHeight = 30
             end
           end
         end
@@ -215,7 +217,7 @@ object FormHomeA: TFormHomeA
                 Top = 56
                 Width = 433
                 Height = 393
-                ActivePage = pctab0Clique
+                ActivePage = pctab1Add
                 TabOrder = 8
                 object pctab0Clique: TTabSheet
                   Caption = 'pctab0Clique'
@@ -249,6 +251,155 @@ object FormHomeA: TFormHomeA
                 object pctab1Add: TTabSheet
                   Caption = 'pctab1Add'
                   ImageIndex = 1
+                  object pLR: TPanel
+                    AlignWithMargins = True
+                    Left = 0
+                    Top = 3
+                    Width = 425
+                    Height = 358
+                    Margins.Left = 50
+                    Margins.Right = 50
+                    Margins.Bottom = 150
+                    BevelOuter = bvNone
+                    Color = clCoral
+                    ParentBackground = False
+                    TabOrder = 0
+                    object lblSenha: TLabel
+                      Left = 78
+                      Top = 174
+                      Width = 90
+                      Height = 15
+                      Caption = 'Digite sua Senha:'
+                    end
+                    object lblEmail: TLabel
+                      Left = 79
+                      Top = 78
+                      Width = 87
+                      Height = 15
+                      Caption = 'Digite seu Email:'
+                    end
+                    object lblCPF: TLabel
+                      Left = 78
+                      Top = 124
+                      Width = 79
+                      Height = 15
+                      Caption = 'Digite seu CPF:'
+                    end
+                    object lblNome: TLabel
+                      Left = 79
+                      Top = 24
+                      Width = 89
+                      Height = 30
+                      Caption = 'Digite seu nome '#13#10'completo:'
+                    end
+                    object lblNPhone: TLabel
+                      Left = 79
+                      Top = 209
+                      Width = 97
+                      Height = 30
+                      Caption = 'Digite seu n'#250'mero'#13#10'de telefone:'
+                    end
+                    object meCPF: TMaskEdit
+                      Left = 181
+                      Top = 121
+                      Width = 148
+                      Height = 23
+                      EditMask = '999.999.999-99;1;_'
+                      MaxLength = 14
+                      TabOrder = 3
+                      Text = '   .   .   -  '
+                      StyleName = 'Windows'
+                    end
+                    object bCadastro: TPanel
+                      AlignWithMargins = True
+                      Left = 78
+                      Top = 258
+                      Width = 73
+                      Height = 40
+                      BevelOuter = bvNone
+                      Caption = 'Confirmar'
+                      Color = clCream
+                      ParentBackground = False
+                      TabOrder = 0
+                      OnClick = bCadastroClick
+                    end
+                    object eEmail: TEdit
+                      Left = 182
+                      Top = 75
+                      Width = 147
+                      Height = 23
+                      TabOrder = 1
+                      StyleName = 'Windows'
+                    end
+                    object eNome: TEdit
+                      Left = 182
+                      Top = 31
+                      Width = 147
+                      Height = 23
+                      BevelInner = bvNone
+                      BevelOuter = bvNone
+                      ParentShowHint = False
+                      ShowHint = True
+                      TabOrder = 2
+                      StyleName = 'Windows'
+                    end
+                    object meSenha: TMaskEdit
+                      Left = 182
+                      Top = 169
+                      Width = 147
+                      Height = 23
+                      PasswordChar = '*'
+                      TabOrder = 4
+                      Text = ''
+                      StyleName = 'Windows'
+                    end
+                    object cbOpcoes: TComboBox
+                      Left = 185
+                      Top = 267
+                      Width = 164
+                      Height = 23
+                      CanUndoSelText = True
+                      TabOrder = 5
+                      TextHint = 'Selecione umas das op'#231#245'es'
+                      StyleName = 'Windows'
+                      Items.Strings = (
+                        'Cliente'
+                        'Dono de Com'#233'rcio'
+                        'Entregador'
+                        'Administrador')
+                    end
+                    object meNPhone: TMaskEdit
+                      Left = 182
+                      Top = 214
+                      Width = 147
+                      Height = 23
+                      EditMask = '(99) 99999-9999;1;_'
+                      MaxLength = 15
+                      TabOrder = 6
+                      Text = '(  )      -    '
+                      StyleName = 'Windows'
+                    end
+                    object eNPhone: TEdit
+                      Left = 182
+                      Top = 214
+                      Width = 147
+                      Height = 23
+                      TabOrder = 7
+                      StyleName = 'Windows'
+                      OnChange = eNPhoneChange
+                      OnClick = eNPhoneChange
+                    end
+                    object eCPF: TEdit
+                      Left = 182
+                      Top = 121
+                      Width = 147
+                      Height = 23
+                      TabOrder = 8
+                      StyleName = 'Windows'
+                      OnChange = eCPFChange
+                      OnClick = eCPFChange
+                    end
+                  end
                 end
                 object pctab2Ex: TTabSheet
                   Caption = 'pctab2Ex'

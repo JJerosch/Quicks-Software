@@ -45,6 +45,8 @@ function TCadastroService.Cadastrar(const Cadastro: TCadastroCfg): Boolean;
       Result := Repository.AddUserEntregador(Cadastro)
     else if Cadastro.TipoUsuario = 'Dono de Comércio' then
       Result := Repository.AddUserDonoComercio(Cadastro)
+    else if Cadastro.TipoUsuario = 'Administrador' then
+      Result := Repository.AddUserAdministrador(Cadastro)
     else
       raise Exception.Create('Tipo de usuário inválido. Escolha Cliente, Entregador ou Dono de comércio.');
     if Result then

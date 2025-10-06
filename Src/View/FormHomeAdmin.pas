@@ -5,7 +5,8 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Imaging.pngimage, Vcl.ExtCtrls,
-  Vcl.StdCtrls, Vcl.ComCtrls, Data.DB, Vcl.Grids, Vcl.DBGrids, uConn, ACRUDModel;
+  Vcl.StdCtrls, Vcl.ComCtrls, Data.DB, Vcl.Grids, Vcl.DBGrids, uConn, ACRUDModel, CadastroModel, CadastroController,
+  Vcl.Mask;
 
 type
   TFormHomeA = class(TForm)
@@ -54,6 +55,21 @@ type
     pctab6Canc: TTabSheet;
     eBuscaMain: TEdit;
     pHideTSbar: TPanel;
+    pLR: TPanel;
+    lblSenha: TLabel;
+    lblEmail: TLabel;
+    lblCPF: TLabel;
+    lblNome: TLabel;
+    lblNPhone: TLabel;
+    meCPF: TMaskEdit;
+    bCadastro: TPanel;
+    eEmail: TEdit;
+    eNome: TEdit;
+    meSenha: TMaskEdit;
+    cbOpcoes: TComboBox;
+    meNPhone: TMaskEdit;
+    eNPhone: TEdit;
+    eCPF: TEdit;
     procedure iButton1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure pButton1AdicionarClick(Sender: TObject);
@@ -63,6 +79,10 @@ type
     procedure pButton5PesquisarClick(Sender: TObject);
     procedure pButton6CancelarClick(Sender: TObject);
     procedure FormShow(Sender: TObject);
+    procedure bCadastroClick(Sender: TObject);
+    procedure eCPFChange(Sender: TObject);
+    procedure eCPFClick(Sender: TObject);
+    procedure eNPhoneChange(Sender: TObject);
   private
     procedure AtualizarGrid;
     procedure FiltrarGrid(const TextoBusca: string);
@@ -133,6 +153,53 @@ procedure TFormHomeA.AtualizarGrid;
         ShowMessage('Erro ao atualizar grid: ' + E.Message);
     end;
   end;
+
+procedure TFormHomeA.bCadastroClick(Sender: TObject);
+var
+  Cadastro: TCadastroCfg;
+  Controller: TCadastroController;
+begin
+  Cadastro := TCadastroCfg.Create;
+  Controller := TCadastroController.Create;
+  try
+    Cadastro.Nome := eNome.Text;
+    Cadastro.Email := eEmail.Text;
+    Cadastro.CPF := meCPF.Text;
+    Cadastro.Senha := meSenha.Text;
+    Cadastro.NPhone := meNPhone.Text;
+    Cadastro.TipoUsuario := cbOpcoes.Text;
+    if Controller.ProcessoCadastro(Cadastro) then
+    begin
+      eNome.Clear;
+      eEmail.Clear;
+      meCPF.Clear;
+      meSenha.Clear;
+      meNPhone.Clear;
+      cbOpcoes.ItemIndex := 0;
+    end;
+  finally
+    Cadastro.Free;
+    Controller.Free;
+  end;
+end;
+
+procedure TFormHomeA.eCPFChange(Sender: TObject);
+begin
+  eCPF.Hide;
+  meCPF.SetFocus;
+end;
+
+procedure TFormHomeA.eCPFClick(Sender: TObject);
+begin
+  eCPF.Hide;
+  meCPF.SetFocus;
+end;
+
+procedure TFormHomeA.eNPhoneChange(Sender: TObject);
+begin
+  eNPhone.Hide;
+  meNPhone.SetFocus;
+end;
 
 procedure TFormHomeA.FiltrarGrid(const TextoBusca: string);
   var
