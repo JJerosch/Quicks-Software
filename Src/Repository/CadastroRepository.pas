@@ -8,11 +8,8 @@ type
   TCadastroRepository = class
   public
     function VerificarEmail(const AEmail: String): Boolean;
-    function AddUser(const ANome, AEmail, ACpf, ASenha, ANPhone: String): Int64;
-    function AddUserDonoComercio(Cadastro: TCadastroCfg): Boolean;
-    function AddUserEntregador(Cadastro: TCadastroCfg): Boolean;
-    function AddUserCliente(Cadastro: TCadastroCfg): Boolean;
-    function AddUserAdministrador(Cadastro: TCadastroCfg): Boolean;
+    function AddUser(const ANome, AEmail, ACpf, ASenha, ANPhone: String; AIdTipoUsuario: Integer): Int64;
+    function AddUserTipoUsuario(Cadastro: TCadastroCfg): Boolean;
   end;
 
 implementation
@@ -27,6 +24,7 @@ function TCadastroRepository.VerificarEmail(const AEmail: String): Boolean;
     Result := False;
     Qr := TFDQuery.Create(nil);
     try
+      Qr.Close;
       Qr.Connection := DM.FDConn;
       Qr.SQL.Text := 'SELECT 1 FROM usuarios WHERE email_user = :email';
       Qr.ParamByName('email').AsString := AEmail;
@@ -37,113 +35,68 @@ function TCadastroRepository.VerificarEmail(const AEmail: String): Boolean;
     end;
   end;
 
-function TCadastroRepository.AddUser(const ANome, AEmail, ACpf, ASenha, ANPhone: String): Int64;
-  var
-    Qr: TFDQuery;
-  begin
-    Result := 0;
-    Qr := TFDQuery.Create(nil);
-    try
-      Qr.Connection := DM.FDConn;
-      Qr.SQL.Text := 'INSERT INTO usuarios (nome_user, email_user, cpf_user, senha_user, nphone_user, ativo) ' + 'VALUES (:nome, :email, :cpf, :senha, :nphone, ''true'') RETURNING id_user';
-      Qr.ParamByName('nome').AsString := ANome;
-      Qr.ParamByName('email').AsString := AEmail;
-      Qr.ParamByName('cpf').AsString := ACpf;
-      Qr.ParamByName('senha').AsString := ASenha;
-      Qr.ParamByName('nphone').AsString := ANPhone;
-      Qr.Open;
-      if not Qr.IsEmpty then
-        Result := Qr.Fields[0].AsLargeInt;
-    finally
-      Qr.Free;
-    end;
-  end;
+function TCadastroRepository.AddUser(const ANome, AEmail, ACpf, ASenha, ANPhone: String; AIdTipoUsuario: Integer): Int64;
+var
+  Qr: TFDQuery;
+begin
+  Result := 0;
+  Qr := TFDQuery.Create(nil);
+  try
+    Qr.Close;
+    Qr.Connection := DM.FDConn;
+    Qr.SQL.Text := 'INSERT INTO usuarios (nome_user, email_user, cpf_user, senha_user, nphone_user, ativo, id_cargo) ' +
+                   'VALUES (:nome, :email, :cpf, :senha, :nphone, ''true'', :id_cargo) RETURNING id_user';
 
-function TCadastroRepository.AddUserDonoComercio(Cadastro: TCadastroCfg): Boolean;
-  var
-    Qr: TFDQuery;
-    IdUsuario: Int64;
-  begin
-    Result := False;
-    IdUsuario := AddUser(Cadastro.Nome, Cadastro.Email, Cadastro.CPF, Cadastro.Senha, Cadastro.NPhone);
-    if IdUsuario > 0 then
-    begin
-      Qr := TFDQuery.Create(nil);
-      try
-        Qr.Connection := DM.FDConn;
-        Qr.SQL.Text := 'INSERT INTO usuarios_cargos (id_user, id_cargo) VALUES (:id_user, ''4'')';
-        Qr.ParamByName('id_user').AsLargeInt := IdUsuario;
-        Qr.ExecSQL;
-        Result := True;
-      finally
-        Qr.Free;
-      end;
-    end;
-  end;
+    Qr.ParamByName('nome').AsString := ANome;
+    Qr.ParamByName('email').AsString := AEmail;
+    Qr.ParamByName('cpf').AsString := ACpf;
+    Qr.ParamByName('senha').AsString := ASenha;
+    Qr.ParamByName('nphone').AsString := ANPhone;
+    Qr.ParamByName('id_cargo').AsInteger := AIdTipoUsuario;  // ADICIONE ESTA LINHA!
 
-function TCadastroRepository.AddUserEntregador(Cadastro: TCadastroCfg): Boolean;
-  var
-    Qr: TFDQuery;
-    IdUsuario: Int64;
-  begin
-    Result := False;
-    IdUsuario := AddUser(Cadastro.Nome, Cadastro.Email, Cadastro.CPF, Cadastro.Senha, Cadastro.NPhone);
-    if IdUsuario > 0 then
-    begin
-      Qr := TFDQuery.Create(nil);
-      try
-        Qr.Connection := DM.FDConn;
-        Qr.SQL.Text := 'INSERT INTO usuarios_cargos (id_user, id_cargo) VALUES (:id_user, ''3'')';
-        Qr.ParamByName('id_user').AsLargeInt := IdUsuario;
-        Qr.ExecSQL;
-        Result := True;
-      finally
-        Qr.Free;
-      end;
-    end;
-  end;
+    Qr.Open;
 
-function TCadastroRepository.AddUserAdministrador(Cadastro: TCadastroCfg): Boolean;
-  var
+    if not Qr.IsEmpty then
+      Result := Qr.Fields[0].AsLargeInt;
+  finally
+    Qr.Free;
+  end;
+end;
+
+
+function TCadastroRepository.AddUserTipoUsuario(Cadastro: TCadastroCfg): Boolean;
+var
   Qr: TFDQuery;
   IdUsuario: Int64;
 begin
   Result := False;
-  IdUsuario := AddUser(Cadastro.Nome, Cadastro.Email, Cadastro.CPF, Cadastro.Senha, Cadastro.NPhone);
+
+  // Add the user with their cargo
+  IdUsuario := AddUser(
+    Cadastro.Nome,
+    Cadastro.Email,
+    Cadastro.CPF,
+    Cadastro.Senha,
+    Cadastro.NPhone,
+    Cadastro.IdTipoUsuario
+  );
+
   if IdUsuario > 0 then
   begin
     Qr := TFDQuery.Create(nil);
     try
       Qr.Connection := DM.FDConn;
-      Qr.SQL.Text := 'INSERT INTO usuarios_cargos (id_user, id_cargo) VALUES (:id_user, ''1'')';
+
+      // Only insert into usuarios_cargos (relationship table)
+      Qr.SQL.Text := 'INSERT INTO usuarios_cargos (id_user, id_cargo) VALUES (:id_user, :id_cargo)';
       Qr.ParamByName('id_user').AsLargeInt := IdUsuario;
+      Qr.ParamByName('id_cargo').AsInteger := Cadastro.IdTipoUsuario;
       Qr.ExecSQL;
+
       Result := True;
     finally
       Qr.Free;
     end;
   end;
 end;
-
-function TCadastroRepository.AddUserCliente(Cadastro: TCadastroCfg): Boolean;
-  var
-    Qr: TFDQuery;
-    IdUsuario: Int64;
-  begin
-    Result := False;
-    IdUsuario := AddUser(Cadastro.Nome, Cadastro.Email, Cadastro.CPF, Cadastro.Senha, Cadastro.NPhone);
-    if IdUsuario > 0 then
-    begin
-      Qr := TFDQuery.Create(nil);
-      try
-        Qr.Connection := DM.FDConn;
-        Qr.SQL.Text := 'INSERT INTO usuarios_cargos (id_user, id_cargo) VALUES (:id_user, ''2'')';
-        Qr.ParamByName('id_user').AsLargeInt := IdUsuario;
-        Qr.ExecSQL;
-        Result := True;
-      finally
-        Qr.Free;
-      end;
-    end;
-  end;
-end.
+  end.

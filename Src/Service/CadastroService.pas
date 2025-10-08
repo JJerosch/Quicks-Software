@@ -40,15 +40,23 @@ function TCadastroService.Cadastrar(const Cadastro: TCadastroCfg): Boolean;
       raise Exception.Create('Este e-mail já está cadastrado. Por favor, use outro.');
     end;
     if Cadastro.TipoUsuario = 'Cliente' then
-      Result := Repository.AddUserCliente(Cadastro)
-    else if Cadastro.TipoUsuario = 'Entregador' then
-      Result := Repository.AddUserEntregador(Cadastro)
-    else if Cadastro.TipoUsuario = 'Dono de Comércio' then
-      Result := Repository.AddUserDonoComercio(Cadastro)
-    else if Cadastro.TipoUsuario = 'Administrador' then
-      Result := Repository.AddUserAdministrador(Cadastro)
-    else
-      raise Exception.Create('Tipo de usuário inválido. Escolha Cliente, Entregador ou Dono de comércio.');
+    begin
+      Cadastro.IdTipoUsuario:=1;
+      Result := Repository.AddUserTipoUsuario(Cadastro)
+    end else if Cadastro.TipoUsuario = 'Dono de Comércio' then
+      begin
+          Cadastro.IdTipoUsuario:=2;
+          Result := Repository.AddUserTipoUsuario(Cadastro)
+      end else if Cadastro.TipoUsuario = 'Entregador' then
+        begin
+          Cadastro.IdTipoUsuario:=3;
+          Result := Repository.AddUserTipoUsuario(Cadastro)
+        end else if Cadastro.TipoUsuario = 'Administrador' then
+          begin
+              Cadastro.IdTipoUsuario:=4;
+              Result := Repository.AddUserTipoUsuario(Cadastro)
+          end else
+            raise Exception.Create('Tipo de usuário inválido. Escolha Cliente, Entregador ou Dono de comércio.');
     if Result then
       ShowMessage('Usuário ' + Cadastro.Nome + ' salvo com sucesso!');
   end;

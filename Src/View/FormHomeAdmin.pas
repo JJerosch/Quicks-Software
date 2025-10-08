@@ -112,6 +112,8 @@ type
     procedure DBGridUsuariosCellClick(Column: TColumn);
     procedure pButtonConfirmarUpdateClick(Sender: TObject);
   private
+    procedure CarregarCargos;
+    procedure OrganizarGrid;
     procedure LimparCamposUpdate;
     procedure CarregarDadosUpdate;
     procedure AtualizarGrid;
@@ -128,60 +130,67 @@ var
 implementation
 {$R *.dfm}
 procedure TFormHomeA.AtualizarGrid;
+begin
+  if not Assigned(DM) then
   begin
-    if not Assigned(DM) then
-      begin
-        ShowMessage('DataModule não está disponível.');
-        Exit;
-      end;
-    if not Assigned(DM.FDQr) then
-      begin
-        ShowMessage('FDQuery não está disponível.');
-        Exit;
-      end;
-    if not Assigned(DM.FDConn) or not DM.FDConn.Connected then
-      begin
-        ShowMessage('Banco de dados não conectado.');
-        Exit;
-      end;
-    if not Assigned(DBGridUsuarios.DataSource) then
-      begin
-        ShowMessage('DataSource não está conectado ao Grid.');
-        Exit;
-      end;
-    try
-      with DM.FDQr do
-      begin
-        try
-          DisableControls;
-          if Active then
-            Close;
-          SQL.Clear;
-          SQL.Add('SELECT id_user, nome_user, email_user, senha_user, cpf_user, nphone_user, ativo');
-          SQL.Add('FROM usuarios');
-          SQL.Add('ORDER BY id_user');
-          Open;
-          if IsEmpty then
-          begin
-            ShowMessage('Nenhum usuário encontrado no banco de dados.');
-          end
-          else
-          begin
-            First;
-          end;
-          Filtered := False;
-          Filter := '';
-          Refresh;
-        finally
-          EnableControls;
-        end;
-      end;
-      eBuscaMain.Clear;
-    except
-      on E: Exception do
-        ShowMessage('Erro ao atualizar grid: ' + E.Message);
-    end;
+    ShowMessage('DataModule não está disponível.');
+    Exit;
   end;
+  if not Assigned(DM.FDQr) then
+  begin
+    ShowMessage('FDQuery não está disponível.');
+    Exit;
+  end;
+  if not Assigned(DM.FDConn) or not DM.FDConn.Connected then
+  begin
+    ShowMessage('Banco de dados não conectado.');
+    Exit;
+  end;
+  if not Assigned(DBGridUsuarios.DataSource) then
+  begin
+    ShowMessage('DataSource não está conectado ao Grid.');
+    Exit;
+  end;
+
+  try
+    with DM.FDQr do
+    begin
+      try
+        DisableControls;
+        if Active then
+          Close;
+
+        SQL.Clear;
+        SQL.Add('SELECT u.id_user, u.nome_user, u.email_user, u.cpf_user, u.nphone_user, c.desc_cargo, u.ativo'); // Substitui id_cargo por desc_cargo
+        SQL.Add('FROM usuarios u');
+        SQL.Add('INNER JOIN cargos c ON u.id_cargo = c.id_cargo');
+        SQL.Add('ORDER BY u.id_user');
+        Open;
+
+        if IsEmpty then
+        begin
+          ShowMessage('Nenhum usuário encontrado no banco de dados.');
+        end
+        else
+        begin
+          First;
+        end;
+
+        Filtered := False;
+        Filter := '';
+        Refresh;
+      finally
+        EnableControls;
+      end;
+    end;
+
+    OrganizarGrid;
+    eBuscaMain.Clear;
+  except
+    on E: Exception do
+      ShowMessage('Erro ao atualizar grid: ' + E.Message);
+  end;
+end;
 
 procedure TFormHomeA.AtualizarGridFalse;
 begin
@@ -215,7 +224,7 @@ begin
             Close;
           SqlQr.sqladd:=('WHERE ativo = False');
           SQL.Clear;
-          SQL.Add('SELECT id_user, nome_user, email_user, senha_user, cpf_user, nphone_user, ativo');
+          SQL.Add('SELECT id_user, nome_user, email_user, cpf_user, nphone_user, id_cargo, ativo');
           SQL.Add('FROM usuarios');
           SQL.Add(SqlQr.sqladd);
           SQL.Add('ORDER BY id_user');
@@ -235,6 +244,7 @@ begin
           EnableControls;
         end;
       end;
+      Organizargrid;
       eBuscaMain.Clear;
     except
       on E: Exception do
@@ -274,7 +284,7 @@ begin
             Close;
           SqlQr.sqladd:=('WHERE ativo = True');
           SQL.Clear;
-          SQL.Add('SELECT id_user, nome_user, email_user, senha_user, cpf_user, nphone_user, ativo');
+          SQL.Add('SELECT id_user, nome_user, email_user, cpf_user, nphone_user, id_cargo, ativo');
           SQL.Add('FROM usuarios');
           SQL.Add(SqlQr.sqladd);
           SQL.Add('ORDER BY id_user');
@@ -294,6 +304,7 @@ begin
           EnableControls;
         end;
       end;
+      OrganizarGrid;
       eBuscaMain.Clear;
     except
       on E: Exception do
@@ -322,7 +333,8 @@ begin
       meCPF.Clear;
       meSenha.Clear;
       meNPhone.Clear;
-      cbOpcoes.ItemIndex := 0;
+      cbOpcoes.ItemIndex := -1;
+      AtualizarGrid;
     end;
   finally
     Cadastro.Free;
@@ -330,7 +342,36 @@ begin
   end;
 end;
 
+procedure TFormHomeA.CarregarCargos;
+begin
+  if not Assigned(DM) or not Assigned(DM.FDQr) then
+  begin
+    ShowMessage('DataModule não disponível.');
+    Exit;
+  end;
+  try
+    with DM.FDQr do
+    begin
+      Close;
+      SQL.Clear;
+      SQL.Add('SELECT id_cargo, desc_cargo FROM cargos ORDER BY id_cargo');
+      Open;
+      cbOpcoes.Clear; // Limpa o combo box antes de preencher
+      while not EOF do
+      begin
+        cbOpcoes.Items.Add(Format('%d - %s', [FieldByName('id_cargo').AsInteger, FieldByName('desc_cargo').AsString]));
+        Next;
+      end;
+      cbOpcoes.ItemIndex := -1; // Reseta a seleção
+    end;
+  except
+    on E: Exception do
+      ShowMessage('Erro ao carregar cargos: ' + E.Message);
+  end;
+end;
+
 procedure TFormHomeA.CarregarDadosUpdate;
+var TipoUsuario: string;
 begin
   if not Assigned(DM) or not Assigned(DM.FDQr) then
   begin
@@ -351,9 +392,9 @@ begin
       eEmailUpdate.Text := FieldByName('email_user').AsString;
       meCPFUpdate.Text := FieldByName('cpf_user').AsString;
       meNPhoneUpdate.Text := FieldByName('nphone_user').AsString;
+      cbUpdate.Text := FieldByName('desc_cargo').AsString;
     end;
     pcButtons.ActivePageIndex := 3;
-
   except
     on E: Exception do
       ShowMessage('Erro ao carregar dados: ' + E.Message);
@@ -364,7 +405,6 @@ procedure TFormHomeA.DBGridUsuariosCellClick(Column: TColumn);
 begin
   lblUserSelectEx.Caption:=DBGridUsuarios.DataSource.DataSet.FieldByName('nome_user').AsString;
   lblUserSelectRes.Caption:=DBGridUsuarios.DataSource.DataSet.FieldByName('nome_user').AsString;
-  CarregarDadosUpdate;
 end;
 
 procedure TFormHomeA.eCPFChange(Sender: TObject);
@@ -418,7 +458,7 @@ procedure TFormHomeA.FiltrarGrid(const TextoBusca: string);
 procedure TFormHomeA.FormCreate(Sender: TObject);
   begin
     if Assigned(pcMain) then
-      pcMain.ActivePageIndex := 3;
+      pcMain.ActivePageIndex := 3; //mudar aqui para 0 quando terminar o crud e os redirecionamentos de pgcontrol
     eBuscaMain.Clear;
     eBuscaMain.TextHint := 'Para digitar clique no botão "Pesquisar"';
   end;
@@ -429,7 +469,7 @@ procedure TFormHomeA.FormShow(Sender: TObject);
     begin
       try
         if DM.FDConn.Connected then
-          AtualizarGridTrue;
+          AtualizarGrid;
       except
         on E: Exception do
           ShowMessage('Erro ao carregar dados: ' + E.Message);
@@ -454,6 +494,25 @@ procedure TFormHomeA.LimparCamposUpdate;
     meNPhoneUpdate.Clear;
     cbUpdate.ItemIndex:=-1;
   end;
+
+procedure TFormHomeA.OrganizarGrid;
+begin
+  DBGridUsuarios.Columns[0].Width:=30;
+  DBGridUsuarios.Columns[1].Width:=80;
+  DBGridUsuarios.Columns[2].Width:=80;
+  DBGridUsuarios.Columns[3].Width:=83;
+  DBGridUsuarios.Columns[4].Width:=90;
+  DBGridUsuarios.Columns[5].Width:=80;
+  DBGridUsuarios.Columns[6].Width:=30;
+
+  DBGridUsuarios.Columns[0].Title.Caption:='Id';
+  DBGridUsuarios.Columns[1].Title.Caption:='Nome';
+  DBGridUsuarios.Columns[2].Title.Caption:='Email';
+  DBGridUsuarios.Columns[3].Title.Caption:='CPF';
+  DBGridUsuarios.Columns[4].Title.Caption:='Telefone';
+  DBGridUsuarios.Columns[5].Title.Caption:='Cargo';
+  DBGridUsuarios.Columns[6].Title.Caption:='Ativo';
+end;
 
 procedure TFormHomeA.pButton1AdicionarClick(Sender: TObject);
 begin
@@ -624,7 +683,7 @@ end;
 procedure TFormHomeA.pButtonConfirmarUpdateClick(Sender: TObject);
 var
   IdUsuario: Integer;
-  NomeUsuario, EmailUsuario, CpfUsuario, NPhoneUsuario: string;
+  NomeUsuario, EmailUsuario, CpfUsuario, NPhoneUsuario, TipoUsuario: string;
 begin
   if not Assigned(DM) or not Assigned(DM.FDQr) then
   begin
@@ -643,8 +702,9 @@ begin
   // Capturar os valores dos campos
   NomeUsuario := Trim(eNomeUpdate.Text);
   EmailUsuario := Trim(eEmailUpdate.Text);
-  CpfUsuario := meCPFUpdate.Text;
-  NPhoneUsuario := meNPhoneUpdate.Text;
+  CpfUsuario := Trim(meCPFUpdate.Text);
+  NPhoneUsuario := Trim(meNPhoneUpdate.Text);
+  TipoUsuario := Trim(cbUpdate.Text);
 
   // Validações
   if NomeUsuario = '' then
@@ -662,14 +722,7 @@ begin
   end;
 
   // Confirmação
-  if MessageDlg(
-    Format('Deseja atualizar os dados do usuário?'#13#10 +
-           'Nome: %s'#13#10 +
-           'Email: %s'#13#10 +
-           'CPF: %s'#13#10 +
-           'Telefone: %s',
-           [NomeUsuario, EmailUsuario, CpfUsuario, NPhoneUsuario]),
-    mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+  if MessageDlg(Format('Deseja atualizar os dados do usuário?'#13#10 + 'Nome: %s'#13#10 + 'Email: %s'#13#10 + 'CPF: %s'#13#10 + 'Telefone: %s'#13#10 + 'Tipo de Usuário: %s',[NomeUsuario, EmailUsuario, CpfUsuario, NPhoneUsuario, TipoUsuario]), mtConfirmation, [mbYes, mbNo], 0) = mrYes then
   begin
     try
       with DM.FDQr do
@@ -679,6 +732,7 @@ begin
         FieldByName('email_user').AsString := EmailUsuario;
         FieldByName('cpf_user').AsString := CpfUsuario;
         FieldByName('nphone_user').AsString := NPhoneUsuario;
+        FieldByName('id_cargo').AsString := TipoUsuario;
         Post;
       end;
 

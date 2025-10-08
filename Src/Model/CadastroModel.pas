@@ -11,6 +11,7 @@ interface
       FSenha: string;
       FNPhone: string;
       FTipoUsuario: string;
+      FIdTipoUsuario: Integer;
     public
       property Id: string read FId write FId;
       property Nome: string read FNome write FNome;
@@ -19,6 +20,7 @@ interface
       property Senha: string read FSenha write FSenha;
       property NPhone: string read FNPhone write FNPhone;
       property TipoUsuario: string read FTipoUsuario write FTipoUsuario;
+      property IdTipoUsuario: Integer read FIdTipoUsuario write FIdTipoUsuario;
     end;
 implementation
 end.

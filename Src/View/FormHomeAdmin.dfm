@@ -36,7 +36,7 @@ object FormHomeA: TFormHomeA
         Top = 0
         Width = 1143
         Height = 644
-        ActivePage = pctab1Selecione
+        ActivePage = pctab4Usuarios
         Align = alClient
         Style = tsFlatButtons
         TabOrder = 0
@@ -100,7 +100,6 @@ object FormHomeA: TFormHomeA
             Color = clWhite
             ParentBackground = False
             TabOrder = 0
-            ExplicitLeft = -1
             object pMainGrid: TPanel
               AlignWithMargins = True
               Left = 61
@@ -116,8 +115,6 @@ object FormHomeA: TFormHomeA
               Color = clCoral
               ParentBackground = False
               TabOrder = 0
-              ExplicitLeft = 309
-              ExplicitTop = 116
               object pBusca: TPanel
                 Left = 48
                 Top = 96
@@ -135,6 +132,7 @@ object FormHomeA: TFormHomeA
                 Width = 497
                 Height = 372
                 DataSource = DM.DS
+                Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
                 ReadOnly = True
                 TabOrder = 1
                 TitleFont.Charset = DEFAULT_CHARSET
@@ -221,7 +219,7 @@ object FormHomeA: TFormHomeA
                 Top = 56
                 Width = 433
                 Height = 393
-                ActivePage = pctab3Up
+                ActivePage = pctab1Add
                 TabOrder = 8
                 object pctab0Clique: TTabSheet
                   Caption = 'pctab0Clique'
@@ -269,10 +267,6 @@ object FormHomeA: TFormHomeA
                     Color = clCoral
                     ParentBackground = False
                     TabOrder = 0
-                    ExplicitLeft = 5
-                    ExplicitTop = 5
-                    ExplicitWidth = 415
-                    ExplicitHeight = 353
                     object lblSenha: TLabel
                       Left = 78
                       Top = 196
@@ -447,10 +441,6 @@ object FormHomeA: TFormHomeA
                     Color = clCoral
                     ParentBackground = False
                     TabOrder = 0
-                    ExplicitLeft = 5
-                    ExplicitTop = 5
-                    ExplicitWidth = 415
-                    ExplicitHeight = 353
                     object pButtonConfirmarExcluir: TPanel
                       Left = 144
                       Top = 264
@@ -487,7 +477,7 @@ object FormHomeA: TFormHomeA
                       object lblUserSelectEx: TLabel
                         Left = 0
                         Top = 80
-                        Width = 185
+                        Width = 128
                         Height = 25
                         Alignment = taCenter
                         Caption = 'lblUserSelectEx'
@@ -518,7 +508,6 @@ object FormHomeA: TFormHomeA
                     Color = clCoral
                     ParentBackground = False
                     TabOrder = 0
-                    ExplicitTop = 5
                     object lblEmailUpdate: TLabel
                       Left = 79
                       Top = 128
@@ -655,10 +644,6 @@ object FormHomeA: TFormHomeA
                     Color = clCoral
                     ParentBackground = False
                     TabOrder = 0
-                    ExplicitLeft = 5
-                    ExplicitTop = 5
-                    ExplicitWidth = 415
-                    ExplicitHeight = 353
                     object pButtonConfirmarRestore: TPanel
                       Left = 142
                       Top = 264
@@ -695,7 +680,7 @@ object FormHomeA: TFormHomeA
                       object lblUserSelectRes: TLabel
                         Left = 0
                         Top = 80
-                        Width = 185
+                        Width = 137
                         Height = 25
                         Alignment = taCenter
                         Caption = 'lblUserSelectRes'
