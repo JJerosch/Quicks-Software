@@ -18,16 +18,22 @@ uses
   FormHomeDono in 'Src\View\FormHomeDono.pas' {FormHomeD},
   FormHomeEntregador in 'Src\View\FormHomeEntregador.pas' {FormHomeE},
   FormHomeAdmin in 'Src\View\FormHomeAdmin.pas' {FormHomeA},
-  ACRUDModel in 'Src\Model\ACRUDModel.pas';
+  UsuarioModelCRUDAdmin in 'Src\Model\UsuarioModelCRUDAdmin.pas',
+  CargosModelCRUDAdmin in 'Src\Model\CargosModelCRUDAdmin.pas',
+  UsuarioRepositoryCRUDAdmin in 'Src\Repository\UsuarioRepositoryCRUDAdmin.pas',
+  CargosRepositoryCRUDAdmin in 'Src\Repository\CargosRepositoryCRUDAdmin.pas',
+  UsuarioServiceCRUDAdmin in 'Src\Service\UsuarioServiceCRUDAdmin.pas',
+  CargosServiceCRUDAdmin in 'Src\Service\CargosServiceCRUDAdmin.pas',
+  UsuarioControllerCRUDAdmin in 'Src\Controller\UsuarioControllerCRUDAdmin.pas';
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
-  Application.CreateForm(TDM, DM);
   Application.CreateForm(TFormHomeA, FormHomeA);
   Application.CreateForm(TFormLogin, FormLogin);
+  Application.CreateForm(TDM, DM);
   Application.CreateForm(TFormCadastro, FormCadastro);
   Application.CreateForm(TFormHomeD, FormHomeD);
   Application.CreateForm(TFormHomeC, FormHomeC);

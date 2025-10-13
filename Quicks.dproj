@@ -163,7 +163,13 @@
             <Form>FormHomeA</Form>
             <FormType>dfm</FormType>
         </DCCReference>
-        <DCCReference Include="Src\Model\ACRUDModel.pas"/>
+        <DCCReference Include="Src\Model\UsuarioModelCRUDAdmin.pas"/>
+        <DCCReference Include="Src\Model\CargosModelCRUDAdmin.pas"/>
+        <DCCReference Include="Src\Repository\UsuarioRepositoryCRUDAdmin.pas"/>
+        <DCCReference Include="Src\Repository\CargosRepositoryCRUDAdmin.pas"/>
+        <DCCReference Include="Src\Service\UsuarioServiceCRUDAdmin.pas"/>
+        <DCCReference Include="Src\Service\CargosServiceCRUDAdmin.pas"/>
+        <DCCReference Include="Src\Controller\UsuarioControllerCRUDAdmin.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
