@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Imaging.pngimage, Vcl.ExtCtrls,
-  Vcl.StdCtrls, Vcl.ComCtrls, Data.DB, Vcl.Grids, Vcl.DBGrids, uConn, ACRUDModel, CadastroModel, CadastroController,
+  Vcl.StdCtrls, Vcl.ComCtrls, Data.DB, Vcl.Grids, Vcl.DBGrids, uConn, CadastroModel, CadastroController,
   Vcl.Mask, FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
   FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
   FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet, FireDAC.Comp.Client;
@@ -132,13 +132,11 @@ type
   end;
 var
   FormHomeA: TFormHomeA;
-  SqlQr: TACRUDCfg;
 
 implementation
 {$R *.dfm}
 procedure TFormHomeA.AtualizarGrid;
 begin
-  SqlQr := TACRUDCfg.Create;
   try
     if not Assigned(DM) then
     begin
@@ -197,13 +195,11 @@ begin
         ShowMessage('Erro ao atualizar grid: ' + E.Message);
     end;
   finally
-    SqlQr.Free;
   end;
 end;
 
 procedure TFormHomeA.AtualizarGridFalse;
 begin
-  SqlQr := TACRUDCfg.Create;
   try
     if not Assigned(DM) then
     begin
@@ -261,13 +257,11 @@ begin
         ShowMessage('Erro ao atualizar grid: ' + E.Message);
     end;
   finally
-    SqlQr.Free;
   end;
 end;
 
 procedure TFormHomeA.AtualizarGridTrue;
 begin
-  SqlQr := TACRUDCfg.Create;
   try
     if not Assigned(DM) then
     begin
@@ -325,7 +319,6 @@ begin
         ShowMessage('Erro ao atualizar grid: ' + E.Message);
     end;
   finally
-    SqlQr.Free;
   end;
 end;
 procedure TFormHomeA.bCadastroClick(Sender: TObject);
