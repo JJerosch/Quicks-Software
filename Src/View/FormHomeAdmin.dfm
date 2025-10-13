@@ -100,6 +100,8 @@ object FormHomeA: TFormHomeA
             Color = clWhite
             ParentBackground = False
             TabOrder = 0
+            ExplicitLeft = -128
+            ExplicitTop = 3
             object pMainGrid: TPanel
               AlignWithMargins = True
               Left = 61
@@ -219,7 +221,7 @@ object FormHomeA: TFormHomeA
                 Top = 56
                 Width = 433
                 Height = 393
-                ActivePage = pctab1Add
+                ActivePage = pctab3Up
                 TabOrder = 8
                 object pctab0Clique: TTabSheet
                   Caption = 'pctab0Clique'
@@ -267,45 +269,46 @@ object FormHomeA: TFormHomeA
                     Color = clCoral
                     ParentBackground = False
                     TabOrder = 0
+                    ExplicitTop = 5
                     object lblSenha: TLabel
-                      Left = 78
-                      Top = 196
-                      Width = 90
+                      Left = 18
+                      Top = 226
+                      Width = 35
                       Height = 15
-                      Caption = 'Digite sua Senha:'
+                      Caption = 'Senha:'
                     end
                     object lblEmail: TLabel
-                      Left = 79
-                      Top = 128
-                      Width = 87
+                      Left = 18
+                      Top = 103
+                      Width = 32
                       Height = 15
-                      Caption = 'Digite seu Email:'
+                      Caption = 'Email:'
                     end
                     object lblCPF: TLabel
-                      Left = 78
-                      Top = 162
-                      Width = 79
+                      Left = 18
+                      Top = 144
+                      Width = 24
                       Height = 15
-                      Caption = 'Digite seu CPF:'
+                      Caption = 'CPF:'
                     end
                     object lblNome: TLabel
-                      Left = 79
-                      Top = 86
-                      Width = 89
-                      Height = 30
-                      Caption = 'Digite seu nome '#13#10'completo:'
+                      Left = 18
+                      Top = 62
+                      Width = 36
+                      Height = 15
+                      Caption = 'Nome:'
                     end
                     object lblNPhone: TLabel
-                      Left = 79
-                      Top = 225
-                      Width = 97
-                      Height = 30
-                      Caption = 'Digite seu n'#250'mero'#13#10'de telefone:'
+                      Left = 18
+                      Top = 185
+                      Width = 48
+                      Height = 15
+                      Caption = 'Telefone:'
                     end
                     object lblTituloMain: TLabel
                       AlignWithMargins = True
-                      Left = 72
-                      Top = 26
+                      Left = 64
+                      Top = 5
                       Width = 288
                       Height = 44
                       Margins.Top = 20
@@ -321,9 +324,16 @@ object FormHomeA: TFormHomeA
                       ParentColor = False
                       ParentFont = False
                     end
+                    object Label1: TLabel
+                      Left = 18
+                      Top = 267
+                      Width = 97
+                      Height = 30
+                      Caption = 'Digite novamente '#13#10'sua senha:'
+                    end
                     object meCPF: TMaskEdit
-                      Left = 185
-                      Top = 159
+                      Left = 69
+                      Top = 141
                       Width = 147
                       Height = 23
                       EditMask = '999.999.999-99;1;_'
@@ -335,7 +345,7 @@ object FormHomeA: TFormHomeA
                     object bCadastro: TPanel
                       AlignWithMargins = True
                       Left = 86
-                      Top = 274
+                      Top = 306
                       Width = 73
                       Height = 40
                       BevelOuter = bvNone
@@ -346,16 +356,16 @@ object FormHomeA: TFormHomeA
                       OnClick = bCadastroClick
                     end
                     object eEmail: TEdit
-                      Left = 185
-                      Top = 125
+                      Left = 69
+                      Top = 100
                       Width = 147
                       Height = 23
                       TabOrder = 1
                       StyleName = 'Windows'
                     end
                     object eNome: TEdit
-                      Left = 185
-                      Top = 92
+                      Left = 69
+                      Top = 59
                       Width = 147
                       Height = 23
                       BevelInner = bvNone
@@ -366,8 +376,8 @@ object FormHomeA: TFormHomeA
                       StyleName = 'Windows'
                     end
                     object meSenha: TMaskEdit
-                      Left = 185
-                      Top = 193
+                      Left = 69
+                      Top = 223
                       Width = 147
                       Height = 23
                       PasswordChar = '*'
@@ -377,7 +387,7 @@ object FormHomeA: TFormHomeA
                     end
                     object cbOpcoes: TComboBox
                       Left = 173
-                      Top = 283
+                      Top = 315
                       Width = 172
                       Height = 23
                       Style = csDropDownList
@@ -392,8 +402,8 @@ object FormHomeA: TFormHomeA
                         'Administrador')
                     end
                     object meNPhone: TMaskEdit
-                      Left = 185
-                      Top = 226
+                      Left = 69
+                      Top = 182
                       Width = 147
                       Height = 23
                       EditMask = '(99) 99999-9999;1;_'
@@ -403,8 +413,8 @@ object FormHomeA: TFormHomeA
                       StyleName = 'Windows'
                     end
                     object eNPhone: TEdit
-                      Left = 185
-                      Top = 226
+                      Left = 69
+                      Top = 182
                       Width = 147
                       Height = 23
                       TabOrder = 7
@@ -413,8 +423,8 @@ object FormHomeA: TFormHomeA
                       OnClick = eNPhoneChange
                     end
                     object eCPF: TEdit
-                      Left = 185
-                      Top = 159
+                      Left = 69
+                      Top = 141
                       Width = 147
                       Height = 23
                       TabOrder = 8
@@ -508,6 +518,7 @@ object FormHomeA: TFormHomeA
                     Color = clCoral
                     ParentBackground = False
                     TabOrder = 0
+                    ExplicitTop = 5
                     object lblEmailUpdate: TLabel
                       Left = 79
                       Top = 128
@@ -604,6 +615,7 @@ object FormHomeA: TFormHomeA
                       Top = 259
                       Width = 164
                       Height = 23
+                      Style = csDropDownList
                       CanUndoSelText = True
                       TabOrder = 4
                       TextHint = 'Selecione umas das op'#231#245'es'
@@ -736,6 +748,7 @@ object FormHomeA: TFormHomeA
                 TabOrder = 9
                 TextHint = 'Para digitar clique no bot'#227'o "Pesquisar"'
                 StyleName = 'Windows'
+                OnChange = eBuscaMainChange
               end
               object pHideTSbar: TPanel
                 Left = 31
@@ -3204,5 +3217,9 @@ object FormHomeA: TFormHomeA
     ParentBackground = False
     TabOrder = 1
     StyleName = 'Windows'
+  end
+  object QueryUp: TFDQuery
+    Left = 717
+    Top = 205
   end
 end
