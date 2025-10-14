@@ -11,6 +11,7 @@ object FormHomeA: TFormHomeA
   Font.Name = 'Segoe UI'
   Font.Style = []
   OnCreate = FormCreate
+  OnResize = FormResize
   OnShow = FormShow
   TextHeight = 15
   object pHomeBackground: TPanel
@@ -36,7 +37,7 @@ object FormHomeA: TFormHomeA
         Top = 0
         Width = 1143
         Height = 644
-        ActivePage = pctab4Usuarios
+        ActivePage = pctab1Selecione
         Align = alClient
         Style = tsFlatButtons
         TabOrder = 0
@@ -100,8 +101,6 @@ object FormHomeA: TFormHomeA
             Color = clWhite
             ParentBackground = False
             TabOrder = 0
-            ExplicitLeft = -128
-            ExplicitTop = 3
             object pMainGrid: TPanel
               AlignWithMargins = True
               Left = 61
@@ -221,7 +220,7 @@ object FormHomeA: TFormHomeA
                 Top = 56
                 Width = 433
                 Height = 393
-                ActivePage = pctab3Up
+                ActivePage = pctab1Add
                 TabOrder = 8
                 object pctab0Clique: TTabSheet
                   Caption = 'pctab0Clique'
@@ -269,7 +268,6 @@ object FormHomeA: TFormHomeA
                     Color = clCoral
                     ParentBackground = False
                     TabOrder = 0
-                    ExplicitTop = 5
                     object lblSenha: TLabel
                       Left = 18
                       Top = 226
@@ -518,7 +516,6 @@ object FormHomeA: TFormHomeA
                     Color = clCoral
                     ParentBackground = False
                     TabOrder = 0
-                    ExplicitTop = 5
                     object lblEmailUpdate: TLabel
                       Left = 79
                       Top = 128
@@ -1245,6 +1242,7 @@ object FormHomeA: TFormHomeA
           000068900600001AA401008006690000A0411A000068900600001AA401008006
           690000A041FF1FA1EEC55B2FFA86940000000049454E44AE426082}
         Proportional = True
+        OnClick = iButton3Click
       end
       object iButton2: TImage
         Left = 22
@@ -1401,6 +1399,7 @@ object FormHomeA: TFormHomeA
           A285E3680B9323DB2B2CFF5F0085B5A00268E7A00268E7A00268E7A00268E7F8
           1F291C2FF9F07C83BF0000000049454E44AE426082}
         Proportional = True
+        OnClick = iButton2Click
       end
       object iButton6: TImage
         AlignWithMargins = True
@@ -1710,6 +1709,7 @@ object FormHomeA: TFormHomeA
           340000D0210D000074480300001DD200004087340000D0210D00007448030000
           1DFAFFD01FFE1E60B6E11C0000000049454E44AE426082}
         Proportional = True
+        OnClick = iButton6Click
         ExplicitLeft = 17
         ExplicitTop = 578
         ExplicitWidth = 54
@@ -2457,6 +2457,7 @@ object FormHomeA: TFormHomeA
           22A20231012022222A1013002222A20231012022222A1013002222A202FD3FBB
           5137C463C0FA390000000049454E44AE426082}
         Proportional = True
+        OnClick = iButton5Click
       end
       object lblButton5: TLabel
         Left = 88
@@ -3204,6 +3205,7 @@ object FormHomeA: TFormHomeA
           40082184C81039004208214486FC3FE8BD66D1F9A7366E0000000049454E44AE
           426082}
         Proportional = True
+        OnClick = iButton4Click
       end
     end
   end
@@ -3219,7 +3221,7 @@ object FormHomeA: TFormHomeA
     StyleName = 'Windows'
   end
   object QueryUp: TFDQuery
-    Left = 717
-    Top = 205
+    Left = 621
+    Top = 69
   end
 end

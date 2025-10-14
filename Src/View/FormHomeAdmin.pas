@@ -116,6 +116,12 @@ type
     procedure DBGridUsuariosCellClick(Column: TColumn);
     procedure pButtonConfirmarUpdateClick(Sender: TObject);
     procedure eBuscaMainChange(Sender: TObject);
+    procedure iButton6Click(Sender: TObject);
+    procedure FormResize(Sender: TObject);
+    procedure iButton2Click(Sender: TObject);
+    procedure iButton3Click(Sender: TObject);
+    procedure iButton4Click(Sender: TObject);
+    procedure iButton5Click(Sender: TObject);
   private
     FIdUsuarioSelecionado: Integer;
     procedure CarregarCargos;
@@ -167,7 +173,7 @@ begin
             Close;
           SQL.Clear;
           // AQUI É ONDE VOCÊ GARANTE QUE ID_CARGO ESTÁ INCLUÍDO
-          SQL.Add('SELECT u.id_user, u.nome_user, u.email_user, u.cpf_user, u.nphone_user, c.desc_cargo, u.id_cargo, u.ativo');
+          SQL.Add('SELECT u.id_user, u.nome_user, u.email_user, u.cpf_user, u.nphone_user, c.desc_cargo, u.ativo');
           SQL.Add('FROM usuarios u');
           SQL.Add('INNER JOIN cargos c ON u.id_cargo = c.id_cargo'); // Certifique-se que o INNER JOIN esteja correto
           SQL.Add('WHERE u.ativo = True');
@@ -229,7 +235,7 @@ begin
           if Active then
             Close;
           SQL.Clear;
-          SQL.Add('SELECT u.id_user, u.nome_user, u.email_user, u.cpf_user, u.nphone_user, c.desc_cargo, u.id_cargo, u.ativo');
+          SQL.Add('SELECT u.id_user, u.nome_user, u.email_user, u.cpf_user, u.nphone_user, c.desc_cargo, u.ativo');
           SQL.Add('FROM usuarios u');
           SQL.Add('INNER JOIN cargos c ON u.id_cargo = c.id_cargo');
           SQL.Add('WHERE u.ativo = False');
@@ -291,7 +297,7 @@ begin
           if Active then
             Close;
           SQL.Clear;
-          SQL.Add('SELECT u.id_user, u.nome_user, u.email_user, u.cpf_user, u.nphone_user, c.desc_cargo, u.id_cargo, u.ativo');
+          SQL.Add('SELECT u.id_user, u.nome_user, u.email_user, u.cpf_user, u.nphone_user, c.desc_cargo, u.ativo');
           SQL.Add('FROM usuarios u');
           SQL.Add('INNER JOIN cargos c ON u.id_cargo = c.id_cargo');
           SQL.Add('WHERE u.ativo = True');
@@ -571,8 +577,27 @@ procedure TFormHomeA.FormCreate(Sender: TObject);
     if Assigned(pcMain) then
       pcMain.ActivePageIndex := 3; //mudar aqui para 0 quando terminar o crud e os redirecionamentos de pgcontrol
     eBuscaMain.Clear;
-    eBuscaMain.TextHint := 'Digite aqui para pesquisar.';
+
+    Constraints.MinWidth := 1248;
+    Constraints.MinHeight := 683;
+    Constraints.MaxWidth := 1920;
+    Constraints.MaxHeight := 1080;
+
+    Self.BorderStyle := bsSingle;
+    Self.WindowState := wsNormal;
+end;
+
+procedure TFormHomeA.FormResize(Sender: TObject);
+begin
+  if Self.WindowState = wsMaximized then
+  begin
+
+  end
+  else if Self.WindowState = wsNormal then
+  begin
+
   end;
+end;
 
 procedure TFormHomeA.FormShow(Sender: TObject);
   begin
@@ -598,6 +623,62 @@ procedure TFormHomeA.iButton1Click(Sender: TObject);
     end;
   end;
 
+procedure TFormHomeA.iButton2Click(Sender: TObject);
+begin
+  if Assigned(pcMain) and Assigned(pctab4Usuarios) then
+  begin
+    pcMain.ActivePage := pctab2Relatorios; // Muda para a aba 'pctab4Usuarios'
+  end
+  else
+  begin
+    ShowMessage('Não foi possível mudar para a aba desejada.');
+  end;
+end;
+
+procedure TFormHomeA.iButton3Click(Sender: TObject);
+begin
+  if Assigned(pcMain) and Assigned(pctab4Usuarios) then
+  begin
+    pcMain.ActivePage := pctab3Pedidos; // Muda para a aba 'pctab4Usuarios'
+  end
+  else
+  begin
+    ShowMessage('Não foi possível mudar para a aba desejada.');
+  end;
+end;
+
+procedure TFormHomeA.iButton4Click(Sender: TObject);
+begin
+  if Assigned(pcMain) and Assigned(pctab4Usuarios) then
+  begin
+    pcMain.ActivePage := pctab4Usuarios; // Muda para a aba 'pctab4Usuarios'
+  end
+  else
+  begin
+    ShowMessage('Não foi possível mudar para a aba desejada.');
+  end;
+end;
+
+procedure TFormHomeA.iButton5Click(Sender: TObject);
+begin
+  if Assigned(pcMain) and Assigned(pctab4Usuarios) then
+  begin
+    pcMain.ActivePage := pctab5Perfil; // Muda para a aba 'pctab4Usuarios'
+  end
+  else
+  begin
+    ShowMessage('Não foi possível mudar para a aba desejada.');
+  end;
+end;
+
+procedure TFormHomeA.iButton6Click(Sender: TObject);
+begin
+  if MessageDlg('Tem certeza que deseja fechar a aplicação?', mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+  begin
+    Application.Terminate; // Fecha a aplicação
+  end;
+end;
+
 procedure TFormHomeA.LimparCamposUpdate;
 begin
   eNomeUpdate.Clear;
@@ -611,21 +692,21 @@ end;
 
 procedure TFormHomeA.OrganizarGrid;
 begin
-  DBGridUsuarios.Columns[0].Width:=30;
-  DBGridUsuarios.Columns[1].Width:=80;
-  DBGridUsuarios.Columns[2].Width:=80;
-  DBGridUsuarios.Columns[3].Width:=83;
-  DBGridUsuarios.Columns[4].Width:=90;
-  DBGridUsuarios.Columns[5].Width:=80;
-  DBGridUsuarios.Columns[6].Width:=30;
+  DBGridUsuarios.Columns[0].Width := 30;  // Coluna id_user
+  DBGridUsuarios.Columns[1].Width := 80;  // Coluna nome_user
+  DBGridUsuarios.Columns[2].Width := 80;  // Coluna email_user
+  DBGridUsuarios.Columns[3].Width := 83;  // Coluna cpf_user
+  DBGridUsuarios.Columns[4].Width := 90;  // Coluna nphone_user
+  DBGridUsuarios.Columns[5].Width := 90;  // Coluna desc_cargo
+  DBGridUsuarios.Columns[6].Width := 30;   // Coluna ativo
 
-  DBGridUsuarios.Columns[0].Title.Caption:='Id';
-  DBGridUsuarios.Columns[1].Title.Caption:='Nome';
-  DBGridUsuarios.Columns[2].Title.Caption:='Email';
-  DBGridUsuarios.Columns[3].Title.Caption:='CPF';
-  DBGridUsuarios.Columns[4].Title.Caption:='Telefone';
-  DBGridUsuarios.Columns[5].Title.Caption:='Cargo';
-  DBGridUsuarios.Columns[6].Title.Caption:='Ativo';
+  DBGridUsuarios.Columns[0].Title.Caption := 'Id';
+  DBGridUsuarios.Columns[1].Title.Caption := 'Nome';
+  DBGridUsuarios.Columns[2].Title.Caption := 'Email';
+  DBGridUsuarios.Columns[3].Title.Caption := 'CPF';
+  DBGridUsuarios.Columns[4].Title.Caption := 'Telefone';
+  DBGridUsuarios.Columns[5].Title.Caption := 'Cargo';
+  DBGridUsuarios.Columns[6].Title.Caption := 'Ativo';
 end;
 
 procedure TFormHomeA.pButton1AdicionarClick(Sender: TObject);

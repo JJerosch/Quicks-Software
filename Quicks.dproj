@@ -170,6 +170,7 @@
         <DCCReference Include="Src\Service\UsuarioServiceCRUDAdmin.pas"/>
         <DCCReference Include="Src\Service\CargosServiceCRUDAdmin.pas"/>
         <DCCReference Include="Src\Controller\UsuarioControllerCRUDAdmin.pas"/>
+        <DCCReference Include="Src\Helper\UsuarioDataSetHelperCRUDAdmin.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

@@ -24,16 +24,17 @@ uses
   CargosRepositoryCRUDAdmin in 'Src\Repository\CargosRepositoryCRUDAdmin.pas',
   UsuarioServiceCRUDAdmin in 'Src\Service\UsuarioServiceCRUDAdmin.pas',
   CargosServiceCRUDAdmin in 'Src\Service\CargosServiceCRUDAdmin.pas',
-  UsuarioControllerCRUDAdmin in 'Src\Controller\UsuarioControllerCRUDAdmin.pas';
+  UsuarioControllerCRUDAdmin in 'Src\Controller\UsuarioControllerCRUDAdmin.pas',
+  UsuarioDataSetHelperCRUDAdmin in 'Src\Helper\UsuarioDataSetHelperCRUDAdmin.pas';
 
 {$R *.res}
 
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TDM, DM);
   Application.CreateForm(TFormHomeA, FormHomeA);
   Application.CreateForm(TFormLogin, FormLogin);
-  Application.CreateForm(TDM, DM);
   Application.CreateForm(TFormCadastro, FormCadastro);
   Application.CreateForm(TFormHomeD, FormHomeD);
   Application.CreateForm(TFormHomeC, FormHomeC);
