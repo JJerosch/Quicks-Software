@@ -37,7 +37,7 @@ object FormHomeA: TFormHomeA
         Top = 0
         Width = 1143
         Height = 644
-        ActivePage = pctab1Selecione
+        ActivePage = pctab4Usuarios
         Align = alClient
         Style = tsFlatButtons
         TabOrder = 0
@@ -111,7 +111,6 @@ object FormHomeA: TFormHomeA
               Margins.Top = 75
               Margins.Right = 60
               Margins.Bottom = 60
-              Align = alClient
               BevelOuter = bvNone
               Color = clCoral
               ParentBackground = False
@@ -321,13 +320,6 @@ object FormHomeA: TFormHomeA
                       Font.Style = [fsBold]
                       ParentColor = False
                       ParentFont = False
-                    end
-                    object Label1: TLabel
-                      Left = 18
-                      Top = 267
-                      Width = 97
-                      Height = 30
-                      Caption = 'Digite novamente '#13#10'sua senha:'
                     end
                     object meCPF: TMaskEdit
                       Left = 69
@@ -738,7 +730,7 @@ object FormHomeA: TFormHomeA
                 Left = 31
                 Top = 27
                 Width = 497
-                Height = 23
+                Height = 30
                 BevelInner = bvNone
                 BevelOuter = bvNone
                 Enabled = False
@@ -3222,6 +3214,6 @@ object FormHomeA: TFormHomeA
   end
   object QueryUp: TFDQuery
     Left = 621
-    Top = 69
+    Top = 53
   end
 end

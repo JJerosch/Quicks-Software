@@ -70,16 +70,7 @@ var
   IdUsuario: Int64;
 begin
   Result := False;
-
-  // Add the user with their cargo
-  IdUsuario := AddUser(
-    Cadastro.Nome,
-    Cadastro.Email,
-    Cadastro.CPF,
-    Cadastro.Senha,
-    Cadastro.NPhone,
-    Cadastro.IdTipoUsuario
-  );
+  IdUsuario := AddUser(Cadastro.Nome,Cadastro.Email,Cadastro.CPF,Cadastro.Senha,Cadastro.NPhone,Cadastro.IdTipoUsuario);
 
   if IdUsuario > 0 then
   begin

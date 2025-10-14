@@ -96,7 +96,6 @@ type
     meNPhoneUpdate: TMaskEdit;
     Panel3: TPanel;
     Label7: TLabel;
-    Label1: TLabel;
     QueryUp: TFDQuery;
     procedure iButton1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -575,7 +574,8 @@ end;
 procedure TFormHomeA.FormCreate(Sender: TObject);
   begin
     if Assigned(pcMain) then
-      pcMain.ActivePageIndex := 3; //mudar aqui para 0 quando terminar o crud e os redirecionamentos de pgcontrol
+      pcMain.ActivePageIndex := 0;
+      pcButtons.ActivePageIndex := 0;
     eBuscaMain.Clear;
 
     Constraints.MinWidth := 1248;
@@ -591,7 +591,8 @@ procedure TFormHomeA.FormResize(Sender: TObject);
 begin
   if Self.WindowState = wsMaximized then
   begin
-
+    FormHomeA.pHeader.Width:=1920;
+    FormHomeA.pMainGrid.Width:= 1013;
   end
   else if Self.WindowState = wsNormal then
   begin
