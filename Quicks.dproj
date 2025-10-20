@@ -127,15 +127,12 @@
         </DelphiCompile>
         <DCCReference Include="Src\View\FormLoginMain.pas">
             <Form>FormLogin</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="Src\View\FormCadastroMain.pas">
             <Form>FormCadastro</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="Src\Model\uConn.pas">
             <Form>DM</Form>
-            <FormType>dfm</FormType>
             <DesignClass>TDataModule</DesignClass>
         </DCCReference>
         <DCCReference Include="Src\Model\LoginModel.pas"/>
@@ -149,19 +146,15 @@
         <DCCReference Include="Src\Controller\CadastroController.pas"/>
         <DCCReference Include="Src\View\FormHomeClientes.pas">
             <Form>FormHomeC</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="Src\View\FormHomeDono.pas">
             <Form>FormHomeD</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="Src\View\FormHomeEntregador.pas">
             <Form>FormHomeE</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="Src\View\FormHomeAdmin.pas">
             <Form>FormHomeA</Form>
-            <FormType>dfm</FormType>
         </DCCReference>
         <DCCReference Include="Src\Model\UsuarioModelCRUDAdmin.pas"/>
         <DCCReference Include="Src\Model\CargosModelCRUDAdmin.pas"/>

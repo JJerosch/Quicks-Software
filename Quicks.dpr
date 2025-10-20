@@ -2,6 +2,7 @@ program Quicks;
 
 uses
   Vcl.Forms,
+  Vcl.Dialogs,
   FormLoginMain in 'Src\View\FormLoginMain.pas' {FormLogin},
   FormCadastroMain in 'Src\View\FormCadastroMain.pas' {FormCadastro},
   uConn in 'Src\Model\uConn.pas' {DM: TDataModule},
@@ -29,10 +30,18 @@ uses
 
 {$R *.res}
 
+var
+  Controller: TLoginController;
 begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TDM, DM);
+  Controller := TLoginController.Create;
+  try
+    Controller.IniciarAplicacao;
+  finally
+    Controller.Free;
+  end;
   Application.CreateForm(TFormHomeA, FormHomeA);
   Application.CreateForm(TFormLogin, FormLogin);
   Application.CreateForm(TFormCadastro, FormCadastro);

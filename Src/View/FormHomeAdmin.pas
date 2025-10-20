@@ -7,8 +7,9 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Imaging.pngimage, Vcl.ExtCtrls,
   Vcl.StdCtrls, Vcl.ComCtrls, Data.DB, Vcl.Grids, Vcl.DBGrids, uConn, CadastroModel, CadastroController,
   Vcl.Mask, FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param,
-  FireDAC.Stan.Error, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
-  FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet, FireDAC.Comp.Client;
+  FireDAC.Stan.Error, System.Generics.Collections, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
+  FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet, FireDAC.Comp.Client, UsuarioModelCRUDAdmin,
+  CargosModelCRUDAdmin, UsuarioControllerCRUDAdmin, UsuarioDataSetHelperCRUDAdmin;
 
 type
   TFormHomeA = class(TForm)
@@ -121,8 +122,13 @@ type
     procedure iButton3Click(Sender: TObject);
     procedure iButton4Click(Sender: TObject);
     procedure iButton5Click(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
   private
+    FController: TUsuarioController;
     FIdUsuarioSelecionado: Integer;
+    FListaUsuarios: TObjectList<TUsuario>;
+    FMemTable: TFDMemTable;
+    FDataSource: TDataSource;
     procedure CarregarCargos;
     procedure CarregarCargosUpdate;
     procedure OrganizarGrid;
@@ -132,8 +138,7 @@ type
     procedure AtualizarGridFalse;
     procedure AtualizarGridTrue;
     procedure FiltrarGrid(const TextoBusca: string);
-  public
-
+    procedure CarregarGridUsuarios(ApenasAtivos: Boolean);
   end;
 var
   FormHomeA: TFormHomeA;
@@ -573,6 +578,22 @@ begin
 end;
 procedure TFormHomeA.FormCreate(Sender: TObject);
   begin
+    FController := TUsuarioController.Create;
+    FListaUsuarios := nil;
+    FIdUsuarioSelecionado := 0;
+
+
+    FDataSource := TDataSource.Create(Self);
+    FMemTable := nil;
+
+    DBGridUsuarios.DataSource := FDataSource;
+
+    if Assigned(pcMain) then
+      pcMain.ActivePageIndex := 3; // Mudar para 0 quando terminar
+
+    eBuscaMain.Clear;
+    eBuscaMain.TextHint := 'Digite aqui para pesquisar.';
+
     if Assigned(pcMain) then
       pcMain.ActivePageIndex := 0;
       pcButtons.ActivePageIndex := 0;
@@ -585,6 +606,19 @@ procedure TFormHomeA.FormCreate(Sender: TObject);
 
     Self.BorderStyle := bsSingle;
     Self.WindowState := wsNormal;
+  end;
+
+procedure TFormHomeA.FormDestroy(Sender: TObject);
+begin
+    // Liberar recursos
+  if Assigned(FListaUsuarios) then
+    FListaUsuarios.Free;
+
+  if Assigned(FMemTable) then
+    FMemTable.Free;
+
+  FDataSource.Free;
+  FController.Free;
 end;
 
 procedure TFormHomeA.FormResize(Sender: TObject);
@@ -602,17 +636,13 @@ end;
 
 procedure TFormHomeA.FormShow(Sender: TObject);
   begin
-    if Assigned(DM) and Assigned(DM.FDQr) and Assigned(DM.FDConn) then
-    begin
-      try
-        if DM.FDConn.Connected then
-          AtualizarGrid;
-          eBuscaMain.TextHint := 'Digite aqui para pesquisar.';
-      except
-        on E: Exception do
-          ShowMessage('Erro ao carregar dados: ' + E.Message);
-      end;
-    end;
+    try
+    CarregarGridUsuarios(True); // Carregar apenas ativos
+    eBuscaMain.TextHint := 'Digite aqui para pesquisar.';
+    except
+    on E: Exception do
+      ShowMessage('Erro ao carregar dados: ' + E.Message);
+  end;
   end;
 
 procedure TFormHomeA.iButton1Click(Sender: TObject);

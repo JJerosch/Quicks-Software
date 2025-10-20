@@ -42,8 +42,11 @@ type
     procedure lblTrocaMouseLeave(Sender: TObject);
     procedure lblTrocaMouseEnter(Sender: TObject);
     procedure sbConfirmarClick(Sender: TObject);
+    function GetTipoUsuario: String;
+    procedure SetTipoUsuario(const Value: string);
+    property TipoUsuario: string read GetTipoUsuario write SetTipoUsuario;
   private
-    { Private declarations }
+    FTipoUsuario: string;
   public
     { Public declarations }
   end;
@@ -81,6 +84,11 @@ begin
   end else begin
     lblLogin.Margins.Top := 50;
   end;
+end;
+
+function TFormLogin.GetTipoUsuario: String;
+begin
+  Result := FTipoUsuario;
 end;
 
 procedure TFormLogin.lblConfirmarMouseEnter(Sender: TObject);
@@ -139,18 +147,37 @@ procedure TFormLogin.sbConfirmarClick(Sender: TObject);
 var
   Login: TLoginCfg;
   Controller: TLoginController;
+  Tipo: string;
 begin
   Login := TLoginCfg.Create;
   Controller := TLoginController.Create;
   try
     Login.Email := eEmail.Text;
     Login.Senha := meSenha.Text;
-    Controller.VerificarLogin(Login)
+
+    // Supondo que o Controller.VerificarLogin retorna o tipo do usuário ou string vazia
+    Tipo := Controller.VerificarLogin(Login);
+
+    if Tipo <> '' then
+    begin
+      FTipoUsuario := Tipo; // define o tipo dentro do form
+      ModalResult := mrOk;  // fecha o ShowModal com sucesso
+    end
+    else
+    begin
+      ShowMessage('Usuário ou senha incorretos.');
+      ModalResult := mrNone; // mantém o form aberto
+    end;
+
   finally
     Login.Free;
     Controller.Free;
   end;
+end;
 
+procedure TFormLogin.SetTipoUsuario(const Value: string);
+begin
+  FTipoUsuario := Value;
 end;
 
 procedure TFormLogin.lblConfirmarMouseLeave(Sender: TObject);

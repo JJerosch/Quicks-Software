@@ -8,7 +8,6 @@ Type TLoginRepository = class
     function VerificarUser(const ALogin, ASenha: String): Boolean;
 end;
 implementation
-
   function TLoginRepository.VerificarUser(const ALogin, ASenha: String): Boolean;
     var Qr: TFDQuery;
     begin

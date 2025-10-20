@@ -11,7 +11,7 @@ object FormHomeA: TFormHomeA
   Font.Name = 'Segoe UI'
   Font.Style = []
   OnCreate = FormCreate
-  OnResize = FormResize
+  OnDestroy = FormDestroy
   OnShow = FormShow
   TextHeight = 15
   object pHomeBackground: TPanel
@@ -730,7 +730,7 @@ object FormHomeA: TFormHomeA
                 Left = 31
                 Top = 27
                 Width = 497
-                Height = 30
+                Height = 23
                 BevelInner = bvNone
                 BevelOuter = bvNone
                 Enabled = False
@@ -1234,7 +1234,6 @@ object FormHomeA: TFormHomeA
           000068900600001AA401008006690000A0411A000068900600001AA401008006
           690000A041FF1FA1EEC55B2FFA86940000000049454E44AE426082}
         Proportional = True
-        OnClick = iButton3Click
       end
       object iButton2: TImage
         Left = 22
@@ -1391,7 +1390,6 @@ object FormHomeA: TFormHomeA
           A285E3680B9323DB2B2CFF5F0085B5A00268E7A00268E7A00268E7A00268E7F8
           1F291C2FF9F07C83BF0000000049454E44AE426082}
         Proportional = True
-        OnClick = iButton2Click
       end
       object iButton6: TImage
         AlignWithMargins = True
@@ -1701,7 +1699,6 @@ object FormHomeA: TFormHomeA
           340000D0210D000074480300001DD200004087340000D0210D00007448030000
           1DFAFFD01FFE1E60B6E11C0000000049454E44AE426082}
         Proportional = True
-        OnClick = iButton6Click
         ExplicitLeft = 17
         ExplicitTop = 578
         ExplicitWidth = 54
@@ -2449,7 +2446,6 @@ object FormHomeA: TFormHomeA
           22A20231012022222A1013002222A20231012022222A1013002222A202FD3FBB
           5137C463C0FA390000000049454E44AE426082}
         Proportional = True
-        OnClick = iButton5Click
       end
       object lblButton5: TLabel
         Left = 88
@@ -3197,7 +3193,6 @@ object FormHomeA: TFormHomeA
           40082184C81039004208214486FC3FE8BD66D1F9A7366E0000000049454E44AE
           426082}
         Proportional = True
-        OnClick = iButton4Click
       end
     end
   end

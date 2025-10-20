@@ -40,6 +40,7 @@ procedure TLoginService.VerificarLogin(const ALoginCfg: TLoginCfg);
     if FRepository.VerificarUser(ALoginCfg.Email, ALoginCfg.Senha) then
     begin
       MessageDlg('Login realizado com sucesso!', mtInformation, [mbOK], 0);
+
     end else begin
       MessageDlg('Usuário ou senha inválidos.', mtInformation, [mbOK], 0);
     end;
