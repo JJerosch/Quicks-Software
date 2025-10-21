@@ -1986,6 +1986,7 @@ object FormHomeC: TFormHomeC
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 1
+      ExplicitLeft = 92
       object scbxMain: TScrollBox
         AlignWithMargins = True
         Left = 25

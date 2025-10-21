@@ -31,9 +31,11 @@ type
     TabSheet2: TTabSheet;
     procedure iButton1Click(Sender: TObject);
   private
-    { Private declarations }
+    FIdUsuario: Integer;
+    FNomeUsuario: String;
   public
-    { Public declarations }
+    property IdUsuario: Integer read FIdUsuario write FIdUsuario;
+    property NomeUsuario: String read FNomeUsuario write FNomeUsuario;
   end;
 
 var

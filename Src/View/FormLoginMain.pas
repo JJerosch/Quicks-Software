@@ -170,16 +170,11 @@ var
   LoginResponse: TLoginResponse;
   Email, Senha: String;
 begin
-  // Obtém os dados dos campos
   Email := Trim(eEmail.Text);
   Senha := Trim(meSenha.Text);
-
-  // Desabilita o botão durante o processo
   sbConfirmar.Enabled := False;
   try
-    // Realiza o login através do controller
     FRedirectController.RealizarLoginERedirecionamento(Email, Senha, LoginResponse);
-
     try
       if LoginResponse.Autenticado then
       begin
@@ -193,11 +188,11 @@ begin
       end
       else
       begin
-        // Falha no login - exibe mensagem de erro
+
         ShowMessage(LoginResponse.Mensagem);
         meSenha.Clear;
         meSenha.SetFocus;
-        ModalResult := mrNone; // Mantém o form aberto
+        ModalResult := mrNone;
       end;
     finally
       LoginResponse.Free;

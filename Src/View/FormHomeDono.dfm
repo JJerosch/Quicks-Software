@@ -61,7 +61,7 @@ object FormHomeD: TFormHomeD
               Left = 20
               Top = 20
               Width = 414
-              Height = 588
+              Height = 30
               Margins.Left = 20
               Margins.Top = 20
               Margins.Bottom = 0
@@ -73,7 +73,6 @@ object FormHomeD: TFormHomeD
               Font.Name = 'Segoe UI'
               Font.Style = [fsBold]
               ParentFont = False
-              ExplicitHeight = 30
             end
           end
         end

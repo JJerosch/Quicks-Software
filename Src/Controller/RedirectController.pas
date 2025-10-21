@@ -37,7 +37,6 @@ end;
 
 function TRedirectController.DeterminarTela(ATipoUsuario: TTipoUsuario): String;
 begin
-  // Define para qual tela redirecionar baseado no tipo de usuário
   case ATipoUsuario of
     tuCliente:    Result := 'do Cliente';
     tuComercio:   Result := 'do Comércio';
