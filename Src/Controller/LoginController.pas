@@ -1,70 +1,44 @@
 unit LoginController;
 
 interface
-uses LoginModel, LoginService, Vcl.Forms, Vcl.Dialogs,
-  FormLoginMain,         // TFormLogin
-  FormHomeAdmin,         // TFormHomeA
-  FormHomeClientes,      // TFormHomeC
-  FormHomeDono,          // TFormHomeD
-  FormHomeEntregador;;
-Type TLoginController = class
+uses
+  LoginModel, LoginService, Vcl.Forms, Vcl.Dialogs;
+
+type
+  TLoginController = class
   private
     FService: TLoginService;
   public
     constructor Create;
     destructor Destroy; override;
-    procedure IniciarAplicacao;
-    procedure VerificarLogin(const ALoginCfg: TLoginCfg);
-end;
+    function VerificarLogin(const ALoginRequest: TLoginRequest): TLoginResponse; overload;
+    function VerificarLogin(const AEmail, ASenha: String): TLoginResponse; overload;
+  end;
 
 implementation
 
-
-  constructor TLoginController.Create;
-    begin
-      FService := TLoginService.Create;
-    end;
-  destructor TLoginController.Destroy;
-    begin
-      FService.Free;
-      inherited;
-    end;
-
-procedure TLoginController.IniciarAplicacao;
-var
-  FormLogin: TFormLogin;
-  TipoUsuario: string;
+constructor TLoginController.Create;
 begin
-  FormLogin := TFormLogin.Create(nil);
-  try
-    if FormLogin.ShowModal <> mrOK then
-    begin
-      Application.Terminate;
-      Exit;
-    end;
-    TipoUsuario := FormLogin.GetTipoUsuario;
-    if TipoUsuario = 'Administrador' then
-      Application.CreateForm(TFormHomeA, FormHomeA)
-    else if TipoUsuario = 'Cliente' then
-      Application.CreateForm(TFormHomeC, FormHomeC)
-    else if TipoUsuario = 'Dono de Comércio' then
-      Application.CreateForm(TFormHomeD, FormHomeD)
-    else if TipoUsuario = 'Entregador' then
-      Application.CreateForm(TFormHomeE, FormHomeE)
-    else
-    begin
-      ShowMessage('Tipo de usuário desconhecido. Encerrando.');
-      Application.Terminate;
-      Exit;
-    end;
-    Application.Run;
-  finally
-    FormLogin.Free;
-  end;
+  inherited;
+  FService := TLoginService.Create;
 end;
 
-procedure TLoginController.VerificarLogin(const ALoginCfg: TLoginCfg);
-    begin
-      FService.VerificarLogin(ALoginCfg);
-    end;
+destructor TLoginController.Destroy;
+begin
+  FService.Free;
+  inherited;
+end;
+
+function TLoginController.VerificarLogin(const ALoginRequest: TLoginRequest): TLoginResponse;
+begin
+  // Chama o Service passando email e senha
+  Result := FService.VerificarLogin(ALoginRequest.Email, ALoginRequest.Senha);
+end;
+
+function TLoginController.VerificarLogin(const AEmail, ASenha: String): TLoginResponse;
+begin
+  // Chama o Service diretamente
+  Result := FService.VerificarLogin(AEmail, ASenha);
+end;
+
 end.

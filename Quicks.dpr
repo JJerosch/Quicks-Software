@@ -26,7 +26,8 @@ uses
   UsuarioServiceCRUDAdmin in 'Src\Service\UsuarioServiceCRUDAdmin.pas',
   CargosServiceCRUDAdmin in 'Src\Service\CargosServiceCRUDAdmin.pas',
   UsuarioControllerCRUDAdmin in 'Src\Controller\UsuarioControllerCRUDAdmin.pas',
-  UsuarioDataSetHelperCRUDAdmin in 'Src\Helper\UsuarioDataSetHelperCRUDAdmin.pas';
+  UsuarioDataSetHelperCRUDAdmin in 'Src\Helper\UsuarioDataSetHelperCRUDAdmin.pas',
+  RedirectController in 'Src\Controller\RedirectController.pas';
 
 {$R *.res}
 
@@ -36,14 +37,8 @@ begin
   Application.Initialize;
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TDM, DM);
-  Controller := TLoginController.Create;
-  try
-    Controller.IniciarAplicacao;
-  finally
-    Controller.Free;
-  end;
-  Application.CreateForm(TFormHomeA, FormHomeA);
   Application.CreateForm(TFormLogin, FormLogin);
+  Application.CreateForm(TFormHomeA, FormHomeA);
   Application.CreateForm(TFormCadastro, FormCadastro);
   Application.CreateForm(TFormHomeD, FormHomeD);
   Application.CreateForm(TFormHomeC, FormHomeC);

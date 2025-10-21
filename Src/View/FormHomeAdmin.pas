@@ -124,6 +124,8 @@ type
     procedure iButton5Click(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
   private
+    FIdUsuario: Integer;
+    FNomeUsuario: String;
     FController: TUsuarioController;
     FIdUsuarioSelecionado: Integer;
     FListaUsuarios: TObjectList<TUsuario>;
@@ -139,6 +141,9 @@ type
     procedure AtualizarGridTrue;
     procedure FiltrarGrid(const TextoBusca: string);
     procedure CarregarGridUsuarios(ApenasAtivos: Boolean);
+  public
+    property IdUsuario: Integer read FIdUsuario write FIdUsuario;
+    property NomeUsuario: String read FNomeUsuario write FNomeUsuario;
   end;
 var
   FormHomeA: TFormHomeA;
@@ -494,6 +499,11 @@ begin
   finally
     QueryAux.Free;
   end;
+end;
+
+procedure TFormHomeA.CarregarGridUsuarios(ApenasAtivos: Boolean);
+begin
+
 end;
 
 procedure TFormHomeA.DBGridUsuariosCellClick(Column: TColumn);
