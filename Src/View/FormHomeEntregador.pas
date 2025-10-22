@@ -26,10 +26,13 @@ type
     pHeader: TPanel;
     pBusca: TPanel;
     procedure iButton1MenuClick(Sender: TObject);
+    procedure FormShow(Sender: TObject);
   private
-    { Private declarations }
+    FIdUsuario: Integer;
+    FNomeUsuario: String;
   public
-    { Public declarations }
+    property IdUsuario: Integer read FIdUsuario write FIdUsuario;
+    property NomeUsuario: String read FNomeUsuario write FNomeUsuario;
   end;
 
 var
@@ -46,6 +49,12 @@ begin
   end else begin
     pBarraMenuLeft.Width := 89;
   end;
+end;
+procedure TFormHomeE.FormShow(Sender: TObject);
+begin
+// Usar os dados do usuário quando o form for exibido
+  Caption := 'Home Entregador - ' + FNomeUsuario;
+  lblText.Caption := 'Bem-vindo, ' + FNomeUsuario + '!';
 end;
 
 end.

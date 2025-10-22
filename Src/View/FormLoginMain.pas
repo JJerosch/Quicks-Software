@@ -5,7 +5,8 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls,
-  Vcl.Imaging.pngimage, Vcl.Imaging.jpeg, Vcl.Mask, Vcl.Buttons, LoginModel, RedirectController;
+  Vcl.Imaging.pngimage, Vcl.Imaging.jpeg, Vcl.Mask, Vcl.Buttons, LoginModel, LoginController,
+  RedirectController, FormCadastroMain, FormHomeAdmin, FormHomeClientes, FormHomeDono, FormHomeEntregador;
 
 type
   TFormLogin = class(TForm)
@@ -43,24 +44,28 @@ type
     procedure lblTrocaMouseEnter(Sender: TObject);
     procedure sbConfirmarClick(Sender: TObject);
   private
-    FRedirectController: TRedirectController;
+    RedirectController: TRedirectController;
+    LoginController: TLoginController;
     FTipoUsuario: String;
     FIdUsuario: Integer;
     FNomeUsuario: String;
   public
+    function DeterminarTela(ATipoUsuario: TTipoUsuario): String;
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
     property TipoUsuario: String read FTipoUsuario;
     property IdUsuario: Integer read FIdUsuario;
     property NomeUsuario: String read FNomeUsuario;
+    procedure RealizarProcessoRedirecionamento(LoginResponse: TLoginResponse);
+    procedure RedirecionarParaTela(const ANomeTela: String; AIdUsuario: Integer; ANomeUsuario: String);
   end;
 
 var
   FormLogin: TFormLogin;
+  ATipoUsuario: TTIpoUsuario;
 
 implementation
-uses
-  FormCadastroMain;
+
 {$R *.dfm}
 
 procedure TFormLogin.bFormLoginSairClick(Sender: TObject);
@@ -71,7 +76,8 @@ end;
 constructor TFormLogin.Create(AOwner: TComponent);
 begin
   inherited;
-  FRedirectController := TRedirectController.Create;
+  LoginController:= TLoginController.Create;
+  RedirectController := TRedirectController.Create;
   FTipoUsuario := '';
   FIdUsuario := 0;
   FNomeUsuario := '';
@@ -79,8 +85,21 @@ end;
 
 destructor TFormLogin.Destroy;
 begin
-  FRedirectController.Free;
+  LoginController.Free;
+  RedirectController.Free;
   inherited;
+end;
+
+function TFormLogin.DeterminarTela(ATipoUsuario: TTipoUsuario): String;
+begin
+  case ATipoUsuario of
+    tuCliente:    Result := 'do Cliente';
+    tuComercio:   Result := 'do Comércio';
+    tuEntregador: Result := 'do Entregador';
+    tuAdmin:      Result := 'do Administrador';
+  else
+    Result := '';
+  end;
 end;
 
 procedure TFormLogin.FormCreate(Sender: TObject);
@@ -165,39 +184,98 @@ begin
   end;
 end;
 
+procedure TFormLogin.RealizarProcessoRedirecionamento(LoginResponse: TLoginResponse);
+var
+  NomeTela: String;
+begin
+    NomeTela := DeterminarTela(LoginResponse.TipoUsuario);
+    if NomeTela <> '' then
+    begin
+      RedirecionarParaTela(NomeTela, LoginResponse.IdUsuario, LoginResponse.NomeUsuario);
+    end
+    else
+    begin
+      LoginResponse.Autenticado := False;
+      LoginResponse.Mensagem := 'Tipo de usuário não reconhecido!';
+    end;
+end;
+
+procedure TFormLogin.RedirecionarParaTela(const ANomeTela: String; AIdUsuario: Integer; ANomeUsuario: String);
+begin
+case ATipoUsuario of
+    tuCliente:
+      begin
+        if not Assigned(FormHomeC) then
+          FormHomeC := TFormHomeC.Create(Application);
+        FormHomeC.IdUsuario := AIdUsuario;
+        FormHomeC.NomeUsuario := ANomeUsuario;
+        FormHomeC.Show;
+      end;
+
+    tuComercio:
+      begin
+        if not Assigned(FormHomeD) then
+          FormHomeD := TFormHomeD.Create(Application);
+        FormHomeD.IdUsuario := AIdUsuario;
+        FormHomeD.NomeUsuario := ANomeUsuario;
+        FormHomeD.Show;
+      end;
+
+    tuEntregador:
+      begin
+        if not Assigned(FormHomeE) then
+          FormHomeE := TFormHomeE.Create(Application);
+        FormHomeE.IdUsuario := AIdUsuario;
+        FormHomeE.NomeUsuario := ANomeUsuario;
+        FormHomeE.Show;
+      end;
+
+    tuAdmin:
+      begin
+        if not Assigned(FormHomeA) then
+          FormHomeA := TFormHomeA.Create(Application);
+        FormHomeA.IdUsuario := AIdUsuario;
+        FormHomeA.NomeUsuario := ANomeUsuario;
+        FormHomeA.Show;
+      end;
+  else
+    ShowMessage('Tipo de usuário inválido!');
+  end;
+
+  ShowMessage('Redirecionando para menu: ' +
+              DeterminarTela(ATipoUsuario) + sLineBreak +
+              'Usuário ID: ' + IntToStr(AIdUsuario) + sLineBreak +
+              'Nome: ' + ANomeUsuario);
+end;
+
 procedure TFormLogin.sbConfirmarClick(Sender: TObject);
 var
-  LoginResponse: TLoginResponse;
-  Email, Senha: String;
+LoginRequest: TLoginRequest;
+LoginResponse: TLoginResponse;
 begin
-  Email := Trim(eEmail.Text);
-  Senha := Trim(meSenha.Text);
+  LoginRequest.Create;
+  LoginResponse.Create;
+  LoginRequest.Email := Trim(eEmail.Text);
+  LoginRequest.Senha := Trim(meSenha.Text);
   sbConfirmar.Enabled := False;
-  try
-    FRedirectController.RealizarLoginERedirecionamento(Email, Senha, LoginResponse);
+
+    LoginResponse:=LoginController.VerificarLogin(LoginRequest);
     try
       if LoginResponse.Autenticado then
       begin
-        // Sucesso - armazena os dados do usuário no form
+        RealizarProcessoRedirecionamento(LoginResponse);
         FTipoUsuario := LoginResponse.TipoUsuarioToString;
         FIdUsuario := LoginResponse.IdUsuario;
         FNomeUsuario := LoginResponse.NomeUsuario;
-
-        // Fecha o form com sucesso
         ModalResult := mrOk;
       end
       else
       begin
-
         ShowMessage(LoginResponse.Mensagem);
         meSenha.Clear;
         meSenha.SetFocus;
         ModalResult := mrNone;
       end;
-    finally
-      LoginResponse.Free;
-    end;
-
   finally
     sbConfirmar.Enabled := True;
   end;

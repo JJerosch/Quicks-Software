@@ -7,14 +7,14 @@ uses
 type
   TLoginRepository = class
   public
-    function BuscarUsuarioPorCredenciais(const AEmail, ASenha: String): TLoginResponse;
+    function BuscarUsuarioPorCredenciais(LoginRequest: TLoginRequest): TLoginResponse;
   end;
 
 implementation
 
 { TLoginRepository }
 
-function TLoginRepository.BuscarUsuarioPorCredenciais(const AEmail, ASenha: String): TLoginResponse;
+function TLoginRepository.BuscarUsuarioPorCredenciais(LoginRequest: TLoginRequest): TLoginResponse;
 var
   Qr: TFDQuery;
 begin
@@ -38,8 +38,8 @@ begin
       '  AND u.senha_user = :senha ' +
       '  AND u.ativo = true';
 
-    Qr.ParamByName('email').AsString := AEmail;
-    Qr.ParamByName('senha').AsString := ASenha;
+    Qr.ParamByName('email').AsString := LoginRequest.Email;
+    Qr.ParamByName('senha').AsString := LoginRequest.Senha;
 
     Qr.Open;
 

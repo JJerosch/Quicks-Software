@@ -11,7 +11,7 @@ type
   public
     constructor Create;
     destructor Destroy; override;
-    function VerificarLogin(const AEmail, ASenha: String): TLoginResponse;
+    function VerificarLogin(LoginRequest: TLoginRequest): TLoginResponse;
     function ValidarDados(const AEmail, ASenha: String; out AMensagem: String): Boolean;
   end;
 
@@ -35,24 +35,18 @@ function TLoginService.ValidarDados(const AEmail, ASenha: String; out AMensagem:
 begin
   Result := True;
   AMensagem := '';
-
-  // Validação de email vazio
   if Trim(AEmail) = '' then
   begin
     Result := False;
     AMensagem := 'Email não pode estar vazio!';
     Exit;
   end;
-
-  // Validação de senha vazia
   if Trim(ASenha) = '' then
   begin
     Result := False;
     AMensagem := 'Senha não pode estar vazia!';
     Exit;
   end;
-
-  // Validação básica de formato de email
   if Pos('@', AEmail) = 0 then
   begin
     Result := False;
@@ -61,14 +55,14 @@ begin
   end;
 end;
 
-function TLoginService.VerificarLogin(const AEmail, ASenha: String): TLoginResponse;
+function TLoginService.VerificarLogin(LoginRequest: TLoginRequest): TLoginResponse;
 var
   MensagemValidacao: String;
 begin
   Result := TLoginResponse.Create;
 
   // Valida os dados antes de consultar o banco
-  if not ValidarDados(AEmail, ASenha, MensagemValidacao) then
+  if not ValidarDados(LoginRequest.Email, LoginRequest.Senha, MensagemValidacao) then
   begin
     Result.Autenticado := False;
     Result.Mensagem := MensagemValidacao;
@@ -77,7 +71,7 @@ begin
 
   // Busca o usuário no banco de dados
   try
-    Result := FRepository.BuscarUsuarioPorCredenciais(AEmail, ASenha);
+    Result := FRepository.BuscarUsuarioPorCredenciais(LoginRequest);
   except
     on E: Exception do
     begin

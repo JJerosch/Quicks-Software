@@ -11,8 +11,7 @@ type
   public
     constructor Create;
     destructor Destroy; override;
-    function VerificarLogin(const ALoginRequest: TLoginRequest): TLoginResponse; overload;
-    function VerificarLogin(const AEmail, ASenha: String): TLoginResponse; overload;
+    function VerificarLogin(LoginRequest: TLoginRequest): TLoginResponse; overload;
   end;
 
 implementation
@@ -29,16 +28,10 @@ begin
   inherited;
 end;
 
-function TLoginController.VerificarLogin(const ALoginRequest: TLoginRequest): TLoginResponse;
+function TLoginController.VerificarLogin(LoginRequest: TLoginRequest): TLoginResponse;
 begin
   // Chama o Service passando email e senha
-  Result := FService.VerificarLogin(ALoginRequest.Email, ALoginRequest.Senha);
-end;
-
-function TLoginController.VerificarLogin(const AEmail, ASenha: String): TLoginResponse;
-begin
-  // Chama o Service diretamente
-  Result := FService.VerificarLogin(AEmail, ASenha);
+  Result := FService.VerificarLogin(LoginRequest);
 end;
 
 end.

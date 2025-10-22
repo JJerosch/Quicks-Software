@@ -2,7 +2,8 @@ unit RedirectController;
 
 interface
 uses
-  System.SysUtils, LoginModel, LoginService, Vcl.Forms, Vcl.Dialogs;
+  System.SysUtils, LoginModel, LoginService, Vcl.Forms, Vcl.Dialogs,
+  FormHomeAdmin, FormHomeClientes, FormHomeDono, FormHomeEntregador;
 
 type
   TRedirectController = class
@@ -12,14 +13,12 @@ type
   public
     constructor Create;
     destructor Destroy; override;
-    procedure RealizarLoginERedirecionamento(const AEmail, ASenha: String; out AResultado: TLoginResponse);
+    procedure RealizarProcessoRedirecionamento(out AResultado: TLoginResponse);
     procedure RedirecionarParaTela(const ANomeTela: String; AIdUsuario: Integer; ANomeUsuario: String);
   end;
-
+  var
+  ATIpoUsuario: TTipoUsuario;
 implementation
-
-uses
-  FormHomeAdmin, FormHomeClientes, FormHomeDono, FormHomeEntregador;
 
 { TRedirectController }
 
@@ -47,22 +46,13 @@ begin
   end;
 end;
 
-procedure TRedirectController.RealizarLoginERedirecionamento(
-  const AEmail, ASenha: String; out AResultado: TLoginResponse);
+procedure TRedirectController.RealizarProcessoRedirecionamento(out AResultado: TLoginResponse);
 var
   NomeTela: String;
 begin
-  // Realiza o login através do service
-  AResultado := FLoginService.VerificarLogin(AEmail, ASenha);
-
-  // Se autenticado, determina para qual tela redirecionar
-  if AResultado.Autenticado then
-  begin
     NomeTela := DeterminarTela(AResultado.TipoUsuario);
-
     if NomeTela <> '' then
     begin
-      // Realiza o redirecionamento
       RedirecionarParaTela(NomeTela, AResultado.IdUsuario, AResultado.NomeUsuario);
     end
     else
@@ -70,54 +60,54 @@ begin
       AResultado.Autenticado := False;
       AResultado.Mensagem := 'Tipo de usuário não reconhecido!';
     end;
-  end;
 end;
 
 procedure TRedirectController.RedirecionarParaTela(const ANomeTela: String;
   AIdUsuario: Integer; ANomeUsuario: String);
 begin
-  {
-  if Assigned(Application.FormLoginMain) then
-    Application.FormLogin.Hide;
-  // Criar e exibir o form de destino
-  case ANomeTela of
-    'do Cliente':
-    begin
-      if not Assigned(FormHomeCliente) then
-        FormHomeCliente := TFormHomeCliente.Create(Application);
-      FormHomeCliente.IdUsuario := AIdUsuario;
-      FormHomeCliente.NomeUsuario := ANomeUsuario;
-      FormHomeCliente.Show;
-    end;
-    'do Comércio':
-    begin
-      if not Assigned(FormHomeDono) then
-        FormHomeDono := TFormHomeDono.Create(Application);
-      FormHomeDono.IdUsuario := AIdUsuario;
-      FormHomeDono.NomeUsuario := ANomeUsuario;
-      FormHomeDono.Show;
-    end;
-    'do Entregador':
-    begin
-      if not Assigned(FormHomeEntregador) then
-        FormHomeEntregador := TFormHomeEntregador.Create(Application);
-      FormHomeEntregador.IdUsuario := AIdUsuario;
-      FormHomeEntregador.NomeUsuario := ANomeUsuario;
-      FormHomeEntregador.Show;
-    end;
-    'do Administrador':
-    begin
-      if not Assigned(FormHomeAdmin) then
-        FormHomeAdmin := TFormHomeAdmin.Create(Application);
-      FormHomeAdmin.IdUsuario := AIdUsuario;
-      FormHomeAdmin.NomeUsuario := ANomeUsuario;
-      FormHomeAdmin.Show;
-    end;
-  end;
-  }
-  ShowMessage('Redirecionando para menu ' + ANomeTela +
-              #13#10 + 'Usuário ID: ' + IntToStr(AIdUsuario) +
-              #13#10 + 'Nome: ' + ANomeUsuario);
-end;
+case ATipoUsuario of
+    tuCliente:
+      begin
+        if not Assigned(FormHomeC) then
+          FormHomeC := TFormHomeC.Create(Application);
+        FormHomeC.IdUsuario := AIdUsuario;
+        FormHomeC.NomeUsuario := ANomeUsuario;
+        FormHomeC.Show;
+      end;
 
+    tuComercio:
+      begin
+        if not Assigned(FormHomeD) then
+          FormHomeD := TFormHomeD.Create(Application);
+        FormHomeD.IdUsuario := AIdUsuario;
+        FormHomeD.NomeUsuario := ANomeUsuario;
+        FormHomeD.Show;
+      end;
+
+    tuEntregador:
+      begin
+        if not Assigned(FormHomeE) then
+          FormHomeE := TFormHomeE.Create(Application);
+        FormHomeE.IdUsuario := AIdUsuario;
+        FormHomeE.NomeUsuario := ANomeUsuario;
+        FormHomeE.Show;
+      end;
+
+    tuAdmin:
+      begin
+        if not Assigned(FormHomeA) then
+          FormHomeA := TFormHomeA.Create(Application);
+        FormHomeA.IdUsuario := AIdUsuario;
+        FormHomeA.NomeUsuario := ANomeUsuario;
+        FormHomeA.Show;
+      end;
+  else
+    ShowMessage('Tipo de usuário inválido!');
+  end;
+
+  ShowMessage('Redirecionando para menu: ' +
+              DeterminarTela(ATipoUsuario) + sLineBreak +
+              'Usuário ID: ' + IntToStr(AIdUsuario) + sLineBreak +
+              'Nome: ' + ANomeUsuario);
+end;
 end.
