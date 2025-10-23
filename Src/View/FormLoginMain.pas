@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls,
   Vcl.Imaging.pngimage, Vcl.Imaging.jpeg, Vcl.Mask, Vcl.Buttons, LoginModel, LoginController,
-  RedirectController, FormCadastroMain, FormHomeAdmin, FormHomeClientes, FormHomeDono, FormHomeEntregador;
+  RedirectController, FormCadastroMain, FormHomeAdmin, FormHomeClientes, FormHomeDono, FormHomeEntregador, uConn;
 
 type
   TFormLogin = class(TForm)
@@ -44,8 +44,6 @@ type
     procedure lblTrocaMouseEnter(Sender: TObject);
     procedure sbConfirmarClick(Sender: TObject);
   private
-    RedirectController: TRedirectController;
-    LoginController: TLoginController;
     FTipoUsuario: String;
     FIdUsuario: Integer;
     FNomeUsuario: String;
@@ -57,13 +55,12 @@ type
     property IdUsuario: Integer read FIdUsuario;
     property NomeUsuario: String read FNomeUsuario;
     procedure RealizarProcessoRedirecionamento(LoginResponse: TLoginResponse);
-    procedure RedirecionarParaTela(const ANomeTela: String; AIdUsuario: Integer; ANomeUsuario: String);
+    procedure RedirecionarParaTela(ATipoUsuario: TTipoUsuario; AIdUsuario: Integer; ANomeUsuario: String);
   end;
 
 var
   FormLogin: TFormLogin;
   ATipoUsuario: TTIpoUsuario;
-
 implementation
 
 {$R *.dfm}
@@ -76,8 +73,6 @@ end;
 constructor TFormLogin.Create(AOwner: TComponent);
 begin
   inherited;
-  LoginController:= TLoginController.Create;
-  RedirectController := TRedirectController.Create;
   FTipoUsuario := '';
   FIdUsuario := 0;
   FNomeUsuario := '';
@@ -85,8 +80,6 @@ end;
 
 destructor TFormLogin.Destroy;
 begin
-  LoginController.Free;
-  RedirectController.Free;
   inherited;
 end;
 
@@ -188,21 +181,23 @@ procedure TFormLogin.RealizarProcessoRedirecionamento(LoginResponse: TLoginRespo
 var
   NomeTela: String;
 begin
-    NomeTela := DeterminarTela(LoginResponse.TipoUsuario);
-    if NomeTela <> '' then
-    begin
-      RedirecionarParaTela(NomeTela, LoginResponse.IdUsuario, LoginResponse.NomeUsuario);
-    end
-    else
-    begin
-      LoginResponse.Autenticado := False;
-      LoginResponse.Mensagem := 'Tipo de usuário não reconhecido!';
-    end;
+  NomeTela := DeterminarTela(LoginResponse.TipoUsuario);
+  if NomeTela <> '' then
+  begin
+    // Passa o TipoUsuario do LoginResponse
+    RedirecionarParaTela(LoginResponse.TipoUsuario, LoginResponse.IdUsuario, LoginResponse.NomeUsuario);
+  end
+  else
+  begin
+    LoginResponse.Autenticado := False;
+    LoginResponse.Mensagem := 'Tipo de usuário não reconhecido!';
+    ShowMessage(LoginResponse.Mensagem);
+  end;
 end;
 
-procedure TFormLogin.RedirecionarParaTela(const ANomeTela: String; AIdUsuario: Integer; ANomeUsuario: String);
+procedure TFormLogin.RedirecionarParaTela(ATipoUsuario: TTipoUsuario; AIdUsuario: Integer; ANomeUsuario: String);
 begin
-case ATipoUsuario of
+  case ATipoUsuario of
     tuCliente:
       begin
         if not Assigned(FormHomeC) then
@@ -247,38 +242,78 @@ case ATipoUsuario of
               'Usuário ID: ' + IntToStr(AIdUsuario) + sLineBreak +
               'Nome: ' + ANomeUsuario);
 end;
-
 procedure TFormLogin.sbConfirmarClick(Sender: TObject);
 var
-LoginRequest: TLoginRequest;
-LoginResponse: TLoginResponse;
+  LocalLoginRequest: TLoginRequest;
+  LocalLoginResponse: TLoginResponse;
+  LocalLoginController: TLoginController;
 begin
-  LoginRequest.Create;
-  LoginResponse.Create;
-  LoginRequest.Email := Trim(eEmail.Text);
-  LoginRequest.Senha := Trim(meSenha.Text);
-  sbConfirmar.Enabled := False;
-
-    LoginResponse:=LoginController.VerificarLogin(LoginRequest);
-    try
-      if LoginResponse.Autenticado then
-      begin
-        RealizarProcessoRedirecionamento(LoginResponse);
-        FTipoUsuario := LoginResponse.TipoUsuarioToString;
-        FIdUsuario := LoginResponse.IdUsuario;
-        FNomeUsuario := LoginResponse.NomeUsuario;
-        ModalResult := mrOk;
-      end
-      else
-      begin
-        ShowMessage(LoginResponse.Mensagem);
-        meSenha.Clear;
-        meSenha.SetFocus;
-        ModalResult := mrNone;
-      end;
-  finally
-    sbConfirmar.Enabled := True;
+  // Verificar se DM existe
+  if not Assigned(DM) then
+  begin
+    ShowMessage('Erro: Sistema não inicializado corretamente');
+    Exit;
   end;
+
+  // Validar campos
+  if Trim(eEmail.Text) = '' then
+  begin
+    ShowMessage('Por favor, informe o e-mail.');
+    eEmail.SetFocus;
+    Exit;
+  end;
+
+  if Trim(meSenha.Text) = '' then
+  begin
+    ShowMessage('Por favor, informe a senha.');
+    meSenha.SetFocus;
+    Exit;
+  end;
+
+  LocalLoginRequest := nil;
+  LocalLoginResponse := nil;
+  LocalLoginController := nil;
+
+  try
+    LocalLoginRequest := TLoginRequest.Create;
+    LocalLoginController := TLoginController.Create;
+    LocalLoginRequest.Email := Trim(eEmail.Text);
+    LocalLoginRequest.Senha := Trim(meSenha.Text);
+    sbConfirmar.Enabled := False;
+    LocalLoginResponse := LocalLoginController.VerificarLogin(LocalLoginRequest);
+    if Assigned(LocalLoginResponse) and LocalLoginResponse.Autenticado then
+    begin
+      FTipoUsuario := LocalLoginResponse.TipoUsuarioToString;
+      FIdUsuario := LocalLoginResponse.IdUsuario;
+      FNomeUsuario := LocalLoginResponse.NomeUsuario;
+      RealizarProcessoRedirecionamento(LocalLoginResponse);
+      Self.Hide;
+    end
+    else
+    begin
+      if Assigned(LocalLoginResponse) then
+        ShowMessage(LocalLoginResponse.Mensagem)
+      else
+        ShowMessage('Erro ao processar login.');
+
+      meSenha.Clear;
+      eEmail.SetFocus;
+    end;
+
+  except
+    on E: Exception do
+    begin
+      ShowMessage('Erro ao processar login: ' + E.Message);
+    end;
+  end;
+  if Assigned(LocalLoginResponse) then
+    LocalLoginResponse.Free;
+  if Assigned(LocalLoginRequest) then
+    LocalLoginRequest.Free;
+  if Assigned(LocalLoginController) then
+    LocalLoginController.Free;
+
+  sbConfirmar.Enabled := True;
 end;
 
 end.
