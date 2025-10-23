@@ -34,6 +34,8 @@ object FormLogin: TFormLogin
     Color = clCoral
     ParentBackground = False
     TabOrder = 0
+    ExplicitLeft = 731
+    ExplicitTop = -5
     object lblLogin: TLabel
       AlignWithMargins = True
       Left = 4

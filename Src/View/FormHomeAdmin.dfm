@@ -63,8 +63,8 @@ object FormHomeA: TFormHomeA
               AlignWithMargins = True
               Left = 20
               Top = 20
-              Width = 414
-              Height = 30
+              Width = 1084
+              Height = 588
               Margins.Left = 20
               Margins.Top = 20
               Margins.Bottom = 0
@@ -76,6 +76,8 @@ object FormHomeA: TFormHomeA
               Font.Name = 'Segoe UI'
               Font.Style = [fsBold]
               ParentFont = False
+              ExplicitWidth = 414
+              ExplicitHeight = 30
             end
           end
         end
@@ -3191,6 +3193,7 @@ object FormHomeA: TFormHomeA
           40082184C81039004208214486FC3FE8BD66D1F9A7366E0000000049454E44AE
           426082}
         Proportional = True
+        OnClick = iButton4Click
       end
     end
   end
@@ -3204,6 +3207,30 @@ object FormHomeA: TFormHomeA
     ParentBackground = False
     TabOrder = 1
     StyleName = 'Windows'
+    object lblUserNameHeader: TLabel
+      Left = 62
+      Top = 9
+      Width = 838
+      Height = 30
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -22
+      Font.Name = 'Segoe UI'
+      Font.Style = []
+      ParentFont = False
+    end
+    object lblUserIdHeader: TLabel
+      Left = 4
+      Top = 9
+      Width = 52
+      Height = 30
+      Font.Charset = DEFAULT_CHARSET
+      Font.Color = clWindowText
+      Font.Height = -22
+      Font.Name = 'Segoe UI'
+      Font.Style = []
+      ParentFont = False
+    end
   end
   object QueryUp: TFDQuery
     Left = 621

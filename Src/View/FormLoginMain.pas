@@ -6,7 +6,8 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls,
   Vcl.Imaging.pngimage, Vcl.Imaging.jpeg, Vcl.Mask, Vcl.Buttons, LoginModel, LoginController,
-  RedirectController, FormCadastroMain, FormHomeAdmin, FormHomeClientes, FormHomeDono, FormHomeEntregador, uConn;
+  RedirectController, FormCadastroMain, FormHomeAdmin, FormHomeClientes, FormHomeDono, FormHomeEntregador, uConn
+  , bcrypt;
 
 type
   TFormLogin = class(TForm)

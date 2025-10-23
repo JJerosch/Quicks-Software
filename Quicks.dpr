@@ -10,7 +10,6 @@ uses
   LoginService in 'Src\Service\LoginService.pas',
   LoginController in 'Src\Controller\LoginController.pas',
   LoginRepository in 'Src\Repository\LoginRepository.pas',
-  DTOLC in 'Src\DTO\DTOLC.pas',
   CadastroModel in 'Src\Model\CadastroModel.pas',
   CadastroService in 'Src\Service\CadastroService.pas',
   CadastroRepository in 'Src\Repository\CadastroRepository.pas',
@@ -26,8 +25,8 @@ uses
   UsuarioServiceCRUDAdmin in 'Src\Service\UsuarioServiceCRUDAdmin.pas',
   CargosServiceCRUDAdmin in 'Src\Service\CargosServiceCRUDAdmin.pas',
   UsuarioControllerCRUDAdmin in 'Src\Controller\UsuarioControllerCRUDAdmin.pas',
-  UsuarioDataSetHelperCRUDAdmin in 'Src\Helper\UsuarioDataSetHelperCRUDAdmin.pas',
-  RedirectController in 'Src\Controller\RedirectController.pas';
+  RedirectController in 'Src\Controller\RedirectController.pas',
+  UsuarioDataSetHelperCRUDAdmin in 'Src\Utils\UsuarioDataSetHelperCRUDAdmin.pas';
 
 {$R *.res}
 

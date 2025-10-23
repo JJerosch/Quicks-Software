@@ -105,6 +105,7 @@
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
+        <DCC_UnitSearchPath>C:\Users\jpjer\OneDrive\Documentos\GitHub\Quicks-Software\Src\Utils;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
@@ -139,7 +140,6 @@
         <DCCReference Include="Src\Service\LoginService.pas"/>
         <DCCReference Include="Src\Controller\LoginController.pas"/>
         <DCCReference Include="Src\Repository\LoginRepository.pas"/>
-        <DCCReference Include="Src\DTO\DTOLC.pas"/>
         <DCCReference Include="Src\Model\CadastroModel.pas"/>
         <DCCReference Include="Src\Service\CadastroService.pas"/>
         <DCCReference Include="Src\Repository\CadastroRepository.pas"/>
@@ -163,8 +163,8 @@
         <DCCReference Include="Src\Service\UsuarioServiceCRUDAdmin.pas"/>
         <DCCReference Include="Src\Service\CargosServiceCRUDAdmin.pas"/>
         <DCCReference Include="Src\Controller\UsuarioControllerCRUDAdmin.pas"/>
-        <DCCReference Include="Src\Helper\UsuarioDataSetHelperCRUDAdmin.pas"/>
         <DCCReference Include="Src\Controller\RedirectController.pas"/>
+        <DCCReference Include="Src\Utils\UsuarioDataSetHelperCRUDAdmin.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

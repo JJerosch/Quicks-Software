@@ -98,6 +98,8 @@ type
     Panel3: TPanel;
     Label7: TLabel;
     QueryUp: TFDQuery;
+    lblUserNameHeader: TLabel;
+    lblUserIdHeader: TLabel;
     procedure iButton1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure pButton1AdicionarClick(Sender: TObject);
@@ -648,6 +650,8 @@ procedure TFormHomeA.FormShow(Sender: TObject);
   begin
     try
     CarregarGridUsuarios(True); // Carregar apenas ativos
+    lblUserNameHeader.Caption:=NomeUsuario;
+    lblUserIdHeader.Caption:=IdUsuario.ToString;
     eBuscaMain.TextHint := 'Digite aqui para pesquisar.';
     except
     on E: Exception do
