@@ -1,8 +1,9 @@
-unit LoginService;
+ï»¿unit LoginService;
 
 interface
+
 uses
-  System.SysUtils, LoginModel, LoginRepository;
+  LoginModel, LoginRepository, System.SysUtils;
 
 type
   TLoginService = class
@@ -12,12 +13,12 @@ type
     constructor Create;
     destructor Destroy; override;
     function VerificarLogin(LoginRequest: TLoginRequest): TLoginResponse;
-    function ValidarDados(const AEmail, ASenha: String; out AMensagem: String): Boolean;
   end;
 
 implementation
 
-{ TLoginService }
+uses
+  PasswordHelper, Vcl.Dialogs;
 
 constructor TLoginService.Create;
 begin
@@ -31,47 +32,56 @@ begin
   inherited;
 end;
 
-function TLoginService.ValidarDados(const AEmail, ASenha: String; out AMensagem: String): Boolean;
-begin
-  Result := True;
-  AMensagem := '';
-  if Trim(AEmail) = '' then
-  begin
-    Result := False;
-    AMensagem := 'Email não pode estar vazio!';
-    Exit;
-  end;
-  if Trim(ASenha) = '' then
-  begin
-    Result := False;
-    AMensagem := 'Senha não pode estar vazia!';
-    Exit;
-  end;
-  if Pos('@', AEmail) = 0 then
-  begin
-    Result := False;
-    AMensagem := 'Email inválido!';
-    Exit;
-  end;
-end;
-
 function TLoginService.VerificarLogin(LoginRequest: TLoginRequest): TLoginResponse;
-var
-  MensagemValidacao: String;
 begin
   Result := TLoginResponse.Create;
 
-  // Valida os dados antes de consultar o banco
-  if not ValidarDados(LoginRequest.Email, LoginRequest.Senha, MensagemValidacao) then
-  begin
-    Result.Autenticado := False;
-    Result.Mensagem := MensagemValidacao;
-    Exit;
-  end;
-
-  // Busca o usuário no banco de dados
   try
-    Result := FRepository.BuscarUsuarioPorCredenciais(LoginRequest);
+    // Validar campos vazios
+    if Trim(LoginRequest.Email) = '' then
+    begin
+      Result.Autenticado := False;
+      Result.Mensagem := 'Por favor, preencha o email.';
+      Exit;
+    end;
+
+    if Trim(LoginRequest.Senha) = '' then
+    begin
+      Result.Autenticado := False;
+      Result.Mensagem := 'Por favor, preencha a senha.';
+      Exit;
+    end;
+
+    // âœ… Buscar usuÃ¡rio no banco
+    Result := FRepository.BuscarUsuarioPorEmail(LoginRequest.Email);
+
+    if not Result.UsuarioEncontrado then
+    begin
+      Result.Autenticado := False;
+      Result.Mensagem := 'Email ou senha incorretos.';
+      Exit;
+    end;
+
+    // âœ… Verificar se estÃ¡ ativo
+    if not Result.Ativo then
+    begin
+      Result.Autenticado := False;
+      Result.Mensagem := 'UsuÃ¡rio inativo. Contate o administrador.';
+      Exit;
+    end;
+
+    // âœ… VERIFICAR O HASH DA SENHA
+    if TPasswordHelper.VerifyPassword(LoginRequest.Senha, Result.SenhaHash) then
+    begin
+      Result.Autenticado := True;
+      Result.Mensagem := 'Login realizado com sucesso!';
+    end
+    else
+    begin
+      Result.Autenticado := False;
+      Result.Mensagem := 'Email ou senha incorretos.';
+    end;
+
   except
     on E: Exception do
     begin

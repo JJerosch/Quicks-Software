@@ -298,7 +298,7 @@ object FormHomeA: TFormHomeA
                     object lblNPhone: TLabel
                       Left = 18
                       Top = 185
-                      Width = 48
+                      Width = 47
                       Height = 15
                       Caption = 'Telefone:'
                     end
@@ -3210,7 +3210,7 @@ object FormHomeA: TFormHomeA
     object lblUserNameHeader: TLabel
       Left = 62
       Top = 9
-      Width = 838
+      Width = 6
       Height = 30
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -3222,7 +3222,7 @@ object FormHomeA: TFormHomeA
     object lblUserIdHeader: TLabel
       Left = 4
       Top = 9
-      Width = 52
+      Width = 6
       Height = 30
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText

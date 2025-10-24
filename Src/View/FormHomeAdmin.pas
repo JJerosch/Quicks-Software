@@ -378,27 +378,40 @@ begin
     Exit;
   end;
 
+  if not DM.FDConn.Connected then
+  begin
+    ShowMessage('Banco de dados não está conectado.');
+    Exit;
+  end;
+
   QueryAux := TFDQuery.Create(nil);
   try
     QueryAux.Connection := DM.FDConn;
     QueryAux.SQL.Clear;
     QueryAux.SQL.Add('SELECT id_cargo, desc_cargo FROM cargos ORDER BY id_cargo');
-    QueryAux.Open;
 
-    cbOpcoes.Clear;
-    cbOpcoes.Items.Clear;
+    try
+      QueryAux.Open;
 
-    // ⭐ MESMO FORMATO que CarregarCargosUpdate
-    while not QueryAux.EOF do
-    begin
-      cbOpcoes.Items.AddObject(
-        QueryAux.FieldByName('desc_cargo').AsString,
-        TObject(QueryAux.FieldByName('id_cargo').AsInteger)
-      );
-      QueryAux.Next;
+      cbOpcoes.Clear;
+      cbOpcoes.Items.Clear;
+
+      while not QueryAux.EOF do
+      begin
+        cbOpcoes.Items.AddObject(
+          QueryAux.FieldByName('desc_cargo').AsString,
+          TObject(QueryAux.FieldByName('id_cargo').AsInteger)
+        );
+        QueryAux.Next;
+      end;
+
+      cbOpcoes.ItemIndex := -1;
+
+    except
+      on E: Exception do
+        ShowMessage('Erro ao carregar cargos: ' + E.Message);
     end;
 
-    cbOpcoes.ItemIndex := -1;
   finally
     QueryAux.Free;
   end;
@@ -505,7 +518,58 @@ end;
 
 procedure TFormHomeA.CarregarGridUsuarios(ApenasAtivos: Boolean);
 begin
+  if not Assigned(DM) or not Assigned(DM.FDQr) then
+  begin
+    ShowMessage('DataModule não está disponível.');
+    Exit;
+  end;
 
+  try
+    with DM.FDQr do
+    begin
+      try
+        DisableControls;
+
+        if Active then
+          Close;
+
+        SQL.Clear;
+        SQL.Add('SELECT u.id_user, u.nome_user, u.email_user, u.cpf_user, u.nphone_user, c.desc_cargo, u.ativo');
+        SQL.Add('FROM usuarios u');
+        SQL.Add('INNER JOIN cargos c ON u.id_cargo = c.id_cargo');
+
+        if ApenasAtivos then
+          SQL.Add('WHERE u.ativo = True')
+        else
+          SQL.Add('WHERE u.ativo = False');
+
+        SQL.Add('ORDER BY u.id_user');
+
+        Open;
+
+        if IsEmpty then
+        begin
+          if ApenasAtivos then
+            ShowMessage('Nenhum usuário ativo encontrado.')
+          else
+            ShowMessage('Nenhum usuário inativo encontrado.');
+        end
+        else
+        begin
+          First;
+        end;
+
+      finally
+        EnableControls;
+      end;
+    end;
+
+    OrganizarGrid;
+
+  except
+    on E: Exception do
+      ShowMessage('Erro ao carregar usuários: ' + E.Message);
+  end;
 end;
 
 procedure TFormHomeA.DBGridUsuariosCellClick(Column: TColumn);
@@ -589,36 +653,32 @@ begin
   end;
 end;
 procedure TFormHomeA.FormCreate(Sender: TObject);
-  begin
-    FController := TUsuarioController.Create;
-    FListaUsuarios := nil;
-    FIdUsuarioSelecionado := 0;
+begin
+  FController := TUsuarioController.Create;
+  FListaUsuarios := nil;
+  FIdUsuarioSelecionado := 0;
 
+  // Configurar páginas iniciais
+  if Assigned(pcMain) then
+    pcMain.ActivePageIndex := 3; // Página de Usuários
 
-    FDataSource := TDataSource.Create(Self);
-    FMemTable := nil;
+  if Assigned(pcButtons) then
+    pcButtons.ActivePageIndex := 0;
 
-    DBGridUsuarios.DataSource := FDataSource;
+  // Configurar busca
+  eBuscaMain.Clear;
+  eBuscaMain.TextHint := 'Digite aqui para pesquisar.';
+  eBuscaMain.Enabled := False;
 
-    if Assigned(pcMain) then
-      pcMain.ActivePageIndex := 3; // Mudar para 0 quando terminar
+  // Configurar constraints da janela
+  Constraints.MinWidth := 1248;
+  Constraints.MinHeight := 683;
+  Constraints.MaxWidth := 1920;
+  Constraints.MaxHeight := 1080;
 
-    eBuscaMain.Clear;
-    eBuscaMain.TextHint := 'Digite aqui para pesquisar.';
-
-    if Assigned(pcMain) then
-      pcMain.ActivePageIndex := 0;
-      pcButtons.ActivePageIndex := 0;
-    eBuscaMain.Clear;
-
-    Constraints.MinWidth := 1248;
-    Constraints.MinHeight := 683;
-    Constraints.MaxWidth := 1920;
-    Constraints.MaxHeight := 1080;
-
-    Self.BorderStyle := bsSingle;
-    Self.WindowState := wsNormal;
-  end;
+  Self.BorderStyle := bsSingle;
+  Self.WindowState := wsNormal;
+end;
 
 procedure TFormHomeA.FormDestroy(Sender: TObject);
 begin
@@ -647,17 +707,34 @@ begin
 end;
 
 procedure TFormHomeA.FormShow(Sender: TObject);
-  begin
-    try
-    CarregarGridUsuarios(True); // Carregar apenas ativos
-    lblUserNameHeader.Caption:=NomeUsuario;
-    lblUserIdHeader.Caption:=IdUsuario.ToString;
+begin
+  try
+    // Certificar que o DataSource está conectado
+    if Assigned(DM) and Assigned(DM.DS) then
+    begin
+      DBGridUsuarios.DataSource := DM.DS;
+    end;
+
+    // ⚠️ NÃO carregue os cargos aqui!
+    // CarregarCargos;
+    // CarregarCargosUpdate;
+
+    // Carregar apenas usuários ativos
+    AtualizarGridTrue; // Use este método que já estava funcionando
+
+    // Exibir informações do usuário logado
+    lblUserNameHeader.Caption := NomeUsuario;
+    lblUserIdHeader.Caption := IdUsuario.ToString;
+
+    // Configurar hint de busca
     eBuscaMain.TextHint := 'Digite aqui para pesquisar.';
-    except
+    eBuscaMain.Clear;
+
+  except
     on E: Exception do
       ShowMessage('Erro ao carregar dados: ' + E.Message);
   end;
-  end;
+end;
 
 procedure TFormHomeA.iButton1Click(Sender: TObject);
   begin
@@ -757,7 +834,11 @@ end;
 procedure TFormHomeA.pButton1AdicionarClick(Sender: TObject);
 begin
   if Assigned(pcButtons) then
-      pcButtons.ActivePageIndex := 1;
+    pcButtons.ActivePageIndex := 1;
+
+  // ✅ Carregar cargos AQUI, quando for adicionar
+  CarregarCargos;
+
   AtualizarGridTrue;
 end;
 
@@ -770,7 +851,7 @@ procedure TFormHomeA.pButton2ExcluirClick(Sender: TObject);
   end;
 
 procedure TFormHomeA.pButton3AtualizarClick(Sender: TObject);
-  begin
+begin
   // Verificar se há um usuário selecionado
   if not Assigned(DM) or not Assigned(DM.FDQr) or DM.FDQr.IsEmpty then
   begin
@@ -778,16 +859,16 @@ procedure TFormHomeA.pButton3AtualizarClick(Sender: TObject);
     Exit;
   end;
 
-  // ⭐ IMPORTANTE: Capturar o ID ANTES de fazer qualquer outra operação
+  // Capturar o ID ANTES de fazer qualquer outra operação
   FIdUsuarioSelecionado := DM.FDQr.FieldByName('id_user').AsInteger;
 
   // Mudar para a página de atualização
   if Assigned(pcButtons) then
     pcButtons.ActivePageIndex := 3;
 
-  // Carregar os dados usando o ID armazenado
+  // ✅ Carregar os dados usando o ID armazenado
   CarregarDadosUpdate(FIdUsuarioSelecionado);
-  end;
+end;
 
 procedure TFormHomeA.pButton4RestaurarClick(Sender: TObject);
 begin

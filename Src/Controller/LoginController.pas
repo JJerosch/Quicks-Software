@@ -11,7 +11,7 @@ type
   public
     constructor Create;
     destructor Destroy; override;
-    function VerificarLogin(LoginRequest: TLoginRequest): TLoginResponse; overload;
+    function VerificarLogin(LoginRequest: TLoginRequest): TLoginResponse;
   end;
 
 implementation
