@@ -1,7 +1,6 @@
-unit LoginRepository;
+﻿unit LoginRepository;
 
 interface
-
 uses
   FireDAC.Comp.Client, System.SysUtils, LoginModel;
 
@@ -19,6 +18,7 @@ uses
 function TLoginRepository.BuscarUsuarioPorEmail(const Email: string): TLoginResponse;
 var
   Qr: TFDQuery;
+  IdCargo: Integer; // ⭐ ADICIONE ESTA VARIÁVEL
 begin
   Result := TLoginResponse.Create;
   Result.Autenticado := False;
@@ -44,12 +44,25 @@ begin
       Result.IdCargo := Qr.FieldByName('id_cargo').AsInteger;
       Result.DescCargo := Qr.FieldByName('desc_cargo').AsString;
       Result.UsuarioEncontrado := True;
+
+      // ⭐⭐⭐ ADICIONE ESTE BLOCO AQUI ⭐⭐⭐
+      IdCargo := Qr.FieldByName('id_cargo').AsInteger;
+      case IdCargo of
+        1: Result.TipoUsuario := tuCliente;
+        2: Result.TipoUsuario := tuComercio;
+        3: Result.TipoUsuario := tuEntregador;
+        4: Result.TipoUsuario := tuAdmin;
+      else
+        Result.TipoUsuario := tuInvalido;
+      end;
+      // ⭐⭐⭐ FIM DO BLOCO ⭐⭐⭐
     end
     else
     begin
       Result.UsuarioEncontrado := False;
-      Result.Mensagem := 'Usu�rio n�o encontrado.';
+      Result.Mensagem := 'Usuário não encontrado.';
     end;
+
   finally
     Qr.Free;
   end;
