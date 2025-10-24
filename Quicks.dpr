@@ -26,7 +26,9 @@ uses
   CargosServiceCRUDAdmin in 'Src\Service\CargosServiceCRUDAdmin.pas',
   UsuarioControllerCRUDAdmin in 'Src\Controller\UsuarioControllerCRUDAdmin.pas',
   RedirectController in 'Src\Controller\RedirectController.pas',
-  UsuarioDataSetHelperCRUDAdmin in 'Src\Utils\UsuarioDataSetHelperCRUDAdmin.pas';
+  UsuarioDataSetHelperCRUDAdmin in 'Src\Utils\UsuarioDataSetHelperCRUDAdmin.pas',
+  PasswordHelper in 'Src\Utils\PasswordHelper.pas',
+  UsuarioViewHelperCRUDAdmin in 'Src\Utils\UsuarioViewHelperCRUDAdmin.pas';
 
 {$R *.res}
 

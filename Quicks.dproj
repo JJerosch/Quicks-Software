@@ -105,7 +105,7 @@
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
-        <DCC_UnitSearchPath>C:\Users\jpjer\OneDrive\Documentos\GitHub\Quicks-Software\Src\Utils;C:\Users\pinto.7979\Documents\GitHub\Quicks-Software\Src\Utils;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>C:\Users\jpjer\OneDrive\Documentos\GitHub\Quicks-Software\Src\Utils;C:\Users\pinto.7979\Documents\GitHub\Quicks-Software\Src\Utils;C:\Users\pinto.7979\Documents\GitHub\Quicks-Software\BCrypt\bcrypt-master;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
@@ -165,6 +165,8 @@
         <DCCReference Include="Src\Controller\UsuarioControllerCRUDAdmin.pas"/>
         <DCCReference Include="Src\Controller\RedirectController.pas"/>
         <DCCReference Include="Src\Utils\UsuarioDataSetHelperCRUDAdmin.pas"/>
+        <DCCReference Include="Src\Utils\PasswordHelper.pas"/>
+        <DCCReference Include="Src\Utils\UsuarioViewHelperCRUDAdmin.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
