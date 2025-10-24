@@ -3,366 +3,297 @@ unit UsuarioServiceCRUDAdmin;
 interface
 
 uses
-  System.SysUtils, System.Generics.Collections, UsuarioModelCRUDAdmin, UsuarioRepositoryCRUDAdmin,
-  CargosRepositoryCRUDAdmin;
+  System.SysUtils, System.Generics.Collections,
+  UsuarioModelCRUDAdmin, UsuarioRepositoryCRUDAdmin, CargosRepositoryCRUDAdmin,
+  CargosModelCRUDAdmin;
 
 type
   TUsuarioService = class
   private
     FUsuarioRepository: TUsuarioRepository;
-    FCargoRepository: TCargoRepository;
-
-    function ValidarEmail(Email: string): Boolean;
-    function ValidarCPF(CPF: string): Boolean;
-    function ValidarTelefone(Telefone: string): Boolean;
-    function LimparCPF(CPF: string): string;
-    function LimparTelefone(Telefone: string): string;
+    FCargosRepository: TCargosRepository;
+    function ValidarUsuario(Usuario: TUsuario; IsUpdate: Boolean): string;
   public
     constructor Create;
     destructor Destroy; override;
 
-    // Operações CRUD
-    function CadastrarUsuario(Nome, Email, CPF, Senha, Telefone: string; IdCargo: Integer): Boolean;
-    function AtualizarUsuario(IdUsuario: Integer; Nome, Email, CPF, Telefone: string; IdCargo: Integer): Boolean;
+    function ListarUsuarios(ApenasAtivos: Boolean): TObjectList<TUsuario>;
+    function ObterUsuario(IdUsuario: Integer): TUsuario;
+    function AdicionarUsuario(Usuario: TUsuario; const Senha: string): Boolean;
+    function AtualizarUsuario(Usuario: TUsuario): Boolean;
     function DesativarUsuario(IdUsuario: Integer): Boolean;
     function ReativarUsuario(IdUsuario: Integer): Boolean;
-
-    // Consultas
-    function BuscarUsuarioPorId(IdUsuario: Integer): TUsuario;
-    function ListarUsuariosAtivos: TObjectList<TUsuario>;
-    function ListarUsuariosInativos: TObjectList<TUsuario>;
-    function BuscarUsuarios(Filtro: string; ApenasAtivos: Boolean = True): TObjectList<TUsuario>;
-
-    // Validações de negócio
-    function ValidarDadosUsuario(Nome, Email, CPF, Telefone: string; IdCargo: Integer;
-                                 var MensagemErro: string; IdUsuarioIgnorar: Integer = 0): Boolean;
+    function ListarCargos: TObjectList<TCargo>;
   end;
 
 implementation
+
+uses
+  PasswordHelper, Vcl.Dialogs;
 
 { TUsuarioService }
 
 constructor TUsuarioService.Create;
 begin
-  inherited Create;
+  inherited;
   FUsuarioRepository := TUsuarioRepository.Create;
-  FCargoRepository := TCargoRepository.Create;
+  FCargosRepository := TCargosRepository.Create;
 end;
 
 destructor TUsuarioService.Destroy;
 begin
   FUsuarioRepository.Free;
-  FCargoRepository.Free;
+  FCargosRepository.Free;
   inherited;
 end;
 
-function TUsuarioService.LimparCPF(CPF: string): string;
+function TUsuarioService.ValidarUsuario(Usuario: TUsuario; IsUpdate: Boolean): string;
 begin
-  Result := StringReplace(CPF, '.', '', [rfReplaceAll]);
-  Result := StringReplace(Result, '-', '', [rfReplaceAll]);
-  Result := StringReplace(Result, '/', '', [rfReplaceAll]);
-  Result := Trim(Result);
-end;
-
-function TUsuarioService.LimparTelefone(Telefone: string): string;
-begin
-  Result := StringReplace(Telefone, '(', '', [rfReplaceAll]);
-  Result := StringReplace(Result, ')', '', [rfReplaceAll]);
-  Result := StringReplace(Result, '-', '', [rfReplaceAll]);
-  Result := StringReplace(Result, ' ', '', [rfReplaceAll]);
-  Result := Trim(Result);
-end;
-
-function TUsuarioService.ValidarEmail(Email: string): Boolean;
-begin
-  // Validação básica de email
-  Result := (Pos('@', Email) > 0) and (Pos('.', Email) > 0) and (Length(Email) >= 5);
-end;
-
-function TUsuarioService.ValidarCPF(CPF: string): Boolean;
-var
-  CPFLimpo: string;
-  i, Soma, Resto: Integer;
-  Digito1, Digito2: Integer;
-begin
-  Result := False;
-  CPFLimpo := LimparCPF(CPF);
-
-  // Verifica se tem 11 dígitos
-  if Length(CPFLimpo) <> 11 then
-    Exit;
-
-  // Verifica se todos os dígitos são iguais (CPF inválido)
-  if (CPFLimpo = '00000000000') or (CPFLimpo = '11111111111') or
-     (CPFLimpo = '22222222222') or (CPFLimpo = '33333333333') or
-     (CPFLimpo = '44444444444') or (CPFLimpo = '55555555555') or
-     (CPFLimpo = '66666666666') or (CPFLimpo = '77777777777') or
-     (CPFLimpo = '88888888888') or (CPFLimpo = '99999999999') then
-    Exit;
-
-  // Calcula o primeiro dígito verificador
-  Soma := 0;
-  for i := 1 to 9 do
-    Soma := Soma + StrToInt(CPFLimpo[i]) * (11 - i);
-
-  Resto := (Soma * 10) mod 11;
-  if Resto = 10 then
-    Resto := 0;
-  Digito1 := Resto;
-
-  // Calcula o segundo dígito verificador
-  Soma := 0;
-  for i := 1 to 10 do
-    Soma := Soma + StrToInt(CPFLimpo[i]) * (12 - i);
-
-  Resto := (Soma * 10) mod 11;
-  if Resto = 10 then
-    Resto := 0;
-  Digito2 := Resto;
-
-  // Valida
-  Result := (Digito1 = StrToInt(CPFLimpo[10])) and (Digito2 = StrToInt(CPFLimpo[11]));
-end;
-
-function TUsuarioService.ValidarTelefone(Telefone: string): Boolean;
-var
-  TelefoneLimpo: string;
-begin
-  TelefoneLimpo := LimparTelefone(Telefone);
-  // Telefone brasileiro: 10 dígitos (fixo) ou 11 dígitos (celular)
-  Result := (Length(TelefoneLimpo) = 10) or (Length(TelefoneLimpo) = 11);
-end;
-
-function TUsuarioService.ValidarDadosUsuario(Nome, Email, CPF, Telefone: string;
-  IdCargo: Integer; var MensagemErro: string; IdUsuarioIgnorar: Integer): Boolean;
-begin
-  Result := False;
-  MensagemErro := '';
+  Result := '';
 
   // Validar Nome
-  if Trim(Nome) = '' then
+  if Trim(Usuario.NomeUser) = '' then
   begin
-    MensagemErro := 'Nome é obrigatório.';
+    Result := 'O nome do usuário é obrigatório.';
     Exit;
   end;
 
-  if Length(Trim(Nome)) < 3 then
+  if Length(Trim(Usuario.NomeUser)) < 3 then
   begin
-    MensagemErro := 'Nome deve ter no mínimo 3 caracteres.';
+    Result := 'O nome deve ter no mínimo 3 caracteres.';
     Exit;
   end;
 
   // Validar Email
-  if Trim(Email) = '' then
+  if Trim(Usuario.EmailUser) = '' then
   begin
-    MensagemErro := 'Email é obrigatório.';
+    Result := 'O email é obrigatório.';
     Exit;
   end;
 
-  if not ValidarEmail(Email) then
+  if Pos('@', Usuario.EmailUser) = 0 then
   begin
-    MensagemErro := 'Email inválido.';
+    Result := 'Email inválido.';
     Exit;
   end;
 
   // Verificar se email já existe
-  if FUsuarioRepository.EmailJaExiste(Email, IdUsuarioIgnorar) then
+  if IsUpdate then
   begin
-    MensagemErro := 'Este email já está cadastrado.';
-    Exit;
+    if FUsuarioRepository.EmailJaExiste(Usuario.EmailUser, Usuario.IdUser) then
+    begin
+      Result := 'Este email já está cadastrado para outro usuário.';
+      Exit;
+    end;
+  end
+  else
+  begin
+    if FUsuarioRepository.EmailJaExiste(Usuario.EmailUser) then
+    begin
+      Result := 'Este email já está cadastrado.';
+      Exit;
+    end;
   end;
 
   // Validar CPF
-  if Trim(CPF) = '' then
+  if Trim(Usuario.CpfUser) = '' then
   begin
-    MensagemErro := 'CPF é obrigatório.';
-    Exit;
-  end;
-
-  if not ValidarCPF(CPF) then
-  begin
-    MensagemErro := 'CPF inválido.';
+    Result := 'O CPF é obrigatório.';
     Exit;
   end;
 
   // Verificar se CPF já existe
-  if FUsuarioRepository.CpfJaExiste(LimparCPF(CPF), IdUsuarioIgnorar) then
+  if IsUpdate then
   begin
-    MensagemErro := 'Este CPF já está cadastrado.';
-    Exit;
+    if FUsuarioRepository.CPFJaExiste(Usuario.CpfUser, Usuario.IdUser) then
+    begin
+      Result := 'Este CPF já está cadastrado para outro usuário.';
+      Exit;
+    end;
+  end
+  else
+  begin
+    if FUsuarioRepository.CPFJaExiste(Usuario.CpfUser) then
+    begin
+      Result := 'Este CPF já está cadastrado.';
+      Exit;
+    end;
   end;
 
   // Validar Telefone
-  if Trim(Telefone) = '' then
+  if Trim(Usuario.NPhoneUser) = '' then
   begin
-    MensagemErro := 'Telefone é obrigatório.';
-    Exit;
-  end;
-
-  if not ValidarTelefone(Telefone) then
-  begin
-    MensagemErro := 'Telefone inválido.';
+    Result := 'O telefone é obrigatório.';
     Exit;
   end;
 
   // Validar Cargo
-  if IdCargo <= 0 then
+  if Usuario.IdCargo <= 0 then
   begin
-    MensagemErro := 'Selecione um cargo válido.';
+    Result := 'Selecione um cargo válido.';
     Exit;
   end;
-
-  if not FCargoRepository.CargoExiste(IdCargo) then
-  begin
-    MensagemErro := 'Cargo não encontrado no sistema.';
-    Exit;
-  end;
-
-  Result := True;
 end;
 
-function TUsuarioService.CadastrarUsuario(Nome, Email, CPF, Senha, Telefone: string;
-  IdCargo: Integer): Boolean;
+function TUsuarioService.ListarUsuarios(ApenasAtivos: Boolean): TObjectList<TUsuario>;
+begin
+  try
+    Result := FUsuarioRepository.BuscarTodos(ApenasAtivos);
+  except
+    on E: Exception do
+    begin
+      ShowMessage('Erro ao listar usuários: ' + E.Message);
+      Result := TObjectList<TUsuario>.Create(True);
+    end;
+  end;
+end;
+
+function TUsuarioService.ObterUsuario(IdUsuario: Integer): TUsuario;
+begin
+  try
+    Result := FUsuarioRepository.BuscarPorId(IdUsuario);
+
+    if not Assigned(Result) then
+      ShowMessage('Usuário não encontrado.');
+  except
+    on E: Exception do
+    begin
+      ShowMessage('Erro ao buscar usuário: ' + E.Message);
+      Result := nil;
+    end;
+  end;
+end;
+
+function TUsuarioService.AdicionarUsuario(Usuario: TUsuario; const Senha: string): Boolean;
 var
-  Usuario: TUsuario;
-  MensagemErro: string;
+  MsgErro: string;
+  SenhaHash: string;
 begin
   Result := False;
 
-  // Validar senha
-  if Trim(Senha) = '' then
-    raise Exception.Create('Senha é obrigatória.');
-
-  if Length(Trim(Senha)) < 6 then
-    raise Exception.Create('Senha deve ter no mínimo 6 caracteres.');
-
-  // Validar dados
-  if not ValidarDadosUsuario(Nome, Email, CPF, Telefone, IdCargo, MensagemErro) then
-    raise Exception.Create(MensagemErro);
-
-  // Criar objeto Usuario
-  Usuario := TUsuario.Create;
   try
-    Usuario.NomeUser := Trim(Nome);
-    Usuario.EmailUser := Trim(Email);
-    Usuario.CpfUser := LimparCPF(CPF);
-    Usuario.NPhoneUser := LimparTelefone(Telefone);
-    Usuario.IdCargo := IdCargo;
-    Usuario.Ativo := True;
+    // Validar senha
+    if Trim(Senha) = '' then
+    begin
+      ShowMessage('A senha é obrigatória.');
+      Exit;
+    end;
+
+    if Length(Senha) < 6 then
+    begin
+      ShowMessage('A senha deve ter no mínimo 6 caracteres.');
+      Exit;
+    end;
+
+    // Validar dados do usuário
+    MsgErro := ValidarUsuario(Usuario, False);
+    if MsgErro <> '' then
+    begin
+      ShowMessage(MsgErro);
+      Exit;
+    end;
+
+    // Gerar hash da senha
+    SenhaHash := TPasswordHelper.HashPassword(Senha);
 
     // Inserir no banco
-    Result := FUsuarioRepository.Inserir(Usuario, Senha);
-  finally
-    Usuario.Free;
+    Result := FUsuarioRepository.Inserir(Usuario, SenhaHash);
+
+    if Result then
+      ShowMessage('Usuário cadastrado com sucesso!')
+    else
+      ShowMessage('Erro ao cadastrar usuário.');
+
+  except
+    on E: Exception do
+    begin
+      ShowMessage('Erro ao adicionar usuário: ' + E.Message);
+      Result := False;
+    end;
   end;
 end;
 
-function TUsuarioService.AtualizarUsuario(IdUsuario: Integer; Nome, Email, CPF,
-  Telefone: string; IdCargo: Integer): Boolean;
+function TUsuarioService.AtualizarUsuario(Usuario: TUsuario): Boolean;
 var
-  Usuario: TUsuario;
-  MensagemErro: string;
+  MsgErro: string;
 begin
   Result := False;
 
-  // Validar ID
-  if IdUsuario <= 0 then
-    raise Exception.Create('ID do usuário inválido.');
-
-  // Verificar se usuário existe
-  Usuario := FUsuarioRepository.BuscarPorId(IdUsuario);
-  if not Assigned(Usuario) then
-    raise Exception.Create('Usuário não encontrado.');
-
   try
-    // Validar dados (ignorando o próprio usuário nas verificações de duplicidade)
-    if not ValidarDadosUsuario(Nome, Email, CPF, Telefone, IdCargo, MensagemErro, IdUsuario) then
-      raise Exception.Create(MensagemErro);
+    // Validar dados do usuário
+    MsgErro := ValidarUsuario(Usuario, True);
+    if MsgErro <> '' then
+    begin
+      ShowMessage(MsgErro);
+      Exit;
+    end;
 
-    // Atualizar dados
-    Usuario.NomeUser := Trim(Nome);
-    Usuario.EmailUser := Trim(Email);
-    Usuario.CpfUser := LimparCPF(CPF);
-    Usuario.NPhoneUser := LimparTelefone(Telefone);
-    Usuario.IdCargo := IdCargo;
-
-    // Salvar no banco
+    // Atualizar no banco
     Result := FUsuarioRepository.Atualizar(Usuario);
-  finally
-    Usuario.Free;
+
+    if Result then
+      ShowMessage('Usuário atualizado com sucesso!')
+    else
+      ShowMessage('Erro ao atualizar usuário.');
+
+  except
+    on E: Exception do
+    begin
+      ShowMessage('Erro ao atualizar usuário: ' + E.Message);
+      Result := False;
+    end;
   end;
 end;
 
 function TUsuarioService.DesativarUsuario(IdUsuario: Integer): Boolean;
-var
-  Usuario: TUsuario;
 begin
-  Result := False;
-
-  // Verificar se usuário existe
-  Usuario := FUsuarioRepository.BuscarPorId(IdUsuario);
-  if not Assigned(Usuario) then
-    raise Exception.Create('Usuário não encontrado.');
-
   try
-    // Verificar se já está inativo
-    if not Usuario.Ativo then
-      raise Exception.Create('Este usuário já está inativo.');
-
-    // Desativar
     Result := FUsuarioRepository.AlterarStatus(IdUsuario, False);
-  finally
-    Usuario.Free;
+
+    if Result then
+      ShowMessage('Usuário desativado com sucesso!')
+    else
+      ShowMessage('Erro ao desativar usuário.');
+
+  except
+    on E: Exception do
+    begin
+      ShowMessage('Erro ao desativar usuário: ' + E.Message);
+      Result := False;
+    end;
   end;
 end;
 
 function TUsuarioService.ReativarUsuario(IdUsuario: Integer): Boolean;
-var
-  Usuario: TUsuario;
 begin
-  Result := False;
-
-  // Verificar se usuário existe
-  Usuario := FUsuarioRepository.BuscarPorId(IdUsuario);
-  if not Assigned(Usuario) then
-    raise Exception.Create('Usuário não encontrado.');
-
   try
-    // Verificar se já está ativo
-    if Usuario.Ativo then
-      raise Exception.Create('Este usuário já está ativo.');
-
-    // Reativar
     Result := FUsuarioRepository.AlterarStatus(IdUsuario, True);
-  finally
-    Usuario.Free;
+
+    if Result then
+      ShowMessage('Usuário reativado com sucesso!')
+    else
+      ShowMessage('Erro ao reativar usuário.');
+
+  except
+    on E: Exception do
+    begin
+      ShowMessage('Erro ao reativar usuário: ' + E.Message);
+      Result := False;
+    end;
   end;
 end;
 
-function TUsuarioService.BuscarUsuarioPorId(IdUsuario: Integer): TUsuario;
+function TUsuarioService.ListarCargos: TObjectList<TCargo>;
 begin
-  Result := FUsuarioRepository.BuscarPorId(IdUsuario);
-
-  if not Assigned(Result) then
-    raise Exception.Create('Usuário não encontrado.');
-end;
-
-function TUsuarioService.ListarUsuariosAtivos: TObjectList<TUsuario>;
-begin
-  Result := FUsuarioRepository.ListarTodos(True);
-end;
-
-function TUsuarioService.ListarUsuariosInativos: TObjectList<TUsuario>;
-begin
-  Result := FUsuarioRepository.ListarTodos(False);
-end;
-
-function TUsuarioService.BuscarUsuarios(Filtro: string; ApenasAtivos: Boolean): TObjectList<TUsuario>;
-begin
-  if Trim(Filtro) = '' then
-    Result := FUsuarioRepository.ListarTodos(ApenasAtivos)
-  else
-    Result := FUsuarioRepository.BuscarPorFiltro(Filtro, ApenasAtivos);
+  try
+    Result := FCargosRepository.BuscarTodos;
+  except
+    on E: Exception do
+    begin
+      ShowMessage('Erro ao listar cargos: ' + E.Message);
+      Result := TObjectList<TCargo>.Create(True);
+    end;
+  end;
 end;
 
 end.

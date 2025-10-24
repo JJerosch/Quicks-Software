@@ -4,335 +4,222 @@ interface
 
 uses
   System.SysUtils, System.Generics.Collections, FireDAC.Comp.Client,
-  FireDAC.Stan.Param, UsuarioModelCRUDAdmin, uConn;
+  UsuarioModelCRUDAdmin, CargosModelCRUDAdmin;
 
 type
   TUsuarioRepository = class
   private
-    // Nenhuma dependência de banco aqui - usa o DM global
+    function DataSetToUsuario(DataSet: TFDQuery): TUsuario;
   public
-    // CRUD Básico
-    function Inserir(Usuario: TUsuario; Senha: string): Boolean;
-    function Atualizar(Usuario: TUsuario): Boolean;
-    function AlterarStatus(IdUsuario: Integer; Ativo: Boolean): Boolean;
+    function BuscarTodos(ApenasAtivos: Boolean): TObjectList<TUsuario>;
     function BuscarPorId(IdUsuario: Integer): TUsuario;
-    function ListarTodos(ApenasAtivos: Boolean = True): TObjectList<TUsuario>;
-    function BuscarPorFiltro(Filtro: string; ApenasAtivos: Boolean = True): TObjectList<TUsuario>;
-
-    // Validações
-    function EmailJaExiste(Email: string; IdUsuarioIgnorar: Integer = 0): Boolean;
-    function CpfJaExiste(Cpf: string; IdUsuarioIgnorar: Integer = 0): Boolean;
-
-    constructor Create;
-    destructor Destroy; override;
+    function Inserir(Usuario: TUsuario; SenhaHash: string): Boolean;
+    function Atualizar(Usuario: TUsuario): Boolean;
+    function AlterarStatus(IdUsuario: Integer; NovoStatus: Boolean): Boolean;
+    function EmailJaExiste(const Email: string; IdUsuarioIgnorar: Integer = 0): Boolean;
+    function CPFJaExiste(const CPF: string; IdUsuarioIgnorar: Integer = 0): Boolean;
   end;
 
 implementation
 
+uses
+  uConn;
+
 { TUsuarioRepository }
 
-constructor TUsuarioRepository.Create;
+function TUsuarioRepository.DataSetToUsuario(DataSet: TFDQuery): TUsuario;
 begin
-  inherited Create;
+  Result := TUsuario.Create;
+  Result.IdUser := DataSet.FieldByName('id_user').AsInteger;
+  Result.NomeUser := DataSet.FieldByName('nome_user').AsString;
+  Result.EmailUser := DataSet.FieldByName('email_user').AsString;
+  Result.CpfUser := DataSet.FieldByName('cpf_user').AsString;
+  Result.NPhoneUser := DataSet.FieldByName('nphone_user').AsString;
+  Result.IdCargo := DataSet.FieldByName('id_cargo').AsInteger;
+  Result.DescCargo := DataSet.FieldByName('desc_cargo').AsString;
+  Result.Ativo := DataSet.FieldByName('ativo').AsBoolean;
 end;
 
-destructor TUsuarioRepository.Destroy;
-begin
-  inherited;
-end;
-
-function TUsuarioRepository.Inserir(Usuario: TUsuario; Senha: string): Boolean;
+function TUsuarioRepository.BuscarTodos(ApenasAtivos: Boolean): TObjectList<TUsuario>;
 var
-  Query: TFDQuery;
+  Qr: TFDQuery;
 begin
-  Result := False;
-
-  if not Assigned(DM) or not Assigned(DM.FDConn) then
-    raise Exception.Create('Conexão com banco de dados não disponível.');
-
-  Query := TFDQuery.Create(nil);
+  Result := TObjectList<TUsuario>.Create(True);
+  Qr := TFDQuery.Create(nil);
   try
-    Query.Connection := DM.FDConn;
-    Query.SQL.Clear;
-    Query.SQL.Add('INSERT INTO usuarios (nome_user, email_user, cpf_user, senha_user, nphone_user, id_cargo, ativo)');
-    Query.SQL.Add('VALUES (:nome, :email, :cpf, :senha, :nphone, :id_cargo, :ativo)');
+    Qr.Connection := DM.FDConn;
+    Qr.SQL.Clear;
+    Qr.SQL.Add('SELECT u.id_user, u.nome_user, u.email_user, u.cpf_user,');
+    Qr.SQL.Add('       u.nphone_user, u.id_cargo, c.desc_cargo, u.ativo');
+    Qr.SQL.Add('FROM usuarios u');
+    Qr.SQL.Add('INNER JOIN cargos c ON u.id_cargo = c.id_cargo');
 
-    Query.ParamByName('nome').AsString := Usuario.NomeUser;
-    Query.ParamByName('email').AsString := Usuario.EmailUser;
-    Query.ParamByName('cpf').AsString := Usuario.CpfUser;
-    Query.ParamByName('senha').AsString := Senha;
-    Query.ParamByName('nphone').AsString := Usuario.NPhoneUser;
-    Query.ParamByName('id_cargo').AsInteger := Usuario.IdCargo;
-    Query.ParamByName('ativo').AsBoolean := Usuario.Ativo;
+    if ApenasAtivos then
+      Qr.SQL.Add('WHERE u.ativo = TRUE');
 
-    Query.ExecSQL;
-    Result := True;
+    Qr.SQL.Add('ORDER BY u.id_user');
+    Qr.Open;
+
+    while not Qr.Eof do
+    begin
+      Result.Add(DataSetToUsuario(Qr));
+      Qr.Next;
+    end;
   finally
-    Query.Free;
-  end;
-end;
-
-function TUsuarioRepository.Atualizar(Usuario: TUsuario): Boolean;
-var
-  Query: TFDQuery;
-begin
-  Result := False;
-
-  if not Assigned(DM) or not Assigned(DM.FDConn) then
-    raise Exception.Create('Conexão com banco de dados não disponível.');
-
-  Query := TFDQuery.Create(nil);
-  try
-    Query.Connection := DM.FDConn;
-    Query.SQL.Clear;
-    Query.SQL.Add('UPDATE usuarios SET');
-    Query.SQL.Add('  nome_user = :nome,');
-    Query.SQL.Add('  email_user = :email,');
-    Query.SQL.Add('  cpf_user = :cpf,');
-    Query.SQL.Add('  nphone_user = :nphone,');
-    Query.SQL.Add('  id_cargo = :id_cargo');
-    Query.SQL.Add('WHERE id_user = :id_user');
-
-    Query.ParamByName('nome').AsString := Usuario.NomeUser;
-    Query.ParamByName('email').AsString := Usuario.EmailUser;
-    Query.ParamByName('cpf').AsString := Usuario.CpfUser;
-    Query.ParamByName('nphone').AsString := Usuario.NPhoneUser;
-    Query.ParamByName('id_cargo').AsInteger := Usuario.IdCargo;
-    Query.ParamByName('id_user').AsInteger := Usuario.IdUser;
-
-    Query.ExecSQL;
-    Result := True;
-  finally
-    Query.Free;
-  end;
-end;
-
-function TUsuarioRepository.AlterarStatus(IdUsuario: Integer; Ativo: Boolean): Boolean;
-var
-  Query: TFDQuery;
-begin
-  Result := False;
-
-  if not Assigned(DM) or not Assigned(DM.FDConn) then
-    raise Exception.Create('Conexão com banco de dados não disponível.');
-
-  Query := TFDQuery.Create(nil);
-  try
-    Query.Connection := DM.FDConn;
-    Query.SQL.Clear;
-    Query.SQL.Add('UPDATE usuarios SET ativo = :ativo WHERE id_user = :id_user');
-
-    Query.ParamByName('ativo').AsBoolean := Ativo;
-    Query.ParamByName('id_user').AsInteger := IdUsuario;
-
-    Query.ExecSQL;
-    Result := True;
-  finally
-    Query.Free;
+    Qr.Free;
   end;
 end;
 
 function TUsuarioRepository.BuscarPorId(IdUsuario: Integer): TUsuario;
 var
-  Query: TFDQuery;
+  Qr: TFDQuery;
 begin
   Result := nil;
-
-  if not Assigned(DM) or not Assigned(DM.FDConn) then
-    raise Exception.Create('Conexão com banco de dados não disponível.');
-
-  Query := TFDQuery.Create(nil);
+  Qr := TFDQuery.Create(nil);
   try
-    Query.Connection := DM.FDConn;
-    Query.SQL.Clear;
-    Query.SQL.Add('SELECT u.id_user, u.nome_user, u.email_user, u.cpf_user,');
-    Query.SQL.Add('       u.nphone_user, u.id_cargo, c.desc_cargo, u.ativo');
-    Query.SQL.Add('FROM usuarios u');
-    Query.SQL.Add('INNER JOIN cargos c ON u.id_cargo = c.id_cargo');
-    Query.SQL.Add('WHERE u.id_user = :id_user');
+    Qr.Connection := DM.FDConn;
+    Qr.SQL.Clear;
+    Qr.SQL.Add('SELECT u.id_user, u.nome_user, u.email_user, u.cpf_user,');
+    Qr.SQL.Add('       u.nphone_user, u.id_cargo, c.desc_cargo, u.ativo');
+    Qr.SQL.Add('FROM usuarios u');
+    Qr.SQL.Add('INNER JOIN cargos c ON u.id_cargo = c.id_cargo');
+    Qr.SQL.Add('WHERE u.id_user = :id_user');
+    Qr.ParamByName('id_user').AsInteger := IdUsuario;
+    Qr.Open;
 
-    Query.ParamByName('id_user').AsInteger := IdUsuario;
-    Query.Open;
-
-    if not Query.IsEmpty then
-    begin
-      Result := TUsuario.Create(
-        Query.FieldByName('id_user').AsInteger,
-        Query.FieldByName('nome_user').AsString,
-        Query.FieldByName('email_user').AsString,
-        Query.FieldByName('cpf_user').AsString,
-        Query.FieldByName('nphone_user').AsString,
-        Query.FieldByName('id_cargo').AsInteger,
-        Query.FieldByName('desc_cargo').AsString,
-        Query.FieldByName('ativo').AsBoolean
-      );
-    end;
+    if not Qr.IsEmpty then
+      Result := DataSetToUsuario(Qr);
   finally
-    Query.Free;
+    Qr.Free;
   end;
 end;
 
-function TUsuarioRepository.ListarTodos(ApenasAtivos: Boolean): TObjectList<TUsuario>;
+function TUsuarioRepository.Inserir(Usuario: TUsuario; SenhaHash: string): Boolean;
 var
-  Query: TFDQuery;
-  Usuario: TUsuario;
-begin
-  Result := TObjectList<TUsuario>.Create(True); // True = libera objetos ao destruir
-
-  if not Assigned(DM) or not Assigned(DM.FDConn) then
-    raise Exception.Create('Conexão com banco de dados não disponível.');
-
-  Query := TFDQuery.Create(nil);
-  try
-    Query.Connection := DM.FDConn;
-    Query.SQL.Clear;
-    Query.SQL.Add('SELECT u.id_user, u.nome_user, u.email_user, u.cpf_user,');
-    Query.SQL.Add('       u.nphone_user, u.id_cargo, c.desc_cargo, u.ativo');
-    Query.SQL.Add('FROM usuarios u');
-    Query.SQL.Add('INNER JOIN cargos c ON u.id_cargo = c.id_cargo');
-
-    if ApenasAtivos then
-      Query.SQL.Add('WHERE u.ativo = True');
-
-    Query.SQL.Add('ORDER BY u.id_user');
-    Query.Open;
-
-    while not Query.Eof do
-    begin
-      Usuario := TUsuario.Create(
-        Query.FieldByName('id_user').AsInteger,
-        Query.FieldByName('nome_user').AsString,
-        Query.FieldByName('email_user').AsString,
-        Query.FieldByName('cpf_user').AsString,
-        Query.FieldByName('nphone_user').AsString,
-        Query.FieldByName('id_cargo').AsInteger,
-        Query.FieldByName('desc_cargo').AsString,
-        Query.FieldByName('ativo').AsBoolean
-      );
-      Result.Add(Usuario);
-      Query.Next;
-    end;
-  finally
-    Query.Free;
-  end;
-end;
-
-function TUsuarioRepository.BuscarPorFiltro(Filtro: string; ApenasAtivos: Boolean): TObjectList<TUsuario>;
-var
-  Query: TFDQuery;
-  Usuario: TUsuario;
-  FiltroUpper: string;
-begin
-  Result := TObjectList<TUsuario>.Create(True);
-
-  if not Assigned(DM) or not Assigned(DM.FDConn) then
-    raise Exception.Create('Conexão com banco de dados não disponível.');
-
-  Query := TFDQuery.Create(nil);
-  try
-    Query.Connection := DM.FDConn;
-    Query.SQL.Clear;
-    Query.SQL.Add('SELECT u.id_user, u.nome_user, u.email_user, u.cpf_user,');
-    Query.SQL.Add('       u.nphone_user, u.id_cargo, c.desc_cargo, u.ativo');
-    Query.SQL.Add('FROM usuarios u');
-    Query.SQL.Add('INNER JOIN cargos c ON u.id_cargo = c.id_cargo');
-    Query.SQL.Add('WHERE (');
-    Query.SQL.Add('  UPPER(CAST(u.id_user AS VARCHAR)) LIKE :filtro OR');
-    Query.SQL.Add('  UPPER(u.nome_user) LIKE :filtro OR');
-    Query.SQL.Add('  UPPER(u.email_user) LIKE :filtro OR');
-    Query.SQL.Add('  UPPER(u.cpf_user) LIKE :filtro OR');
-    Query.SQL.Add('  UPPER(u.nphone_user) LIKE :filtro OR');
-    Query.SQL.Add('  UPPER(c.desc_cargo) LIKE :filtro');
-    Query.SQL.Add(')');
-
-    if ApenasAtivos then
-      Query.SQL.Add('AND u.ativo = True');
-
-    Query.SQL.Add('ORDER BY u.id_user');
-
-    FiltroUpper := '%' + UpperCase(Filtro) + '%';
-    Query.ParamByName('filtro').AsString := FiltroUpper;
-    Query.Open;
-
-    while not Query.Eof do
-    begin
-      Usuario := TUsuario.Create(
-        Query.FieldByName('id_user').AsInteger,
-        Query.FieldByName('nome_user').AsString,
-        Query.FieldByName('email_user').AsString,
-        Query.FieldByName('cpf_user').AsString,
-        Query.FieldByName('nphone_user').AsString,
-        Query.FieldByName('id_cargo').AsInteger,
-        Query.FieldByName('desc_cargo').AsString,
-        Query.FieldByName('ativo').AsBoolean
-      );
-      Result.Add(Usuario);
-      Query.Next;
-    end;
-  finally
-    Query.Free;
-  end;
-end;
-
-function TUsuarioRepository.EmailJaExiste(Email: string; IdUsuarioIgnorar: Integer): Boolean;
-var
-  Query: TFDQuery;
+  Qr: TFDQuery;
 begin
   Result := False;
-
-  if not Assigned(DM) or not Assigned(DM.FDConn) then
-    raise Exception.Create('Conexão com banco de dados não disponível.');
-
-  Query := TFDQuery.Create(nil);
+  Qr := TFDQuery.Create(nil);
   try
-    Query.Connection := DM.FDConn;
-    Query.SQL.Clear;
-    Query.SQL.Add('SELECT COUNT(*) as total FROM usuarios');
-    Query.SQL.Add('WHERE email_user = :email');
+    Qr.Connection := DM.FDConn;
+    Qr.SQL.Clear;
+    Qr.SQL.Add('INSERT INTO usuarios (nome_user, email_user, cpf_user, senha_user,');
+    Qr.SQL.Add('                      nphone_user, id_cargo, ativo)');
+    Qr.SQL.Add('VALUES (:nome, :email, :cpf, :senha, :nphone, :id_cargo, TRUE)');
 
-    if IdUsuarioIgnorar > 0 then
-      Query.SQL.Add('AND id_user <> :id_user');
+    Qr.ParamByName('nome').AsString := Usuario.NomeUser;
+    Qr.ParamByName('email').AsString := Usuario.EmailUser;
+    Qr.ParamByName('cpf').AsString := Usuario.CpfUser;
+    Qr.ParamByName('senha').AsString := SenhaHash;
+    Qr.ParamByName('nphone').AsString := Usuario.NPhoneUser;
+    Qr.ParamByName('id_cargo').AsInteger := Usuario.IdCargo;
 
-    Query.ParamByName('email').AsString := Email;
-
-    if IdUsuarioIgnorar > 0 then
-      Query.ParamByName('id_user').AsInteger := IdUsuarioIgnorar;
-
-    Query.Open;
-    Result := Query.FieldByName('total').AsInteger > 0;
+    Qr.ExecSQL;
+    Result := True;
   finally
-    Query.Free;
+    Qr.Free;
   end;
 end;
 
-function TUsuarioRepository.CpfJaExiste(Cpf: string; IdUsuarioIgnorar: Integer): Boolean;
+function TUsuarioRepository.Atualizar(Usuario: TUsuario): Boolean;
 var
-  Query: TFDQuery;
+  Qr: TFDQuery;
 begin
   Result := False;
-
-  if not Assigned(DM) or not Assigned(DM.FDConn) then
-    raise Exception.Create('Conexão com banco de dados não disponível.');
-
-  Query := TFDQuery.Create(nil);
+  Qr := TFDQuery.Create(nil);
   try
-    Query.Connection := DM.FDConn;
-    Query.SQL.Clear;
-    Query.SQL.Add('SELECT COUNT(*) as total FROM usuarios');
-    Query.SQL.Add('WHERE cpf_user = :cpf');
+    Qr.Connection := DM.FDConn;
+    Qr.SQL.Clear;
+    Qr.SQL.Add('UPDATE usuarios SET');
+    Qr.SQL.Add('  nome_user = :nome,');
+    Qr.SQL.Add('  email_user = :email,');
+    Qr.SQL.Add('  cpf_user = :cpf,');
+    Qr.SQL.Add('  nphone_user = :nphone,');
+    Qr.SQL.Add('  id_cargo = :id_cargo');
+    Qr.SQL.Add('WHERE id_user = :id_user');
 
-    if IdUsuarioIgnorar > 0 then
-      Query.SQL.Add('AND id_user <> :id_user');
+    Qr.ParamByName('nome').AsString := Usuario.NomeUser;
+    Qr.ParamByName('email').AsString := Usuario.EmailUser;
+    Qr.ParamByName('cpf').AsString := Usuario.CpfUser;
+    Qr.ParamByName('nphone').AsString := Usuario.NPhoneUser;
+    Qr.ParamByName('id_cargo').AsInteger := Usuario.IdCargo;
+    Qr.ParamByName('id_user').AsInteger := Usuario.IdUser;
 
-    Query.ParamByName('cpf').AsString := Cpf;
-
-    if IdUsuarioIgnorar > 0 then
-      Query.ParamByName('id_user').AsInteger := IdUsuarioIgnorar;
-
-    Query.Open;
-    Result := Query.FieldByName('total').AsInteger > 0;
+    Qr.ExecSQL;
+    Result := True;
   finally
-    Query.Free;
+    Qr.Free;
+  end;
+end;
+
+function TUsuarioRepository.AlterarStatus(IdUsuario: Integer; NovoStatus: Boolean): Boolean;
+var
+  Qr: TFDQuery;
+begin
+  Result := False;
+  Qr := TFDQuery.Create(nil);
+  try
+    Qr.Connection := DM.FDConn;
+    Qr.SQL.Clear;
+    Qr.SQL.Add('UPDATE usuarios SET ativo = :ativo WHERE id_user = :id_user');
+    Qr.ParamByName('ativo').AsBoolean := NovoStatus;
+    Qr.ParamByName('id_user').AsInteger := IdUsuario;
+    Qr.ExecSQL;
+    Result := True;
+  finally
+    Qr.Free;
+  end;
+end;
+
+function TUsuarioRepository.EmailJaExiste(const Email: string; IdUsuarioIgnorar: Integer): Boolean;
+var
+  Qr: TFDQuery;
+begin
+  Result := False;
+  Qr := TFDQuery.Create(nil);
+  try
+    Qr.Connection := DM.FDConn;
+    Qr.SQL.Clear;
+    Qr.SQL.Add('SELECT 1 FROM usuarios WHERE email_user = :email');
+
+    if IdUsuarioIgnorar > 0 then
+      Qr.SQL.Add('AND id_user <> :id_user');
+
+    Qr.ParamByName('email').AsString := Email;
+
+    if IdUsuarioIgnorar > 0 then
+      Qr.ParamByName('id_user').AsInteger := IdUsuarioIgnorar;
+
+    Qr.Open;
+    Result := not Qr.IsEmpty;
+  finally
+    Qr.Free;
+  end;
+end;
+
+function TUsuarioRepository.CPFJaExiste(const CPF: string; IdUsuarioIgnorar: Integer): Boolean;
+var
+  Qr: TFDQuery;
+begin
+  Result := False;
+  Qr := TFDQuery.Create(nil);
+  try
+    Qr.Connection := DM.FDConn;
+    Qr.SQL.Clear;
+    Qr.SQL.Add('SELECT 1 FROM usuarios WHERE cpf_user = :cpf');
+
+    if IdUsuarioIgnorar > 0 then
+      Qr.SQL.Add('AND id_user <> :id_user');
+
+    Qr.ParamByName('cpf').AsString := CPF;
+
+    if IdUsuarioIgnorar > 0 then
+      Qr.ParamByName('id_user').AsInteger := IdUsuarioIgnorar;
+
+    Qr.Open;
+    Result := not Qr.IsEmpty;
+  finally
+    Qr.Free;
   end;
 end;
 
