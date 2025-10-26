@@ -3,8 +3,8 @@ unit UsuarioViewHelperCRUDAdmin;
 interface
 
 uses
-  System.SysUtils, System.Generics.Collections, Vcl.StdCtrls, Vcl.Grids,
-  Data.DB, FireDAC.Comp.Client, FireDAC.Stan.Param,
+  System.SysUtils, System.Generics.Collections, Vcl.StdCtrls,
+  Data.DB, FireDAC.Comp.Client,
   UsuarioModelCRUDAdmin, CargosModelCRUDAdmin;
 
 type
@@ -14,24 +14,18 @@ type
     class procedure SelecionarCargoPorId(ComboBox: TComboBox; IdCargo: Integer);
     class function ObterIdCargoSelecionado(ComboBox: TComboBox): Integer;
     class procedure PreencherMemTableUsuarios(MemTable: TFDMemTable; Usuarios: TObjectList<TUsuario>);
-    class procedure LimparCamposUsuario(Nome, Email, CPF, NPhone: TEdit; Cargo: TComboBox);
   end;
 
 implementation
-
-{ TUsuarioViewHelper }
 
 class procedure TUsuarioViewHelper.PreencherComboBoxCargos(ComboBox: TComboBox; Cargos: TObjectList<TCargo>);
 var
   Cargo: TCargo;
 begin
   ComboBox.Clear;
-  ComboBox.Items.Clear;
 
   for Cargo in Cargos do
-  begin
     ComboBox.Items.AddObject(Cargo.DescCargo, TObject(Cargo.IdCargo));
-  end;
 
   ComboBox.ItemIndex := -1;
 end;
@@ -40,14 +34,12 @@ class procedure TUsuarioViewHelper.SelecionarCargoPorId(ComboBox: TComboBox; IdC
 var
   i: Integer;
 begin
-  ComboBox.ItemIndex := -1;
-
   for i := 0 to ComboBox.Items.Count - 1 do
   begin
     if Integer(ComboBox.Items.Objects[i]) = IdCargo then
     begin
       ComboBox.ItemIndex := i;
-      Break;
+      Exit;
     end;
   end;
 end;
@@ -55,38 +47,45 @@ end;
 class function TUsuarioViewHelper.ObterIdCargoSelecionado(ComboBox: TComboBox): Integer;
 begin
   Result := 0;
-
-  if (ComboBox.ItemIndex >= 0) and (ComboBox.ItemIndex < ComboBox.Items.Count) then
+  if (ComboBox.ItemIndex >= 0) then
     Result := Integer(ComboBox.Items.Objects[ComboBox.ItemIndex]);
 end;
 
 class procedure TUsuarioViewHelper.PreencherMemTableUsuarios(MemTable: TFDMemTable; Usuarios: TObjectList<TUsuario>);
 var
   Usuario: TUsuario;
+  CriarEstrutura: Boolean;
 begin
-  MemTable.Close;
+  // Verificar se precisa criar estrutura
+  CriarEstrutura := (MemTable.FieldDefs.Count = 0);
 
-  // Criar estrutura da MemTable se não existir
-  if MemTable.FieldDefs.Count = 0 then
+  // Fechar se estiver aberto
+  if MemTable.Active then
+    MemTable.Close;
+
+  // Criar estrutura apenas se necessário
+  if CriarEstrutura then
   begin
-    MemTable.FieldDefs.Clear;
-    MemTable.FieldDefs.Add('id_user', ftInteger);
-    MemTable.FieldDefs.Add('nome_user', ftString, 100);
-    MemTable.FieldDefs.Add('email_user', ftString, 100);
-    MemTable.FieldDefs.Add('cpf_user', ftString, 14);
-    MemTable.FieldDefs.Add('nphone_user', ftString, 15);
-    MemTable.FieldDefs.Add('desc_cargo', ftString, 50);
-    MemTable.FieldDefs.Add('ativo', ftBoolean);
+    with MemTable.FieldDefs do
+    begin
+      Clear;
+      Add('id_user', ftInteger);
+      Add('nome_user', ftString, 100);
+      Add('email_user', ftString, 100);
+      Add('cpf_user', ftString, 14);
+      Add('nphone_user', ftString, 15);
+      Add('desc_cargo', ftString, 50);
+      Add('ativo', ftBoolean);
+    end;
     MemTable.CreateDataSet;
   end
   else
   begin
     MemTable.Open;
+    MemTable.EmptyDataSet;
   end;
 
-  MemTable.EmptyDataSet;
-
-  // Preencher com dados
+  // Preencher dados
   for Usuario in Usuarios do
   begin
     MemTable.Append;
@@ -100,16 +99,8 @@ begin
     MemTable.Post;
   end;
 
-  MemTable.First;
-end;
-
-class procedure TUsuarioViewHelper.LimparCamposUsuario(Nome, Email, CPF, NPhone: TEdit; Cargo: TComboBox);
-begin
-  Nome.Clear;
-  Email.Clear;
-  CPF.Clear;
-  NPhone.Clear;
-  Cargo.ItemIndex := -1;
+  if not MemTable.IsEmpty then
+    MemTable.First;
 end;
 
 end.

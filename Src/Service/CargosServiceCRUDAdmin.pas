@@ -1,14 +1,15 @@
-unit CargosServiceCRUDAdmin;
+﻿unit CargosServiceCRUDAdmin;
 
 interface
 
 uses
-  System.SysUtils, System.Generics.Collections, CargosModelCRUDAdmin, CargosRepositoryCRUDAdmin;
+  System.SysUtils, System.Generics.Collections,
+  CargosModelCRUDAdmin, CargosRepositoryCRUDAdmin;
 
 type
   TCargoService = class
   private
-    FCargoRepository: TCargoRepository;
+    FRepository: TCargosRepository;
   public
     constructor Create;
     destructor Destroy; override;
@@ -19,34 +20,56 @@ type
 
 implementation
 
+uses
+  Vcl.Dialogs;
+
 { TCargoService }
 
 constructor TCargoService.Create;
 begin
-  inherited Create;
-  FCargoRepository := TCargoRepository.Create;
+  inherited;
+  FRepository := TCargosRepository.Create;
 end;
 
 destructor TCargoService.Destroy;
 begin
-  FCargoRepository.Free;
+  FRepository.Free;
   inherited;
 end;
 
 function TCargoService.ListarTodosCargos: TObjectList<TCargo>;
 begin
-  Result := FCargoRepository.ListarTodos;
+  try
+    // ⭐ AQUI: chama BuscarTodos do Repository
+    Result := FRepository.BuscarTodos;
 
-  if Result.Count = 0 then
-    raise Exception.Create('Nenhum cargo cadastrado no sistema.');
+    if Result.Count = 0 then
+      ShowMessage('Nenhum cargo encontrado no sistema.');
+
+  except
+    on E: Exception do
+    begin
+      ShowMessage('Erro ao listar cargos: ' + E.Message);
+      Result := TObjectList<TCargo>.Create(True);
+    end;
+  end;
 end;
 
 function TCargoService.BuscarCargoPorId(IdCargo: Integer): TCargo;
 begin
-  Result := FCargoRepository.BuscarPorId(IdCargo);
+  try
+    Result := FRepository.BuscarPorId(IdCargo);
 
-  if not Assigned(Result) then
-    raise Exception.Create('Cargo n�o encontrado.');
+    if not Assigned(Result) then
+      ShowMessage('Cargo não encontrado.');
+
+  except
+    on E: Exception do
+    begin
+      ShowMessage('Erro ao buscar cargo: ' + E.Message);
+      Result := nil;
+    end;
+  end;
 end;
 
 end.

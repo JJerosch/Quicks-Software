@@ -1,7 +1,22 @@
-program Quicks;
+﻿program Quicks;
 
 uses
   Vcl.Forms,
+  System.Classes,
+  FireDAC.Stan.Intf,
+  FireDAC.Stan.Option,
+  FireDAC.Stan.Error,
+  FireDAC.UI.Intf,
+  FireDAC.Phys.Intf,
+  FireDAC.Stan.Def,
+  FireDAC.Stan.Pool,
+  FireDAC.Stan.Async,
+  FireDAC.Phys,
+  FireDAC.Phys.PG,
+  FireDAC.Phys.PGDef,
+  FireDAC.VCLUI.Wait,
+  FireDAC.Comp.Client,
+  FireDAC.Comp.DataSet,
   Vcl.Dialogs,
   FormLoginMain in 'Src\View\FormLoginMain.pas' {FormLogin},
   FormCadastroMain in 'Src\View\FormCadastroMain.pas' {FormCadastro},
@@ -36,6 +51,8 @@ var
   Controller: TLoginController;
 begin
   Application.Initialize;
+  RegisterClass(TFDQuery);
+  RegisterClass(TFDMemTable);
   Application.MainFormOnTaskbar := True;
   Application.CreateForm(TDM, DM);
   Application.CreateForm(TFormLogin, FormLogin);

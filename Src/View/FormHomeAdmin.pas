@@ -452,7 +452,7 @@ begin
     IdCargo := TUsuarioViewHelper.ObterIdCargoSelecionado(cbOpcoes);
     Usuario.IdCargo := IdCargo;
 
-    if FController.AdicionarUsuario(Usuario, meSenha.Text) then
+    if FController.CadastrarUsuario(Usuario, meSenha.Text) then
     begin
       LimparCamposAdicionar;
       CarregarGrid(True);
@@ -486,14 +486,10 @@ begin
   IdUsuario := FMemTable.FieldByName('id_user').AsInteger;
   NomeUsuario := FMemTable.FieldByName('nome_user').AsString;
 
-  if MessageDlg(Format('Deseja desativar o usuário "%s"?', [NomeUsuario]),
-     mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+  if FController.DesativarUsuario(IdUsuario, NomeUsuario) then
   begin
-    if FController.DesativarUsuario(IdUsuario) then
-    begin
-      CarregarGrid(True);
-      pcButtons.ActivePageIndex := 0;
-    end;
+    CarregarGrid(True);
+    pcButtons.ActivePageIndex := 0;
   end;
 end;
 
@@ -566,14 +562,10 @@ begin
   IdUsuario := FMemTable.FieldByName('id_user').AsInteger;
   NomeUsuario := FMemTable.FieldByName('nome_user').AsString;
 
-  if MessageDlg(Format('Deseja restaurar o usuário "%s"?', [NomeUsuario]),
-     mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+  if FController.ReativarUsuario(IdUsuario, NomeUsuario) then
   begin
-    if FController.ReativarUsuario(IdUsuario) then
-    begin
-      CarregarGrid(True);
-      pcButtons.ActivePageIndex := 0;
-    end;
+    CarregarGrid(True);
+    pcButtons.ActivePageIndex := 0;
   end;
 end;
 

@@ -63,8 +63,8 @@ object FormHomeA: TFormHomeA
               AlignWithMargins = True
               Left = 20
               Top = 20
-              Width = 1084
-              Height = 588
+              Width = 414
+              Height = 30
               Margins.Left = 20
               Margins.Top = 20
               Margins.Bottom = 0
@@ -76,8 +76,6 @@ object FormHomeA: TFormHomeA
               Font.Name = 'Segoe UI'
               Font.Style = [fsBold]
               ParentFont = False
-              ExplicitWidth = 414
-              ExplicitHeight = 30
             end
           end
         end
@@ -298,7 +296,7 @@ object FormHomeA: TFormHomeA
                     object lblNPhone: TLabel
                       Left = 18
                       Top = 185
-                      Width = 47
+                      Width = 48
                       Height = 15
                       Caption = 'Telefone:'
                     end
