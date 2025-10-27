@@ -10,6 +10,7 @@ object FormHomeD: TFormHomeD
   Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
+  OnShow = FormShow
   TextHeight = 15
   object pHomeBackground: TPanel
     Left = 0
@@ -29,19 +30,19 @@ object FormHomeD: TFormHomeD
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 1
-      object PageControl1: TPageControl
+      object pcMain: TPageControl
         Left = 0
         Top = 0
         Width = 1143
         Height = 644
-        ActivePage = TabSheet2
+        ActivePage = ts5Perfil
         Align = alClient
         Style = tsFlatButtons
         TabOrder = 0
         Touch.ParentTabletOptions = False
         Touch.TabletOptions = [toPressAndHold]
-        object TabSheet1: TTabSheet
-          Caption = 'TabSheet1'
+        object ts1Selecione: TTabSheet
+          Caption = 'ts1Selecione'
           object pText: TPanel
             AlignWithMargins = True
             Left = 3
@@ -58,14 +59,13 @@ object FormHomeD: TFormHomeD
             StyleName = 'Windows'
             object lblText: TLabel
               AlignWithMargins = True
-              Left = 20
-              Top = 20
+              Left = 13
+              Top = 32
               Width = 414
-              Height = 30
+              Height = 588
               Margins.Left = 20
               Margins.Top = 20
               Margins.Bottom = 0
-              Align = alLeft
               Caption = 'Selecione a '#225'rea de seu desejo no menu.'
               Font.Charset = DEFAULT_CHARSET
               Font.Color = clBlack
@@ -76,9 +76,21 @@ object FormHomeD: TFormHomeD
             end
           end
         end
-        object TabSheet2: TTabSheet
-          Caption = 'TabSheet2'
+        object ts2Relatorios: TTabSheet
+          Caption = 'ts2Relatorios'
           ImageIndex = 1
+        end
+        object ts3Pedidos: TTabSheet
+          Caption = 'ts3Pedidos'
+          ImageIndex = 2
+        end
+        object ts4Produtos: TTabSheet
+          Caption = 'ts4Produtos'
+          ImageIndex = 3
+        end
+        object ts5Perfil: TTabSheet
+          Caption = 'ts5Perfil'
+          ImageIndex = 4
         end
       end
       object pBusca: TPanel
@@ -91,6 +103,32 @@ object FormHomeD: TFormHomeD
         ParentBackground = False
         TabOrder = 1
         StyleName = 'Windows'
+        object lblUserNameHeader: TLabel
+          Left = 39
+          Top = 13
+          Width = 44
+          Height = 25
+          Caption = 'Teste'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -19
+          Font.Name = 'Segoe UI'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
+        object lblUserIdHeader: TLabel
+          Left = 4
+          Top = 13
+          Width = 35
+          Height = 25
+          Caption = 'Teste'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -19
+          Font.Name = 'Segoe UI'
+          Font.Style = [fsBold]
+          ParentFont = False
+        end
       end
     end
     object pBarraMenuLeft: TPanel
@@ -568,6 +606,7 @@ object FormHomeD: TFormHomeD
           000068900600001AA401008006690000A0411A000068900600001AA401008006
           690000A041FF1FA1EEC55B2FFA86940000000049454E44AE426082}
         Proportional = True
+        OnClick = iButton3Click
       end
       object iButton2: TImage
         Left = 22
@@ -724,17 +763,17 @@ object FormHomeD: TFormHomeD
           A285E3680B9323DB2B2CFF5F0085B5A00268E7A00268E7A00268E7A00268E7F8
           1F291C2FF9F07C83BF0000000049454E44AE426082}
         Proportional = True
+        OnClick = iButton2Click
       end
       object iButton6: TImage
         AlignWithMargins = True
-        Left = 15
-        Top = 574
-        Width = 59
+        Left = 17
+        Top = 578
+        Width = 54
         Height = 55
         Margins.Left = 15
         Margins.Right = 15
         Margins.Bottom = 15
-        Align = alBottom
         Center = True
         Picture.Data = {
           0954506E67496D61676589504E470D0A1A0A0000000D49484452000002000000
@@ -1033,9 +1072,7 @@ object FormHomeD: TFormHomeD
           340000D0210D000074480300001DD200004087340000D0210D00007448030000
           1DFAFFD01FFE1E60B6E11C0000000049454E44AE426082}
         Proportional = True
-        ExplicitLeft = 17
-        ExplicitTop = 578
-        ExplicitWidth = 54
+        OnClick = iButton6Click
       end
       object lblButton1: TLabel
         Left = 88
@@ -1452,6 +1489,7 @@ object FormHomeD: TFormHomeD
           0100008006110000006810010000800611000000681001000080061100000068
           100100008006FD7F717B0BC4DB9574E30000000049454E44AE426082}
         Proportional = True
+        OnClick = iButton4Click
       end
       object iButton5: TImage
         Left = 17
@@ -2144,6 +2182,7 @@ object FormHomeD: TFormHomeD
           22A20231012022222A1013002222A20231012022222A1013002222A202FD3FBB
           5137C463C0FA390000000049454E44AE426082}
         Proportional = True
+        OnClick = iButton5Click
       end
       object lblButton5: TLabel
         Left = 88
@@ -2151,6 +2190,19 @@ object FormHomeD: TFormHomeD
         Width = 39
         Height = 30
         Caption = 'Loja'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -22
+        Font.Name = 'Segoe UI'
+        Font.Style = []
+        ParentFont = False
+      end
+      object lblButton6: TLabel
+        Left = 88
+        Top = 590
+        Width = 36
+        Height = 30
+        Caption = 'Sair'
         Font.Charset = DEFAULT_CHARSET
         Font.Color = clWindowText
         Font.Height = -22

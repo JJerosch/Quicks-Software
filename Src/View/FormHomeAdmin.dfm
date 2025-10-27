@@ -4680,7 +4680,7 @@ object FormHomeA: TFormHomeA
     object lblUserNameHeader: TLabel
       Left = 62
       Top = 9
-      Width = 6
+      Width = 91
       Height = 30
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -4692,7 +4692,7 @@ object FormHomeA: TFormHomeA
     object lblUserIdHeader: TLabel
       Left = 4
       Top = 9
-      Width = 6
+      Width = 52
       Height = 30
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText

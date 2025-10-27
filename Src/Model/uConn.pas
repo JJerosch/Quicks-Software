@@ -37,7 +37,6 @@ begin
       if not FDConn.Connected then
       begin
         FDConn.Connected := True;
-        ShowMessage('Conexão estabelecida com sucesso!');
       end;
     except
       on E: Exception do

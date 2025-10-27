@@ -54,11 +54,11 @@ begin
   RegisterClass(TFDQuery);
   RegisterClass(TFDMemTable);
   Application.MainFormOnTaskbar := True;
+  Application.CreateForm(TFormHomeD, FormHomeD);
   Application.CreateForm(TDM, DM);
   Application.CreateForm(TFormLogin, FormLogin);
   Application.CreateForm(TFormHomeA, FormHomeA);
   Application.CreateForm(TFormCadastro, FormCadastro);
-  Application.CreateForm(TFormHomeD, FormHomeD);
   Application.CreateForm(TFormHomeC, FormHomeC);
   Application.CreateForm(TFormHomeE, FormHomeE);
   Application.Run;

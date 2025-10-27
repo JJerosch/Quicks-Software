@@ -105,7 +105,7 @@
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
-        <DCC_UnitSearchPath>C:\Users\jpjer\OneDrive\Documentos\GitHub\Quicks-Software\Src\Utils;C:\Users\pinto.7979\Documents\GitHub\Quicks-Software\Src\Utils;C:\Users\pinto.7979\Documents\GitHub\Quicks-Software\BCrypt\bcrypt-master;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>C:\Users\jpjer\OneDrive\Documentos\GitHub\Quicks-Software\Src\Utils;C:\Users\pinto.7979\Documents\GitHub\Quicks-Software\Src\Utils;C:\Users\pinto.7979\Documents\GitHub\Quicks-Software\BCrypt\bcrypt-master;C:\Users\João Jerosch\OneDrive\Documentos\Embarcadero\Studio\Projects\Quicks\Src\Utils;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
