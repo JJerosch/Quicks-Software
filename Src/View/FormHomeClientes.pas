@@ -10,30 +10,27 @@ uses
 type
   TFormHomeC = class(TForm)
     pHomeBackground: TPanel;
+    pBusca: TPanel;
+    Image1: TImage;
+    eBuscaMain: TEdit;
+    scbxMain: TScrollBox;
+    lvMain: TListView;
     pBarraMenuLeft: TPanel;
     iButton1: TImage;
     iButton2: TImage;
     iButton3: TImage;
     iButton4: TImage;
     iButtonLeave: TImage;
-    pListViewMain: TPanel;
-    scbxMain: TScrollBox;
-    lvMain: TListView;
-    pExploreCarrinho: TPanel;
-    pBusca: TPanel;
-    Image1: TImage;
-    eBuscaMain: TEdit;
-    pTextCarrinho: TPanel;
-    lblText: TLabel;
-    pButtonCarrinho: TPanel;
-    shButtonCarrinho: TShape;
-    lblButtonCarrinho: TLabel;
-    pBanner: TPanel;
-    iCarrinho: TImage;
     lblButton1: TLabel;
     lblButton2: TLabel;
     lblButton3: TLabel;
     lblButton4: TLabel;
+    iCarrinho: TImage;
+    lblButton5: TLabel;
+    lblQuantidadeCarrinho: TLabel;
+    lblSair: TLabel;
+    pEndereco: TPanel;
+    pCategorias: TPanel;
     procedure iButton1Click(Sender: TObject);
   private
     FIdUsuario: Integer;
@@ -52,10 +49,12 @@ implementation
 
 procedure TFormHomeC.iButton1Click(Sender: TObject);
 begin
-  if pBarraMenuLeft.Width = 89 then begin
-    pBarraMenuLeft.Width := 190;
+  if pBarraMenuLeft.Width = 57 then begin
+    pBarraMenuLeft.Width := 225;
+    pBarraMenuLeft.Height := 683;
   end else begin
-    pBarraMenuLeft.Width := 89;
+    pBarraMenuLeft.Width := 57;
+    pBarraMenuLeft.Height :=55;
   end;
 
 end;

@@ -10,23 +10,22 @@ uses
 type
   TFormHomeE = class(TForm)
     pHomeBackground: TPanel;
+    scbxMain: TScrollBox;
+    lvMain: TListView;
+    pBusca: TPanel;
+    Image1: TImage;
+    eBuscaMain: TEdit;
     pBarraMenuLeft: TPanel;
-    iButton1Menu: TImage;
-    iButton3Pedidos: TImage;
-    iButton4Perfil: TImage;
+    iButton1: TImage;
+    iButton3: TImage;
+    iButton4: TImage;
     iButtonLeave: TImage;
     lblButton1: TLabel;
     lblButton3: TLabel;
     lblButton4: TLabel;
-    pListViewMain: TPanel;
-    scbxMain: TScrollBox;
-    lvMain: TListView;
-    pTextCarrinho: TPanel;
-    lblText: TLabel;
-    pHeader: TPanel;
-    pBusca: TPanel;
+    lblSair: TLabel;
     procedure iButton1MenuClick(Sender: TObject);
-    procedure FormShow(Sender: TObject);
+    procedure iButton1Click(Sender: TObject);
   private
     FIdUsuario: Integer;
     FNomeUsuario: String;
@@ -42,6 +41,17 @@ implementation
 
 {$R *.dfm}
 
+procedure TFormHomeE.iButton1Click(Sender: TObject);
+begin
+if pBarraMenuLeft.Width = 57 then begin
+    pBarraMenuLeft.Width := 225;
+    pBarraMenuLeft.Height := 683;
+  end else begin
+    pBarraMenuLeft.Width := 57;
+    pBarraMenuLeft.Height :=55;
+  end;
+end;
+
 procedure TFormHomeE.iButton1MenuClick(Sender: TObject);
 begin
    if pBarraMenuLeft.Width = 89 then begin
@@ -50,11 +60,4 @@ begin
     pBarraMenuLeft.Width := 89;
   end;
 end;
-procedure TFormHomeE.FormShow(Sender: TObject);
-begin
-// Usar os dados do usuário quando o form for exibido
-  Caption := 'Home Entregador - ' + FNomeUsuario;
-  lblText.Caption := 'Bem-vindo, ' + FNomeUsuario + '!';
-end;
-
 end.
