@@ -43,7 +43,12 @@ uses
   RedirectController in 'Src\Controller\RedirectController.pas',
   UsuarioDataSetHelperCRUDAdmin in 'Src\Utils\UsuarioDataSetHelperCRUDAdmin.pas',
   PasswordHelper in 'Src\Utils\PasswordHelper.pas',
-  UsuarioViewHelperCRUDAdmin in 'Src\Utils\UsuarioViewHelperCRUDAdmin.pas';
+  UsuarioViewHelperCRUDAdmin in 'Src\Utils\UsuarioViewHelperCRUDAdmin.pas',
+  ProdutoModel in 'Src\Model\ProdutoModel.pas',
+  ProdutoService in 'Src\Service\ProdutoService.pas',
+  ProdutoRepository in 'Src\Repository\ProdutoRepository.pas',
+  ProdutoController in 'Src\Controller\ProdutoController.pas',
+  ProdutoViewHelper in 'Src\Utils\ProdutoViewHelper.pas';
 
 {$R *.res}
 
@@ -54,9 +59,9 @@ begin
   RegisterClass(TFDQuery);
   RegisterClass(TFDMemTable);
   Application.MainFormOnTaskbar := True;
-  Application.CreateForm(TFormHomeD, FormHomeD);
   Application.CreateForm(TDM, DM);
   Application.CreateForm(TFormLogin, FormLogin);
+  Application.CreateForm(TFormHomeD, FormHomeD);
   Application.CreateForm(TFormHomeA, FormHomeA);
   Application.CreateForm(TFormCadastro, FormCadastro);
   Application.CreateForm(TFormHomeC, FormHomeC);

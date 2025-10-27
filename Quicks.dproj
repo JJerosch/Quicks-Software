@@ -167,6 +167,11 @@
         <DCCReference Include="Src\Utils\UsuarioDataSetHelperCRUDAdmin.pas"/>
         <DCCReference Include="Src\Utils\PasswordHelper.pas"/>
         <DCCReference Include="Src\Utils\UsuarioViewHelperCRUDAdmin.pas"/>
+        <DCCReference Include="Src\Model\ProdutoModel.pas"/>
+        <DCCReference Include="Src\Service\ProdutoService.pas"/>
+        <DCCReference Include="Src\Repository\ProdutoRepository.pas"/>
+        <DCCReference Include="Src\Controller\ProdutoController.pas"/>
+        <DCCReference Include="Src\Utils\ProdutoViewHelper.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

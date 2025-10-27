@@ -1,4 +1,4 @@
-object FormHomeD: TFormHomeD
+﻿object FormHomeD: TFormHomeD
   Left = 0
   Top = 0
   Caption = 'FormHomeD'
@@ -10,6 +10,8 @@ object FormHomeD: TFormHomeD
   Font.Height = -12
   Font.Name = 'Segoe UI'
   Font.Style = []
+  OnCreate = FormCreate
+  OnDestroy = FormDestroy
   OnShow = FormShow
   TextHeight = 15
   object pHomeBackground: TPanel
@@ -35,7 +37,7 @@ object FormHomeD: TFormHomeD
         Top = 0
         Width = 1143
         Height = 644
-        ActivePage = ts5Perfil
+        ActivePage = ts4Produtos
         Align = alClient
         Style = tsFlatButtons
         TabOrder = 0
@@ -87,6 +89,589 @@ object FormHomeD: TFormHomeD
         object ts4Produtos: TTabSheet
           Caption = 'ts4Produtos'
           ImageIndex = 3
+          object pMainProdutos: TPanel
+            Left = 0
+            Top = 0
+            Width = 1135
+            Height = 611
+            Align = alClient
+            Color = clWhite
+            ParentBackground = False
+            TabOrder = 0
+            ExplicitLeft = -1
+            object pMainGrid: TPanel
+              AlignWithMargins = True
+              Left = 61
+              Top = 76
+              Width = 1013
+              Height = 474
+              Margins.Left = 60
+              Margins.Top = 75
+              Margins.Right = 60
+              Margins.Bottom = 60
+              BevelOuter = bvNone
+              Color = clCoral
+              ParentBackground = False
+              TabOrder = 0
+              object DBGridProdutos: TDBGrid
+                Left = 32
+                Top = 78
+                Width = 497
+                Height = 372
+                DataSource = DM.DS
+                Options = [dgTitles, dgIndicator, dgColumnResize, dgColLines, dgRowLines, dgTabs, dgConfirmDelete, dgCancelOnExit, dgTitleClick, dgTitleHotTrack]
+                ReadOnly = True
+                TabOrder = 0
+                TitleFont.Charset = DEFAULT_CHARSET
+                TitleFont.Color = clWindowText
+                TitleFont.Height = -12
+                TitleFont.Name = 'Segoe UI'
+                TitleFont.Style = []
+                OnCellClick = DBGridProdutosCellClick
+              end
+              object pButton2Excluir: TPanel
+                Left = 628
+                Top = 27
+                Width = 66
+                Height = 30
+                Caption = 'Excluir'
+                Color = clWhite
+                ParentBackground = False
+                TabOrder = 1
+                OnClick = pButton2ExcluirClick
+              end
+              object pButton3Atualizar: TPanel
+                Left = 700
+                Top = 27
+                Width = 66
+                Height = 30
+                Caption = 'Atualizar'
+                Color = clWhite
+                ParentBackground = False
+                TabOrder = 2
+                OnClick = pButton3AtualizarClick
+              end
+              object pButton4Restaurar: TPanel
+                Left = 774
+                Top = 27
+                Width = 66
+                Height = 30
+                Caption = 'Restaurar'
+                Color = clWhite
+                ParentBackground = False
+                TabOrder = 3
+                OnClick = pButton4RestaurarClick
+              end
+              object pButton5Pesquisar: TPanel
+                Left = 847
+                Top = 27
+                Width = 66
+                Height = 30
+                Caption = 'Pesquisar'
+                Color = clWhite
+                ParentBackground = False
+                TabOrder = 4
+                OnClick = pButton5PesquisarClick
+              end
+              object pButton1Adicionar: TPanel
+                Left = 552
+                Top = 27
+                Width = 66
+                Height = 30
+                Caption = 'Adicionar'
+                Color = clWhite
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clBlack
+                Font.Height = -12
+                Font.Name = 'Segoe UI'
+                Font.Style = []
+                ParentBackground = False
+                ParentFont = False
+                TabOrder = 5
+                OnClick = pButton1AdicionarClick
+              end
+              object pButton6Cancelar: TPanel
+                Left = 919
+                Top = 27
+                Width = 66
+                Height = 30
+                Caption = 'Cancelar'
+                Color = clWhite
+                ParentBackground = False
+                TabOrder = 6
+                OnClick = pButton6CancelarClick
+              end
+              object pcButtons: TPageControl
+                Left = 552
+                Top = 56
+                Width = 433
+                Height = 393
+                ActivePage = pctab1Add
+                TabOrder = 7
+                object pctab0Clique: TTabSheet
+                  Caption = 'pctab0Clique'
+                  object pMainPTab0: TPanel
+                    Left = 0
+                    Top = 0
+                    Width = 425
+                    Height = 363
+                    Align = alClient
+                    BevelOuter = bvNone
+                    Color = clCoral
+                    ParentBackground = False
+                    TabOrder = 0
+                    StyleName = 'Windows'
+                    object lblClique: TLabel
+                      Left = 96
+                      Top = 155
+                      Width = 265
+                      Height = 50
+                      Alignment = taCenter
+                      Caption = 'Clique nos bot'#245'es acima para '#13#10'realizar a a'#231#227'o descrita neles.'
+                      Font.Charset = DEFAULT_CHARSET
+                      Font.Color = clMaroon
+                      Font.Height = -19
+                      Font.Name = 'Segoe UI'
+                      Font.Style = [fsBold]
+                      ParentFont = False
+                    end
+                  end
+                end
+                object pctab1Add: TTabSheet
+                  Caption = 'pctab1Add'
+                  ImageIndex = 1
+                  object pBackgroundAdicionar: TPanel
+                    Left = 0
+                    Top = 0
+                    Width = 425
+                    Height = 363
+                    Margins.Left = 5
+                    Margins.Top = 5
+                    Margins.Right = 5
+                    Margins.Bottom = 5
+                    Align = alClient
+                    BevelOuter = bvNone
+                    Color = clCoral
+                    ParentBackground = False
+                    TabOrder = 0
+                    ExplicitTop = 5
+                    object lblDisponívelVenda: TLabel
+                      Left = 23
+                      Top = 247
+                      Width = 119
+                      Height = 15
+                      Caption = 'Dispon'#237'vel para venda:'
+                    end
+                    object lblPreco: TLabel
+                      Left = 23
+                      Top = 103
+                      Width = 64
+                      Height = 15
+                      Caption = 'Pre'#231'o:      R$'
+                    end
+                    object lblNome: TLabel
+                      Left = 23
+                      Top = 62
+                      Width = 36
+                      Height = 15
+                      Caption = 'Nome:'
+                    end
+                    object lblDesc: TLabel
+                      Left = 23
+                      Top = 142
+                      Width = 54
+                      Height = 15
+                      Caption = 'Descri'#231#227'o:'
+                    end
+                    object lblTituloMain: TLabel
+                      AlignWithMargins = True
+                      Left = 64
+                      Top = 5
+                      Width = 288
+                      Height = 44
+                      Margins.Top = 20
+                      Margins.Bottom = 30
+                      Alignment = taCenter
+                      Caption = 'Preencha os dados'
+                      Color = clOrangered
+                      Font.Charset = ANSI_CHARSET
+                      Font.Color = clWhite
+                      Font.Height = -36
+                      Font.Name = 'Candara'
+                      Font.Style = [fsBold]
+                      ParentColor = False
+                      ParentFont = False
+                    end
+                    object pButtonConfirmarAdd: TPanel
+                      AlignWithMargins = True
+                      Left = 182
+                      Top = 306
+                      Width = 73
+                      Height = 40
+                      BevelOuter = bvNone
+                      Caption = 'Confirmar'
+                      Color = clCream
+                      ParentBackground = False
+                      TabOrder = 0
+                      OnClick = pButtonConfirmarAddClick
+                    end
+                    object eNomeAdd: TEdit
+                      Left = 91
+                      Top = 59
+                      Width = 190
+                      Height = 23
+                      BevelInner = bvNone
+                      BevelOuter = bvNone
+                      ParentShowHint = False
+                      ShowHint = True
+                      TabOrder = 1
+                      TextHint = 'Escreva aqui o nome do produto...'
+                      StyleName = 'Windows'
+                    end
+                    object cbDisponivelAdd: TCheckBox
+                      Left = 147
+                      Top = 247
+                      Width = 18
+                      Height = 17
+                      TabOrder = 2
+                      StyleName = 'Windows'
+                    end
+                    object mDescAdd: TMemo
+                      Left = 91
+                      Top = 139
+                      Width = 270
+                      Height = 94
+                      Lines.Strings = (
+                        'mDescAdd')
+                      TabOrder = 3
+                    end
+                    object ePrecoAdd: TEdit
+                      Left = 91
+                      Top = 100
+                      Width = 190
+                      Height = 23
+                      BevelInner = bvNone
+                      BevelOuter = bvNone
+                      ParentShowHint = False
+                      ShowHint = True
+                      TabOrder = 4
+                      TextHint = '000,00'
+                      StyleName = 'Windows'
+                    end
+                  end
+                end
+                object pctab2Ex: TTabSheet
+                  Caption = 'pctab2Ex'
+                  ImageIndex = 2
+                  object pBackgroundExcluir: TPanel
+                    Left = 0
+                    Top = 0
+                    Width = 425
+                    Height = 363
+                    Margins.Left = 5
+                    Margins.Top = 5
+                    Margins.Right = 5
+                    Margins.Bottom = 5
+                    Align = alClient
+                    BevelOuter = bvNone
+                    Color = clCoral
+                    ParentBackground = False
+                    TabOrder = 0
+                    object pButtonConfirmarDesativar: TPanel
+                      Left = 144
+                      Top = 264
+                      Width = 145
+                      Height = 41
+                      Caption = 'Confirmar Exclus'#227'o'
+                      Color = clWhite
+                      ParentBackground = False
+                      TabOrder = 0
+                      OnClick = pButtonConfirmarDesativarClick
+                    end
+                    object pUserSelectionEx: TPanel
+                      Left = 120
+                      Top = 60
+                      Width = 185
+                      Height = 175
+                      Color = clWhite
+                      ParentBackground = False
+                      TabOrder = 1
+                      object lblDescUserSelectEx: TLabel
+                        Left = 35
+                        Top = 10
+                        Width = 120
+                        Height = 50
+                        Alignment = taCenter
+                        Caption = 'O produto '#13#10'selecionado '#233':'
+                        Font.Charset = DEFAULT_CHARSET
+                        Font.Color = clGray
+                        Font.Height = -19
+                        Font.Name = 'Segoe UI'
+                        Font.Style = []
+                        ParentFont = False
+                      end
+                      object lblProdSelectDesativar: TLabel
+                        Left = 0
+                        Top = 80
+                        Width = 185
+                        Height = 25
+                        Alignment = taCenter
+                        Caption = 'lblProdSelectDesativar'
+                        Font.Charset = DEFAULT_CHARSET
+                        Font.Color = clRed
+                        Font.Height = -19
+                        Font.Name = 'Segoe UI'
+                        Font.Style = []
+                        ParentFont = False
+                      end
+                    end
+                  end
+                end
+                object pctab3Up: TTabSheet
+                  Caption = 'pctab3Up'
+                  ImageIndex = 3
+                  object pBackgroundUpdate: TPanel
+                    Left = 0
+                    Top = 0
+                    Width = 425
+                    Height = 363
+                    Margins.Left = 5
+                    Margins.Top = 5
+                    Margins.Right = 5
+                    Margins.Bottom = 5
+                    Align = alClient
+                    BevelOuter = bvNone
+                    Color = clCoral
+                    ParentBackground = False
+                    TabOrder = 0
+                    ExplicitTop = 5
+                    object Label1: TLabel
+                      Left = 23
+                      Top = 247
+                      Width = 119
+                      Height = 15
+                      Caption = 'Dispon'#237'vel para venda:'
+                    end
+                    object Label2: TLabel
+                      Left = 23
+                      Top = 103
+                      Width = 33
+                      Height = 15
+                      Caption = 'Pre'#231'o:'
+                    end
+                    object Label3: TLabel
+                      Left = 23
+                      Top = 62
+                      Width = 36
+                      Height = 15
+                      Caption = 'Nome:'
+                    end
+                    object Label4: TLabel
+                      Left = 23
+                      Top = 142
+                      Width = 54
+                      Height = 15
+                      Caption = 'Descri'#231#227'o:'
+                    end
+                    object Label5: TLabel
+                      AlignWithMargins = True
+                      Left = 64
+                      Top = 5
+                      Width = 288
+                      Height = 44
+                      Margins.Top = 20
+                      Margins.Bottom = 30
+                      Alignment = taCenter
+                      Caption = 'Preencha os dados'
+                      Color = clOrangered
+                      Font.Charset = ANSI_CHARSET
+                      Font.Color = clWhite
+                      Font.Height = -36
+                      Font.Name = 'Candara'
+                      Font.Style = [fsBold]
+                      ParentColor = False
+                      ParentFont = False
+                    end
+                    object ePrecoUpdate: TMaskEdit
+                      Left = 91
+                      Top = 100
+                      Width = 102
+                      Height = 23
+                      BevelInner = bvNone
+                      BevelOuter = bvNone
+                      TabOrder = 2
+                      Text = ''
+                      TextHint = '00,00'
+                      StyleName = 'Windows'
+                    end
+                    object Panel2: TPanel
+                      AlignWithMargins = True
+                      Left = 182
+                      Top = 306
+                      Width = 73
+                      Height = 40
+                      BevelOuter = bvNone
+                      Caption = 'Confirmar'
+                      Color = clCream
+                      ParentBackground = False
+                      TabOrder = 0
+                      OnClick = pButtonConfirmarAddClick
+                    end
+                    object eNomeUpdate: TEdit
+                      Left = 91
+                      Top = 59
+                      Width = 190
+                      Height = 23
+                      BevelInner = bvNone
+                      BevelOuter = bvNone
+                      ParentShowHint = False
+                      ShowHint = True
+                      TabOrder = 1
+                      TextHint = 'Escreva aqui o nome do produto...'
+                      StyleName = 'Windows'
+                    end
+                    object cbDisponivelUpdate: TCheckBox
+                      Left = 147
+                      Top = 247
+                      Width = 18
+                      Height = 17
+                      TabOrder = 3
+                      StyleName = 'Windows'
+                    end
+                    object mDescUpdate: TEdit
+                      Left = 91
+                      Top = 139
+                      Width = 270
+                      Height = 102
+                      TabOrder = 4
+                      TextHint = 'Escreva aqui a descri'#231'ao do produto...'
+                    end
+                  end
+                end
+                object pctab4Res: TTabSheet
+                  Caption = 'pctab4Res'
+                  ImageIndex = 4
+                  object pConfirmarRestore: TPanel
+                    Left = 0
+                    Top = 0
+                    Width = 425
+                    Height = 363
+                    Margins.Left = 5
+                    Margins.Top = 5
+                    Margins.Right = 5
+                    Margins.Bottom = 5
+                    Align = alClient
+                    BevelOuter = bvNone
+                    Color = clCoral
+                    ParentBackground = False
+                    TabOrder = 0
+                    object pButtonConfirmarReativar: TPanel
+                      Left = 142
+                      Top = 264
+                      Width = 145
+                      Height = 41
+                      Caption = 'Confirmar Restaura'#231#227'o'
+                      Color = clWhite
+                      ParentBackground = False
+                      TabOrder = 0
+                      OnClick = pButtonConfirmarReativarClick
+                    end
+                    object pUserSelectionRestore: TPanel
+                      Left = 120
+                      Top = 60
+                      Width = 185
+                      Height = 175
+                      Color = clWhite
+                      ParentBackground = False
+                      TabOrder = 1
+                      object lblDescUserSelectRes: TLabel
+                        Left = 35
+                        Top = 10
+                        Width = 120
+                        Height = 50
+                        Alignment = taCenter
+                        Caption = 'O produto '#13#10'selecionado '#233':'
+                        Font.Charset = DEFAULT_CHARSET
+                        Font.Color = clGray
+                        Font.Height = -19
+                        Font.Name = 'Segoe UI'
+                        Font.Style = []
+                        ParentFont = False
+                      end
+                      object lblProdSelectReativar: TLabel
+                        Left = 0
+                        Top = 80
+                        Width = 185
+                        Height = 25
+                        Alignment = taCenter
+                        Caption = 'lblProdSelectReativar'
+                        Font.Charset = DEFAULT_CHARSET
+                        Font.Color = clRed
+                        Font.Height = -19
+                        Font.Name = 'Segoe UI'
+                        Font.Style = []
+                        ParentFont = False
+                      end
+                    end
+                  end
+                end
+                object pctab5Pesq: TTabSheet
+                  Caption = 'pctab5Pesq'
+                  ImageIndex = 5
+                  object Panel3: TPanel
+                    Left = 0
+                    Top = 0
+                    Width = 425
+                    Height = 363
+                    Align = alClient
+                    BevelOuter = bvNone
+                    Color = clCoral
+                    ParentBackground = False
+                    TabOrder = 0
+                    StyleName = 'Windows'
+                    object Label7: TLabel
+                      Left = 96
+                      Top = 155
+                      Width = 247
+                      Height = 50
+                      Alignment = taCenter
+                      Caption = 'Digite na barra de pesquisa '#13#10'que est'#225' logo acima.'
+                      Font.Charset = DEFAULT_CHARSET
+                      Font.Color = clMaroon
+                      Font.Height = -19
+                      Font.Name = 'Segoe UI'
+                      Font.Style = [fsBold]
+                      ParentFont = False
+                    end
+                  end
+                end
+              end
+              object eBuscaMain: TEdit
+                Left = 31
+                Top = 27
+                Width = 497
+                Height = 23
+                BevelInner = bvNone
+                BevelOuter = bvNone
+                Enabled = False
+                TabOrder = 8
+                TextHint = 'Para digitar clique no bot'#227'o "Pesquisar"'
+                StyleName = 'Windows'
+                OnChange = eBuscaMainChange
+              end
+              object pHideTSbar: TPanel
+                Left = 31
+                Top = 56
+                Width = 954
+                Height = 23
+                BevelOuter = bvNone
+                Color = clCoral
+                ParentBackground = False
+                TabOrder = 9
+                StyleName = 'Windows'
+              end
+            end
+          end
         end
         object ts5Perfil: TTabSheet
           Caption = 'ts5Perfil'
@@ -103,31 +688,42 @@ object FormHomeD: TFormHomeD
         ParentBackground = False
         TabOrder = 1
         StyleName = 'Windows'
-        object lblUserNameHeader: TLabel
-          Left = 39
-          Top = 13
-          Width = 44
-          Height = 25
-          Caption = 'Teste'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -19
-          Font.Name = 'Segoe UI'
-          Font.Style = [fsBold]
-          ParentFont = False
-        end
-        object lblUserIdHeader: TLabel
+        object pDadosHeader: TPanel
           Left = 4
           Top = 13
-          Width = 35
-          Height = 25
-          Caption = 'Teste'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -19
-          Font.Name = 'Segoe UI'
-          Font.Style = [fsBold]
-          ParentFont = False
+          Width = 281
+          Height = 23
+          BevelOuter = bvNone
+          TabOrder = 0
+          object lblUserIdHeader: TLabel
+            Left = 0
+            Top = 0
+            Width = 5
+            Height = 23
+            Align = alLeft
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -19
+            Font.Name = 'Segoe UI'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ExplicitHeight = 25
+          end
+          object lblUserNameHeader: TLabel
+            Left = 5
+            Top = 0
+            Width = 5
+            Height = 23
+            Align = alLeft
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -19
+            Font.Name = 'Segoe UI'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ExplicitLeft = 44
+            ExplicitHeight = 25
+          end
         end
       end
     end
@@ -1086,6 +1682,7 @@ object FormHomeD: TFormHomeD
         Font.Name = 'Segoe UI'
         Font.Style = []
         ParentFont = False
+        OnClick = lblButton1Click
       end
       object lblButton2: TLabel
         Left = 88
@@ -2199,7 +2796,7 @@ object FormHomeD: TFormHomeD
       end
       object lblButton6: TLabel
         Left = 88
-        Top = 590
+        Top = 587
         Width = 36
         Height = 30
         Caption = 'Sair'
