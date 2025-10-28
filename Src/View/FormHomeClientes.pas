@@ -37,8 +37,7 @@ type
   private
     FIdUsuario: Integer;
     FNomeUsuario: String;
-    // MUDANÇA 1: Procedure agora aceita um parâmetro TFDQuery
-    procedure PopularLista(AQuery: TFDQuery);
+    procedure PopularLista;
   public
     property IdUsuario: Integer read FIdUsuario write FIdUsuario;
     property NomeUsuario: String read FNomeUsuario write FNomeUsuario;
@@ -56,18 +55,10 @@ var
   Qr: TFDQuery;
 begin
   Qr := TFDQuery.Create(nil);
-  try
-    Qr.Connection := DM.FDConn;
-    Qr.SQL.Clear;
-    Qr.SQL.Text := 'SELECT id_comercio, nome_comercio, descricao FROM comercios WHERE ativo = true';
-
-    // MUDANÇA 2: Passa a query (Qr) como parâmetro
-    PopularLista(Qr);
-
-  finally
-    // MUDANÇA 3: Libera a query da memória após o uso
-    Qr.Free;
-  end;
+  Qr.Connection := DM.FDConn;
+  Qr.SQL.Clear;
+  Qr.SQL.Text := 'SELECT id_comercio, nome_comercio, descricao FROM comercios WHERE ativo = true';
+  PopularLista;
 end;
 
 procedure TFormHomeC.iButton1Click(Sender: TObject);
@@ -79,61 +70,59 @@ begin
     pBarraMenuLeft.Width := 57;
     pBarraMenuLeft.Height :=55;
   end;
+
 end;
 
-// MUDANÇA 4: Procedure agora usa o parâmetro 'AQuery'
-procedure TFormHomeC.PopularLista(AQuery: TFDQuery);
+procedure TFormHomeC.PopularLista;
 var
   Item: TListViewItem;
-  // MUDANÇA 5: A variável local 'Qr: TFDQuery' foi REMOVIDA
-begin
-  // Limpa a lista antes de adicionar novos itens
-  lvMain.Items.Clear;
+  Qr: TFDQuery;
+ begin
+   // Limpa a lista antes de adicionar novos itens
+   lvMain.Items.Clear;
 
-  // MUDANÇA 6: Não precisamos mais checar se a query está ativa,
-  // pois acabamos de criá-la. Vamos direto para o Open.
+   // Garante que a query esteja fechada antes de abrir
+   if Qr.Active then
+     Qr.Close;
 
-  // Abre a query para buscar os dados
-  try
-    AQuery.Open; // Usa o parâmetro AQuery
-  except
-    on E: Exception do
-    begin
-      ShowMessage('Erro ao conectar ao banco de dados: ' + E.Message);
-      Exit; // Sai da procedure se não conseguir conectar
-    end;
-  end;
+   // Abre a query para buscar os dados
+   try
+     Qr.Open;
+   except
+     on E: Exception do
+     begin
+       ShowMessage('Erro ao conectar ao banco de dados: ' + E.Message);
+       Exit; // Sai da procedure se não conseguir conectar
+     end;
+   end;
+   try
+     lvMain.BeginUpdate; // Otimização: pausa a atualização visual
+     try
+       // Loop enquanto não chegar ao fim dos registros
+       while not Qr.Eof do
+       begin
+         // 1. Adiciona um novo item ao ListView
+         Item := lvMain.Items.Add;
 
-  // O 'try..finally' aqui é apenas para o BeginUpdate/EndUpdate
-  try
-    lvMain.BeginUpdate; // Otimização: pausa a atualização visual
-    try
-      // Loop enquanto não chegar ao fim dos registros
-      while not AQuery.Eof do
-      begin
-        // 1. Adiciona um novo item ao ListView
-        Item := lvMain.Items.Add;
+         // 2. Define o texto principal do item
+         Item.Text := Qr.FieldByName('nome_comercio').AsString;
 
-        // 2. Define o texto principal do item
-        Item.Text := AQuery.FieldByName('nome_comercio').AsString;
+         // 3. (Opcional) Define detalhes adicionais
+         // (Para isso, o ViewStyle do lvMain deve ser vsList, vsIcon, etc.)
+         Item.Detail := Qr.FieldByName('descricao').AsString;
 
-        // 3. (Opcional) Define detalhes adicionais
-        Item.Detail := AQuery.FieldByName('descricao').AsString;
+         // 4. (Opcional) Você pode guardar o ID para uso futuro
+         // (Convertemos o Integer para um TObject para guardar no .Data)
+         Item.Data := TObject(NativeInt(Qr.FieldByName('id_comercio').AsInteger));
 
-        // 4. (Opcional) Você pode guardar o ID para uso futuro
-        Item.Data := TObject(NativeInt(AQuery.FieldByName('id_comercio').AsInteger));
-
-        // 5. Move para o próximo registro
-        AQuery.Next;
-      end;
-    finally
-      lvMain.EndUpdate; // Retoma a atualização visual
-    end;
-  finally
-    // MUDANÇA 7: NÃO fechamos a query aqui (AQuery.Close),
-    // pois ela será destruída (Free) no FormShow.
-  end;
-end;
-
+         // 5. Move para o próximo registro
+         Qr.Next;
+       end;
+     finally
+       lvMain.EndUpdate; // Retoma a atualização visual
+     end;
+   finally
+     Qr.Close; // Fecha a query
+   end;
+ end;
 end.
-
