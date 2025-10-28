@@ -31,10 +31,10 @@ function TProdutoRepository.DataSetToProduto(DataSet: TFDQuery): TProduto;
 begin
   Result := TProduto.Create;
   Result.IdProduto := DataSet.FieldByName('id_produto').AsInteger;
-  Result.NomeProd := DataSet.FieldByName('nome_produto').AsString;
-  Result.DescProd := DataSet.FieldByName('descricao').AsString;
-  Result.PrecoProd := DataSet.FieldByName('preco').AsCurrency;
-  Result.DisponivelVenda := DataSet.FieldByName('disponivel').AsBoolean;
+  Result.NomeProd := DataSet.FieldByName('nome_prod').AsString;
+  Result.DescProd := DataSet.FieldByName('desc_prod').AsString;
+  Result.PrecoProd := DataSet.FieldByName('preco_prod').AsCurrency;
+  Result.DisponivelVenda := DataSet.FieldByName('disponivel_venda').AsBoolean;
   Result.IdComercio := DataSet.FieldByName('id_comercio').AsInteger;
 
   // Nome do comércio (se houver join)
@@ -52,14 +52,14 @@ begin
   try
     Qr.Connection := DM.FDConn;
     Qr.SQL.Clear;
-    Qr.SQL.Add('SELECT p.id_produto, p.nome_produto, p.descricao, p.preco,');
-    Qr.SQL.Add('       p.disponivel, p.id_comercio, c.nome_comercio');
+    Qr.SQL.Add('SELECT p.id_produto, p.nome_prod, p.desc_prod, p.preco_prod,');
+    Qr.SQL.Add('       p.disponivel_venda, p.id_comercio, c.nome_comercio');
     Qr.SQL.Add('FROM produtos p');
     Qr.SQL.Add('INNER JOIN comercios c ON p.id_comercio = c.id_comercio');
     Qr.SQL.Add('WHERE p.id_comercio = :id_comercio');
 
     if ApenasDisponiveis then
-      Qr.SQL.Add('AND p.disponivel = TRUE');
+      Qr.SQL.Add('AND p.disponivel_venda = TRUE');
 
     Qr.SQL.Add('ORDER BY p.id_produto');
     Qr.ParamByName('id_comercio').AsInteger := IdComercio;
@@ -84,8 +84,8 @@ begin
   try
     Qr.Connection := DM.FDConn;
     Qr.SQL.Clear;
-    Qr.SQL.Add('SELECT p.id_produto, p.nome_produto, p.descricao, p.preco,');
-    Qr.SQL.Add('       p.disponivel, p.id_comercio, c.nome_comercio');
+    Qr.SQL.Add('SELECT p.id_produto, p.nome_prod, p.desc_prod, p.preco_prod,');
+    Qr.SQL.Add('       p.disponivel_venda, p.id_comercio, c.nome_comercio');
     Qr.SQL.Add('FROM produtos p');
     Qr.SQL.Add('INNER JOIN comercios c ON p.id_comercio = c.id_comercio');
     Qr.SQL.Add('WHERE p.id_produto = :id_produto');
@@ -108,8 +108,8 @@ begin
   try
     Qr.Connection := DM.FDConn;
     Qr.SQL.Clear;
-    Qr.SQL.Add('INSERT INTO produtos (nome_produto, descricao, preco,');
-    Qr.SQL.Add('                      disponivel, id_comercio)');
+    Qr.SQL.Add('INSERT INTO produtos (nome_prod, desc_prod, preco_prod,');
+    Qr.SQL.Add('                      disponivel_venda, id_comercio)');
     Qr.SQL.Add('VALUES (:nome, :descricao, :preco, :disponivel, :id_comercio)');
 
     Qr.ParamByName('nome').AsString := Produto.NomeProd;
@@ -135,10 +135,10 @@ begin
     Qr.Connection := DM.FDConn;
     Qr.SQL.Clear;
     Qr.SQL.Add('UPDATE produtos SET');
-    Qr.SQL.Add('  nome_produto = :nome,');
-    Qr.SQL.Add('  descricao = :descricao,');
-    Qr.SQL.Add('  preco = :preco,');
-    Qr.SQL.Add('  disponivel = :disponivel');
+    Qr.SQL.Add('  nome_prod = :nome,');
+    Qr.SQL.Add('  desc_prod = :descricao,');
+    Qr.SQL.Add('  preco_prod = :preco,');
+    Qr.SQL.Add('  disponivel_venda = :disponivel');
     Qr.SQL.Add('WHERE id_produto = :id_produto');
 
     Qr.ParamByName('nome').AsString := Produto.NomeProd;
@@ -164,7 +164,7 @@ begin
   try
     Qr.Connection := DM.FDConn;
     Qr.SQL.Clear;
-    Qr.SQL.Add('UPDATE produtos SET disponivel = :status');
+    Qr.SQL.Add('UPDATE produtos SET disponivel_venda = :status');
     Qr.SQL.Add('WHERE id_produto = :id_produto');
     Qr.ParamByName('status').AsBoolean := NovoStatus;
     Qr.ParamByName('id_produto').AsInteger := IdProduto;
@@ -184,7 +184,7 @@ begin
   try
     Qr.Connection := DM.FDConn;
     Qr.SQL.Clear;
-    Qr.SQL.Add('DELETE FROM produtos WHERE id_produto = :id_produto');
+    Qr.SQL.Add('UPDATE FROM produtos SET disponivel_venda = false WHERE id_produto = :id_produto');
     Qr.ParamByName('id_produto').AsInteger := IdProduto;
     Qr.ExecSQL;
     Result := True;
@@ -204,7 +204,7 @@ begin
     Qr.Connection := DM.FDConn;
     Qr.SQL.Clear;
     Qr.SQL.Add('SELECT 1 FROM produtos');
-    Qr.SQL.Add('WHERE nome_produto = :nome AND id_comercio = :id_comercio');
+    Qr.SQL.Add('WHERE nome_prod = :nome AND id_comercio = :id_comercio');
 
     if IdProdutoIgnorar > 0 then
       Qr.SQL.Add('AND id_produto <> :id_produto');

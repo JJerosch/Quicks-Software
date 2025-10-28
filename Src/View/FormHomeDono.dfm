@@ -205,7 +205,7 @@
                 Top = 56
                 Width = 433
                 Height = 393
-                ActivePage = pctab1Add
+                ActivePage = pctab3Up
                 TabOrder = 7
                 object pctab0Clique: TTabSheet
                   Caption = 'pctab0Clique'
@@ -489,7 +489,7 @@
                       ParentColor = False
                       ParentFont = False
                     end
-                    object ePrecoUpdate: TMaskEdit
+                    object ePrecoUp: TMaskEdit
                       Left = 91
                       Top = 100
                       Width = 102
@@ -501,7 +501,7 @@
                       TextHint = '00,00'
                       StyleName = 'Windows'
                     end
-                    object Panel2: TPanel
+                    object pButtonConfirmarUp: TPanel
                       AlignWithMargins = True
                       Left = 182
                       Top = 306
@@ -512,9 +512,9 @@
                       Color = clCream
                       ParentBackground = False
                       TabOrder = 0
-                      OnClick = pButtonConfirmarAddClick
+                      OnClick = pButtonConfirmarUpdateClick
                     end
-                    object eNomeUpdate: TEdit
+                    object eNomeUp: TEdit
                       Left = 91
                       Top = 59
                       Width = 190
@@ -527,7 +527,7 @@
                       TextHint = 'Escreva aqui o nome do produto...'
                       StyleName = 'Windows'
                     end
-                    object cbDisponivelUpdate: TCheckBox
+                    object cbDisponivelUp: TCheckBox
                       Left = 147
                       Top = 247
                       Width = 18
@@ -535,13 +535,14 @@
                       TabOrder = 3
                       StyleName = 'Windows'
                     end
-                    object mDescUpdate: TEdit
+                    object mDescUp: TMemo
                       Left = 91
-                      Top = 139
+                      Top = 137
                       Width = 270
-                      Height = 23
+                      Height = 94
+                      Lines.Strings = (
+                        'mDescAdd')
                       TabOrder = 4
-                      TextHint = 'Escreva aqui a descri'#231'ao do produto...'
                     end
                   end
                 end
@@ -718,7 +719,6 @@
             Font.Name = 'Segoe UI'
             Font.Style = [fsBold]
             ParentFont = False
-            ExplicitLeft = 5
             ExplicitHeight = 25
           end
           object lblNomeComercio: TLabel

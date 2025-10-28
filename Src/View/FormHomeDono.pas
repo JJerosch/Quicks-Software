@@ -85,14 +85,14 @@ type
     Label3: TLabel;
     Label4: TLabel;
     Label5: TLabel;
-    ePrecoUpdate: TMaskEdit;
-    Panel2: TPanel;
-    eNomeUpdate: TEdit;
-    cbDisponivelUpdate: TCheckBox;
-    mDescUpdate: TEdit;
+    ePrecoUp: TMaskEdit;
+    pButtonConfirmarUp: TPanel;
+    eNomeUp: TEdit;
+    cbDisponivelUp: TCheckBox;
     mDescAdd: TMemo;
     ePrecoAdd: TEdit;
     lblNomeComercio: TLabel;
+    mDescUp: TMemo;
 
     procedure iButton1Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -324,10 +324,10 @@ end;
 
 procedure TFormHomeD.LimparCamposAtualizar;
 begin
-  eNomeUpdate.Clear;
-  mDescUpdate.Clear;
-  ePrecoUpdate.Clear;
-  cbDisponivelUpdate.Checked := True;
+  eNomeUp.Clear;
+  mDescUp.Clear;
+  ePrecoUp.Clear;
+  cbDisponivelUp.Checked := True;
   FIdProdutoSelecionado := 0;
 end;
 
@@ -340,10 +340,10 @@ begin
     if Assigned(Produto) then
     begin
       try
-        eNomeUpdate.Text := Produto.NomeProd;
-        mDescUpdate.Text := Produto.DescProd;
-        ePrecoUpdate.Text := FormatCurr('0.00', Produto.PrecoProd);
-        cbDisponivelUpdate.Checked := Produto.DisponivelVenda;
+        eNomeUp.Text := Produto.NomeProd;
+        mDescUp.Text := Produto.DescProd;
+        ePrecoUp.Text := FormatCurr('0.00', Produto.PrecoProd);
+        cbDisponivelUp.Checked := Produto.DisponivelVenda;
       finally
         Produto.Free;
       end;
@@ -441,10 +441,10 @@ begin
   Produto := TProduto.Create;
   try
     Produto.IdProduto := FIdProdutoSelecionado;
-    Produto.NomeProd := Trim(eNomeUpdate.Text);
-    Produto.DescProd := Trim(mDescUpdate.Text);
-    Produto.PrecoProd := TProdutoViewHelper.ParsePreco(ePrecoUpdate.Text);
-    Produto.DisponivelVenda := cbDisponivelUpdate.Checked;
+    Produto.NomeProd := Trim(eNomeUp.Text);
+    Produto.DescProd := Trim(mDescUp.Text);
+    Produto.PrecoProd := TProdutoViewHelper.ParsePreco(ePrecoUp.Text);
+    Produto.DisponivelVenda := cbDisponivelUp.Checked;
     Produto.IdComercio := FIdComercio; // ⭐ USAR ID DO COMÉRCIO
 
     if FController.AtualizarProduto(Produto) then
