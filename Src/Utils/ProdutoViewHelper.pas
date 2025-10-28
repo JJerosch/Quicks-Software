@@ -11,6 +11,7 @@ type
   public
     class procedure PreencherMemTableProdutos(MemTable: TFDMemTable; Produtos: TObjectList<TProduto>);
     class function ParsePreco(const PrecoTexto: string): Currency;
+    class function FormatPreco(const Preco: Currency): string;
   end;
 
 implementation
@@ -59,20 +60,85 @@ end;
 class function TProdutoViewHelper.ParsePreco(const PrecoTexto: string): Currency;
 var
   PrecoLimpo: string;
+  FS: TFormatSettings;
+  ValorFloat: Double;
 begin
-  // Remover formatação (R$, espaços, pontos)
-  PrecoLimpo := StringReplace(PrecoTexto, 'R$', '', [rfReplaceAll]);
-  PrecoLimpo := StringReplace(PrecoLimpo, ' ', '', [rfReplaceAll]);
-  PrecoLimpo := StringReplace(PrecoLimpo, '.', '', [rfReplaceAll]);
-  PrecoLimpo := StringReplace(PrecoLimpo, ',', '.', [rfReplaceAll]);
-  PrecoLimpo := Trim(PrecoLimpo);
+  Result := 0;
 
-  // Converter para Currency
+  // Verificar se está vazio
+  if Trim(PrecoTexto) = '' then
+    Exit;
+
   try
-    Result := StrToCurr(PrecoLimpo);
+    // Remover formatação (R$, espaços)
+    PrecoLimpo := StringReplace(PrecoTexto, 'R$', '', [rfReplaceAll]);
+    PrecoLimpo := StringReplace(PrecoLimpo, ' ', '', [rfReplaceAll]);
+    PrecoLimpo := Trim(PrecoLimpo);
+
+    // Se estiver vazio após limpeza, retornar 0
+    if PrecoLimpo = '' then
+      Exit;
+
+    // Criar FormatSettings personalizados para garantir parse correto
+    FS := TFormatSettings.Create;
+    FS.DecimalSeparator := '.';
+    FS.ThousandSeparator := ',';
+
+    // Detectar formato brasileiro (vírgula como decimal)
+    if Pos(',', PrecoLimpo) > 0 then
+    begin
+      // Formato: 1.234,56 (brasileiro)
+      // Remover pontos (separador de milhares)
+      PrecoLimpo := StringReplace(PrecoLimpo, '.', '', [rfReplaceAll]);
+      // Trocar vírgula por ponto (separador decimal)
+      PrecoLimpo := StringReplace(PrecoLimpo, ',', '.', [rfReplaceAll]);
+    end
+    else
+    begin
+      // Formato: 1,234.56 (americano) ou apenas 1234.56
+      // Remover vírgulas (separador de milhares)
+      PrecoLimpo := StringReplace(PrecoLimpo, ',', '', [rfReplaceAll]);
+      // O ponto já está correto como separador decimal
+    end;
+
+    // Converter para Double primeiro (mais tolerante) e depois para Currency
+    if TryStrToFloat(PrecoLimpo, ValorFloat, FS) then
+      Result := ValorFloat
+    else
+      Result := 0;
+
   except
-    Result := 0;
+    on E: Exception do
+    begin
+      // Em caso de erro, retornar 0
+      Result := 0;
+    end;
   end;
 end;
 
+class function TProdutoViewHelper.FormatPreco(const Preco: Currency): string;
+var
+  FS: TFormatSettings;
+begin
+  // Criar FormatSettings para formato brasileiro
+  FS := TFormatSettings.Create;
+  FS.DecimalSeparator := ',';
+  FS.ThousandSeparator := '.';
+
+  // Formatar o valor usando FormatFloat com configurações brasileiras
+  Result := FormatFloat('#,##0.00', Preco, FS);
+end;
+
 end.
+
+{
+  NOTA IMPORTANTE PARA O FormHomeDono.pas:
+
+  No método CarregarDadosParaAtualizar, ALTERE a linha:
+
+  ANTES:
+    ePrecoUp.Text := FormatCurr('0.00', Produto.PrecoProd);
+
+  DEPOIS:
+    ePrecoUp.Text := TProdutoViewHelper.FormatPreco(Produto.PrecoProd);
+}

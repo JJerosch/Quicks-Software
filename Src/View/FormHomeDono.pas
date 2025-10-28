@@ -85,7 +85,6 @@ type
     Label3: TLabel;
     Label4: TLabel;
     Label5: TLabel;
-    ePrecoUp: TMaskEdit;
     pButtonConfirmarUp: TPanel;
     eNomeUp: TEdit;
     cbDisponivelUp: TCheckBox;
@@ -93,6 +92,7 @@ type
     ePrecoAdd: TEdit;
     lblNomeComercio: TLabel;
     mDescUp: TMemo;
+    ePrecoUp: TEdit;
 
     procedure iButton1Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -116,6 +116,8 @@ type
     procedure pButtonConfirmarDesativarClick(Sender: TObject);
     procedure pButtonConfirmarUpdateClick(Sender: TObject);
     procedure pButtonConfirmarReativarClick(Sender: TObject);
+    procedure ePrecoUpExit(Sender: TObject);
+    procedure ePrecoAddExit(Sender: TObject);
 
   private
     FIdUsuario: Integer;
@@ -342,7 +344,7 @@ begin
       try
         eNomeUp.Text := Produto.NomeProd;
         mDescUp.Text := Produto.DescProd;
-        ePrecoUp.Text := FormatCurr('0.00', Produto.PrecoProd);
+        ePrecoUp.Text := TProdutoViewHelper.FormatPreco(Produto.PrecoProd);
         cbDisponivelUp.Checked := Produto.DisponivelVenda;
       finally
         Produto.Free;
@@ -513,6 +515,24 @@ procedure TFormHomeD.eBuscaMainChange(Sender: TObject);
 begin
   if FMemTable.Active then
     FiltrarGrid(eBuscaMain.Text);
+end;
+
+procedure TFormHomeD.ePrecoAddExit(Sender: TObject);
+var
+  Valor: Currency;
+begin
+  Valor := TProdutoViewHelper.ParsePreco(ePrecoAdd.Text);
+  if Valor > 0 then
+    ePrecoAdd.Text := TProdutoViewHelper.FormatPreco(Valor);
+end;
+
+procedure TFormHomeD.ePrecoUpExit(Sender: TObject);
+var
+  Valor: Currency;
+begin
+  Valor := TProdutoViewHelper.ParsePreco(ePrecoUp.Text);
+  if Valor > 0 then
+    ePrecoUp.Text := TProdutoViewHelper.FormatPreco(Valor);
 end;
 
 procedure TFormHomeD.DBGridProdutosCellClick(Column: TColumn);

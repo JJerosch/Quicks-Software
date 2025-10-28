@@ -205,7 +205,7 @@
                 Top = 56
                 Width = 433
                 Height = 393
-                ActivePage = pctab3Up
+                ActivePage = pctab1Add
                 TabOrder = 7
                 object pctab0Clique: TTabSheet
                   Caption = 'pctab0Clique'
@@ -355,6 +355,7 @@
                       TabOrder = 4
                       TextHint = '000,00'
                       StyleName = 'Windows'
+                      OnExit = ePrecoAddExit
                     end
                   end
                 end
@@ -452,9 +453,9 @@
                     object Label2: TLabel
                       Left = 23
                       Top = 103
-                      Width = 33
+                      Width = 67
                       Height = 15
-                      Caption = 'Pre'#231'o:'
+                      Caption = 'Pre'#231'o:       R$'
                     end
                     object Label3: TLabel
                       Left = 23
@@ -489,18 +490,6 @@
                       ParentColor = False
                       ParentFont = False
                     end
-                    object ePrecoUp: TMaskEdit
-                      Left = 91
-                      Top = 100
-                      Width = 102
-                      Height = 23
-                      BevelInner = bvNone
-                      BevelOuter = bvNone
-                      TabOrder = 2
-                      Text = ''
-                      TextHint = '00,00'
-                      StyleName = 'Windows'
-                    end
                     object pButtonConfirmarUp: TPanel
                       AlignWithMargins = True
                       Left = 182
@@ -532,7 +521,7 @@
                       Top = 247
                       Width = 18
                       Height = 17
-                      TabOrder = 3
+                      TabOrder = 2
                       StyleName = 'Windows'
                     end
                     object mDescUp: TMemo
@@ -542,7 +531,20 @@
                       Height = 94
                       Lines.Strings = (
                         'mDescAdd')
+                      TabOrder = 3
+                    end
+                    object ePrecoUp: TEdit
+                      Left = 91
+                      Top = 100
+                      Width = 190
+                      Height = 23
+                      BevelInner = bvNone
+                      BevelOuter = bvNone
+                      ParentShowHint = False
+                      ShowHint = True
                       TabOrder = 4
+                      TextHint = '000,00'
+                      StyleName = 'Windows'
                     end
                   end
                 end
