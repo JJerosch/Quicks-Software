@@ -33,6 +33,7 @@ implementation
 {$R *.dfm}
 procedure TDM.DataModuleCreate(Sender: TObject);
 begin
+  FDConn.Params.Add('CharacterSet=UTF8');
   try
       if not FDConn.Connected then
       begin

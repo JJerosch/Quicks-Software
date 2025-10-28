@@ -6,15 +6,14 @@ uses
   System.SysUtils, System.Generics.Collections,
   ProdutoModel, ProdutoService;
 
-type
-  TProdutoController = class
+type TProdutoController = class
   private
     FService: TProdutoService;
   public
     constructor Create;
     destructor Destroy; override;
 
-    function ListarProdutos(IdDono: Integer; ApenasDisponiveis: Boolean = False): TObjectList<TProduto>;
+    function ListarProdutos(IdComercio: Integer; ApenasDisponiveis: Boolean = False): TObjectList<TProduto>;
     function ObterProduto(IdProduto: Integer): TProduto;
     function CadastrarProduto(Produto: TProduto): Boolean;
     function AtualizarProduto(Produto: TProduto): Boolean;
@@ -39,10 +38,10 @@ begin
   inherited;
 end;
 
-function TProdutoController.ListarProdutos(IdDono: Integer;
+function TProdutoController.ListarProdutos(IdComercio: Integer;
   ApenasDisponiveis: Boolean): TObjectList<TProduto>;
 begin
-  Result := FService.ListarProdutosPorDono(IdDono, ApenasDisponiveis);
+  Result := FService.ListarProdutosPorComercio(IdComercio, ApenasDisponiveis);
 end;
 
 function TProdutoController.ObterProduto(IdProduto: Integer): TProduto;

@@ -1,4 +1,4 @@
-unit FormHomeDono;
+﻿unit FormHomeDono;
 
 interface
 
@@ -53,7 +53,7 @@ type
     lblClique: TLabel;
     pctab1Add: TTabSheet;
     pBackgroundAdicionar: TPanel;
-    lblDispon�velVenda: TLabel;
+    lblDisponívelVenda: TLabel;
     lblPreco: TLabel;
     lblNome: TLabel;
     lblDesc: TLabel;
@@ -92,6 +92,8 @@ type
     mDescUpdate: TEdit;
     mDescAdd: TMemo;
     ePrecoAdd: TEdit;
+    lblNomeComercio: TLabel;
+
     procedure iButton1Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure iButton4Click(Sender: TObject);
@@ -114,9 +116,12 @@ type
     procedure pButtonConfirmarDesativarClick(Sender: TObject);
     procedure pButtonConfirmarUpdateClick(Sender: TObject);
     procedure pButtonConfirmarReativarClick(Sender: TObject);
+
   private
     FIdUsuario: Integer;
     FNomeUsuario: String;
+    FIdComercio: Integer;        // ⭐ ADICIONAR
+    FNomeComercio: String;       // ⭐ ADICIONAR
     FController: TProdutoController;
     FIdProdutoSelecionado: Integer;
     FMemTable: TFDMemTable;
@@ -132,6 +137,8 @@ type
   public
     property IdUsuario: Integer read FIdUsuario write FIdUsuario;
     property NomeUsuario: String read FNomeUsuario write FNomeUsuario;
+    property IdComercio: Integer read FIdComercio write FIdComercio;         // ⭐ ADICIONAR
+    property NomeComercio: String read FNomeComercio write FNomeComercio;   // ⭐ ADICIONAR
   end;
 
 var
@@ -141,123 +148,89 @@ implementation
 
 {$R *.dfm}
 
-procedure TFormHomeD.pButtonConfirmarAddClick(Sender: TObject);
-var
-  Produto: TProduto;
+procedure TFormHomeD.FormCreate(Sender: TObject);
 begin
-  Produto := TProduto.Create;
-  try
-    Produto.NomeProd := Trim(eNomeAdd.Text);
-    Produto.DescProd := Trim(mDescAdd.Text);
-    Produto.PrecoProd := TProdutoViewHelper.ParsePreco(ePrecoAdd.Text);
-    Produto.DisponivelVenda := cbDisponivelAdd.Checked;
-    Produto.IdDono := FIdUsuario; // ID do usu�rio logado
+  // Criar controller
+  FController := TProdutoController.Create;
+  FIdProdutoSelecionado := 0;
 
-    if FController.CadastrarProduto(Produto) then
-    begin
-      LimparCamposAdicionar;
-      CarregarGrid(True);
-      pcButtons.ActivePageIndex := 0;
-    end;
-  finally
-    Produto.Free;
-  end;
-end;
+  // Criar MemTable e DataSource
+  FMemTable := TFDMemTable.Create(Self);
+  FDataSource := TDataSource.Create(Self);
+  FDataSource.DataSet := FMemTable;
+  DBGridProdutos.DataSource := FDataSource;
 
-procedure TFormHomeD.pButtonConfirmarDesativarClick(Sender: TObject);
-var
-  IdProduto: Integer;
-  NomeProduto: string;
-begin
-  if FMemTable.IsEmpty then
-  begin
-    ShowMessage('Selecione um produto para desativar.');
-    Exit;
-  end;
+  // Configurar páginas iniciais
+  if Assigned(pcMain) then
+    pcMain.ActivePageIndex := 3; // Tab Produtos
 
-  IdProduto := FMemTable.FieldByName('id_produto').AsInteger;
-  NomeProduto := FMemTable.FieldByName('nome_prod').AsString;
-
-  if FController.DesativarProduto(IdProduto, NomeProduto) then
-  begin
-    CarregarGrid(True);
+  if Assigned(pcButtons) then
     pcButtons.ActivePageIndex := 0;
-  end;
+
+  // Configurar busca
+  eBuscaMain.Clear;
+  eBuscaMain.TextHint := 'Digite aqui para pesquisar produtos...';
+  eBuscaMain.Enabled := False;
+
+  // Configurar constraints da janela
+  Constraints.MinWidth := 1248;
+  Constraints.MinHeight := 683;
+  Constraints.MaxWidth := 1920;
+  Constraints.MaxHeight := 1080;
+
+  Self.BorderStyle := bsSingle;
+  Self.WindowState := wsNormal;
 end;
 
-procedure TFormHomeD.pButtonConfirmarReativarClick(Sender: TObject);
-var
-  IdProduto: Integer;
-  NomeProduto: string;
+procedure TFormHomeD.FormDestroy(Sender: TObject);
 begin
-  if FMemTable.IsEmpty then
-  begin
-    ShowMessage('Selecione um produto para reativar.');
-    Exit;
-  end;
-
-  IdProduto := FMemTable.FieldByName('id_produto').AsInteger;
-  NomeProduto := FMemTable.FieldByName('nome_prod').AsString;
-
-  if FController.ReativarProduto(IdProduto, NomeProduto) then
-  begin
-    CarregarGrid(True);
-    pcButtons.ActivePageIndex := 0;
-  end;
+  FController.Free;
+  FMemTable.Free;
+  FDataSource.Free;
 end;
 
-
-procedure TFormHomeD.pButtonConfirmarUpdateClick(Sender: TObject);
+procedure TFormHomeD.FormShow(Sender: TObject);
 var
-  Produto: TProduto;
-begin
-  if FIdProdutoSelecionado <= 0 then
-  begin
-    ShowMessage('Nenhum produto selecionado.');
-    Exit;
-  end;
-
-  Produto := TProduto.Create;
-  try
-    Produto.IdProduto := FIdProdutoSelecionado;
-    Produto.NomeProd := Trim(eNomeUpdate.Text);
-    Produto.DescProd := Trim(mDescUpdate.Text);
-    Produto.PrecoProd := TProdutoViewHelper.ParsePreco(ePrecoUpdate.Text);
-    Produto.DisponivelVenda := cbDisponivelUpdate.Checked;
-    Produto.IdDono := FIdUsuario;
-
-    if FController.AtualizarProduto(Produto) then
-    begin
-      LimparCamposAtualizar;
-      CarregarGrid(True);
-      pcButtons.ActivePageIndex := 0;
-    end;
-  finally
-    Produto.Free;
-  end;
-end;
-
-
-procedure TFormHomeD.CarregarDadosParaAtualizar(IdProduto: Integer);
-var
-  Produto: TProduto;
+  Qr: TFDQuery;
 begin
   try
-    Produto := FController.ObterProduto(IdProduto);
-    if Assigned(Produto) then
-    begin
-      try
-        eNomeUpdate.Text := Produto.NomeProd;
-        mDescUpdate.Text := Produto.DescProd;
-        ePrecoUpdate.Text := FormatCurr('0.00', Produto.PrecoProd);
-        cbDisponivelUpdate.Checked := Produto.DisponivelVenda;
-      finally
-        Produto.Free;
+    // Buscar informações do comércio do dono logado
+    Qr := TFDQuery.Create(nil);
+    try
+      Qr.Connection := DM.FDConn;
+      Qr.SQL.Text := 'SELECT id_comercio, nome_comercio FROM comercios WHERE id_user = :id_user';
+      Qr.ParamByName('id_user').AsInteger := FIdUsuario;
+      Qr.Open;
+
+      if not Qr.IsEmpty then
+      begin
+        FIdComercio := Qr.FieldByName('id_comercio').AsInteger;
+        FNomeComercio := Qr.FieldByName('nome_comercio').AsString;
+
+        // Atualizar header com informações
+        lblUserNameHeader.Caption := FNomeUsuario;
+        lblUserIdHeader.Caption := 'ID: ' + IntToStr(FIdUsuario);
+
+        // Se você tiver um label para o nome do comércio:
+        if Assigned(lblNomeComercio) then
+          lblNomeComercio.Caption := FNomeComercio;
+      end
+      else
+      begin
+        ShowMessage('Comércio não encontrado para este usuário. Entre em contato com o administrador.');
+        FIdComercio := 0;
       end;
+    finally
+      Qr.Free;
     end;
+
+    // Carregar produtos se encontrou o comércio
+    if FIdComercio > 0 then
+      CarregarGrid(True);
+
   except
     on E: Exception do
-      ShowMessage('Erro ao carregar dados para atualiza��o: ' + E.Message);
+      ShowMessage('Erro ao carregar informações: ' + E.Message);
   end;
 end;
 
@@ -266,8 +239,15 @@ var
   Produtos: TObjectList<TProduto>;
 begin
   try
-    // Buscar produtos do dono logado
-    Produtos := FController.ListarProdutos(FIdUsuario, ApenasDisponiveis);
+    // ⚠️ IMPORTANTE: Usar FIdComercio ao invés de FIdUsuario
+    if FIdComercio <= 0 then
+    begin
+      ShowMessage('ID do comércio não definido.');
+      Exit;
+    end;
+
+    // Buscar produtos do comércio
+    Produtos := FController.ListarProdutos(FIdComercio, ApenasDisponiveis);
     try
       TProdutoViewHelper.PreencherMemTableProdutos(FMemTable, Produtos);
       OrganizarGrid;
@@ -280,19 +260,26 @@ begin
   end;
 end;
 
-procedure TFormHomeD.DBGridProdutosCellClick(Column: TColumn);
+procedure TFormHomeD.OrganizarGrid;
 begin
-  if not FMemTable.IsEmpty then
+  if DBGridProdutos.Columns.Count > 0 then
   begin
-    lblProdSelectDesativar.Caption := FMemTable.FieldByName('nome_prod').AsString;
-    lblProdSelectReativar.Caption := FMemTable.FieldByName('nome_prod').AsString;
-  end;
-end;
+    DBGridProdutos.Columns[0].Width := 50;   // id_produto
+    DBGridProdutos.Columns[1].Width := 200;  // nome_prod
+    DBGridProdutos.Columns[2].Width := 300;  // desc_prod
+    DBGridProdutos.Columns[3].Width := 100;  // preco_prod
+    DBGridProdutos.Columns[4].Width := 80;   // disponivel_venda
 
-procedure TFormHomeD.eBuscaMainChange(Sender: TObject);
-begin
-  if FMemTable.Active then
-    FiltrarGrid(eBuscaMain.Text);
+    // Ocultar id_comercio
+    if DBGridProdutos.Columns.Count > 5 then
+      DBGridProdutos.Columns[5].Visible := False;
+
+    DBGridProdutos.Columns[0].Title.Caption := 'ID';
+    DBGridProdutos.Columns[1].Title.Caption := 'Nome do Produto';
+    DBGridProdutos.Columns[2].Title.Caption := 'Descrição';
+    DBGridProdutos.Columns[3].Title.Caption := 'Preço';
+    DBGridProdutos.Columns[4].Title.Caption := 'Disponível';
+  end;
 end;
 
 procedure TFormHomeD.FiltrarGrid(const TextoBusca: string);
@@ -327,108 +314,6 @@ begin
   end;
 end;
 
-procedure TFormHomeD.FormCreate(Sender: TObject);
-begin
-// Criar controller
-  FController := TProdutoController.Create;
-  FIdProdutoSelecionado := 0;
-
-  // Criar MemTable e DataSource
-  FMemTable := TFDMemTable.Create(Self);
-  FDataSource := TDataSource.Create(Self);
-  FDataSource.DataSet := FMemTable;
-  DBGridProdutos.DataSource := FDataSource;
-
-  // Configurar p�ginas iniciais
-  if Assigned(pcMain) then
-    pcMain.ActivePageIndex := 1; // Tab Produtos
-
-  if Assigned(pcButtons) then
-    pcButtons.ActivePageIndex := 0;
-
-  // Configurar busca
-  eBuscaMain.Clear;
-  eBuscaMain.TextHint := 'Digite aqui para pesquisar produtos...';
-  eBuscaMain.Enabled := False;
-
-  // Configurar constraints da janela
-  Constraints.MinWidth := 1248;
-  Constraints.MinHeight := 683;
-  Constraints.MaxWidth := 1920;
-  Constraints.MaxHeight := 1080;
-
-  Self.BorderStyle := bsSingle;
-  Self.WindowState := wsNormal;
-end;
-
-
-procedure TFormHomeD.FormDestroy(Sender: TObject);
-begin
-  FController.Free;
-  FMemTable.Free;
-  FDataSource.Free;
-end;
-
-procedure TFormHomeD.FormShow(Sender: TObject);
-begin
-    try
-      // Carregar apenas produtos dispon�veis do dono logado
-      CarregarGrid(True);
-
-      // Exibir informa��es do usu�rio logado
-      lblUserNameHeader.Caption := NomeUsuario;
-      lblUserIdHeader.Caption := IdUsuario.ToString;
-
-      // Configurar hint de busca
-      eBuscaMain.TextHint := 'Digite aqui para pesquisar produtos...';
-      eBuscaMain.Clear;
-      pcMain.ActivePageIndex := 0;
-    except
-      on E: Exception do
-        ShowMessage('Erro ao carregar dados: ' + E.Message);
-    end;
-end;
-
-procedure TFormHomeD.iButton1Click(Sender: TObject);
-begin
-   if pBarraMenuLeft.Width = 89 then begin
-    pBarraMenuLeft.Width := 200;
-  end else begin
-    pBarraMenuLeft.Width := 89;
-  end;
-end;
-
-procedure TFormHomeD.iButton2Click(Sender: TObject);
-begin
-  pcMain.ActivePageIndex := 1;
-end;
-
-procedure TFormHomeD.iButton3Click(Sender: TObject);
-begin
-  pcMain.ActivePageIndex := 2;
-end;
-
-procedure TFormHomeD.iButton4Click(Sender: TObject);
-begin
-  pcMain.ActivePageIndex := 3;
-end;
-
-procedure TFormHomeD.iButton5Click(Sender: TObject);
-begin
-  pcMain.ActivePageIndex := 4;
-end;
-
-procedure TFormHomeD.iButton6Click(Sender: TObject);
-begin
-  ShowMessage('Encerrando aplica��o...');
-  FormHomeD.Close;
-end;
-
-procedure TFormHomeD.lblButton1Click(Sender: TObject);
-begin
-  pcMain.ActivePageIndex := 1;
-end;
-
 procedure TFormHomeD.LimparCamposAdicionar;
 begin
   eNomeAdd.Clear;
@@ -446,24 +331,30 @@ begin
   FIdProdutoSelecionado := 0;
 end;
 
-procedure TFormHomeD.OrganizarGrid;
+procedure TFormHomeD.CarregarDadosParaAtualizar(IdProduto: Integer);
+var
+  Produto: TProduto;
 begin
-  if DBGridProdutos.Columns.Count > 0 then
-  begin
-    DBGridProdutos.Columns[0].Width := 50;   // id_produto
-    DBGridProdutos.Columns[1].Width := 200;  // nome_prod
-    DBGridProdutos.Columns[2].Width := 300;  // desc_prod
-    DBGridProdutos.Columns[3].Width := 100;  // preco_prod
-    DBGridProdutos.Columns[4].Width := 80;   // disponivel_venda
-    DBGridProdutos.Columns[5].Visible := False; // id_dono (ocultar)
-
-    DBGridProdutos.Columns[0].Title.Caption := 'ID';
-    DBGridProdutos.Columns[1].Title.Caption := 'Nome do Produto';
-    DBGridProdutos.Columns[2].Title.Caption := 'Descri��o';
-    DBGridProdutos.Columns[3].Title.Caption := 'Pre�o';
-    DBGridProdutos.Columns[4].Title.Caption := 'Dispon�vel';
+  try
+    Produto := FController.ObterProduto(IdProduto);
+    if Assigned(Produto) then
+    begin
+      try
+        eNomeUpdate.Text := Produto.NomeProd;
+        mDescUpdate.Text := Produto.DescProd;
+        ePrecoUpdate.Text := FormatCurr('0.00', Produto.PrecoProd);
+        cbDisponivelUpdate.Checked := Produto.DisponivelVenda;
+      finally
+        Produto.Free;
+      end;
+    end;
+  except
+    on E: Exception do
+      ShowMessage('Erro ao carregar dados para atualização: ' + E.Message);
   end;
 end;
+
+// ============ EVENTOS DOS BOTÕES ============
 
 procedure TFormHomeD.pButton1AdicionarClick(Sender: TObject);
 begin
@@ -471,13 +362,57 @@ begin
   LimparCamposAdicionar;
 end;
 
+procedure TFormHomeD.pButtonConfirmarAddClick(Sender: TObject);
+var
+  Produto: TProduto;
+begin
+  Produto := TProduto.Create;
+  try
+    Produto.NomeProd := Trim(eNomeAdd.Text);
+    Produto.DescProd := Trim(mDescAdd.Text);
+    Produto.PrecoProd := TProdutoViewHelper.ParsePreco(ePrecoAdd.Text);
+    Produto.DisponivelVenda := cbDisponivelAdd.Checked;
+    Produto.IdComercio := FIdComercio; // ⭐ USAR ID DO COMÉRCIO
+
+    if FController.CadastrarProduto(Produto) then
+    begin
+      LimparCamposAdicionar;
+      CarregarGrid(True);
+      pcButtons.ActivePageIndex := 0;
+    end;
+  finally
+    Produto.Free;
+  end;
+end;
+
 procedure TFormHomeD.pButton2ExcluirClick(Sender: TObject);
 begin
   pcButtons.ActivePageIndex := 2;
-  CarregarGrid(True); // Mostrar apenas dispon�veis
+  CarregarGrid(True);
 
   if not FMemTable.IsEmpty then
     lblProdSelectDesativar.Caption := FMemTable.FieldByName('nome_prod').AsString;
+end;
+
+procedure TFormHomeD.pButtonConfirmarDesativarClick(Sender: TObject);
+var
+  IdProduto: Integer;
+  NomeProduto: string;
+begin
+  if FMemTable.IsEmpty then
+  begin
+    ShowMessage('Selecione um produto para desativar.');
+    Exit;
+  end;
+
+  IdProduto := FMemTable.FieldByName('id_produto').AsInteger;
+  NomeProduto := FMemTable.FieldByName('nome_prod').AsString;
+
+  if FController.DesativarProduto(IdProduto, NomeProduto) then
+  begin
+    CarregarGrid(True);
+    pcButtons.ActivePageIndex := 0;
+  end;
 end;
 
 procedure TFormHomeD.pButton3AtualizarClick(Sender: TObject);
@@ -493,13 +428,64 @@ begin
   CarregarDadosParaAtualizar(FIdProdutoSelecionado);
 end;
 
+procedure TFormHomeD.pButtonConfirmarUpdateClick(Sender: TObject);
+var
+  Produto: TProduto;
+begin
+  if FIdProdutoSelecionado <= 0 then
+  begin
+    ShowMessage('Nenhum produto selecionado.');
+    Exit;
+  end;
+
+  Produto := TProduto.Create;
+  try
+    Produto.IdProduto := FIdProdutoSelecionado;
+    Produto.NomeProd := Trim(eNomeUpdate.Text);
+    Produto.DescProd := Trim(mDescUpdate.Text);
+    Produto.PrecoProd := TProdutoViewHelper.ParsePreco(ePrecoUpdate.Text);
+    Produto.DisponivelVenda := cbDisponivelUpdate.Checked;
+    Produto.IdComercio := FIdComercio; // ⭐ USAR ID DO COMÉRCIO
+
+    if FController.AtualizarProduto(Produto) then
+    begin
+      LimparCamposAtualizar;
+      CarregarGrid(True);
+      pcButtons.ActivePageIndex := 0;
+    end;
+  finally
+    Produto.Free;
+  end;
+end;
+
 procedure TFormHomeD.pButton4RestaurarClick(Sender: TObject);
 begin
   pcButtons.ActivePageIndex := 4;
-  CarregarGrid(False); // Mostrar todos, incluindo desativados
+  CarregarGrid(False);
 
   if not FMemTable.IsEmpty then
     lblProdSelectReativar.Caption := FMemTable.FieldByName('nome_prod').AsString;
+end;
+
+procedure TFormHomeD.pButtonConfirmarReativarClick(Sender: TObject);
+var
+  IdProduto: Integer;
+  NomeProduto: string;
+begin
+  if FMemTable.IsEmpty then
+  begin
+    ShowMessage('Selecione um produto para reativar.');
+    Exit;
+  end;
+
+  IdProduto := FMemTable.FieldByName('id_produto').AsInteger;
+  NomeProduto := FMemTable.FieldByName('nome_prod').AsString;
+
+  if FController.ReativarProduto(IdProduto, NomeProduto) then
+  begin
+    CarregarGrid(True);
+    pcButtons.ActivePageIndex := 0;
+  end;
 end;
 
 procedure TFormHomeD.pButton5PesquisarClick(Sender: TObject);
@@ -521,6 +507,65 @@ begin
   LimparCamposAtualizar;
   CarregarGrid(True);
   pcButtons.ActivePageIndex := 0;
+end;
+
+procedure TFormHomeD.eBuscaMainChange(Sender: TObject);
+begin
+  if FMemTable.Active then
+    FiltrarGrid(eBuscaMain.Text);
+end;
+
+procedure TFormHomeD.DBGridProdutosCellClick(Column: TColumn);
+begin
+  if not FMemTable.IsEmpty then
+  begin
+    lblProdSelectDesativar.Caption := FMemTable.FieldByName('nome_prod').AsString;
+    lblProdSelectReativar.Caption := FMemTable.FieldByName('nome_prod').AsString;
+  end;
+end;
+
+// ============ NAVEGAÇÃO MENU LATERAL ============
+
+procedure TFormHomeD.iButton1Click(Sender: TObject);
+begin
+  if pBarraMenuLeft.Width = 89 then
+    pBarraMenuLeft.Width := 200
+  else
+    pBarraMenuLeft.Width := 89;
+end;
+
+procedure TFormHomeD.iButton2Click(Sender: TObject);
+begin
+  pcMain.ActivePageIndex := 1; // Relatórios
+end;
+
+procedure TFormHomeD.iButton3Click(Sender: TObject);
+begin
+  pcMain.ActivePageIndex := 2; // Pedidos
+end;
+
+procedure TFormHomeD.iButton4Click(Sender: TObject);
+begin
+  pcMain.ActivePageIndex := 3; // Produtos
+end;
+
+procedure TFormHomeD.iButton5Click(Sender: TObject);
+begin
+  pcMain.ActivePageIndex := 4; // Perfil
+end;
+
+procedure TFormHomeD.iButton6Click(Sender: TObject);
+begin
+  if MessageDlg('Tem certeza que deseja sair?',
+     mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+  begin
+    Close;
+  end;
+end;
+
+procedure TFormHomeD.lblButton1Click(Sender: TObject);
+begin
+  pcMain.ActivePageIndex := 1;
 end;
 
 end.

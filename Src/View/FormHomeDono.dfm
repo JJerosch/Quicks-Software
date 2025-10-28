@@ -64,7 +64,7 @@
               Left = 13
               Top = 32
               Width = 414
-              Height = 588
+              Height = 30
               Margins.Left = 20
               Margins.Top = 20
               Margins.Bottom = 0
@@ -98,7 +98,6 @@
             Color = clWhite
             ParentBackground = False
             TabOrder = 0
-            ExplicitLeft = -1
             object pMainGrid: TPanel
               AlignWithMargins = True
               Left = 61
@@ -254,7 +253,6 @@
                     Color = clCoral
                     ParentBackground = False
                     TabOrder = 0
-                    ExplicitTop = 5
                     object lblDisponívelVenda: TLabel
                       Left = 23
                       Top = 247
@@ -413,7 +411,7 @@
                       object lblProdSelectDesativar: TLabel
                         Left = 0
                         Top = 80
-                        Width = 185
+                        Width = 189
                         Height = 25
                         Alignment = taCenter
                         Caption = 'lblProdSelectDesativar'
@@ -444,7 +442,6 @@
                     Color = clCoral
                     ParentBackground = False
                     TabOrder = 0
-                    ExplicitTop = 5
                     object Label1: TLabel
                       Left = 23
                       Top = 247
@@ -542,7 +539,7 @@
                       Left = 91
                       Top = 139
                       Width = 270
-                      Height = 102
+                      Height = 23
                       TabOrder = 4
                       TextHint = 'Escreva aqui a descri'#231'ao do produto...'
                     end
@@ -601,7 +598,7 @@
                       object lblProdSelectReativar: TLabel
                         Left = 0
                         Top = 80
-                        Width = 185
+                        Width = 178
                         Height = 25
                         Alignment = taCenter
                         Caption = 'lblProdSelectReativar'
@@ -691,7 +688,7 @@
         object pDadosHeader: TPanel
           Left = 4
           Top = 13
-          Width = 281
+          Width = 445
           Height = 23
           BevelOuter = bvNone
           TabOrder = 0
@@ -710,6 +707,21 @@
             ExplicitHeight = 25
           end
           object lblUserNameHeader: TLabel
+            Left = 10
+            Top = 0
+            Width = 5
+            Height = 23
+            Align = alLeft
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -19
+            Font.Name = 'Segoe UI'
+            Font.Style = [fsBold]
+            ParentFont = False
+            ExplicitLeft = 5
+            ExplicitHeight = 25
+          end
+          object lblNomeComercio: TLabel
             Left = 5
             Top = 0
             Width = 5
@@ -721,7 +733,6 @@
             Font.Name = 'Segoe UI'
             Font.Style = [fsBold]
             ParentFont = False
-            ExplicitLeft = 44
             ExplicitHeight = 25
           end
         end

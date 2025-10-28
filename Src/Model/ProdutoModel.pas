@@ -1,4 +1,4 @@
-unit ProdutoModel;
+﻿unit ProdutoModel;
 
 interface
 
@@ -6,24 +6,26 @@ type
   TProduto = class
   private
     FIdProduto: Integer;
+    FIdComercio: Integer;          // ⭐ MUDOU DE IdDono PARA IdComercio
     FNomeProd: string;
     FDescProd: string;
     FPrecoProd: Currency;
     FDisponivelVenda: Boolean;
-    FIdDono: Integer;
-    FNomeDono: string; // Para exibi��o
+
+    // Campos extras (quando busca com JOIN)
+    FNomeComercio: string;         // ⭐ NOVO
   public
     property IdProduto: Integer read FIdProduto write FIdProduto;
+    property IdComercio: Integer read FIdComercio write FIdComercio;  // ⭐ MUDOU
     property NomeProd: string read FNomeProd write FNomeProd;
     property DescProd: string read FDescProd write FDescProd;
     property PrecoProd: Currency read FPrecoProd write FPrecoProd;
     property DisponivelVenda: Boolean read FDisponivelVenda write FDisponivelVenda;
-    property IdDono: Integer read FIdDono write FIdDono;
-    property NomeDono: string read FNomeDono write FNomeDono;
 
-    constructor Create; overload;
-    constructor Create(AId: Integer; ANome, ADesc: string; APreco: Currency;
-                      ADisponivel: Boolean; AIdDono: Integer; ANomeDono: string = ''); overload;
+    // Extras
+    property NomeComercio: string read FNomeComercio write FNomeComercio;  // ⭐ NOVO
+
+    constructor Create;
     destructor Destroy; override;
   end;
 
@@ -35,24 +37,12 @@ constructor TProduto.Create;
 begin
   inherited Create;
   FIdProduto := 0;
+  FIdComercio := 0;              // ⭐ MUDOU
   FNomeProd := '';
   FDescProd := '';
   FPrecoProd := 0;
   FDisponivelVenda := True;
-  FIdDono := 0;
-  FNomeDono := '';
-end;
-
-constructor TProduto.Create(AId: Integer; ANome, ADesc: string; APreco: Currency;
-  ADisponivel: Boolean; AIdDono: Integer; ANomeDono: string);
-begin
-  FIdProduto := AId;
-  FNomeProd := ANome;
-  FDescProd := ADesc;
-  FPrecoProd := APreco;
-  FDisponivelVenda := ADisponivel;
-  FIdDono := AIdDono;
-  FNomeDono := ANomeDono;
+  FNomeComercio := '';           // ⭐ NOVO
 end;
 
 destructor TProduto.Destroy;
