@@ -11,6 +11,7 @@ object FormHomeC: TFormHomeC
   Font.Name = 'Segoe UI'
   Font.Style = []
   Position = poScreenCenter
+  OnShow = FormShow
   TextHeight = 15
   object pHomeBackground: TPanel
     Left = 0
@@ -22,8 +23,6 @@ object FormHomeC: TFormHomeC
     Color = clWhite
     ParentBackground = False
     TabOrder = 0
-    ExplicitLeft = -104
-    ExplicitTop = 120
     object scbxMain: TScrollBox
       Left = 0
       Top = 58
