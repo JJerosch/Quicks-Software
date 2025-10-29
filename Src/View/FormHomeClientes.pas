@@ -75,54 +75,54 @@ end;
 
 procedure TFormHomeC.PopularLista;
 var
-  Item: TListViewItem;
+//  Item: TListViewItem;
   Qr: TFDQuery;
  begin
-   // Limpa a lista antes de adicionar novos itens
-   lvMain.Items.Clear;
-
-   // Garante que a query esteja fechada antes de abrir
-   if Qr.Active then
-     Qr.Close;
-
-   // Abre a query para buscar os dados
-   try
-     Qr.Open;
-   except
-     on E: Exception do
-     begin
-       ShowMessage('Erro ao conectar ao banco de dados: ' + E.Message);
-       Exit; // Sai da procedure se não conseguir conectar
-     end;
-   end;
-   try
-     lvMain.BeginUpdate; // Otimização: pausa a atualização visual
-     try
-       // Loop enquanto não chegar ao fim dos registros
-       while not Qr.Eof do
-       begin
-         // 1. Adiciona um novo item ao ListView
-         Item := lvMain.Items.Add;
-
-         // 2. Define o texto principal do item
-         Item.Text := Qr.FieldByName('nome_comercio').AsString;
-
-         // 3. (Opcional) Define detalhes adicionais
-         // (Para isso, o ViewStyle do lvMain deve ser vsList, vsIcon, etc.)
-         Item.Detail := Qr.FieldByName('descricao').AsString;
-
-         // 4. (Opcional) Você pode guardar o ID para uso futuro
-         // (Convertemos o Integer para um TObject para guardar no .Data)
-         Item.Data := TObject(NativeInt(Qr.FieldByName('id_comercio').AsInteger));
-
-         // 5. Move para o próximo registro
-         Qr.Next;
-       end;
-     finally
-       lvMain.EndUpdate; // Retoma a atualização visual
-     end;
-   finally
-     Qr.Close; // Fecha a query
-   end;
+//   // Limpa a lista antes de adicionar novos itens
+//   lvMain.Items.Clear;
+//
+//   // Garante que a query esteja fechada antes de abrir
+//   if Qr.Active then
+//     Qr.Close;
+//
+//   // Abre a query para buscar os dados
+//   try
+//     Qr.Open;
+//   except
+//     on E: Exception do
+//     begin
+//       ShowMessage('Erro ao conectar ao banco de dados: ' + E.Message);
+//       Exit; // Sai da procedure se não conseguir conectar
+//     end;
+//   end;
+//   try
+//     lvMain.BeginUpdate; // Otimização: pausa a atualização visual
+//     try
+//       // Loop enquanto não chegar ao fim dos registros
+//       while not Qr.Eof do
+//       begin
+//         // 1. Adiciona um novo item ao ListView
+//         Item := lvMain.Items.Add;
+//
+//         // 2. Define o texto principal do item
+//         Item.Text := Qr.FieldByName('nome_comercio').AsString;
+//
+//         // 3. (Opcional) Define detalhes adicionais
+//         // (Para isso, o ViewStyle do lvMain deve ser vsList, vsIcon, etc.)
+//         Item.Detail := Qr.FieldByName('descricao').AsString;
+//
+//         // 4. (Opcional) Você pode guardar o ID para uso futuro
+//         // (Convertemos o Integer para um TObject para guardar no .Data)
+//         Item.Data := TObject(NativeInt(Qr.FieldByName('id_comercio').AsInteger));
+//
+//         // 5. Move para o próximo registro
+//         Qr.Next;
+//       end;
+//     finally
+//       lvMain.EndUpdate; // Retoma a atualização visual
+//     end;
+//   finally
+//     Qr.Close; // Fecha a query
+//   end;
  end;
 end.
