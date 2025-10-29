@@ -173,11 +173,9 @@ type
     eTPCommDE: TEdit;
     eTECommDE: TEdit;
     eRuaCommDE: TEdit;
-    eCEPCommDE: TEdit;
     eECommDE: TEdit;
     eNPCommDE: TEdit;
     eEPCommDE: TEdit;
-    eCPFPCommDE: TEdit;
     cbCcommDE: TComboBox;
     meTCommDE: TMaskEdit;
     Label11: TLabel;
@@ -190,6 +188,8 @@ type
     eBairroCommDE: TEdit;
     Label19: TLabel;
     eComplementoCommDE: TEdit;
+    meCEPCommDE: TMaskEdit;
+    meCPFPCommDE: TMaskEdit;
 
     procedure iButton1Click(Sender: TObject);
     procedure FormShow(Sender: TObject);

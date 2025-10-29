@@ -353,7 +353,7 @@
                       ParentShowHint = False
                       ShowHint = True
                       TabOrder = 4
-                      TextHint = '000,00'
+                      TextHint = '0000,00'
                       StyleName = 'Windows'
                       OnExit = ePrecoAddExit
                     end
@@ -1334,9 +1334,9 @@
                   object Label16: TLabel
                     Left = 16
                     Top = 93
-                    Width = 91
+                    Width = 181
                     Height = 15
-                    Caption = 'Taxa de Entrega:'
+                    Caption = 'Taxa de Entrega:                         R$'
                     Font.Charset = DEFAULT_CHARSET
                     Font.Color = clWhite
                     Font.Height = -12
@@ -1354,9 +1354,11 @@
                   object eTPCommDE: TEdit
                     Left = 198
                     Top = 69
-                    Width = 150
+                    Width = 35
                     Height = 20
+                    NumbersOnly = True
                     TabOrder = 1
+                    TextHint = '30'
                   end
                   object eTECommDE: TEdit
                     Left = 198
@@ -1364,6 +1366,7 @@
                     Width = 150
                     Height = 20
                     TabOrder = 2
+                    TextHint = '0000,00'
                   end
                 end
                 object pButtonSalvarDadosE: TPanel
@@ -1437,17 +1440,19 @@
                   object eECommDE: TEdit
                     Left = 162
                     Top = 48
-                    Width = 150
+                    Width = 159
                     Height = 20
                     TabOrder = 0
                   end
                   object meTCommDE: TMaskEdit
                     Left = 162
                     Top = 69
-                    Width = 151
+                    Width = 71
                     Height = 20
+                    EditMask = '(99)99999-99;1;_'
+                    MaxLength = 12
                     TabOrder = 1
-                    Text = ''
+                    Text = '(  )     -  '
                   end
                 end
                 object pInfoRestauranteLE: TPanel
@@ -1572,47 +1577,50 @@
                     Height = 20
                     TabOrder = 0
                   end
-                  object eCEPCommDE: TEdit
-                    Left = 46
-                    Top = 53
-                    Width = 95
-                    Height = 20
-                    TabOrder = 1
-                  end
                   object eEstadoCOmmDE: TEdit
                     Left = 198
                     Top = 53
                     Width = 95
                     Height = 20
-                    TabOrder = 2
+                    TabOrder = 1
                   end
                   object eNumeroEnderecoCommDE: TEdit
                     Left = 198
                     Top = 74
                     Width = 95
                     Height = 20
-                    TabOrder = 3
+                    TabOrder = 2
                   end
                   object eCidadeCommDE: TEdit
                     Left = 339
                     Top = 53
                     Width = 95
                     Height = 20
-                    TabOrder = 4
+                    TabOrder = 3
                   end
                   object eBairroCommDE: TEdit
                     Left = 339
                     Top = 74
                     Width = 95
                     Height = 20
-                    TabOrder = 5
+                    TabOrder = 4
                   end
                   object eComplementoCommDE: TEdit
                     Left = 161
                     Top = 95
                     Width = 131
                     Height = 20
+                    TabOrder = 5
+                  end
+                  object meCEPCommDE: TMaskEdit
+                    Left = 46
+                    Top = 53
+                    Width = 95
+                    Height = 20
+                    EditMask = '99999-999;1;_'
+                    MaxLength = 9
                     TabOrder = 6
+                    Text = '     -   '
                   end
                 end
                 object pButtonAlterarSenhaE: TPanel
@@ -1727,12 +1735,15 @@
                     Height = 20
                     TabOrder = 1
                   end
-                  object eCPFPCommDE: TEdit
+                  object meCPFPCommDE: TMaskEdit
                     Left = 146
                     Top = 90
                     Width = 150
                     Height = 20
+                    EditMask = '999.999.999-99;1;_'
+                    MaxLength = 14
                     TabOrder = 2
+                    Text = '   .   .   -  '
                   end
                 end
                 object pButtonCancelarE: TPanel
