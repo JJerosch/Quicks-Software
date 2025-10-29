@@ -190,6 +190,19 @@ type
     eComplementoCommDE: TEdit;
     meCEPCommDE: TMaskEdit;
     meCPFPCommDE: TMaskEdit;
+    Panel1: TPanel;
+    lblAlterarSenha: TLabel;
+    Label24: TLabel;
+    Label29: TLabel;
+    Edit1: TEdit;
+    Panel2: TPanel;
+    Label34: TLabel;
+    Label35: TLabel;
+    Edit2: TEdit;
+    Label23: TLabel;
+    Edit3: TEdit;
+    pButtonConfirmarAlterarSenha: TPanel;
+    Panel4: TPanel;
 
     procedure iButton1Click(Sender: TObject);
     procedure FormShow(Sender: TObject);

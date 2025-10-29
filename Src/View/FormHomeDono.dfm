@@ -681,7 +681,7 @@
             Top = 0
             Width = 1135
             Height = 611
-            ActivePage = tsEditar
+            ActivePage = tsAlterarSenha
             Align = alClient
             TabOrder = 0
             object tsVisualizar: TTabSheet
@@ -1769,6 +1769,148 @@
             object tsAlterarSenha: TTabSheet
               Caption = 'tsAlterarSenha'
               ImageIndex = 2
+              object Panel1: TPanel
+                Left = 120
+                Top = 154
+                Width = 337
+                Height = 244
+                BevelOuter = bvNone
+                Color = clCoral
+                ParentBackground = False
+                TabOrder = 0
+                object lblAlterarSenha: TLabel
+                  Left = 120
+                  Top = 12
+                  Width = 120
+                  Height = 25
+                  Caption = 'Alterar Senha'
+                  Color = clCream
+                  Font.Charset = DEFAULT_CHARSET
+                  Font.Color = clWhite
+                  Font.Height = -19
+                  Font.Name = 'Segoe UI'
+                  Font.Style = [fsBold]
+                  ParentColor = False
+                  ParentFont = False
+                end
+                object Label24: TLabel
+                  Left = 40
+                  Top = 58
+                  Width = 85
+                  Height = 15
+                  Caption = 'Senha anterior:'
+                  Font.Charset = DEFAULT_CHARSET
+                  Font.Color = clWhite
+                  Font.Height = -12
+                  Font.Name = 'Segoe UI'
+                  Font.Style = [fsBold]
+                  ParentFont = False
+                end
+                object Label29: TLabel
+                  Left = 40
+                  Top = 87
+                  Width = 67
+                  Height = 15
+                  Caption = 'Nova senha:'
+                  Font.Charset = DEFAULT_CHARSET
+                  Font.Color = clWhite
+                  Font.Height = -12
+                  Font.Name = 'Segoe UI'
+                  Font.Style = [fsBold]
+                  ParentFont = False
+                end
+                object Label23: TLabel
+                  Left = 40
+                  Top = 110
+                  Width = 101
+                  Height = 30
+                  Caption = 'Digite novamente'#13#10' a nova senha:'
+                  Font.Charset = DEFAULT_CHARSET
+                  Font.Color = clWhite
+                  Font.Height = -12
+                  Font.Name = 'Segoe UI'
+                  Font.Style = [fsBold]
+                  ParentFont = False
+                end
+                object Edit1: TEdit
+                  Left = 147
+                  Top = 55
+                  Width = 150
+                  Height = 23
+                  TabOrder = 0
+                end
+                object Edit2: TEdit
+                  Left = 147
+                  Top = 84
+                  Width = 150
+                  Height = 23
+                  TabOrder = 1
+                end
+                object Edit3: TEdit
+                  Left = 147
+                  Top = 113
+                  Width = 150
+                  Height = 23
+                  TabOrder = 2
+                end
+                object pButtonConfirmarAlterarSenha: TPanel
+                  Left = 80
+                  Top = 184
+                  Width = 71
+                  Height = 41
+                  Caption = 'Confirmar'
+                  TabOrder = 3
+                end
+                object Panel4: TPanel
+                  Left = 200
+                  Top = 184
+                  Width = 71
+                  Height = 41
+                  Caption = 'Cancelar'
+                  TabOrder = 4
+                end
+              end
+              object Panel2: TPanel
+                Left = 496
+                Top = 150
+                Width = 265
+                Height = 244
+                BevelOuter = bvNone
+                Color = clCoral
+                ParentBackground = False
+                TabOrder = 1
+                object Label34: TLabel
+                  Left = 10
+                  Top = 12
+                  Width = 246
+                  Height = 25
+                  Caption = 'Dicas para uma senha forte:'
+                  Color = clCream
+                  Font.Charset = DEFAULT_CHARSET
+                  Font.Color = clWhite
+                  Font.Height = -19
+                  Font.Name = 'Segoe UI'
+                  Font.Style = [fsBold]
+                  ParentColor = False
+                  ParentFont = False
+                end
+                object Label35: TLabel
+                  Left = 8
+                  Top = 59
+                  Width = 248
+                  Height = 120
+                  Caption = 
+                    ' - Minimo de 6 caracteres;'#13#10' - Mai'#250'sculas e Min'#250'sculas;'#13#10' - N'#250'me' +
+                    'ros;'#13#10' - Caracteres especiais;'#13#10' - Evite dados pessoais(anivers'#225 +
+                    'rio, '#13#10'n'#250'mero de celular, etc.).'
+                  Font.Charset = DEFAULT_CHARSET
+                  Font.Color = clWhite
+                  Font.Height = -15
+                  Font.Name = 'Segoe UI'
+                  Font.Style = [fsBold]
+                  ParentFont = False
+                end
+              end
             end
           end
         end

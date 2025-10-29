@@ -37,7 +37,7 @@ object FormHomeA: TFormHomeA
         Top = 0
         Width = 1143
         Height = 644
-        ActivePage = pctab4Usuarios
+        ActivePage = pctab5Perfil
         Align = alClient
         Style = tsFlatButtons
         TabOrder = 0
@@ -4680,7 +4680,7 @@ object FormHomeA: TFormHomeA
     object lblUserNameHeader: TLabel
       Left = 62
       Top = 9
-      Width = 91
+      Width = 6
       Height = 30
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
@@ -4692,7 +4692,7 @@ object FormHomeA: TFormHomeA
     object lblUserIdHeader: TLabel
       Left = 4
       Top = 9
-      Width = 52
+      Width = 6
       Height = 30
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
