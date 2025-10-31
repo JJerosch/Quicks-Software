@@ -7,7 +7,8 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls,
   Vcl.ComCtrls, Vcl.Imaging.pngimage, Data.DB, Vcl.Mask, Vcl.Grids, Vcl.DBGrids,
   uConn, FireDAC.Comp.Client, System.Generics.Collections,
-  ProdutoModel, ProdutoController, ProdutoViewHelper;
+  ProdutoModel, ProdutoController, ProdutoViewHelper,
+  ComercioModel, ComercioController, ComercioViewHelper;
 
 type
   TFormHomeD = class(TForm)
@@ -112,7 +113,6 @@ type
     lblHFCommD: TLabel;
     lblTPCommD: TLabel;
     lblTECommD: TLabel;
-    pButtonSalvarDados: TPanel;
     pInfoRestauranteC: TPanel;
     lblContatoComm: TLabel;
     lblEComm: TLabel;
@@ -126,7 +126,6 @@ type
     lblENCommD: TLabel;
     lblCEPCommD: TLabel;
     pButtonAlterarSenha: TPanel;
-    pButtonSalvarSenha: TPanel;
     pInfoRestauranteP: TPanel;
     lblProprietario: TLabel;
     lblNPComm: TLabel;
@@ -135,7 +134,6 @@ type
     lblNPCommD: TLabel;
     lblEPCommD: TLabel;
     lblCPFPCommD: TLabel;
-    pButtonCancelar: TPanel;
     tsEditar: TTabSheet;
     tsAlterarSenha: TTabSheet;
     pMainPerfilEditar: TPanel;
@@ -145,7 +143,6 @@ type
     Label9: TLabel;
     Label10: TLabel;
     mDCommDE: TMemo;
-    pButtonEditarE: TPanel;
     pInfoRestauranteHE: TPanel;
     Label13: TLabel;
     Label14: TLabel;
@@ -161,7 +158,6 @@ type
     Label26: TLabel;
     Label27: TLabel;
     pButtonAlterarSenhaE: TPanel;
-    pButtonSalvarSenhaE: TPanel;
     pInfoRestaurantePE: TPanel;
     Label30: TLabel;
     Label31: TLabel;
@@ -169,7 +165,6 @@ type
     Label33: TLabel;
     pButtonCancelarE: TPanel;
     eNCommDE: TEdit;
-    eHFCommDE: TEdit;
     eTPCommDE: TEdit;
     eTECommDE: TEdit;
     eRuaCommDE: TEdit;
@@ -194,15 +189,19 @@ type
     lblAlterarSenha: TLabel;
     Label24: TLabel;
     Label29: TLabel;
-    Edit1: TEdit;
+    eSenhaAtual: TEdit;
     Panel2: TPanel;
     Label34: TLabel;
     Label35: TLabel;
-    Edit2: TEdit;
+    eSenhaNova: TEdit;
     Label23: TLabel;
-    Edit3: TEdit;
+    eSenhaConfirmacao: TEdit;
     pButtonConfirmarAlterarSenha: TPanel;
     Panel4: TPanel;
+    Image1: TImage;
+    Label28: TLabel;
+    meHACommDE: TMaskEdit;
+    meHFCommDE: TMaskEdit;
 
     procedure iButton1Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -228,13 +227,20 @@ type
     procedure pButtonConfirmarReativarClick(Sender: TObject);
     procedure ePrecoUpExit(Sender: TObject);
     procedure ePrecoAddExit(Sender: TObject);
+    procedure pButtonEditarClick(Sender: TObject);
+    procedure pButtonAlterarSenhaEClick(Sender: TObject);
+    procedure pButtonSalvarDadosEClick(Sender: TObject);
+    procedure pButtonCancelarEClick(Sender: TObject);
+    procedure pButtonConfirmarAlterarSenhaClick(Sender: TObject);
+    procedure eTECommDEExit(Sender: TObject);
 
   private
     FIdUsuario: Integer;
     FNomeUsuario: String;
-    FIdComercio: Integer;        // ⭐ ADICIONAR
-    FNomeComercio: String;       // ⭐ ADICIONAR
-    FController: TProdutoController;
+    FIdComercio: Integer;
+    FNomeComercio: String;
+    FProdutoController: TProdutoController;
+    FComercioController: TComercioController;
     FIdProdutoSelecionado: Integer;
     FMemTable: TFDMemTable;
     FDataSource: TDataSource;
@@ -246,11 +252,17 @@ type
     procedure LimparCamposAtualizar;
     procedure CarregarDadosParaAtualizar(IdProduto: Integer);
 
+    // Perfil
+    procedure CarregarDadosPerfil;
+    procedure ExibirDadosPerfilVisualizacao(Comercio: TComercio);
+    procedure CarregarDadosPerfilEdicao(Comercio: TComercio);
+    procedure LimparCamposAlterarSenha;
+
   public
     property IdUsuario: Integer read FIdUsuario write FIdUsuario;
     property NomeUsuario: String read FNomeUsuario write FNomeUsuario;
-    property IdComercio: Integer read FIdComercio write FIdComercio;         // ⭐ ADICIONAR
-    property NomeComercio: String read FNomeComercio write FNomeComercio;   // ⭐ ADICIONAR
+    property IdComercio: Integer read FIdComercio write FIdComercio;
+    property NomeComercio: String read FNomeComercio write FNomeComercio;
   end;
 
 var
@@ -262,8 +274,9 @@ implementation
 
 procedure TFormHomeD.FormCreate(Sender: TObject);
 begin
-  // Criar controller
-  FController := TProdutoController.Create;
+  // Criar controllers
+  FProdutoController := TProdutoController.Create;
+  FComercioController := TComercioController.Create;
   FIdProdutoSelecionado := 0;
 
   // Criar MemTable e DataSource
@@ -274,15 +287,21 @@ begin
 
   // Configurar páginas iniciais
   if Assigned(pcMain) then
-    pcMain.ActivePageIndex := 3; // Tab Produtos
+    pcMain.ActivePageIndex := 3;
 
   if Assigned(pcButtons) then
     pcButtons.ActivePageIndex := 0;
+
+  if Assigned(pcPerfil) then
+    pcPerfil.ActivePageIndex := 0;
 
   // Configurar busca
   eBuscaMain.Clear;
   eBuscaMain.TextHint := 'Digite aqui para pesquisar produtos...';
   eBuscaMain.Enabled := False;
+
+  // Popular ComboBox de categorias
+  TComercioViewHelper.PopularCategoriasComercio(cbCcommDE);
 
   // Configurar constraints da janela
   Constraints.MinWidth := 1248;
@@ -296,7 +315,8 @@ end;
 
 procedure TFormHomeD.FormDestroy(Sender: TObject);
 begin
-  FController.Free;
+  FProdutoController.Free;
+  FComercioController.Free;
   FMemTable.Free;
   FDataSource.Free;
 end;
@@ -323,7 +343,6 @@ begin
         lblUserNameHeader.Caption := FNomeUsuario;
         lblUserIdHeader.Caption := 'ID: ' + IntToStr(FIdUsuario);
 
-        // Se você tiver um label para o nome do comércio:
         if Assigned(lblNomeComercio) then
           lblNomeComercio.Caption := FNomeComercio;
       end
@@ -346,20 +365,20 @@ begin
   end;
 end;
 
+// ============ PRODUTOS (MANTIDO IGUAL) ============
+
 procedure TFormHomeD.CarregarGrid(ApenasDisponiveis: Boolean);
 var
   Produtos: TObjectList<TProduto>;
 begin
   try
-    // ⚠️ IMPORTANTE: Usar FIdComercio ao invés de FIdUsuario
     if FIdComercio <= 0 then
     begin
       ShowMessage('ID do comércio não definido.');
       Exit;
     end;
 
-    // Buscar produtos do comércio
-    Produtos := FController.ListarProdutos(FIdComercio, ApenasDisponiveis);
+    Produtos := FProdutoController.ListarProdutos(FIdComercio, ApenasDisponiveis);
     try
       TProdutoViewHelper.PreencherMemTableProdutos(FMemTable, Produtos);
       OrganizarGrid;
@@ -376,13 +395,12 @@ procedure TFormHomeD.OrganizarGrid;
 begin
   if DBGridProdutos.Columns.Count > 0 then
   begin
-    DBGridProdutos.Columns[0].Width := 50;   // id_produto
-    DBGridProdutos.Columns[1].Width := 200;  // nome_prod
-    DBGridProdutos.Columns[2].Width := 300;  // desc_prod
-    DBGridProdutos.Columns[3].Width := 100;  // preco_prod
-    DBGridProdutos.Columns[4].Width := 80;   // disponivel_venda
+    DBGridProdutos.Columns[0].Width := 50;
+    DBGridProdutos.Columns[1].Width := 200;
+    DBGridProdutos.Columns[2].Width := 300;
+    DBGridProdutos.Columns[3].Width := 100;
+    DBGridProdutos.Columns[4].Width := 80;
 
-    // Ocultar id_comercio
     if DBGridProdutos.Columns.Count > 5 then
       DBGridProdutos.Columns[5].Visible := False;
 
@@ -448,7 +466,7 @@ var
   Produto: TProduto;
 begin
   try
-    Produto := FController.ObterProduto(IdProduto);
+    Produto := FProdutoController.ObterProduto(IdProduto);
     if Assigned(Produto) then
     begin
       try
@@ -466,8 +484,6 @@ begin
   end;
 end;
 
-// ============ EVENTOS DOS BOTÕES ============
-
 procedure TFormHomeD.pButton1AdicionarClick(Sender: TObject);
 begin
   pcButtons.ActivePageIndex := 1;
@@ -484,9 +500,9 @@ begin
     Produto.DescProd := Trim(mDescAdd.Text);
     Produto.PrecoProd := TProdutoViewHelper.ParsePreco(ePrecoAdd.Text);
     Produto.DisponivelVenda := cbDisponivelAdd.Checked;
-    Produto.IdComercio := FIdComercio; // ⭐ USAR ID DO COMÉRCIO
+    Produto.IdComercio := FIdComercio;
 
-    if FController.CadastrarProduto(Produto) then
+    if FProdutoController.CadastrarProduto(Produto) then
     begin
       LimparCamposAdicionar;
       CarregarGrid(True);
@@ -520,7 +536,7 @@ begin
   IdProduto := FMemTable.FieldByName('id_produto').AsInteger;
   NomeProduto := FMemTable.FieldByName('nome_prod').AsString;
 
-  if FController.DesativarProduto(IdProduto, NomeProduto) then
+  if FProdutoController.DesativarProduto(IdProduto, NomeProduto) then
   begin
     CarregarGrid(True);
     pcButtons.ActivePageIndex := 0;
@@ -557,9 +573,9 @@ begin
     Produto.DescProd := Trim(mDescUp.Text);
     Produto.PrecoProd := TProdutoViewHelper.ParsePreco(ePrecoUp.Text);
     Produto.DisponivelVenda := cbDisponivelUp.Checked;
-    Produto.IdComercio := FIdComercio; // ⭐ USAR ID DO COMÉRCIO
+    Produto.IdComercio := FIdComercio;
 
-    if FController.AtualizarProduto(Produto) then
+    if FProdutoController.AtualizarProduto(Produto) then
     begin
       LimparCamposAtualizar;
       CarregarGrid(True);
@@ -593,7 +609,7 @@ begin
   IdProduto := FMemTable.FieldByName('id_produto').AsInteger;
   NomeProduto := FMemTable.FieldByName('nome_prod').AsString;
 
-  if FController.ReativarProduto(IdProduto, NomeProduto) then
+  if FProdutoController.ReativarProduto(IdProduto, NomeProduto) then
   begin
     CarregarGrid(True);
     pcButtons.ActivePageIndex := 0;
@@ -654,6 +670,232 @@ begin
   end;
 end;
 
+// ============ PERFIL ============
+
+procedure TFormHomeD.CarregarDadosPerfil;
+var
+  Comercio: TComercio;
+begin
+  try
+    Comercio := FComercioController.ObterComercioPorUsuario(FIdUsuario);
+    if Assigned(Comercio) then
+    begin
+      try
+        ExibirDadosPerfilVisualizacao(Comercio);
+      finally
+        Comercio.Free;
+      end;
+    end;
+  except
+    on E: Exception do
+      ShowMessage('Erro ao carregar dados do perfil: ' + E.Message);
+  end;
+end;
+
+procedure TFormHomeD.ExibirDadosPerfilVisualizacao(Comercio: TComercio);
+begin
+  // Dados do Comércio
+  lblNCommD.Caption := Comercio.NomeComercio;
+  lblCACommD.Caption := Comercio.Categoria;
+  mDCommD.Text := Comercio.Descricao;
+
+  // Horários e Taxa
+  lblHFCommD.Caption := Comercio.HorarioAbertura + ' às ' + Comercio.HorarioFechamento;
+  lblTPCommD.Caption := IntToStr(Comercio.TempoPreparoMedio) + ' minutos';
+  lblTECommD.Caption := TComercioViewHelper.FormatarMoeda(Comercio.TaxaEntregaBase);
+
+  // Contato
+  lblECommD.Caption := Comercio.EmailComercio;
+  lblTCommD.Caption := TComercioViewHelper.FormatarTelefone(Comercio.NPhoneComercio);
+
+  // Localização
+  if Trim(Comercio.EnderecoCompleto) <> '' then
+    lblENCommD.Caption := Comercio.EnderecoCompleto
+  else
+    lblENCommD.Caption := Comercio.Bairro + ', ' + Comercio.Cidade + '/' + Comercio.Estado;
+
+  if Trim(Comercio.Numero) <> '' then
+    lblENCommD.Caption := lblENCommD.Caption + ', Nº ' + Comercio.Numero;
+  if Trim(Comercio.Complemento) <> '' then
+    lblENCommD.Caption := lblENCommD.Caption + ' (' + Comercio.Complemento + ')';
+  lblCEPCommD.Caption := TComercioViewHelper.FormatarCEP(Comercio.CEP);
+
+  // Proprietário
+  lblNPCommD.Caption := Comercio.NomeProprietario;
+  lblEPCommD.Caption := Comercio.EmailProprietario;
+  lblCPFPCommD.Caption := TComercioViewHelper.FormatarCPF(Comercio.CPFProprietario);
+end;
+
+procedure TFormHomeD.CarregarDadosPerfilEdicao(Comercio: TComercio);
+var
+  HorariosCompleto: string;
+begin
+  // Dados do Comércio
+  eNCommDE.Text := Comercio.NomeComercio;
+  cbCcommDE.Text := Comercio.Categoria;
+  mDCommDE.Text := Comercio.Descricao;
+
+  // Horários e Taxa
+  eHFCommDE.Text := Comercio.HorarioAbertura + ' às ' + Comercio.HorarioFechamento;
+  eTPCommDE.Text := IntToStr(Comercio.TempoPreparoMedio);
+  eTECommDE.Text := TComercioViewHelper.FormatarMoeda(Comercio.TaxaEntregaBase);
+
+  // Contato
+  eECommDE.Text := Comercio.EmailComercio;
+  meTCommDE.Text := TComercioViewHelper.FormatarTelefone(Comercio.NPhoneComercio);
+
+  // Localização
+  eRuaCommDE.Text := Comercio.EnderecoCompleto;
+  eNumeroEnderecoCommDE.Text := Comercio.Numero;
+  eBairroCommDE.Text := Comercio.Bairro;
+  eCidadeCommDE.Text := Comercio.Cidade;
+  eEstadoCOmmDE.Text := Comercio.Estado;
+  meCEPCommDE.Text := TComercioViewHelper.FormatarCEP(Comercio.CEP);
+  eComplementoCommDE.Text := Comercio.Complemento;
+
+  // Proprietário (apenas exibição - readonly)
+  eNPCommDE.Text := Comercio.NomeProprietario;
+  eEPCommDE.Text := Comercio.EmailProprietario;
+  meCPFPCommDE.Text := TComercioViewHelper.FormatarCPF(Comercio.CPFProprietario);
+end;
+
+procedure TFormHomeD.pButtonEditarClick(Sender: TObject);
+var
+  Comercio: TComercio;
+begin
+  try
+    Comercio := FComercioController.ObterComercioPorUsuario(FIdUsuario);
+    if Assigned(Comercio) then
+    begin
+      try
+        CarregarDadosPerfilEdicao(Comercio);
+        pcPerfil.ActivePageIndex := 1; // Tab Editar
+      finally
+        Comercio.Free;
+      end;
+    end;
+  except
+    on E: Exception do
+      ShowMessage('Erro ao carregar dados para edição: ' + E.Message);
+  end;
+end;
+
+procedure TFormHomeD.pButtonSalvarDadosEClick(Sender: TObject);
+var
+  Comercio: TComercio;
+  HorarioCompleto: string;
+  HorarioAbertura, HorarioFechamento: string;
+  PosAs: Integer;
+begin
+  try
+    Comercio := TComercio.Create;
+    try
+      // Buscar ID do comércio
+      Comercio.IdComercio := FIdComercio;
+      Comercio.IdUser := FIdUsuario;
+
+      // Dados do Comércio
+      Comercio.NomeComercio := Trim(eNCommDE.Text);
+      Comercio.Categoria := Trim(cbCcommDE.Text);
+      Comercio.Descricao := Trim(mDCommDE.Text);
+
+      // Horários (separar abertura e fechamento se estiver no formato "08:00 às 18:00")
+      HorarioCompleto := Trim(eHFCommDE.Text);
+      PosAs := Pos(' às ', HorarioCompleto);
+      if PosAs > 0 then
+      begin
+        Comercio.HorarioAbertura := Trim(Copy(HorarioCompleto, 1, PosAs - 1));
+        Comercio.HorarioFechamento := Trim(Copy(HorarioCompleto, PosAs + 5, Length(HorarioCompleto)));
+      end
+      else
+      begin
+        Comercio.HorarioAbertura := HorarioCompleto;
+        Comercio.HorarioFechamento := HorarioCompleto;
+      end;
+
+      Comercio.TempoPreparoMedio := StrToIntDef(eTPCommDE.Text, 30);
+      Comercio.TaxaEntregaBase := TComercioViewHelper.ParseMoeda(eTECommDE.Text);
+
+      // Contato
+      Comercio.EmailComercio := Trim(eECommDE.Text);
+      Comercio.NPhoneComercio := TComercioViewHelper.RemoverMascaraTelefone(meTCommDE.Text);
+
+      // Localização
+      Comercio.EnderecoCompleto := Trim(eRuaCommDE.Text);
+      Comercio.Numero := Trim(eNumeroEnderecoCommDE.Text);
+      Comercio.Bairro := Trim(eBairroCommDE.Text);
+      Comercio.Cidade := Trim(eCidadeCommDE.Text);
+      Comercio.Estado := Trim(eEstadoCOmmDE.Text);
+      Comercio.CEP := TComercioViewHelper.RemoverMascaraCEP(meCEPCommDE.Text);
+      Comercio.Complemento := Trim(eComplementoCommDE.Text);
+
+      if FComercioController.AtualizarComercio(Comercio) then
+      begin
+        CarregarDadosPerfil;
+        pcPerfil.ActivePageIndex := 0; // Voltar para visualização
+      end;
+    finally
+      Comercio.Free;
+    end;
+  except
+    on E: Exception do
+      ShowMessage('Erro ao salvar dados: ' + E.Message);
+  end;
+end;
+
+procedure TFormHomeD.pButtonCancelarEClick(Sender: TObject);
+begin
+  pcPerfil.ActivePageIndex := 0; // Voltar para visualização
+end;
+
+procedure TFormHomeD.pButtonAlterarSenhaEClick(Sender: TObject);
+begin
+  LimparCamposAlterarSenha;
+  pcPerfil.ActivePageIndex := 2; // Tab Alterar Senha
+end;
+
+procedure TFormHomeD.pButtonConfirmarAlterarSenhaClick(Sender: TObject);
+var
+  Request: TAlterarSenhaRequest;
+begin
+  try
+    Request := TAlterarSenhaRequest.Create;
+    try
+      Request.IdUsuario := FIdUsuario;
+      Request.SenhaAtual := Trim(eSenhaAtual.Text);
+      Request.SenhaNova := Trim(eSenhaNova.Text);
+      Request.SenhaConfirmacao := Trim(eSenhaConfirmacao.Text);
+
+      if FComercioController.AlterarSenha(Request) then
+      begin
+        LimparCamposAlterarSenha;
+        pcPerfil.ActivePageIndex := 0; // Voltar para visualização
+      end;
+    finally
+      Request.Free;
+    end;
+  except
+    on E: Exception do
+      ShowMessage('Erro ao alterar senha: ' + E.Message);
+  end;
+end;
+
+procedure TFormHomeD.LimparCamposAlterarSenha;
+begin
+  eSenhaAtual.Clear;
+  eSenhaNova.Clear;
+  eSenhaConfirmacao.Clear;
+end;
+
+procedure TFormHomeD.eTECommDEExit(Sender: TObject);
+var
+  Valor: Currency;
+begin
+  Valor := TComercioViewHelper.ParseMoeda(eTECommDE.Text);
+  if Valor >= 0 then
+    eTECommDE.Text := TComercioViewHelper.FormatarMoeda(Valor);
+end;
+
 // ============ NAVEGAÇÃO MENU LATERAL ============
 
 procedure TFormHomeD.iButton1Click(Sender: TObject);
@@ -682,6 +924,8 @@ end;
 procedure TFormHomeD.iButton5Click(Sender: TObject);
 begin
   pcMain.ActivePageIndex := 4; // Perfil
+  pcPerfil.ActivePageIndex := 0; // Tab Visualizar
+  CarregarDadosPerfil; // Carregar dados ao abrir perfil
 end;
 
 procedure TFormHomeD.iButton6Click(Sender: TObject);

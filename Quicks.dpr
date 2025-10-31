@@ -48,7 +48,12 @@ uses
   ProdutoService in 'Src\Service\ProdutoService.pas',
   ProdutoRepository in 'Src\Repository\ProdutoRepository.pas',
   ProdutoController in 'Src\Controller\ProdutoController.pas',
-  ProdutoViewHelper in 'Src\Utils\ProdutoViewHelper.pas';
+  ProdutoViewHelper in 'Src\Utils\ProdutoViewHelper.pas',
+  ComercioModel in 'Src\Model\ComercioModel.pas',
+  ComercioRepository in 'Src\Repository\ComercioRepository.pas',
+  ComercioService in 'Src\Service\ComercioService.pas',
+  ComercioViewHelper in 'Src\Utils\ComercioViewHelper.pas',
+  ComercioController in 'Src\Controller\ComercioController.pas';
 
 {$R *.res}
 

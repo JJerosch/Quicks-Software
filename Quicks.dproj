@@ -172,6 +172,11 @@
         <DCCReference Include="Src\Repository\ProdutoRepository.pas"/>
         <DCCReference Include="Src\Controller\ProdutoController.pas"/>
         <DCCReference Include="Src\Utils\ProdutoViewHelper.pas"/>
+        <DCCReference Include="Src\Model\ComercioModel.pas"/>
+        <DCCReference Include="Src\Repository\ComercioRepository.pas"/>
+        <DCCReference Include="Src\Service\ComercioService.pas"/>
+        <DCCReference Include="Src\Utils\ComercioViewHelper.pas"/>
+        <DCCReference Include="Src\Controller\ComercioController.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
