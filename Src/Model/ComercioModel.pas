@@ -11,8 +11,8 @@ type
     FNomeComercio: string;
     FCategoria: string;
     FDescricao: string;
-    FHorarioAbertura: string;
-    FHorarioFechamento: string;
+    FHorarioAbertura: TTime;  // MUDOU DE TDate PARA TTime
+    FHorarioFechamento: TTime;  // MUDOU DE TDate PARA TTime
     FTempoPreparoMedio: Integer;
     FTaxaEntregaBase: Currency;
 
@@ -41,8 +41,8 @@ type
     property NomeComercio: string read FNomeComercio write FNomeComercio;
     property Categoria: string read FCategoria write FCategoria;
     property Descricao: string read FDescricao write FDescricao;
-    property HorarioAbertura: string read FHorarioAbertura write FHorarioAbertura;
-    property HorarioFechamento: string read FHorarioFechamento write FHorarioFechamento;
+    property HorarioAbertura: TTime read FHorarioAbertura write FHorarioAbertura;  // TTime
+    property HorarioFechamento: TTime read FHorarioFechamento write FHorarioFechamento;  // TTime
     property TempoPreparoMedio: Integer read FTempoPreparoMedio write FTempoPreparoMedio;
     property TaxaEntregaBase: Currency read FTaxaEntregaBase write FTaxaEntregaBase;
 
@@ -96,8 +96,6 @@ begin
   FNomeComercio := '';
   FCategoria := '';
   FDescricao := '';
-  FHorarioAbertura := '';
-  FHorarioFechamento := '';
   FTempoPreparoMedio := 0;
   FTaxaEntregaBase := 0;
   FEmailComercio := '';

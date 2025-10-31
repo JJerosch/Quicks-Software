@@ -274,6 +274,11 @@ implementation
 
 procedure TFormHomeD.FormCreate(Sender: TObject);
 begin
+  meHACommDE.EditMask := '!90:00;1;_';
+  meHFCommDE.EditMask := '!90:00;1;_';
+  meTCommDE.EditMask := '!\(99\)00000-0000;1;_';
+  meCEPCommDE.EditMask := '00000-000;1;_';
+  meCPFPCommDE.EditMask := '000\.000\.000\-00;1;_';
   // Criar controllers
   FProdutoController := TProdutoController.Create;
   FComercioController := TComercioController.Create;
@@ -699,8 +704,9 @@ begin
   lblCACommD.Caption := Comercio.Categoria;
   mDCommD.Text := Comercio.Descricao;
 
-  // Horários e Taxa
-  lblHFCommD.Caption := Comercio.HorarioAbertura + ' às ' + Comercio.HorarioFechamento;
+  // Horários e Taxa - USAR TimeToStr ao invés de DateToStr
+  lblHFCommD.Caption := FormatDateTime('hh:nn', Comercio.HorarioAbertura) + ' - ' +
+                        FormatDateTime('hh:nn', Comercio.HorarioFechamento);
   lblTPCommD.Caption := IntToStr(Comercio.TempoPreparoMedio) + ' minutos';
   lblTECommD.Caption := TComercioViewHelper.FormatarMoeda(Comercio.TaxaEntregaBase);
 
@@ -727,16 +733,15 @@ begin
 end;
 
 procedure TFormHomeD.CarregarDadosPerfilEdicao(Comercio: TComercio);
-var
-  HorariosCompleto: string;
 begin
   // Dados do Comércio
   eNCommDE.Text := Comercio.NomeComercio;
   cbCcommDE.Text := Comercio.Categoria;
   mDCommDE.Text := Comercio.Descricao;
 
-  // Horários e Taxa
-  eHFCommDE.Text := Comercio.HorarioAbertura + ' às ' + Comercio.HorarioFechamento;
+  // Horários - USAR FormatDateTime com hh:nn
+  meHACommDE.Text := FormatDateTime('hh:nn', Comercio.HorarioAbertura);
+  meHFCommDE.Text := FormatDateTime('hh:nn', Comercio.HorarioFechamento);
   eTPCommDE.Text := IntToStr(Comercio.TempoPreparoMedio);
   eTECommDE.Text := TComercioViewHelper.FormatarMoeda(Comercio.TaxaEntregaBase);
 
@@ -745,52 +750,162 @@ begin
   meTCommDE.Text := TComercioViewHelper.FormatarTelefone(Comercio.NPhoneComercio);
 
   // Localização
+  meCEPCommDE.Text := TComercioViewHelper.FormatarCEP(Comercio.CEP);
+  eEstadoCOmmDE.Text := Comercio.Estado;
+  eCidadeCommDE.Text := Comercio.Cidade;
   eRuaCommDE.Text := Comercio.EnderecoCompleto;
   eNumeroEnderecoCommDE.Text := Comercio.Numero;
   eBairroCommDE.Text := Comercio.Bairro;
-  eCidadeCommDE.Text := Comercio.Cidade;
-  eEstadoCOmmDE.Text := Comercio.Estado;
-  meCEPCommDE.Text := TComercioViewHelper.FormatarCEP(Comercio.CEP);
   eComplementoCommDE.Text := Comercio.Complemento;
 
-  // Proprietário (apenas exibição - readonly)
+  // Proprietário
   eNPCommDE.Text := Comercio.NomeProprietario;
   eEPCommDE.Text := Comercio.EmailProprietario;
   meCPFPCommDE.Text := TComercioViewHelper.FormatarCPF(Comercio.CPFProprietario);
+
+  eNPCommDE.ReadOnly := True;
+  eEPCommDE.ReadOnly := True;
+  meCPFPCommDE.ReadOnly := True;
 end;
 
 procedure TFormHomeD.pButtonEditarClick(Sender: TObject);
 var
   Comercio: TComercio;
+  HoraAbertura, HoraFechamento: TTime;
 begin
   try
-    Comercio := FComercioController.ObterComercioPorUsuario(FIdUsuario);
-    if Assigned(Comercio) then
+    // Validações básicas
+    if Trim(eNCommDE.Text) = '' then
     begin
-      try
-        CarregarDadosPerfilEdicao(Comercio);
-        pcPerfil.ActivePageIndex := 1; // Tab Editar
-      finally
-        Comercio.Free;
+      ShowMessage('Informe o nome do comércio.');
+      eNCommDE.SetFocus;
+      Exit;
+    end;
+
+    if Trim(cbCcommDE.Text) = '' then
+    begin
+      ShowMessage('Selecione a categoria do comércio.');
+      cbCcommDE.SetFocus;
+      Exit;
+    end;
+
+    // Validar horários
+    try
+      HoraAbertura := StrToTime(meHACommDE.Text);
+    except
+      ShowMessage('Horário de abertura inválido. Use o formato HH:MM');
+      meHACommDE.SetFocus;
+      Exit;
+    end;
+
+    try
+      HoraFechamento := StrToTime(meHFCommDE.Text);
+    except
+      ShowMessage('Horário de fechamento inválido. Use o formato HH:MM');
+      meHFCommDE.SetFocus;
+      Exit;
+    end;
+
+    if Trim(eECommDE.Text) = '' then
+    begin
+      ShowMessage('Informe o email do comércio.');
+      eECommDE.SetFocus;
+      Exit;
+    end;
+
+    Comercio := TComercio.Create;
+    try
+      Comercio.IdComercio := FIdComercio;
+      Comercio.IdUser := FIdUsuario;
+      Comercio.NomeComercio := Trim(eNCommDE.Text);
+      Comercio.Categoria := Trim(cbCcommDE.Text);
+      Comercio.Descricao := Trim(mDCommDE.Text);
+
+      // Horários como TTime
+      Comercio.HorarioAbertura := HoraAbertura;
+      Comercio.HorarioFechamento := HoraFechamento;
+      Comercio.TempoPreparoMedio := StrToIntDef(Trim(eTPCommDE.Text), 30);
+      Comercio.TaxaEntregaBase := TComercioViewHelper.ParseMoeda(eTECommDE.Text);
+
+      // Contato
+      Comercio.EmailComercio := Trim(eECommDE.Text);
+      Comercio.NPhoneComercio := TComercioViewHelper.RemoverMascaraTelefone(meTCommDE.Text);
+      Comercio.CpfCnpjComercio := '';
+
+      // Localização
+      Comercio.CEP := TComercioViewHelper.RemoverMascaraCEP(meCEPCommDE.Text);
+      Comercio.Estado := Trim(eEstadoCOmmDE.Text);
+      Comercio.Cidade := Trim(eCidadeCommDE.Text);
+      Comercio.EnderecoCompleto := Trim(eRuaCommDE.Text);
+      Comercio.Numero := Trim(eNumeroEnderecoCommDE.Text);
+      Comercio.Bairro := Trim(eBairroCommDE.Text);
+      Comercio.Complemento := Trim(eComplementoCommDE.Text);
+
+      if FComercioController.AtualizarComercio(Comercio) then
+      begin
+        ShowMessage('Dados atualizados com sucesso!');
+        CarregarDadosPerfil;
+        pcPerfil.ActivePageIndex := 0;
       end;
+    finally
+      Comercio.Free;
     end;
   except
     on E: Exception do
-      ShowMessage('Erro ao carregar dados para edição: ' + E.Message);
+      ShowMessage('Erro ao salvar dados: ' + E.Message);
   end;
 end;
-
 procedure TFormHomeD.pButtonSalvarDadosEClick(Sender: TObject);
 var
   Comercio: TComercio;
-  HorarioCompleto: string;
-  HorarioAbertura, HorarioFechamento: string;
-  PosAs: Integer;
 begin
   try
+    // Validações básicas
+    if Trim(eNCommDE.Text) = '' then
+    begin
+      ShowMessage('Informe o nome do comércio.');
+      eNCommDE.SetFocus;
+      Exit;
+    end;
+
+    if Trim(cbCcommDE.Text) = '' then
+    begin
+      ShowMessage('Selecione a categoria do comércio.');
+      cbCcommDE.SetFocus;
+      Exit;
+    end;
+
+    if Trim(meHACommDE.Text) = '  :  ' then
+    begin
+      ShowMessage('Informe o horário de abertura.');
+      meHACommDE.SetFocus;
+      Exit;
+    end;
+
+    if Trim(meHFCommDE.Text) = '  :  ' then
+    begin
+      ShowMessage('Informe o horário de fechamento.');
+      meHFCommDE.SetFocus;
+      Exit;
+    end;
+
+    if Trim(eECommDE.Text) = '' then
+    begin
+      ShowMessage('Informe o email do comércio.');
+      eECommDE.SetFocus;
+      Exit;
+    end;
+
+    if Trim(meCEPCommDE.Text) = '     -   ' then
+    begin
+      ShowMessage('Informe o CEP.');
+      meCEPCommDE.SetFocus;
+      Exit;
+    end;
+
     Comercio := TComercio.Create;
     try
-      // Buscar ID do comércio
+      // IDs
       Comercio.IdComercio := FIdComercio;
       Comercio.IdUser := FIdUsuario;
 
@@ -799,38 +914,29 @@ begin
       Comercio.Categoria := Trim(cbCcommDE.Text);
       Comercio.Descricao := Trim(mDCommDE.Text);
 
-      // Horários (separar abertura e fechamento se estiver no formato "08:00 às 18:00")
-      HorarioCompleto := Trim(eHFCommDE.Text);
-      PosAs := Pos(' às ', HorarioCompleto);
-      if PosAs > 0 then
-      begin
-        Comercio.HorarioAbertura := Trim(Copy(HorarioCompleto, 1, PosAs - 1));
-        Comercio.HorarioFechamento := Trim(Copy(HorarioCompleto, PosAs + 5, Length(HorarioCompleto)));
-      end
-      else
-      begin
-        Comercio.HorarioAbertura := HorarioCompleto;
-        Comercio.HorarioFechamento := HorarioCompleto;
-      end;
-
-      Comercio.TempoPreparoMedio := StrToIntDef(eTPCommDE.Text, 30);
+      // Horários (agora direto dos campos separados)
+      Comercio.HorarioAbertura := StrToDateTime(Trim(meHACommDE.Text));
+      Comercio.HorarioFechamento := StrToDateTime(Trim(meHFCommDE.Text));
+      Comercio.TempoPreparoMedio := StrToIntDef(Trim(eTPCommDE.Text), 30);
       Comercio.TaxaEntregaBase := TComercioViewHelper.ParseMoeda(eTECommDE.Text);
 
       // Contato
       Comercio.EmailComercio := Trim(eECommDE.Text);
       Comercio.NPhoneComercio := TComercioViewHelper.RemoverMascaraTelefone(meTCommDE.Text);
+      Comercio.CpfCnpjComercio := ''; // Não temos esse campo no formulário
 
       // Localização
+      Comercio.CEP := TComercioViewHelper.RemoverMascaraCEP(meCEPCommDE.Text);
+      Comercio.Estado := Trim(eEstadoCOmmDE.Text);
+      Comercio.Cidade := Trim(eCidadeCommDE.Text);
       Comercio.EnderecoCompleto := Trim(eRuaCommDE.Text);
       Comercio.Numero := Trim(eNumeroEnderecoCommDE.Text);
       Comercio.Bairro := Trim(eBairroCommDE.Text);
-      Comercio.Cidade := Trim(eCidadeCommDE.Text);
-      Comercio.Estado := Trim(eEstadoCOmmDE.Text);
-      Comercio.CEP := TComercioViewHelper.RemoverMascaraCEP(meCEPCommDE.Text);
       Comercio.Complemento := Trim(eComplementoCommDE.Text);
 
       if FComercioController.AtualizarComercio(Comercio) then
       begin
+        ShowMessage('Dados atualizados com sucesso!');
         CarregarDadosPerfil;
         pcPerfil.ActivePageIndex := 0; // Voltar para visualização
       end;
@@ -845,7 +951,11 @@ end;
 
 procedure TFormHomeD.pButtonCancelarEClick(Sender: TObject);
 begin
-  pcPerfil.ActivePageIndex := 0; // Voltar para visualização
+  if MessageDlg('Deseja cancelar as alterações?',
+     mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+  begin
+    pcPerfil.ActivePageIndex := 0; // Voltar para visualização
+  end;
 end;
 
 procedure TFormHomeD.pButtonAlterarSenhaEClick(Sender: TObject);
@@ -859,6 +969,42 @@ var
   Request: TAlterarSenhaRequest;
 begin
   try
+    // Validações
+    if Trim(eSenhaAtual.Text) = '' then
+    begin
+      ShowMessage('Informe a senha atual.');
+      eSenhaAtual.SetFocus;
+      Exit;
+    end;
+
+    if Trim(eSenhaNova.Text) = '' then
+    begin
+      ShowMessage('Informe a nova senha.');
+      eSenhaNova.SetFocus;
+      Exit;
+    end;
+
+    if Length(Trim(eSenhaNova.Text)) < 6 then
+    begin
+      ShowMessage('A nova senha deve ter no mínimo 6 caracteres.');
+      eSenhaNova.SetFocus;
+      Exit;
+    end;
+
+    if Trim(eSenhaConfirmacao.Text) = '' then
+    begin
+      ShowMessage('Confirme a nova senha.');
+      eSenhaConfirmacao.SetFocus;
+      Exit;
+    end;
+
+    if eSenhaNova.Text <> eSenhaConfirmacao.Text then
+    begin
+      ShowMessage('A nova senha e a confirmação não coincidem.');
+      eSenhaConfirmacao.SetFocus;
+      Exit;
+    end;
+
     Request := TAlterarSenhaRequest.Create;
     try
       Request.IdUsuario := FIdUsuario;
@@ -868,6 +1014,7 @@ begin
 
       if FComercioController.AlterarSenha(Request) then
       begin
+        ShowMessage('Senha alterada com sucesso!');
         LimparCamposAlterarSenha;
         pcPerfil.ActivePageIndex := 0; // Voltar para visualização
       end;

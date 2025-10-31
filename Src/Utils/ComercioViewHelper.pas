@@ -31,6 +31,9 @@ type
 
     // Popular ComboBox de categorias
     class procedure PopularCategoriasComercio(ComboBox: TComboBox);
+
+    class function FormatarHorario(const Hora: TTime): string;
+    class function ParseHorario(const Texto: string): TTime;
   end;
 
 implementation
@@ -40,6 +43,30 @@ implementation
 class function TComercioViewHelper.FormatarMoeda(Valor: Currency): string;
 begin
   Result := FormatFloat('R$ #,##0.00', Valor);
+end;
+
+class function TComercioViewHelper.FormatarHorario(const Hora: TTime): string;
+begin
+  Result := FormatDateTime('hh:nn', Hora);
+end;
+
+class function TComercioViewHelper.ParseHorario(const Texto: string): TTime;
+var
+  TextoLimpo: string;
+begin
+  TextoLimpo := StringReplace(Texto, '_', '', [rfReplaceAll]);
+  TextoLimpo := Trim(TextoLimpo);
+
+  if (Length(TextoLimpo) >= 4) and (Pos(':', TextoLimpo) > 0) then
+  begin
+    try
+      Result := StrToTime(TextoLimpo);
+    except
+      Result := 0; // 00:00
+    end;
+  end
+  else
+    Result := 0;
 end;
 
 class function TComercioViewHelper.ParseMoeda(const Texto: string): Currency;

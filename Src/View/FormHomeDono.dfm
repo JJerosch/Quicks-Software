@@ -695,8 +695,6 @@
                 Color = clWindow
                 ParentBackground = False
                 TabOrder = 0
-                ExplicitLeft = -5
-                ExplicitTop = 6
                 object pInfoRestauranteNCD: TPanel
                   Left = 24
                   Top = 37
@@ -1274,7 +1272,7 @@
                     ParentFont = False
                   end
                   object Label28: TLabel
-                    Left = 232
+                    Left = 198
                     Top = 51
                     Width = 134
                     Height = 15
@@ -1314,7 +1312,7 @@
                     Text = '  :  '
                   end
                   object meHFCommDE: TMaskEdit
-                    Left = 372
+                    Left = 338
                     Top = 48
                     Width = 55
                     Height = 23
@@ -2046,7 +2044,6 @@
             Font.Name = 'Segoe UI'
             Font.Style = [fsBold]
             ParentFont = False
-            ExplicitLeft = 89
             ExplicitHeight = 25
           end
         end
