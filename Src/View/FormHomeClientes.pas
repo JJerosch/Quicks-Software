@@ -74,55 +74,60 @@ begin
 end;
 
 procedure TFormHomeC.PopularLista;
-var
+//var
 //  Item: TListViewItem;
-  Qr: TFDQuery;
- begin
-//   // Limpa a lista antes de adicionar novos itens
-//   lvMain.Items.Clear;
+//  Qr: TFDQuery; // A query deve ser criada e destruída aqui dentro
+begin
+//  // 1. Cria a Query
+//  Qr := TFDQuery.Create(nil);
+//  try
+//    Qr.Connection := DM.FDConn; // Usa a conexão do seu DataModule
+//    Qr.SQL.Text := 'SELECT id_comercio, nome_comercio, descricao FROM comercios WHERE ativo = true';
 //
-//   // Garante que a query esteja fechada antes de abrir
-//   if Qr.Active then
-//     Qr.Close;
+//    // 2. Limpa a lista antes de adicionar novos itens
+//    lvMain.Items.Clear;
 //
-//   // Abre a query para buscar os dados
-//   try
-//     Qr.Open;
-//   except
-//     on E: Exception do
-//     begin
-//       ShowMessage('Erro ao conectar ao banco de dados: ' + E.Message);
-//       Exit; // Sai da procedure se não conseguir conectar
-//     end;
-//   end;
-//   try
-//     lvMain.BeginUpdate; // Otimização: pausa a atualização visual
-//     try
-//       // Loop enquanto não chegar ao fim dos registros
-//       while not Qr.Eof do
-//       begin
-//         // 1. Adiciona um novo item ao ListView
-//         Item := lvMain.Items.Add;
+//    // 3. Abre a query
+//    try
+//      Qr.Open;
+//    except
+//      on E: Exception do
+//      begin
+//        ShowMessage('Erro ao buscar comércios: ' + E.Message);
+//        Exit; // Sai da procedure se não conseguir conectar
+//      end;
+//    end;
 //
-//         // 2. Define o texto principal do item
-//         Item.Text := Qr.FieldByName('nome_comercio').AsString;
+//    // 4. Loop para popular o ListView
+//    lvMain.BeginUpdate; // Otimização: pausa a atualização visual
+//    try
+//      while not Qr.Eof do
+//      begin
+//        // Adiciona um novo item ao ListView
+//        Item := lvMain.Items.Add;
 //
-//         // 3. (Opcional) Define detalhes adicionais
-//         // (Para isso, o ViewStyle do lvMain deve ser vsList, vsIcon, etc.)
-//         Item.Detail := Qr.FieldByName('descricao').AsString;
+//        // Define o texto principal (Nome do Comércio)
+//        Item.Text := Qr.FieldByName('nome_comercio').AsString;
 //
-//         // 4. (Opcional) Você pode guardar o ID para uso futuro
-//         // (Convertemos o Integer para um TObject para guardar no .Data)
-//         Item.Data := TObject(NativeInt(Qr.FieldByName('id_comercio').AsInteger));
+//        // (Opcional) Define um sub-item (Descrição)
+//        // Para isso, seu lvMain.ViewStyle precisa ser vsReport e você precisa ter colunas
+//        // Item.SubItems.Add(Qr.FieldByName('descricao').AsString);
 //
-//         // 5. Move para o próximo registro
-//         Qr.Next;
-//       end;
-//     finally
-//       lvMain.EndUpdate; // Retoma a atualização visual
-//     end;
-//   finally
-//     Qr.Close; // Fecha a query
-//   end;
- end;
+//        // !! ESTA É A PARTE MAIS IMPORTANTE !!
+//        // Guardamos o ID do comércio (Integer) dentro da propriedade 'Data' do item
+//        // Estamos "anexando" o ID ao item visual da lista.
+//        Item.Data := TObject(NativeInt(Qr.FieldByName('id_comercio').AsInteger));
+//
+//        // Move para o próximo registro
+//        Qr.Next;
+//      end;
+//    finally
+//      lvMain.EndUpdate; // Retoma a atualização visual
+//    end;
+//
+//  finally
+//    Qr.Free; // 5. Libera a memória da Query
+//  end;
+end;
+
 end.
