@@ -81,7 +81,6 @@ type
     cbDisponivelAdd: TCheckBox;
     pBackgroundUpdate: TPanel;
     Label1: TLabel;
-    Label2: TLabel;
     Label3: TLabel;
     Label4: TLabel;
     Label5: TLabel;
@@ -89,10 +88,10 @@ type
     eNomeUp: TEdit;
     cbDisponivelUp: TCheckBox;
     mDescAdd: TMemo;
-    ePrecoAdd: TEdit;
+    ePrecoVendaAdd: TEdit;
     lblNomeComercio: TLabel;
     mDescUp: TMemo;
-    ePrecoUp: TEdit;
+    ePrecoVendaUp: TEdit;
     pcPerfil: TPageControl;
     tsVisualizar: TTabSheet;
     pMainPerfilVisualizar: TPanel;
@@ -197,11 +196,21 @@ type
     Label23: TLabel;
     eSenhaConfirmacao: TEdit;
     pButtonConfirmarAlterarSenha: TPanel;
-    Panel4: TPanel;
+    pButtonCancelarAlterarSenha: TPanel;
     Image1: TImage;
     Label28: TLabel;
     tpHACommDE: TTimePicker;
     tpHFCommDE: TTimePicker;
+    meHFCommDE: TMaskEdit;
+    lblCategoria: TLabel;
+    cbCategoriaProdutoAdd: TComboBox;
+    Label36: TLabel;
+    ePrecoCustoAdd: TEdit;
+    Label2: TLabel;
+    Label37: TLabel;
+    ePrecoCustoUp: TEdit;
+    Label38: TLabel;
+    cbCategoriaProdutoUp: TComboBox;
 
     procedure iButton1Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -225,14 +234,17 @@ type
     procedure pButtonConfirmarDesativarClick(Sender: TObject);
     procedure pButtonConfirmarUpdateClick(Sender: TObject);
     procedure pButtonConfirmarReativarClick(Sender: TObject);
-    procedure ePrecoUpExit(Sender: TObject);
-    procedure ePrecoAddExit(Sender: TObject);
+    procedure ePrecoVendaAddExit(Sender: TObject);
     procedure pButtonEditarClick(Sender: TObject);
     procedure pButtonAlterarSenhaEClick(Sender: TObject);
     procedure pButtonSalvarDadosEClick(Sender: TObject);
     procedure pButtonCancelarEClick(Sender: TObject);
     procedure pButtonConfirmarAlterarSenhaClick(Sender: TObject);
     procedure eTECommDEExit(Sender: TObject);
+    procedure pButtonCancelarAlterarSenhaClick(Sender: TObject);
+    procedure ePrecoVendaUpExit(Sender: TObject);
+    procedure ePrecoCustoUpExit(Sender: TObject);
+    procedure ePrecoCustoAddExit(Sender: TObject);
 
   private
     FIdUsuario: Integer;
@@ -290,7 +302,7 @@ begin
 
   // Configurar páginas iniciais
   if Assigned(pcMain) then
-    pcMain.ActivePageIndex := 3;
+    pcMain.ActivePageIndex := 1;
 
   if Assigned(pcButtons) then
     pcButtons.ActivePageIndex := 0;
@@ -305,7 +317,8 @@ begin
 
   // Popular ComboBox de categorias
   TComercioViewHelper.PopularCategoriasComercio(cbCcommDE);
-
+  TProdutoViewHelper.PopularCategoriasProduto(cbCategoriaProdutoAdd);
+  TProdutoViewHelper.PopularCategoriasProduto(cbCategoriaProdutoUp);
   // Configurar constraints da janela
   Constraints.MinWidth := 1248;
   Constraints.MinHeight := 683;
@@ -398,21 +411,33 @@ procedure TFormHomeD.OrganizarGrid;
 begin
   if DBGridProdutos.Columns.Count > 0 then
   begin
-    DBGridProdutos.Columns[0].Width := 50;
-    DBGridProdutos.Columns[1].Width := 200;
-    DBGridProdutos.Columns[2].Width := 300;
-    DBGridProdutos.Columns[3].Width := 100;
-    DBGridProdutos.Columns[4].Width := 80;
+    DBGridProdutos.Columns[0].Width := 40;   // ID
+    DBGridProdutos.Columns[1].Width := 180;  // Nome
+    DBGridProdutos.Columns[2].Width := 250;  // Descrição
+    DBGridProdutos.Columns[3].Width := 100;  // Categoria ⭐ NOVO
+    DBGridProdutos.Columns[4].Width := 90;   // Preço Custo ⭐ NOVO
+    DBGridProdutos.Columns[5].Width := 90;   // Preço Venda ⭐ NOVO
+    DBGridProdutos.Columns[6].Width := 70;   // Disponível
 
-    if DBGridProdutos.Columns.Count > 5 then
-      DBGridProdutos.Columns[5].Visible := False;
+    if DBGridProdutos.Columns.Count > 7 then
+      DBGridProdutos.Columns[7].Visible := False; // id_comercio
 
     DBGridProdutos.Columns[0].Title.Caption := 'ID';
     DBGridProdutos.Columns[1].Title.Caption := 'Nome do Produto';
     DBGridProdutos.Columns[2].Title.Caption := 'Descrição';
-    DBGridProdutos.Columns[3].Title.Caption := 'Preço';
-    DBGridProdutos.Columns[4].Title.Caption := 'Disponível';
+    DBGridProdutos.Columns[3].Title.Caption := 'Categoria';           // ⭐ NOVO
+    DBGridProdutos.Columns[4].Title.Caption := 'Preço Custo';         // ⭐ NOVO
+    DBGridProdutos.Columns[5].Title.Caption := 'Preço Venda';         // ⭐ NOVO
+    DBGridProdutos.Columns[6].Title.Caption := 'Disponível';
   end;
+end;
+
+
+procedure TFormHomeD.pButtonCancelarAlterarSenhaClick(Sender: TObject);
+begin
+  eSenhaAtual.Clear;
+  eSenhaNova.Clear;
+  eSenhaConfirmacao.Clear;
 end;
 
 procedure TFormHomeD.FiltrarGrid(const TextoBusca: string);
@@ -451,7 +476,15 @@ procedure TFormHomeD.LimparCamposAdicionar;
 begin
   eNomeAdd.Clear;
   mDescAdd.Clear;
-  ePrecoAdd.Clear;
+
+  // ⭐ NOVO: Limpar categoria
+  if cbCategoriaProdutoAdd.Items.Count > 0 then
+    cbCategoriaProdutoAdd.ItemIndex := 0;
+
+  // ⭐ NOVO: Limpar preços
+  ePrecoCustoAdd.Text := '0,00';  // Preço de custo (conforme sua imagem)
+  ePrecoVendaAdd.Text := '0,00';  // Preço de venda
+
   cbDisponivelAdd.Checked := True;
 end;
 
@@ -459,7 +492,14 @@ procedure TFormHomeD.LimparCamposAtualizar;
 begin
   eNomeUp.Clear;
   mDescUp.Clear;
-  ePrecoUp.Clear;
+
+  // ⭐ NOVO: Limpar categoria (você precisa adicionar um ComboBox na tela de atualizar)
+  // Se você já tiver cbCategoriaUp, descomente a linha abaixo:
+  if cbCategoriaProdutoUp.Items.Count > 0 then
+    cbCategoriaProdutoUp.ItemIndex := 0;
+
+  ePrecoVendaUp.Text := '0,00';
+  ePrecoCustoUp.Text := '0,00';
   cbDisponivelUp.Checked := True;
   FIdProdutoSelecionado := 0;
 end;
@@ -467,6 +507,7 @@ end;
 procedure TFormHomeD.CarregarDadosParaAtualizar(IdProduto: Integer);
 var
   Produto: TProduto;
+  i: Integer;
 begin
   try
     Produto := FProdutoController.ObterProduto(IdProduto);
@@ -475,7 +516,23 @@ begin
       try
         eNomeUp.Text := Produto.NomeProd;
         mDescUp.Text := Produto.DescProd;
-        ePrecoUp.Text := TProdutoViewHelper.FormatPreco(Produto.PrecoProd);
+
+        // ⭐ NOVO: Carregar categoria
+        // Você precisa adicionar um cbCategoriaUp no formulário de atualização
+        // Se você já tiver, descomente:
+
+        for i := 0 to cbCategoriaProdutoUp.Items.Count - 1 do
+        begin
+          if Integer(cbCategoriaProdutoUp.Items.Objects[i]) = Produto.IdCategoria then
+          begin
+            cbCategoriaProdutoUp.ItemIndex := i;
+            Break;
+          end;
+        end;
+        // ⭐ NOVO: Carregar preços (você precisa adicionar ePrecoCustoUp)
+        ePrecoCustoUp.Text := TProdutoViewHelper.FormatPreco(Produto.PrecoCusto);
+        ePrecoVendaUp.Text := TProdutoViewHelper.FormatPreco(Produto.PrecoVenda);
+
         cbDisponivelUp.Checked := Produto.DisponivelVenda;
       finally
         Produto.Free;
@@ -496,12 +553,33 @@ end;
 procedure TFormHomeD.pButtonConfirmarAddClick(Sender: TObject);
 var
   Produto: TProduto;
+  IdCategoria: Integer;
 begin
+  // Validações básicas
+  if Trim(eNomeAdd.Text) = '' then
+  begin
+    ShowMessage('Informe o nome do produto.');
+    eNomeAdd.SetFocus;
+    Exit;
+  end;
+
+  if cbCategoriaProdutoAdd.ItemIndex < 0 then
+  begin
+    ShowMessage('Selecione a categoria do produto.');
+    cbCategoriaProdutoAdd.SetFocus;
+    Exit;
+  end;
+
   Produto := TProduto.Create;
   try
+    // ⭐ NOVO: Obter ID da categoria selecionada
+    IdCategoria := Integer(cbCategoriaProdutoAdd.Items.Objects[cbCategoriaProdutoAdd.ItemIndex]);
+
     Produto.NomeProd := Trim(eNomeAdd.Text);
     Produto.DescProd := Trim(mDescAdd.Text);
-    Produto.PrecoProd := TProdutoViewHelper.ParsePreco(ePrecoAdd.Text);
+    Produto.IdCategoria := IdCategoria;                                    // ⭐ NOVO
+    Produto.PrecoCusto := TProdutoViewHelper.ParsePreco(ePrecoCustoAdd.Text);      // ⭐ NOVO
+    Produto.PrecoVenda := TProdutoViewHelper.ParsePreco(ePrecoVendaAdd.Text);  // ⭐ NOVO
     Produto.DisponivelVenda := cbDisponivelAdd.Checked;
     Produto.IdComercio := FIdComercio;
 
@@ -562,6 +640,7 @@ end;
 procedure TFormHomeD.pButtonConfirmarUpdateClick(Sender: TObject);
 var
   Produto: TProduto;
+  IdCategoria: Integer;
 begin
   if FIdProdutoSelecionado <= 0 then
   begin
@@ -569,12 +648,27 @@ begin
     Exit;
   end;
 
+  // ⭐ NOVO: Validar categoria (descomente se tiver cbCategoriaUp)
+
+  if cbCategoriaProdutoUp.ItemIndex < 0 then
+  begin
+    ShowMessage('Selecione a categoria do produto.');
+    cbCategoriaProdutoUp.SetFocus;
+    Exit;
+  end;
+
+
   Produto := TProduto.Create;
   try
+    // ⭐ NOVO: Obter ID da categoria (descomente se tiver cbCategoriaUp)
+    IdCategoria := Integer(cbCategoriaProdutoUp.Items.Objects[cbCategoriaProdutoUp.ItemIndex]);
+
     Produto.IdProduto := FIdProdutoSelecionado;
     Produto.NomeProd := Trim(eNomeUp.Text);
     Produto.DescProd := Trim(mDescUp.Text);
-    Produto.PrecoProd := TProdutoViewHelper.ParsePreco(ePrecoUp.Text);
+    Produto.IdCategoria := IdCategoria;                                    // ⭐ NOVO
+    Produto.PrecoCusto := TProdutoViewHelper.ParsePreco(ePrecoCustoUp.Text);  // ⭐ ADICIONAR
+    Produto.PrecoVenda := TProdutoViewHelper.ParsePreco(ePrecoVendaUp.Text);   // ⭐ NOVO
     Produto.DisponivelVenda := cbDisponivelUp.Checked;
     Produto.IdComercio := FIdComercio;
 
@@ -646,22 +740,36 @@ begin
     FiltrarGrid(eBuscaMain.Text);
 end;
 
-procedure TFormHomeD.ePrecoAddExit(Sender: TObject);
+procedure TFormHomeD.ePrecoCustoAddExit(Sender: TObject);
 var
   Valor: Currency;
 begin
-  Valor := TProdutoViewHelper.ParsePreco(ePrecoAdd.Text);
-  if Valor > 0 then
-    ePrecoAdd.Text := TProdutoViewHelper.FormatPreco(Valor);
+  Valor := TProdutoViewHelper.ParsePreco(ePrecoCustoAdd.Text);
+  ePrecoCustoAdd.Text := TProdutoViewHelper.FormatPreco(Valor);
+end;
+procedure TFormHomeD.ePrecoCustoUpExit(Sender: TObject);
+var
+  Valor: Currency;
+begin
+  Valor := TProdutoViewHelper.ParsePreco(ePrecoCustoUp.Text);
+  ePrecoCustoUp.Text := TProdutoViewHelper.FormatPreco(Valor);
 end;
 
-procedure TFormHomeD.ePrecoUpExit(Sender: TObject);
+procedure TFormHomeD.ePrecoVendaAddExit(Sender: TObject);
 var
   Valor: Currency;
 begin
-  Valor := TProdutoViewHelper.ParsePreco(ePrecoUp.Text);
+  Valor := TProdutoViewHelper.ParsePreco(ePrecoVendaAdd.Text);
+  ePrecoVendaAdd.Text := TProdutoViewHelper.FormatPreco(Valor);
+end;
+
+procedure TFormHomeD.ePrecoVendaUpExit(Sender: TObject);
+var
+  Valor: Currency;
+begin
+  Valor := TProdutoViewHelper.ParsePreco(ePrecoVendaUp.Text);
   if Valor > 0 then
-    ePrecoUp.Text := TProdutoViewHelper.FormatPreco(Valor);
+    ePrecoVendaUp.Text := TProdutoViewHelper.FormatPreco(Valor);
 end;
 
 procedure TFormHomeD.DBGridProdutosCellClick(Column: TColumn);
@@ -998,11 +1106,9 @@ procedure TFormHomeD.eTECommDEExit(Sender: TObject);
 var
   Valor: Currency;
 begin
-  // Parse do valor digitado
   Valor := TComercioViewHelper.ParseMoeda(eTECommDE.Text);
-
-  // Formata sempre, mesmo que seja 0
-  eTECommDE.Text := TComercioViewHelper.FormatarMoeda(Valor);
+  if Valor >= 0 then  // Mudei >= para >
+    eTECommDE.Text := TComercioViewHelper.FormatarMoeda(Valor);
 end;
 
 // ============ NAVEGAÇÃO MENU LATERAL ============

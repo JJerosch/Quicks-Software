@@ -3,8 +3,8 @@ unit ProdutoService;
 interface
 
 uses
-  System.SysUtils, System.Generics.Collections, Vcl.Dialogs, Vcl.Forms, Vcl.Controls,
-  ProdutoModel, ProdutoRepository;
+  System.SysUtils, System.Generics.Collections,
+  ProdutoModel, ProdutoRepository, Vcl.Dialogs, Vcl.Forms, System.UITypes;
 
 type
   TProdutoService = class
@@ -14,7 +14,7 @@ type
     constructor Create;
     destructor Destroy; override;
 
-    function ListarProdutosPorComercio(IdComercio: Integer; ApenasDisponiveis: Boolean = False): TObjectList<TProduto>;
+    function ListarProdutosPorComercio(IdComercio: Integer; ApenasDisponiveis: Boolean): TObjectList<TProduto>;
     function ObterProduto(IdProduto: Integer): TProduto;
     function CadastrarProduto(Produto: TProduto): Boolean;
     function AtualizarProduto(Produto: TProduto): Boolean;
@@ -24,6 +24,7 @@ type
   end;
 
 implementation
+
 
 { TProdutoService }
 
@@ -42,177 +43,187 @@ end;
 function TProdutoService.ListarProdutosPorComercio(IdComercio: Integer;
   ApenasDisponiveis: Boolean): TObjectList<TProduto>;
 begin
-  try
-    Result := FRepository.BuscarTodosPorComercio(IdComercio, ApenasDisponiveis);
-  except
-    on E: Exception do
-    begin
-      ShowMessage('Erro ao listar produtos: ' + E.Message);
-      Result := TObjectList<TProduto>.Create(True);
-    end;
-  end;
+  Result := FRepository.ListarPorComercio(IdComercio, ApenasDisponiveis);
 end;
 
 function TProdutoService.ObterProduto(IdProduto: Integer): TProduto;
 begin
-  try
-    Result := FRepository.BuscarPorId(IdProduto);
-
-    if not Assigned(Result) then
-      ShowMessage('Produto não encontrado.');
-
-  except
-    on E: Exception do
-    begin
-      ShowMessage('Erro ao buscar produto: ' + E.Message);
-      Result := nil;
-    end;
-  end;
+  Result := FRepository.BuscarPorId(IdProduto);
 end;
 
 function TProdutoService.CadastrarProduto(Produto: TProduto): Boolean;
 begin
-  Result := False;
+  // Validações
+  if Trim(Produto.NomeProd) = '' then
+  begin
+    ShowMessage('Informe o nome do produto.');
+    Result := False;
+    Exit;
+  end;
+
+  if Produto.IdCategoria <= 0 then
+  begin
+    ShowMessage('Selecione a categoria do produto.');
+    Result := False;
+    Exit;
+  end;
+
+  if Produto.PrecoCusto < 0 then
+  begin
+    ShowMessage('O preço de custo não pode ser negativo.');
+    Result := False;
+    Exit;
+  end;
+
+  if Produto.PrecoVenda <= 0 then
+  begin
+    ShowMessage('Informe o preço de venda do produto.');
+    Result := False;
+    Exit;
+  end;
+
+  if Produto.PrecoVenda < Produto.PrecoCusto then
+  begin
+    if MessageDlg('O preço de venda é menor que o preço de custo. Deseja continuar?',
+       mtWarning, [mbYes, mbNo], 0) <> mrYes then
+    begin
+      Result := False;
+      Exit;
+    end;
+  end;
 
   try
-    // Validações
-    if Trim(Produto.NomeProd) = '' then
-    begin
-      ShowMessage('O nome do produto é obrigatório.');
-      Exit;
-    end;
-
-    if Produto.PrecoProd <= 0 then
-    begin
-      ShowMessage('O preço deve ser maior que zero.');
-      Exit;
-    end;
-
-    if Produto.IdComercio <= 0 then
-    begin
-      ShowMessage('ID do comércio não definido.');
-      Exit;
-    end;
-
-    // Verificar se nome já existe
-    if FRepository.NomeJaExiste(Produto.NomeProd, Produto.IdComercio) then
-    begin
-      ShowMessage('Já existe um produto com esse nome neste comércio.');
-      Exit;
-    end;
-
-    // Inserir
-    if FRepository.Inserir(Produto) then
-    begin
+    Result := FRepository.Inserir(Produto);
+    if Result then
       ShowMessage('Produto cadastrado com sucesso!');
-      Result := True;
-    end;
-
   except
     on E: Exception do
+    begin
       ShowMessage('Erro ao cadastrar produto: ' + E.Message);
+      Result := False;
+    end;
   end;
 end;
 
 function TProdutoService.AtualizarProduto(Produto: TProduto): Boolean;
 begin
-  Result := False;
+  // Validações
+  if Trim(Produto.NomeProd) = '' then
+  begin
+    ShowMessage('Informe o nome do produto.');
+    Result := False;
+    Exit;
+  end;
+
+  if Produto.IdCategoria <= 0 then
+  begin
+    ShowMessage('Selecione a categoria do produto.');
+    Result := False;
+    Exit;
+  end;
+
+  if Produto.PrecoCusto < 0 then
+  begin
+    ShowMessage('O preço de custo não pode ser negativo.');
+    Result := False;
+    Exit;
+  end;
+
+  if Produto.PrecoVenda <= 0 then
+  begin
+    ShowMessage('Informe o preço de venda do produto.');
+    Result := False;
+    Exit;
+  end;
+
+  if Produto.PrecoVenda < Produto.PrecoCusto then
+  begin
+    if MessageDlg('O preço de venda é menor que o preço de custo. Deseja continuar?',
+       mtWarning, [mbYes, mbNo], 0) <> mrYes then
+    begin
+      Result := False;
+      Exit;
+    end;
+  end;
 
   try
-    // Validações
-    if Trim(Produto.NomeProd) = '' then
-    begin
-      ShowMessage('O nome do produto é obrigatório.');
-      Exit;
-    end;
-
-    if Produto.PrecoProd <= 0 then
-    begin
-      ShowMessage('O preço deve ser maior que zero.');
-      Exit;
-    end;
-
-    // Verificar se nome já existe (excluindo o próprio produto)
-    if FRepository.NomeJaExiste(Produto.NomeProd, Produto.IdComercio, Produto.IdProduto) then
-    begin
-      ShowMessage('Já existe outro produto com esse nome neste comércio.');
-      Exit;
-    end;
-
-    // Atualizar
-    if FRepository.Atualizar(Produto) then
-    begin
+    Result := FRepository.Atualizar(Produto);
+    if Result then
       ShowMessage('Produto atualizado com sucesso!');
-      Result := True;
-    end;
-
   except
     on E: Exception do
+    begin
       ShowMessage('Erro ao atualizar produto: ' + E.Message);
+      Result := False;
+    end;
   end;
 end;
 
 function TProdutoService.DesativarProduto(IdProduto: Integer;
   const NomeProduto: string): Boolean;
 begin
-  Result := False;
-
-  if MessageDlg(Format('Deseja realmente desativar o produto "%s"?', [NomeProduto]),
-     mtConfirmation, [mbYes, mbNo], 0) <> mrYes then
-    Exit;
-
-  try
-    if FRepository.AlterarDisponibilidade(IdProduto, False) then
-    begin
-      ShowMessage('Produto desativado com sucesso!');
-      Result := True;
+  if MessageDlg('Deseja desativar o produto "' + NomeProduto + '"?',
+     mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+  begin
+    try
+      Result := FRepository.AlterarDisponibilidade(IdProduto, False);
+      if Result then
+        ShowMessage('Produto desativado com sucesso!');
+    except
+      on E: Exception do
+      begin
+        ShowMessage('Erro ao desativar produto: ' + E.Message);
+        Result := False;
+      end;
     end;
-  except
-    on E: Exception do
-      ShowMessage('Erro ao desativar produto: ' + E.Message);
-  end;
+  end
+  else
+    Result := False;
 end;
 
 function TProdutoService.ReativarProduto(IdProduto: Integer;
   const NomeProduto: string): Boolean;
 begin
-  Result := False;
-
-  if MessageDlg(Format('Deseja reativar o produto "%s"?', [NomeProduto]),
-     mtConfirmation, [mbYes, mbNo], 0) <> mrYes then
-    Exit;
-
-  try
-    if FRepository.AlterarDisponibilidade(IdProduto, True) then
-    begin
-      ShowMessage('Produto reativado com sucesso!');
-      Result := True;
+  if MessageDlg('Deseja reativar o produto "' + NomeProduto + '"?',
+     mtConfirmation, [mbYes, mbNo], 0) = mrYes then
+  begin
+    try
+      Result := FRepository.AlterarDisponibilidade(IdProduto, True);
+      if Result then
+        ShowMessage('Produto reativado com sucesso!');
+    except
+      on E: Exception do
+      begin
+        ShowMessage('Erro ao reativar produto: ' + E.Message);
+        Result := False;
+      end;
     end;
-  except
-    on E: Exception do
-      ShowMessage('Erro ao reativar produto: ' + E.Message);
-  end;
+  end
+  else
+    Result := False;
 end;
 
 function TProdutoService.ExcluirProduto(IdProduto: Integer;
   const NomeProduto: string): Boolean;
 begin
-  Result := False;
-
-  if MessageDlg(Format('ATENÇÃO: Excluir permanentemente o produto "%s"?', [NomeProduto]),
-     mtWarning, [mbYes, mbNo], 0) <> mrYes then
-    Exit;
-
-  try
-    if FRepository.Excluir(IdProduto) then
-    begin
-      ShowMessage('Produto excluído permanentemente!');
-      Result := True;
+  if MessageDlg('Deseja EXCLUIR permanentemente o produto "' + NomeProduto + '"?' + sLineBreak +
+     'Esta ação não pode ser desfeita!',
+     mtWarning, [mbYes, mbNo], 0) = mrYes then
+  begin
+    try
+      Result := FRepository.Excluir(IdProduto);
+      if Result then
+        ShowMessage('Produto excluído com sucesso!');
+    except
+      on E: Exception do
+      begin
+        ShowMessage('Erro ao excluir produto: ' + E.Message);
+        Result := False;
+      end;
     end;
-  except
-    on E: Exception do
-      ShowMessage('Erro ao excluir produto: ' + E.Message);
-  end;
+  end
+  else
+    Result := False;
 end;
 
 end.

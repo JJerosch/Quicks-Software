@@ -1,144 +1,125 @@
-unit ProdutoViewHelper;
+ï»¿unit ProdutoViewHelper;
 
 interface
 
 uses
-  System.SysUtils, System.Generics.Collections, FireDAC.Comp.Client,
-  Data.DB, Vcl.StdCtrls, ProdutoModel;
+  System.SysUtils, System.Generics.Collections, Vcl.StdCtrls,
+  FireDAC.Comp.Client, ProdutoModel, uConn, Data.DB;
 
 type
   TProdutoViewHelper = class
   public
+    // FormataÃ§Ã£o de preÃ§os
+    class function FormatPreco(Valor: Currency): string;
+    class function ParsePreco(const Texto: string): Currency;
+
+    // Popular ComboBox de categorias
+    class procedure PopularCategoriasProduto(ComboBox: TComboBox);
+
+    // Preencher MemTable
     class procedure PreencherMemTableProdutos(MemTable: TFDMemTable; Produtos: TObjectList<TProduto>);
-    class function ParsePreco(const PrecoTexto: string): Currency;
-    class function FormatPreco(const Preco: Currency): string;
   end;
 
 implementation
 
 { TProdutoViewHelper }
 
+class function TProdutoViewHelper.FormatPreco(Valor: Currency): string;
+begin
+  Result := FormatFloat('#,##0.00', Valor);
+end;
+
+class function TProdutoViewHelper.ParsePreco(const Texto: string): Currency;
+var
+  TextoLimpo: string;
+begin
+  // Remove o separador de milhar (ponto no BR)
+  TextoLimpo := StringReplace(Texto, '.', '', [rfReplaceAll]);
+
+  // [LINHA REMOVIDA]
+  // TextoLimpo := StringReplace(TextoLimpo, ',', '.', [rfReplaceAll]); // <-- REMOVA OU COMENTE ESTA LINHA
+
+  // Remove o sÃ­mbolo da moeda
+  TextoLimpo := StringReplace(TextoLimpo, 'R$', '', [rfReplaceAll]);
+  TextoLimpo := Trim(TextoLimpo);
+
+  if TextoLimpo = '' then
+    Result := 0
+  else
+  begin
+    try
+      // Agora StrToCurr receberÃ¡ "100,00" (ou "1500,75"), o que Ã© vÃ¡lido.
+      Result  := StrToCurr(TextoLimpo);
+    except
+      Result := 0;
+    end;
+  end;
+end;
+class procedure TProdutoViewHelper.PopularCategoriasProduto(ComboBox: TComboBox);
+var
+  Qr: TFDQuery;
+begin
+  ComboBox.Clear;
+  Qr := TFDQuery.Create(nil);
+  try
+    Qr.Connection := DM.FDConn;
+    Qr.SQL.Text := 'SELECT id_categoria, nome_categoria FROM categorias_produtos ORDER BY nome_categoria';
+    Qr.Open;
+
+    while not Qr.Eof do
+    begin
+      // Adiciona o nome da categoria no ComboBox
+      // O ID fica armazenado no Objects[]
+      ComboBox.Items.AddObject(
+        Qr.FieldByName('nome_categoria').AsString,
+        TObject(Qr.FieldByName('id_categoria').AsInteger)
+      );
+      Qr.Next;
+    end;
+
+    if ComboBox.Items.Count > 0 then
+      ComboBox.ItemIndex := 0;
+  finally
+    Qr.Free;
+  end;
+end;
+
 class procedure TProdutoViewHelper.PreencherMemTableProdutos(
   MemTable: TFDMemTable; Produtos: TObjectList<TProduto>);
 var
   Produto: TProduto;
 begin
-  // Fechar e limpar
   MemTable.Close;
   MemTable.FieldDefs.Clear;
 
-  // Definir estrutura
+  // Definir estrutura da MemTable
   MemTable.FieldDefs.Add('id_produto', ftInteger);
   MemTable.FieldDefs.Add('nome_prod', ftString, 255);
   MemTable.FieldDefs.Add('desc_prod', ftString, 500);
-  MemTable.FieldDefs.Add('preco_prod', ftCurrency);
+  MemTable.FieldDefs.Add('categoria', ftString, 100);           // â­ NOVO
+  MemTable.FieldDefs.Add('preco_custo', ftCurrency);            // â­ NOVO
+  MemTable.FieldDefs.Add('preco_venda', ftCurrency);            // â­ NOVO (era preco_prod)
   MemTable.FieldDefs.Add('disponivel_venda', ftBoolean);
   MemTable.FieldDefs.Add('id_comercio', ftInteger);
 
-  // Criar dataset
   MemTable.CreateDataSet;
-  MemTable.Open;
 
-  // Preencher dados
+  // Preencher com dados
   for Produto in Produtos do
   begin
     MemTable.Append;
     MemTable.FieldByName('id_produto').AsInteger := Produto.IdProduto;
     MemTable.FieldByName('nome_prod').AsString := Produto.NomeProd;
     MemTable.FieldByName('desc_prod').AsString := Produto.DescProd;
-    MemTable.FieldByName('preco_prod').AsCurrency := Produto.PrecoProd;
+    MemTable.FieldByName('categoria').AsString := Produto.Categoria;                    // â­ NOVO
+    MemTable.FieldByName('preco_custo').AsCurrency := Produto.PrecoCusto;              // â­ NOVO
+    MemTable.FieldByName('preco_venda').AsCurrency := Produto.PrecoVenda;              // â­ NOVO
     MemTable.FieldByName('disponivel_venda').AsBoolean := Produto.DisponivelVenda;
     MemTable.FieldByName('id_comercio').AsInteger := Produto.IdComercio;
     MemTable.Post;
   end;
 
-  // Voltar para o primeiro registro
-  if not MemTable.IsEmpty then
-    MemTable.First;
-end;
-
-class function TProdutoViewHelper.ParsePreco(const PrecoTexto: string): Currency;
-var
-  PrecoLimpo: string;
-  FS: TFormatSettings;
-  ValorFloat: Double;
-begin
-  Result := 0;
-
-  // Verificar se está vazio
-  if Trim(PrecoTexto) = '' then
-    Exit;
-
-  try
-    // Remover formatação (R$, espaços)
-    PrecoLimpo := StringReplace(PrecoTexto, 'R$', '', [rfReplaceAll]);
-    PrecoLimpo := StringReplace(PrecoLimpo, ' ', '', [rfReplaceAll]);
-    PrecoLimpo := Trim(PrecoLimpo);
-
-    // Se estiver vazio após limpeza, retornar 0
-    if PrecoLimpo = '' then
-      Exit;
-
-    // Criar FormatSettings personalizados para garantir parse correto
-    FS := TFormatSettings.Create;
-    FS.DecimalSeparator := '.';
-    FS.ThousandSeparator := ',';
-
-    // Detectar formato brasileiro (vírgula como decimal)
-    if Pos(',', PrecoLimpo) > 0 then
-    begin
-      // Formato: 1.234,56 (brasileiro)
-      // Remover pontos (separador de milhares)
-      PrecoLimpo := StringReplace(PrecoLimpo, '.', '', [rfReplaceAll]);
-      // Trocar vírgula por ponto (separador decimal)
-      PrecoLimpo := StringReplace(PrecoLimpo, ',', '.', [rfReplaceAll]);
-    end
-    else
-    begin
-      // Formato: 1,234.56 (americano) ou apenas 1234.56
-      // Remover vírgulas (separador de milhares)
-      PrecoLimpo := StringReplace(PrecoLimpo, ',', '', [rfReplaceAll]);
-      // O ponto já está correto como separador decimal
-    end;
-
-    // Converter para Double primeiro (mais tolerante) e depois para Currency
-    if TryStrToFloat(PrecoLimpo, ValorFloat, FS) then
-      Result := ValorFloat
-    else
-      Result := 0;
-
-  except
-    on E: Exception do
-    begin
-      // Em caso de erro, retornar 0
-      Result := 0;
-    end;
-  end;
-end;
-
-class function TProdutoViewHelper.FormatPreco(const Preco: Currency): string;
-var
-  FS: TFormatSettings;
-begin
-  // Criar FormatSettings para formato brasileiro
-  FS := TFormatSettings.Create;
-  FS.DecimalSeparator := ',';
-  FS.ThousandSeparator := '.';
-
-  // Formatar o valor usando FormatFloat com configurações brasileiras
-  Result := FormatFloat('#,##0.00', Preco, FS);
+  MemTable.First;
 end;
 
 end.
-
-{
-  NOTA IMPORTANTE PARA O FormHomeDono.pas:
-
-  No método CarregarDadosParaAtualizar, ALTERE a linha:
-
-  ANTES:
-    ePrecoUp.Text := FormatCurr('0.00', Produto.PrecoProd);
-
-  DEPOIS:
-    ePrecoUp.Text := TProdutoViewHelper.FormatPreco(Produto.PrecoProd);
-}

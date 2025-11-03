@@ -37,7 +37,7 @@
         Top = 0
         Width = 1143
         Height = 644
-        ActivePage = ts5Perfil
+        ActivePage = ts4Produtos
         Align = alClient
         Style = tsFlatButtons
         TabOrder = 0
@@ -64,13 +64,13 @@
             object lblText: TLabel
               AlignWithMargins = True
               Left = 13
-              Top = 32
-              Width = 414
+              Top = 57
+              Width = 325
               Height = 30
               Margins.Left = 20
               Margins.Top = 20
               Margins.Bottom = 0
-              Caption = 'Selecione a '#225'rea de seu desejo no menu.'
+              Caption = 'Selecione a '#225'rea para acessa-l'#225'.'
               Font.Charset = DEFAULT_CHARSET
               Font.Color = clBlack
               Font.Height = -22
@@ -255,9 +255,10 @@
                     Color = clCoral
                     ParentBackground = False
                     TabOrder = 0
+                    ExplicitTop = 5
                     object lblDisponívelVenda: TLabel
                       Left = 23
-                      Top = 247
+                      Top = 279
                       Width = 119
                       Height = 15
                       Caption = 'Dispon'#237'vel para venda:'
@@ -265,9 +266,9 @@
                     object lblPreco: TLabel
                       Left = 23
                       Top = 103
-                      Width = 64
+                      Width = 84
                       Height = 15
-                      Caption = 'Pre'#231'o:      R$'
+                      Caption = 'Pre'#231'o Venda: R$'
                     end
                     object lblNome: TLabel
                       Left = 23
@@ -278,7 +279,7 @@
                     end
                     object lblDesc: TLabel
                       Left = 23
-                      Top = 142
+                      Top = 176
                       Width = 54
                       Height = 15
                       Caption = 'Descri'#231#227'o:'
@@ -301,6 +302,20 @@
                       Font.Style = [fsBold]
                       ParentColor = False
                       ParentFont = False
+                    end
+                    object lblCategoria: TLabel
+                      Left = 23
+                      Top = 244
+                      Width = 57
+                      Height = 15
+                      Caption = 'Categoria: '
+                    end
+                    object Label36: TLabel
+                      Left = 23
+                      Top = 140
+                      Width = 83
+                      Height = 15
+                      Caption = 'Pre'#231'o Custo: R$'
                     end
                     object pButtonConfirmarAdd: TPanel
                       AlignWithMargins = True
@@ -330,7 +345,7 @@
                     end
                     object cbDisponivelAdd: TCheckBox
                       Left = 147
-                      Top = 247
+                      Top = 279
                       Width = 18
                       Height = 17
                       TabOrder = 2
@@ -338,17 +353,17 @@
                     end
                     object mDescAdd: TMemo
                       Left = 91
-                      Top = 139
+                      Top = 173
                       Width = 270
-                      Height = 94
+                      Height = 54
                       Lines.Strings = (
                         'mDescAdd')
                       TabOrder = 3
                     end
-                    object ePrecoAdd: TEdit
-                      Left = 91
+                    object ePrecoVendaAdd: TEdit
+                      Left = 111
                       Top = 100
-                      Width = 190
+                      Width = 170
                       Height = 23
                       BevelInner = bvNone
                       BevelOuter = bvNone
@@ -357,7 +372,28 @@
                       TabOrder = 4
                       TextHint = '0000,00'
                       StyleName = 'Windows'
-                      OnExit = ePrecoAddExit
+                      OnExit = ePrecoVendaAddExit
+                    end
+                    object cbCategoriaProdutoAdd: TComboBox
+                      Left = 86
+                      Top = 250
+                      Width = 110
+                      Height = 23
+                      TabOrder = 5
+                    end
+                    object ePrecoCustoAdd: TEdit
+                      Left = 111
+                      Top = 137
+                      Width = 170
+                      Height = 23
+                      BevelInner = bvNone
+                      BevelOuter = bvNone
+                      ParentShowHint = False
+                      ShowHint = True
+                      TabOrder = 6
+                      TextHint = '0000,00'
+                      StyleName = 'Windows'
+                      OnExit = ePrecoCustoAddExit
                     end
                   end
                 end
@@ -445,19 +481,13 @@
                     Color = clCoral
                     ParentBackground = False
                     TabOrder = 0
+                    ExplicitTop = 5
                     object Label1: TLabel
                       Left = 23
-                      Top = 247
+                      Top = 278
                       Width = 119
                       Height = 15
                       Caption = 'Dispon'#237'vel para venda:'
-                    end
-                    object Label2: TLabel
-                      Left = 23
-                      Top = 103
-                      Width = 67
-                      Height = 15
-                      Caption = 'Pre'#231'o:       R$'
                     end
                     object Label3: TLabel
                       Left = 23
@@ -468,7 +498,7 @@
                     end
                     object Label4: TLabel
                       Left = 23
-                      Top = 142
+                      Top = 174
                       Width = 54
                       Height = 15
                       Caption = 'Descri'#231#227'o:'
@@ -491,6 +521,27 @@
                       Font.Style = [fsBold]
                       ParentColor = False
                       ParentFont = False
+                    end
+                    object Label2: TLabel
+                      Left = 23
+                      Top = 103
+                      Width = 84
+                      Height = 15
+                      Caption = 'Pre'#231'o Venda: R$'
+                    end
+                    object Label37: TLabel
+                      Left = 23
+                      Top = 140
+                      Width = 83
+                      Height = 15
+                      Caption = 'Pre'#231'o Custo: R$'
+                    end
+                    object Label38: TLabel
+                      Left = 23
+                      Top = 247
+                      Width = 57
+                      Height = 15
+                      Caption = 'Categoria: '
                     end
                     object pButtonConfirmarUp: TPanel
                       AlignWithMargins = True
@@ -519,8 +570,8 @@
                       StyleName = 'Windows'
                     end
                     object cbDisponivelUp: TCheckBox
-                      Left = 147
-                      Top = 247
+                      Left = 148
+                      Top = 279
                       Width = 18
                       Height = 17
                       TabOrder = 2
@@ -528,25 +579,47 @@
                     end
                     object mDescUp: TMemo
                       Left = 91
-                      Top = 137
+                      Top = 174
                       Width = 270
-                      Height = 94
+                      Height = 57
                       Lines.Strings = (
                         'mDescAdd')
                       TabOrder = 3
                     end
-                    object ePrecoUp: TEdit
-                      Left = 91
+                    object ePrecoVendaUp: TEdit
+                      Left = 113
                       Top = 100
-                      Width = 190
+                      Width = 168
                       Height = 23
                       BevelInner = bvNone
                       BevelOuter = bvNone
                       ParentShowHint = False
                       ShowHint = True
                       TabOrder = 4
-                      TextHint = '000,00'
+                      TextHint = '0000,00'
                       StyleName = 'Windows'
+                      OnExit = ePrecoVendaUpExit
+                    end
+                    object ePrecoCustoUp: TEdit
+                      Left = 112
+                      Top = 137
+                      Width = 168
+                      Height = 23
+                      BevelInner = bvNone
+                      BevelOuter = bvNone
+                      ParentShowHint = False
+                      ShowHint = True
+                      TabOrder = 5
+                      TextHint = '0000,00'
+                      StyleName = 'Windows'
+                      OnExit = ePrecoCustoUpExit
+                    end
+                    object cbCategoriaProdutoUp: TComboBox
+                      Left = 91
+                      Top = 244
+                      Width = 110
+                      Height = 23
+                      TabOrder = 6
                     end
                   end
                 end
@@ -683,7 +756,7 @@
             Top = 0
             Width = 1135
             Height = 611
-            ActivePage = tsEditar
+            ActivePage = tsAlterarSenha
             Align = alClient
             TabOrder = 0
             object tsVisualizar: TTabSheet
@@ -697,6 +770,8 @@
                 Color = clWindow
                 ParentBackground = False
                 TabOrder = 0
+                OnClick = pButtonAlterarSenhaEClick
+                ExplicitLeft = -5
                 object pInfoRestauranteNCD: TPanel
                   Left = 24
                   Top = 37
@@ -773,10 +848,11 @@
                     Height = 15
                   end
                   object mDCommD: TMemo
-                    Left = 11
+                    Left = 10
                     Top = 113
                     Width = 485
                     Height = 119
+                    Enabled = False
                     Lines.Strings = (
                       'mDCommD')
                     ReadOnly = True
@@ -1025,6 +1101,7 @@
                   ParentBackground = False
                   ParentFont = False
                   TabOrder = 5
+                  OnClick = pButtonAlterarSenhaEClick
                 end
                 object pInfoRestauranteP: TPanel
                   Left = 558
@@ -1329,6 +1406,16 @@
                     Font.Style = []
                     TabOrder = 3
                     TimeFormat = 'hh:nn'
+                  end
+                  object meHFCommDE: TMaskEdit
+                    Left = 311
+                    Top = 96
+                    Width = 55
+                    Height = 23
+                    EditMask = '!90:00;1;_'
+                    MaxLength = 5
+                    TabOrder = 4
+                    Text = '  :  '
                   end
                 end
                 object pButtonSalvarDadosE: TPanel
@@ -1707,6 +1794,7 @@
                   ParentBackground = False
                   ParentFont = False
                   TabOrder = 7
+                  OnClick = pButtonCancelarEClick
                 end
               end
             end
@@ -1899,7 +1987,7 @@
                   Left = 40
                   Top = 110
                   Width = 101
-                  Height = 30
+                  Height = 35
                   Caption = 'Digite novamente'#13#10' a nova senha:'
                   Font.Charset = DEFAULT_CHARSET
                   Font.Color = clWhite
@@ -1937,13 +2025,14 @@
                   Caption = 'Confirmar'
                   TabOrder = 3
                 end
-                object Panel4: TPanel
+                object pButtonCancelarAlterarSenha: TPanel
                   Left = 200
                   Top = 184
                   Width = 71
                   Height = 41
                   Caption = 'Cancelar'
                   TabOrder = 4
+                  OnClick = pButtonCancelarAlterarSenhaClick
                 end
               end
               object Panel2: TPanel
