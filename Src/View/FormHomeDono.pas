@@ -8,7 +8,7 @@ uses
   Vcl.ComCtrls, Vcl.Imaging.pngimage, Data.DB, Vcl.Mask, Vcl.Grids, Vcl.DBGrids,
   uConn, FireDAC.Comp.Client, System.Generics.Collections,
   ProdutoModel, ProdutoController, ProdutoViewHelper,
-  ComercioModel, ComercioController, ComercioViewHelper;
+  ComercioModel, ComercioController, ComercioViewHelper, Vcl.WinXPickers;
 
 type
   TFormHomeD = class(TForm)
@@ -200,8 +200,8 @@ type
     Panel4: TPanel;
     Image1: TImage;
     Label28: TLabel;
-    meHACommDE: TMaskEdit;
-    meHFCommDE: TMaskEdit;
+    tpHACommDE: TTimePicker;
+    tpHFCommDE: TTimePicker;
 
     procedure iButton1Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -274,8 +274,6 @@ implementation
 
 procedure TFormHomeD.FormCreate(Sender: TObject);
 begin
-  meHACommDE.EditMask := '!90:00;1;_';
-  meHFCommDE.EditMask := '!90:00;1;_';
   meTCommDE.EditMask := '!\(99\)00000-0000;1;_';
   meCEPCommDE.EditMask := '00000-000;1;_';
   meCPFPCommDE.EditMask := '000\.000\.000\-00;1;_';
@@ -740,8 +738,8 @@ begin
   mDCommDE.Text := Comercio.Descricao;
 
   // Horários - USAR FormatDateTime com hh:nn
-  meHACommDE.Text := FormatDateTime('hh:nn', Comercio.HorarioAbertura);
-  meHFCommDE.Text := FormatDateTime('hh:nn', Comercio.HorarioFechamento);
+  tpHACommDE.Time := Comercio.HorarioAbertura;
+  tpHFCommDE.Time := Comercio.HorarioFechamento;
   eTPCommDE.Text := IntToStr(Comercio.TempoPreparoMedio);
   eTECommDE.Text := TComercioViewHelper.FormatarMoeda(Comercio.TaxaEntregaBase);
 
@@ -771,90 +769,32 @@ end;
 procedure TFormHomeD.pButtonEditarClick(Sender: TObject);
 var
   Comercio: TComercio;
-  HoraAbertura, HoraFechamento: TTime;
 begin
   try
-    // Validações básicas
-    if Trim(eNCommDE.Text) = '' then
+    // Buscar dados do comércio
+    Comercio := FComercioController.ObterComercioPorUsuario(FIdUsuario);
+    if Assigned(Comercio) then
     begin
-      ShowMessage('Informe o nome do comércio.');
-      eNCommDE.SetFocus;
-      Exit;
-    end;
+      try
+        // Carregar dados nos campos de edição
+        CarregarDadosPerfilEdicao(Comercio);
 
-    if Trim(cbCcommDE.Text) = '' then
-    begin
-      ShowMessage('Selecione a categoria do comércio.');
-      cbCcommDE.SetFocus;
-      Exit;
-    end;
-
-    // Validar horários
-    try
-      HoraAbertura := StrToTime(meHACommDE.Text);
-    except
-      ShowMessage('Horário de abertura inválido. Use o formato HH:MM');
-      meHACommDE.SetFocus;
-      Exit;
-    end;
-
-    try
-      HoraFechamento := StrToTime(meHFCommDE.Text);
-    except
-      ShowMessage('Horário de fechamento inválido. Use o formato HH:MM');
-      meHFCommDE.SetFocus;
-      Exit;
-    end;
-
-    if Trim(eECommDE.Text) = '' then
-    begin
-      ShowMessage('Informe o email do comércio.');
-      eECommDE.SetFocus;
-      Exit;
-    end;
-
-    Comercio := TComercio.Create;
-    try
-      Comercio.IdComercio := FIdComercio;
-      Comercio.IdUser := FIdUsuario;
-      Comercio.NomeComercio := Trim(eNCommDE.Text);
-      Comercio.Categoria := Trim(cbCcommDE.Text);
-      Comercio.Descricao := Trim(mDCommDE.Text);
-
-      // Horários como TTime
-      Comercio.HorarioAbertura := HoraAbertura;
-      Comercio.HorarioFechamento := HoraFechamento;
-      Comercio.TempoPreparoMedio := StrToIntDef(Trim(eTPCommDE.Text), 30);
-      Comercio.TaxaEntregaBase := TComercioViewHelper.ParseMoeda(eTECommDE.Text);
-
-      // Contato
-      Comercio.EmailComercio := Trim(eECommDE.Text);
-      Comercio.NPhoneComercio := TComercioViewHelper.RemoverMascaraTelefone(meTCommDE.Text);
-      Comercio.CpfCnpjComercio := '';
-
-      // Localização
-      Comercio.CEP := TComercioViewHelper.RemoverMascaraCEP(meCEPCommDE.Text);
-      Comercio.Estado := Trim(eEstadoCOmmDE.Text);
-      Comercio.Cidade := Trim(eCidadeCommDE.Text);
-      Comercio.EnderecoCompleto := Trim(eRuaCommDE.Text);
-      Comercio.Numero := Trim(eNumeroEnderecoCommDE.Text);
-      Comercio.Bairro := Trim(eBairroCommDE.Text);
-      Comercio.Complemento := Trim(eComplementoCommDE.Text);
-
-      if FComercioController.AtualizarComercio(Comercio) then
-      begin
-        ShowMessage('Dados atualizados com sucesso!');
-        CarregarDadosPerfil;
-        pcPerfil.ActivePageIndex := 0;
+        // Mudar para a aba de edição
+        pcPerfil.ActivePageIndex := 1;
+      finally
+        Comercio.Free;
       end;
-    finally
-      Comercio.Free;
+    end
+    else
+    begin
+      ShowMessage('Não foi possível carregar os dados do comércio.');
     end;
   except
     on E: Exception do
-      ShowMessage('Erro ao salvar dados: ' + E.Message);
+      ShowMessage('Erro ao carregar dados para edição: ' + E.Message);
   end;
 end;
+
 procedure TFormHomeD.pButtonSalvarDadosEClick(Sender: TObject);
 var
   Comercio: TComercio;
@@ -875,17 +815,26 @@ begin
       Exit;
     end;
 
-    if Trim(meHACommDE.Text) = '  :  ' then
+    // Validar se os horários foram preenchidos (TTime = 0 significa não preenchido)
+    if tpHACommDE.Time = 0 then
     begin
       ShowMessage('Informe o horário de abertura.');
-      meHACommDE.SetFocus;
+      tpHACommDE.SetFocus;
       Exit;
     end;
 
-    if Trim(meHFCommDE.Text) = '  :  ' then
+    if tpHFCommDE.Time = 0 then
     begin
       ShowMessage('Informe o horário de fechamento.');
-      meHFCommDE.SetFocus;
+      tpHFCommDE.SetFocus;
+      Exit;
+    end;
+
+    // Validar se o horário de fechamento é depois da abertura
+    if tpHFCommDE.Time <= tpHACommDE.Time then
+    begin
+      ShowMessage('O horário de fechamento deve ser posterior ao horário de abertura.');
+      tpHFCommDE.SetFocus;
       Exit;
     end;
 
@@ -903,6 +852,7 @@ begin
       Exit;
     end;
 
+    // Criar objeto Comercio e preencher com os dados do formulário
     Comercio := TComercio.Create;
     try
       // IDs
@@ -914,9 +864,9 @@ begin
       Comercio.Categoria := Trim(cbCcommDE.Text);
       Comercio.Descricao := Trim(mDCommDE.Text);
 
-      // Horários (agora direto dos campos separados)
-      Comercio.HorarioAbertura := StrToDateTime(Trim(meHACommDE.Text));
-      Comercio.HorarioFechamento := StrToDateTime(Trim(meHFCommDE.Text));
+      // Horários - usar diretamente a propriedade Time dos TimePickers
+      Comercio.HorarioAbertura := tpHACommDE.Time;
+      Comercio.HorarioFechamento := tpHFCommDE.Time;
       Comercio.TempoPreparoMedio := StrToIntDef(Trim(eTPCommDE.Text), 30);
       Comercio.TaxaEntregaBase := TComercioViewHelper.ParseMoeda(eTECommDE.Text);
 
@@ -934,11 +884,21 @@ begin
       Comercio.Bairro := Trim(eBairroCommDE.Text);
       Comercio.Complemento := Trim(eComplementoCommDE.Text);
 
+      // Atualizar no banco
       if FComercioController.AtualizarComercio(Comercio) then
       begin
         ShowMessage('Dados atualizados com sucesso!');
+
+        // Recarregar dados na visualização
         CarregarDadosPerfil;
-        pcPerfil.ActivePageIndex := 0; // Voltar para visualização
+
+        // Voltar para a aba de visualização
+        pcPerfil.ActivePageIndex := 0;
+
+        // Atualizar nome no header se foi alterado
+        FNomeComercio := Comercio.NomeComercio;
+        if Assigned(lblNomeComercio) then
+          lblNomeComercio.Caption := FNomeComercio;
       end;
     finally
       Comercio.Free;
@@ -1038,9 +998,11 @@ procedure TFormHomeD.eTECommDEExit(Sender: TObject);
 var
   Valor: Currency;
 begin
+  // Parse do valor digitado
   Valor := TComercioViewHelper.ParseMoeda(eTECommDE.Text);
-  if Valor >= 0 then
-    eTECommDE.Text := TComercioViewHelper.FormatarMoeda(Valor);
+
+  // Formata sempre, mesmo que seja 0
+  eTECommDE.Text := TComercioViewHelper.FormatarMoeda(Valor);
 end;
 
 // ============ NAVEGAÇÃO MENU LATERAL ============

@@ -43,6 +43,8 @@
         TabOrder = 0
         Touch.ParentTabletOptions = False
         Touch.TabletOptions = [toPressAndHold]
+        ExplicitLeft = -24
+        ExplicitTop = -56
         object ts1Selecione: TTabSheet
           Caption = 'ts1Selecione'
           object pText: TPanel
@@ -1121,6 +1123,7 @@
                 ParentBackground = False
                 TabOrder = 0
                 OnClick = pButtonSalvarDadosEClick
+                ExplicitLeft = -5
                 object pInfoRestauranteNCDE: TPanel
                   Left = 24
                   Top = 37
@@ -1272,7 +1275,7 @@
                     ParentFont = False
                   end
                   object Label28: TLabel
-                    Left = 198
+                    Left = 210
                     Top = 51
                     Width = 134
                     Height = 15
@@ -1301,25 +1304,31 @@
                     TabOrder = 1
                     TextHint = '0000,00'
                   end
-                  object meHACommDE: TMaskEdit
-                    Left = 137
-                    Top = 48
-                    Width = 55
-                    Height = 23
-                    EditMask = '!90:00;1;_'
-                    MaxLength = 5
+                  object tpHACommDE: TTimePicker
+                    Left = 134
+                    Top = 46
+                    Width = 72
+                    Height = 25
+                    Font.Charset = DEFAULT_CHARSET
+                    Font.Color = clWindowText
+                    Font.Height = -16
+                    Font.Name = 'Segoe UI'
+                    Font.Style = []
                     TabOrder = 2
-                    Text = '  :  '
+                    TimeFormat = 'hh:nn'
                   end
-                  object meHFCommDE: TMaskEdit
-                    Left = 338
-                    Top = 48
-                    Width = 55
-                    Height = 23
-                    EditMask = '!90:00;1;_'
-                    MaxLength = 5
+                  object tpHFCommDE: TTimePicker
+                    Left = 348
+                    Top = 46
+                    Width = 72
+                    Height = 25
+                    Font.Charset = DEFAULT_CHARSET
+                    Font.Color = clWindowText
+                    Font.Height = -16
+                    Font.Name = 'Segoe UI'
+                    Font.Style = []
                     TabOrder = 3
-                    Text = '  :  '
+                    TimeFormat = 'hh:nn'
                   end
                 end
                 object pButtonSalvarDadosE: TPanel

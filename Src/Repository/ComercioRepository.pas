@@ -1,4 +1,4 @@
-unit ComercioRepository;
+﻿unit ComercioRepository;
 
 interface
 
@@ -53,8 +53,11 @@ begin
       Result.NomeComercio := Qr.FieldByName('nome_comercio').AsString;
       Result.Categoria := Qr.FieldByName('categoria').AsString;
       Result.Descricao := Qr.FieldByName('descricao').AsString;
-      Result.HorarioAbertura := Qr.FieldByName('horario_abertura').AsDateTime;
-      Result.HorarioFechamento := Qr.FieldByName('horario_fechamento').AsDateTime;
+
+      // ⭐ MUDANÇA AQUI: Use AsTime ou Frac(AsDateTime)
+      Result.HorarioAbertura := Frac(Qr.FieldByName('horario_abertura').AsDateTime);
+      Result.HorarioFechamento := Frac(Qr.FieldByName('horario_fechamento').AsDateTime);
+
       Result.TempoPreparoMedio := Qr.FieldByName('tempo_preparo_medio').AsInteger;
       Result.TaxaEntregaBase := Qr.FieldByName('taxa_entrega_base').AsCurrency;
       Result.EmailComercio := Qr.FieldByName('email_comercio').AsString;
@@ -163,8 +166,11 @@ begin
     Qr.ParamByName('nome_comercio').AsString := Comercio.NomeComercio;
     Qr.ParamByName('categoria').AsString := Comercio.Categoria;
     Qr.ParamByName('descricao').AsString := Comercio.Descricao;
-    Qr.ParamByName('horario_abertura').AsDateTime := Comercio.HorarioAbertura;
-    Qr.ParamByName('horario_fechamento').AsDateTime := Comercio.HorarioFechamento;
+
+    // ⭐ MUDANÇA AQUI: Use AsTime para campos TIME do PostgreSQL
+    Qr.ParamByName('horario_abertura').AsTime := Comercio.HorarioAbertura;
+    Qr.ParamByName('horario_fechamento').AsTime := Comercio.HorarioFechamento;
+
     Qr.ParamByName('tempo_preparo_medio').AsInteger := Comercio.TempoPreparoMedio;
     Qr.ParamByName('taxa_entrega_base').AsCurrency := Comercio.TaxaEntregaBase;
     Qr.ParamByName('email_comercio').AsString := Comercio.EmailComercio;
