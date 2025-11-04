@@ -53,7 +53,9 @@ uses
   ComercioRepository in 'Src\Repository\ComercioRepository.pas',
   ComercioService in 'Src\Service\ComercioService.pas',
   ComercioViewHelper in 'Src\Utils\ComercioViewHelper.pas',
-  ComercioController in 'Src\Controller\ComercioController.pas';
+  ComercioController in 'Src\Controller\ComercioController.pas',
+  ClienteController in 'Src\Controller\ClienteController.pas',
+  ClienteRepository in 'Src\Repository\ClienteRepository.pas';
 
 {$R *.res}
 

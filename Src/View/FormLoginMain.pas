@@ -1,4 +1,4 @@
-unit FormLoginMain;
+Ôªøunit FormLoginMain;
 
 interface
 
@@ -88,7 +88,7 @@ function TFormLogin.DeterminarTela(ATipoUsuario: TTipoUsuario): String;
 begin
   case ATipoUsuario of
     tuCliente:    Result := 'do Cliente';
-    tuComercio:   Result := 'do ComÈrcio';
+    tuComercio:   Result := 'do Com√©rcio';
     tuEntregador: Result := 'do Entregador';
     tuAdmin:      Result := 'do Administrador';
   else
@@ -191,7 +191,7 @@ begin
   else
   begin
     LoginResponse.Autenticado := False;
-    LoginResponse.Mensagem := 'Tipo de usu·rio n„o reconhecido!';
+    LoginResponse.Mensagem := 'Tipo de usu√°rio n√£o reconhecido!';
     ShowMessage(LoginResponse.Mensagem);
   end;
 end;
@@ -235,86 +235,80 @@ begin
         FormHomeA.Show;
       end;
   else
-    ShowMessage('Tipo de usu·rio inv·lido!');
+    ShowMessage('Tipo de usu√°rio inv√°lido!');
   end;
 
   ShowMessage('Redirecionando para menu: ' +
               DeterminarTela(ATipoUsuario) + sLineBreak +
-              'Usu·rio ID: ' + IntToStr(AIdUsuario) + sLineBreak +
+              'Usu√°rio ID: ' + IntToStr(AIdUsuario) + sLineBreak +
               'Nome: ' + ANomeUsuario);
 end;
 procedure TFormLogin.sbConfirmarClick(Sender: TObject);
+// No LoginController ou onde voc√™ redireciona ap√≥s o login bem-sucedido
 var
-  LocalLoginRequest: TLoginRequest;
-  LocalLoginResponse: TLoginResponse;
-  LocalLoginController: TLoginController;
+  LoginRequest: TLoginRequest;
+  LoginResponse: TLoginResponse;
+  Controller: TLoginController;
 begin
-  // Verificar se DM existe
-  if not Assigned(DM) then
-  begin
-    ShowMessage('Erro: Sistema n„o inicializado corretamente');
-    Exit;
-  end;
-
-  // Validar campos
-  if Trim(eEmail.Text) = '' then
-  begin
-    ShowMessage('Por favor, informe o e-mail.');
-    eEmail.SetFocus;
-    Exit;
-  end;
-
-  if Trim(meSenha.Text) = '' then
-  begin
-    ShowMessage('Por favor, informe a senha.');
-    meSenha.SetFocus;
-    Exit;
-  end;
-
-  LocalLoginRequest := nil;
-  LocalLoginResponse := nil;
-  LocalLoginController := nil;
-
+  LoginRequest := TLoginRequest.Create;
+  Controller := TLoginController.Create;
   try
-    LocalLoginRequest := TLoginRequest.Create;
-    LocalLoginController := TLoginController.Create;
-    LocalLoginRequest.Email := Trim(eEmail.Text);
-    LocalLoginRequest.Senha := Trim(meSenha.Text);
-    sbConfirmar.Enabled := False;
-    LocalLoginResponse := LocalLoginController.VerificarLogin(LocalLoginRequest);
-    if Assigned(LocalLoginResponse) and LocalLoginResponse.Autenticado then
+    LoginRequest.Email := eEmail.Text;
+    LoginRequest.Senha := meSenha.Text;
+
+    LoginResponse := Controller.VerificarLogin(LoginRequest);
+
+    if LoginResponse.Autenticado then
     begin
-      FTipoUsuario := LocalLoginResponse.TipoUsuarioToString;
-      FIdUsuario := LocalLoginResponse.IdUsuario;
-      FNomeUsuario := LocalLoginResponse.NomeUsuario;
-      RealizarProcessoRedirecionamento(LocalLoginResponse);
-      Self.Hide;
+      case LoginResponse.TipoUsuario of
+        tuCliente:
+        begin
+          // ‚≠ê CRIAR O FORM CORRETAMENTE
+          if not Assigned(FormHomeC) then
+            Application.CreateForm(TFormHomeC, FormHomeC);
+
+          // ‚≠ê DEFINIR AS PROPRIEDADES **ANTES** DE MOSTRAR
+          FormHomeC.IdUsuario := LoginResponse.IdUsuario;
+          FormHomeC.NomeUsuario := LoginResponse.NomeUsuario;
+
+          // ‚≠ê MOSTRAR O FORM
+          FormHomeC.Show;
+          Self.Hide;
+        end;
+
+        tuComercio:
+        begin
+          if not Assigned(FormHomeD) then
+            Application.CreateForm(TFormHomeD, FormHomeD);
+
+          FormHomeD.IdUsuario := LoginResponse.IdUsuario;
+          FormHomeD.NomeUsuario := LoginResponse.NomeUsuario;
+          FormHomeD.Show;
+          Self.Hide;
+        end;
+
+        tuAdmin:
+        begin
+          if not Assigned(FormHomeA) then
+            Application.CreateForm(TFormHomeA, FormHomeA);
+
+          FormHomeA.IdUsuario := LoginResponse.IdUsuario;
+          FormHomeA.NomeUsuario := LoginResponse.NomeUsuario;
+          FormHomeA.Show;
+          Self.Hide;
+        end;
+      end;
     end
     else
     begin
-      if Assigned(LocalLoginResponse) then
-        ShowMessage(LocalLoginResponse.Mensagem)
-      else
-        ShowMessage('Erro ao processar login.');
-
-      meSenha.Clear;
-      eEmail.SetFocus;
+      ShowMessage(LoginResponse.Mensagem);
     end;
 
-  except
-    on E: Exception do
-    begin
-      ShowMessage('Erro ao processar login: ' + E.Message);
-    end;
+  finally
+    LoginRequest.Free;
+    LoginResponse.Free;
+    Controller.Free;
   end;
-  if Assigned(LocalLoginResponse) then
-    LocalLoginResponse.Free;
-  if Assigned(LocalLoginRequest) then
-    LocalLoginRequest.Free;
-  if Assigned(LocalLoginController) then
-    LocalLoginController.Free;
-
-  sbConfirmar.Enabled := True;
 end;
 
 end.

@@ -36,12 +36,22 @@ object FormHomeC: TFormHomeC
       TabOrder = 2
       object lvMain: TListView
         Left = 0
-        Top = 230
+        Top = 243
         Width = 412
-        Height = 355
+        Height = 522
         BorderStyle = bsNone
         Columns = <>
         TabOrder = 0
+      end
+      object pCategorias: TPanel
+        Left = 0
+        Top = 107
+        Width = 412
+        Height = 143
+        BevelOuter = bvNone
+        Color = cl3DLight
+        ParentBackground = False
+        TabOrder = 1
       end
       object pEndereco: TPanel
         Left = 0
@@ -50,16 +60,6 @@ object FormHomeC: TFormHomeC
         Height = 106
         BevelOuter = bvNone
         Color = clWindow
-        ParentBackground = False
-        TabOrder = 1
-      end
-      object pCategorias: TPanel
-        Left = 0
-        Top = 94
-        Width = 412
-        Height = 143
-        BevelOuter = bvNone
-        Color = cl3DLight
         ParentBackground = False
         TabOrder = 2
       end
@@ -76,7 +76,7 @@ object FormHomeC: TFormHomeC
       StyleName = 'Windows'
       object Image1: TImage
         Left = 378
-        Top = 14
+        Top = 11
         Width = 25
         Height = 29
         Center = True
@@ -531,6 +531,7 @@ object FormHomeC: TFormHomeC
           D100000050201A0000000A440300004081FE1FDC74937946A20DE30000000049
           454E44AE426082}
         Proportional = True
+        OnClick = eBuscaMainChange
       end
     end
     object eBuscaMain: TEdit

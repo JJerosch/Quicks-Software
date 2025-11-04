@@ -177,6 +177,8 @@
         <DCCReference Include="Src\Service\ComercioService.pas"/>
         <DCCReference Include="Src\Utils\ComercioViewHelper.pas"/>
         <DCCReference Include="Src\Controller\ComercioController.pas"/>
+        <DCCReference Include="Src\Controller\ClienteController.pas"/>
+        <DCCReference Include="Src\Repository\ClienteRepository.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
