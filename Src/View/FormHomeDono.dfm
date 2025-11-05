@@ -37,14 +37,12 @@
         Top = 0
         Width = 1143
         Height = 644
-        ActivePage = ts4Produtos
+        ActivePage = ts5Perfil
         Align = alClient
         Style = tsFlatButtons
         TabOrder = 0
         Touch.ParentTabletOptions = False
         Touch.TabletOptions = [toPressAndHold]
-        ExplicitLeft = -24
-        ExplicitTop = -56
         object ts1Selecione: TTabSheet
           Caption = 'ts1Selecione'
           object pText: TPanel
@@ -255,7 +253,6 @@
                     Color = clCoral
                     ParentBackground = False
                     TabOrder = 0
-                    ExplicitTop = 5
                     object lblDisponívelVenda: TLabel
                       Left = 23
                       Top = 279
@@ -481,7 +478,6 @@
                     Color = clCoral
                     ParentBackground = False
                     TabOrder = 0
-                    ExplicitTop = 5
                     object Label1: TLabel
                       Left = 23
                       Top = 278
@@ -771,7 +767,6 @@
                 ParentBackground = False
                 TabOrder = 0
                 OnClick = pButtonAlterarSenhaEClick
-                ExplicitLeft = -5
                 object pInfoRestauranteNCD: TPanel
                   Left = 24
                   Top = 37
@@ -1200,7 +1195,6 @@
                 ParentBackground = False
                 TabOrder = 0
                 OnClick = pButtonSalvarDadosEClick
-                ExplicitLeft = -5
                 object pInfoRestauranteNCDE: TPanel
                   Left = 24
                   Top = 37
@@ -1392,6 +1386,7 @@
                     Font.Name = 'Segoe UI'
                     Font.Style = []
                     TabOrder = 2
+                    Time = 45966.617643831020000000
                     TimeFormat = 'hh:nn'
                   end
                   object tpHFCommDE: TTimePicker
@@ -1405,6 +1400,7 @@
                     Font.Name = 'Segoe UI'
                     Font.Style = []
                     TabOrder = 3
+                    Time = 45966.617643831020000000
                     TimeFormat = 'hh:nn'
                   end
                   object meHFCommDE: TMaskEdit
@@ -1987,7 +1983,7 @@
                   Left = 40
                   Top = 110
                   Width = 101
-                  Height = 35
+                  Height = 30
                   Caption = 'Digite novamente'#13#10' a nova senha:'
                   Font.Charset = DEFAULT_CHARSET
                   Font.Color = clWhite

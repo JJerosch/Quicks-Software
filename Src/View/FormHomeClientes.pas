@@ -3,7 +3,7 @@
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
+  Winapi.Windows, Winapi.Messages, System.SysUtils, System.StrUtils, System.Variants,
   System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
   Vcl.ExtCtrls, Vcl.Menus, Vcl.StdCtrls, Vcl.Imaging.pngimage, Vcl.ComCtrls,
   Data.DB, FireDAC.Comp.Client, FireDAC.Comp.DataSet, uConn,
@@ -21,18 +21,14 @@ type
     FEstaAberto: Boolean;
     FDescricao: String;
     procedure PanelClick(Sender: TObject);
+    procedure PanelMouseEnter(Sender: TObject);
+    procedure PanelMouseLeave(Sender: TObject);
   public
     constructor CreateCard(AOwner: TComponent; IdComercio: Integer;
       const Nome, Categoria, Taxa, Horario, Descricao: String; EstaAberto: Boolean);
   end;
 
   TFormHomeC = class(TForm)
-    pHomeBackground: TPanel;
-    pBusca: TPanel;
-    Image1: TImage;
-    eBuscaMain: TEdit;
-    scbxMain: TScrollBox;
-    lvMain: TListView;
     pBarraMenuLeft: TPanel;
     iButton1: TImage;
     iButton2: TImage;
@@ -47,24 +43,96 @@ type
     lblButton5: TLabel;
     lblQuantidadeCarrinho: TLabel;
     lblSair: TLabel;
-    pEndereco: TPanel;
+    pcMain: TPageControl;
+    tsMain: TTabSheet;
+    pHomeBackground: TPanel;
+    scbxMain: TScrollBox;
     pCategorias: TPanel;
+    pEndereco: TPanel;
+    lblEnderecoTitle: TLabel;
+    lblEnderecoAtual: TLabel;
+    pButtonAddEndereco: TPanel;
+    cbEnderecos: TComboBox;
+    scbxComercios: TScrollBox;
+    pgscrlCategorias: TPageScroller;
+    tsLojas: TTabSheet;
+    tsPerfil: TTabSheet;
+    tsPedidos: TTabSheet;
+    tsCarrinho: TTabSheet;
+    pBusca: TPanel;
+    lblUserName: TLabel;
+    lblUserId: TLabel;
+    eBuscaMain: TEdit;
+    tsCommSelec: TTabSheet;
+    eBuscaProdutoComm: TEdit;
+    scbxMainCommSelec: TScrollBox;
+    pCarrinhoComm: TPanel;
+    lblItensCart: TLabel;
+    lblTotalCart: TLabel;
+    pButtonCartComm: TPanel;
+    pCategoriasProdutosComm: TPanel;
+    scbxCategoriasProdutosComm: TScrollBox;
+    lblCategoriasProdutos: TLabel;
+    pInfoComm: TPanel;
+    lblNomeComm: TLabel;
+    iButtonBackComm: TImage;
+    lblNota: TLabel;
+    lblTaxaEntrega: TLabel;
+    lblHorarioFunc: TLabel;
+    lblCategoria: TLabel;
+    pButtonAvalienos: TPanel;
+    pProdutosComm: TPanel;
+    scbxProdutosComm: TScrollBox;
+    scbxMainLojas: TScrollBox;
+    pCategoriasL: TPanel;
+    scbxCategoriasL: TScrollBox;
+    lblCategoriasL: TLabel;
+    scbxComerciosL: TScrollBox;
+    lblComerciosL: TLabel;
+    scbxMainCarrinho: TScrollBox;
+    pEnderecoCarrinho: TPanel;
+    lblEnderecoDesc: TLabel;
+    lblEnderecoAtualCarrinho: TLabel;
+    pButtonAlterarEndereco: TPanel;
+    pNumerosCarrinho: TPanel;
+    Label3: TLabel;
+    Label4: TLabel;
+    Image1: TImage;
+    pItensCarrinho: TPanel;
+    pResumoPedido: TPanel;
+    scbxCarrinhoItems: TScrollBox;
+    lblResumo: TLabel;
+    lblSubtotal: TLabel;
+    lblSubtotalDesc: TLabel;
+    lblTaxa: TLabel;
+    lblTaxadesc: TLabel;
+    lblTotalDesc: TLabel;
+    lblTotal: TLabel;
+    lblFormaPDesc: TLabel;
+    lblFormaPagamento: TLabel;
+    pButtonFinalizarPedido: TPanel;
 
     procedure iButton1Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure eBuscaMainChange(Sender: TObject);
+    procedure eBuscaMainKeyPress(Sender: TObject; var Key: Char);
+    procedure Image1Click(Sender: TObject);
+    procedure FormResize(Sender: TObject);  // ⭐ NOVO
 
   private
     FIdUsuario: Integer;
     FNomeUsuario: String;
     FController: TClienteController;
     FInicializado: Boolean;
-    FCardsPerRow: Integer;
-    FCardWidth: Integer;
+    FBuscaTimer: TTimer;
+    FUltimaBusca: String;
+
+    // ⭐ Configurações de layout
     FCardHeight: Integer;
     FCardSpacing: Integer;
+    FMargemLateral: Integer;
 
     procedure InicializarController;
     procedure PopularLista(ApenasAbertos: Boolean);
@@ -73,6 +141,11 @@ type
     procedure LimparCards;
     procedure AdicionarCardComercio(Comercio: TComercio; EstaAberto: Boolean; Index: Integer);
     procedure AbrirCardapio(IdComercio: Integer; const NomeComercio: String);
+    procedure OnBuscaTimer(Sender: TObject);
+    procedure LimparBusca;
+    procedure ExibirMensagemNenhumResultado;
+    procedure ConfigurarLayout;  // ⭐ NOVO
+    procedure AjustarScrollBox;  // ⭐ NOVO
 
   public
     property IdUsuario: Integer read FIdUsuario write FIdUsuario;
@@ -105,7 +178,7 @@ begin
   FEstaAberto := EstaAberto;
   FDescricao := Descricao;
 
-  // Configurações do painel principal
+  // ⭐ Configurações do painel
   Self.ParentBackground := False;
   Self.BevelOuter := bvNone;
   Self.Color := clWhite;
@@ -113,31 +186,33 @@ begin
   Self.ShowHint := True;
   Self.Hint := 'Clique para ver o cardápio';
   Self.OnClick := PanelClick;
-
-  // Adicionar borda arredondada (simulação com bordas)
+  Self.OnMouseEnter := PanelMouseEnter;
+  Self.OnMouseLeave := PanelMouseLeave;
   Self.BorderStyle := bsSingle;
   Self.Ctl3D := True;
+  Self.ParentColor := False;
 
-  Y := 12;  // Margem superior reduzida
+  Y := 15;
 
-  // Label do Nome
+  // Nome
   lblNome := TLabel.Create(Self);
   lblNome.Parent := Self;
-  lblNome.Left := 15;
+  lblNome.Left := 20;
   lblNome.Top := Y;
   lblNome.Caption := Nome;
   lblNome.Font.Name := 'Segoe UI';
-  lblNome.Font.Size := 11;
+  lblNome.Font.Size := 12;
   lblNome.Font.Style := [fsBold];
   lblNome.Font.Color := clBlack;
   lblNome.Cursor := crHandPoint;
   lblNome.OnClick := PanelClick;
-  Inc(Y, 24);  // Espaçamento reduzido
+  lblNome.Transparent := True;
+  Inc(Y, 28);
 
-  // Label da Categoria
+  // Categoria
   lblCategoria := TLabel.Create(Self);
   lblCategoria.Parent := Self;
-  lblCategoria.Left := 15;
+  lblCategoria.Left := 20;
   lblCategoria.Top := Y;
   lblCategoria.Caption := '📍 ' + Categoria;
   lblCategoria.Font.Name := 'Segoe UI';
@@ -145,26 +220,28 @@ begin
   lblCategoria.Font.Color := $00808080;
   lblCategoria.Cursor := crHandPoint;
   lblCategoria.OnClick := PanelClick;
-  Inc(Y, 20);  // Espaçamento reduzido
+  lblCategoria.Transparent := True;
+  Inc(Y, 22);
 
-  // Label da Taxa
+  // Taxa
   lblTaxa := TLabel.Create(Self);
   lblTaxa.Parent := Self;
-  lblTaxa.Left := 15;
+  lblTaxa.Left := 20;
   lblTaxa.Top := Y;
-  lblTaxa.Caption := '💰 Taxa de entrega: ' + Taxa;
+  lblTaxa.Caption := '💰 Entrega: ' + Taxa;
   lblTaxa.Font.Name := 'Segoe UI';
   lblTaxa.Font.Size := 9;
   lblTaxa.Font.Style := [fsBold];
   lblTaxa.Font.Color := $00FF6600;
   lblTaxa.Cursor := crHandPoint;
   lblTaxa.OnClick := PanelClick;
-  Inc(Y, 20);  // Espaçamento reduzido
+  lblTaxa.Transparent := True;
+  Inc(Y, 22);
 
-  // Label do Horário
+  // Horário
   lblHorario := TLabel.Create(Self);
   lblHorario.Parent := Self;
-  lblHorario.Left := 15;
+  lblHorario.Left := 20;
   lblHorario.Top := Y;
   lblHorario.Caption := '🕐 ' + Horario;
   lblHorario.Font.Name := 'Segoe UI';
@@ -172,43 +249,43 @@ begin
   lblHorario.Font.Color := $00666666;
   lblHorario.Cursor := crHandPoint;
   lblHorario.OnClick := PanelClick;
-  Inc(Y, 18);  // Espaçamento reduzido
+  lblHorario.Transparent := True;
+  Inc(Y, 20);
 
-  // Badge de Status (canto superior direito)
+  // Badge Status (canto superior direito)
   pStatus := TPanel.Create(Self);
   pStatus.Parent := Self;
-  pStatus.Width := 80;
-  pStatus.Height := 24;
-  pStatus.Top := 10;
-  pStatus.Left := Self.Width - pStatus.Width - 12;  // Alinhado à direita
-  pStatus.Anchors := [akTop, akRight];  // Ficar sempre no canto direito
+  pStatus.Width := 85;
+  pStatus.Height := 28;
+  pStatus.Top := 12;
+  pStatus.Left := Self.Width - pStatus.Width - 15;
+  pStatus.Anchors := [akTop, akRight];
   pStatus.BevelOuter := bvNone;
   pStatus.Font.Name := 'Segoe UI';
-  pStatus.Font.Size := 8;
+  pStatus.Font.Size := 9;
   pStatus.Font.Style := [fsBold];
   pStatus.Cursor := crHandPoint;
   pStatus.OnClick := PanelClick;
+  pStatus.Caption := IfThen(EstaAberto, 'ABERTO', 'FECHADO');
 
   if EstaAberto then
   begin
-    pStatus.Color := $0000CC00;  // Verde
+    pStatus.Color := $0000BB00;  // Verde
     pStatus.Font.Color := clWhite;
-    pStatus.Caption := 'ABERTO';
   end
   else
   begin
-    pStatus.Color := $000000CC;  // Vermelho
+    pStatus.Color := $000000BB;  // Vermelho
     pStatus.Font.Color := clWhite;
-    pStatus.Caption := 'FECHADO';
   end;
 
-  // Label da Descrição (no final)
+  // Descrição
   lblDescricao := TLabel.Create(Self);
   lblDescricao.Parent := Self;
-  lblDescricao.Left := 15;
+  lblDescricao.Left := 20;
   lblDescricao.Top := Y;
-  if Length(Descricao) > 80 then
-    lblDescricao.Caption := Copy(Descricao, 1, 80) + '...'
+  if Length(Descricao) > 90 then
+    lblDescricao.Caption := Copy(Descricao, 1, 90) + '...'
   else
     lblDescricao.Caption := Descricao;
   lblDescricao.Font.Name := 'Segoe UI';
@@ -217,8 +294,9 @@ begin
   lblDescricao.Cursor := crHandPoint;
   lblDescricao.OnClick := PanelClick;
   lblDescricao.AutoSize := False;
-  lblDescricao.Width := Self.Width - 110;  // Deixar espaço para o status badge
+  lblDescricao.Width := Self.Width - 130;
   lblDescricao.WordWrap := True;
+  lblDescricao.Transparent := True;
 end;
 
 procedure TCardComercioPanel.PanelClick(Sender: TObject);
@@ -227,40 +305,120 @@ begin
     TFormHomeC(Self.Owner).AbrirCardapio(FIdComercio, FNomeComercio);
 end;
 
+procedure TCardComercioPanel.PanelMouseEnter(Sender: TObject);
+begin
+  // ⭐ Efeito hover
+  Self.Color := $00F5F5F5;  // Cinza bem claro
+end;
+
+procedure TCardComercioPanel.PanelMouseLeave(Sender: TObject);
+begin
+  // ⭐ Voltar ao normal
+  Self.Color := clWhite;
+end;
+
 { TFormHomeC }
 
 procedure TFormHomeC.FormCreate(Sender: TObject);
 begin
   FInicializado := False;
   FController := nil;
+  FUltimaBusca := '';
 
-  // Configurações do Grid - EMPILHADO (1 card por linha)
-  FCardsPerRow := 1;       // 1 card por linha (empilhado verticalmente)
-  FCardWidth := 0;         // 0 = largura automática (ocupar toda a largura disponível)
-  FCardHeight := 140;      // Altura de cada card
-  FCardSpacing := 12;      // Espaçamento entre cards
+  // ⭐ Configurações de layout
+  FCardHeight := 145;       // Altura de cada card
+  FCardSpacing := 15;       // Espaço entre cards
+  FMargemLateral := 20;     // Margem lateral
 
-  // PROTEÇÃO: Garantir valores mínimos
-  if FCardsPerRow < 1 then
-    FCardsPerRow := 1;
-  if FCardWidth < 100 then
-    FCardWidth := 280;
-  if FCardHeight < 80 then
-    FCardHeight := 150;
+  // Timer para debounce
+  FBuscaTimer := TTimer.Create(Self);
+  FBuscaTimer.Enabled := False;
+  FBuscaTimer.Interval := 500;
+  FBuscaTimer.OnTimer := OnBuscaTimer;
 
-  eBuscaMain.TextHint := 'Pesquise um restaurante ou loja ...';
+  // Configurar campo de busca
+  eBuscaMain.TextHint := '🔍 Pesquise restaurantes, lojas, categorias...';
+  eBuscaMain.Text := '';
+  eBuscaMain.Font.Size := 10;
 
-  // Configurar ScrollBox
-  if Assigned(scbxMain) then
+  if Assigned(Image1) then
   begin
-    scbxMain.VertScrollBar.Tracking := True;
-    scbxMain.HorzScrollBar.Visible := False;
-    scbxMain.BorderStyle := bsNone;
+    Image1.Cursor := crHandPoint;
+    Image1.Hint := 'Clique para buscar';
+    Image1.ShowHint := True;
   end;
 
-  // Esconder o ListView (vamos usar ScrollBox)
-  if Assigned(lvMain) then
-    lvMain.Visible := False;
+  // ⭐ Configurar layout
+  ConfigurarLayout;
+
+  // Esconder ListView
+//  if Assigned(lvMain) then
+//    lvMain.Visible := False;
+end;
+
+procedure TFormHomeC.ConfigurarLayout;
+begin
+  // ⭐ Configurar ScrollBox
+  if Assigned(scbxMain) then
+  begin
+    scbxMain.Align := alClient;  // Ocupar todo o espaço disponível
+    scbxMain.AlignWithMargins := False;
+    scbxMain.VertScrollBar.Tracking := True;
+    scbxMain.VertScrollBar.Smooth := True;
+    scbxMain.VertScrollBar.Increment := 20;
+    scbxMain.HorzScrollBar.Visible := False;
+    scbxMain.BorderStyle := bsNone;
+    scbxMain.Color := $00F8F8F8;  // Cor de fundo cinza clarinho
+    scbxMain.ParentColor := False;
+  end;
+
+  // ⭐ Garantir que painéis superiores estão posicionados corretamente
+  if Assigned(pBusca) then
+  begin
+    pBusca.Align := alTop;
+    pBusca.Height := 60;
+  end;
+
+  if Assigned(pEndereco) then
+  begin
+    pEndereco.Align := alTop;
+    pEndereco.Height := 50;
+  end;
+
+  if Assigned(pCategorias) then
+  begin
+    pCategorias.Align := alTop;
+    pCategorias.Height := 80;
+  end;
+end;
+
+procedure TFormHomeC.FormResize(Sender: TObject);
+begin
+  // ⭐ Reajustar cards quando redimensionar a janela
+  AjustarScrollBox;
+end;
+
+procedure TFormHomeC.AjustarScrollBox;
+var
+  I: Integer;
+  Card: TCardComercioPanel;
+  NovaLargura: Integer;
+begin
+  if not Assigned(scbxMain) then
+    Exit;
+
+  // ⭐ Calcular nova largura dos cards
+  NovaLargura := scbxMain.ClientWidth - (FMargemLateral * 2) - 10;  // -10 para scrollbar
+
+  // ⭐ Ajustar largura de todos os cards existentes
+  for I := 0 to scbxMain.ComponentCount - 1 do
+  begin
+    if scbxMain.Components[I] is TCardComercioPanel then
+    begin
+      Card := TCardComercioPanel(scbxMain.Components[I]);
+      Card.Width := NovaLargura;
+    end;
+  end;
 end;
 
 procedure TFormHomeC.InicializarController;
@@ -295,6 +453,9 @@ end;
 
 procedure TFormHomeC.FormDestroy(Sender: TObject);
 begin
+  if Assigned(FBuscaTimer) then
+    FBuscaTimer.Free;
+
   if Assigned(FController) then
     FreeAndNil(FController);
 end;
@@ -333,12 +494,15 @@ procedure TFormHomeC.LimparCards;
 var
   I: Integer;
 begin
-  // Liberar todos os componentes filhos do ScrollBox
   for I := scbxMain.ComponentCount - 1 downto 0 do
   begin
     if scbxMain.Components[I] is TCardComercioPanel then
       scbxMain.Components[I].Free;
   end;
+
+  // ⭐ Resetar scroll para o topo
+  if Assigned(scbxMain) then
+    scbxMain.VertScrollBar.Position := 0;
 end;
 
 procedure TFormHomeC.PopularLista(ApenasAbertos: Boolean);
@@ -358,39 +522,49 @@ begin
   try
     LimparCards;
 
-    Comercios := FController.ListarComerciosDisponiveis(ApenasAbertos);
-
-    if not Assigned(Comercios) then
-    begin
-      ShowMessage('Erro ao buscar comércios do banco!');
-      Exit;
-    end;
-
+    Screen.Cursor := crHourGlass;
     try
-      if Comercios.Count = 0 then
+      Comercios := FController.ListarComerciosDisponiveis(ApenasAbertos);
+
+      if not Assigned(Comercios) then
       begin
-        ShowMessage('Nenhum comércio disponível no momento.');
+        ShowMessage('Erro ao buscar comércios do banco!');
         Exit;
       end;
 
-      Index := 0;
-      for Comercio in Comercios do
-      begin
-        if Assigned(Comercio) then
+      try
+        if Comercios.Count = 0 then
         begin
-          EstaAberto := ComercioEstaAberto(Comercio.HorarioAbertura, Comercio.HorarioFechamento);
-          AdicionarCardComercio(Comercio, EstaAberto, Index);
-          Inc(Index);
+          ExibirMensagemNenhumResultado;
+          Exit;
         end;
+
+        // ⭐ Adicionar cards
+        Index := 0;
+        for Comercio in Comercios do
+        begin
+          if Assigned(Comercio) then
+          begin
+            EstaAberto := ComercioEstaAberto(Comercio.HorarioAbertura, Comercio.HorarioFechamento);
+            AdicionarCardComercio(Comercio, EstaAberto, Index);
+            Inc(Index);
+          end;
+        end;
+
+      finally
+        Comercios.Free;
       end;
 
     finally
-      Comercios.Free;
+      Screen.Cursor := crDefault;
     end;
 
   except
     on E: Exception do
+    begin
+      Screen.Cursor := crDefault;
       ShowMessage('Erro ao popular lista: ' + E.Message);
+    end;
   end;
 end;
 
@@ -404,21 +578,12 @@ begin
   if not Assigned(Comercio) then
     Exit;
 
-  // PROTEÇÃO: Verificar valores seguros
-  if FCardsPerRow < 1 then
-    FCardsPerRow := 1;
-  if FCardHeight < 80 then
-    FCardHeight := 140;
-  if FCardSpacing < 5 then
-    FCardSpacing := 12;
+  // ⭐ Calcular largura disponível
+  LarguraCard := scbxMain.ClientWidth - (FMargemLateral * 2) - 10;  // -10 para scrollbar
+  if LarguraCard < 300 then
+    LarguraCard := 300;  // Largura mínima
 
-  // Calcular largura do card (ocupar toda a largura disponível com margens)
-  if FCardWidth = 0 then
-    LarguraCard := scbxMain.Width - (FCardSpacing * 2) - 20  // -20 para scrollbar
-  else
-    LarguraCard := FCardWidth;
-
-  // Posição Y (empilhado verticalmente)
+  // ⭐ Calcular posição Y (empilhado verticalmente)
   PosY := FCardSpacing + (Index * (FCardHeight + FCardSpacing));
 
   // Formatar dados
@@ -426,7 +591,7 @@ begin
              FormatDateTime('hh:nn', Comercio.HorarioFechamento);
   Taxa := FormatFloat('R$ #,##0.00', Comercio.TaxaEntregaBase);
 
-  // Criar o card
+  // ⭐ Criar o card
   Card := TCardComercioPanel.CreateCard(
     Self,
     Comercio.IdComercio,
@@ -439,33 +604,79 @@ begin
   );
 
   Card.Parent := scbxMain;
-  Card.Left := FCardSpacing;      // Margem esquerda
-  Card.Top := PosY;               // Posição vertical
-  Card.Width := LarguraCard;      // Largura total disponível
-  Card.Height := FCardHeight;     // Altura fixa
-  Card.Anchors := [akLeft, akTop, akRight];  // Ancorar para redimensionar com o form
+  Card.Left := FMargemLateral;
+  Card.Top := PosY;
+  Card.Width := LarguraCard;
+  Card.Height := FCardHeight;
+
+  // ⭐ NÃO usar Anchors aqui, vamos redimensionar manualmente no FormResize
 end;
 
 procedure TFormHomeC.AbrirCardapio(IdComercio: Integer; const NomeComercio: String);
 begin
   ShowMessage('Abrindo cardápio de: ' + NomeComercio + #13#10 +
               'ID: ' + IntToStr(IdComercio));
-
-  // Aqui você abrirá o form de cardápio
-  // FormCardapio := TFormCardapio.Create(Self);
-  // FormCardapio.IdComercio := IdComercio;
-  // FormCardapio.ShowModal;
 end;
+
+// ⭐⭐⭐ SISTEMA DE BUSCA ⭐⭐⭐
 
 procedure TFormHomeC.eBuscaMainChange(Sender: TObject);
 begin
   if not FInicializado then
     Exit;
 
+  FBuscaTimer.Enabled := False;
+
   if Trim(eBuscaMain.Text) = '' then
-    PopularLista(True)
+  begin
+    FUltimaBusca := '';
+    PopularLista(True);
+  end
   else
-    BuscarComercios(eBuscaMain.Text);
+  begin
+    FBuscaTimer.Enabled := True;
+  end;
+end;
+
+procedure TFormHomeC.OnBuscaTimer(Sender: TObject);
+var
+  TermoBusca: String;
+begin
+  FBuscaTimer.Enabled := False;
+
+  TermoBusca := Trim(eBuscaMain.Text);
+
+  if TermoBusca = FUltimaBusca then
+    Exit;
+
+  FUltimaBusca := TermoBusca;
+
+  if TermoBusca <> '' then
+    BuscarComercios(TermoBusca);
+end;
+
+procedure TFormHomeC.eBuscaMainKeyPress(Sender: TObject; var Key: Char);
+begin
+  if Key = #13 then
+  begin
+    Key := #0;
+    FBuscaTimer.Enabled := False;
+    if Trim(eBuscaMain.Text) <> '' then
+      BuscarComercios(Trim(eBuscaMain.Text));
+  end;
+end;
+
+procedure TFormHomeC.Image1Click(Sender: TObject);
+begin
+  if Trim(eBuscaMain.Text) <> '' then
+  begin
+    FBuscaTimer.Enabled := False;
+    BuscarComercios(Trim(eBuscaMain.Text));
+  end
+  else
+  begin
+    LimparBusca;
+  end;
 end;
 
 procedure TFormHomeC.BuscarComercios(const Termo: string);
@@ -478,31 +689,101 @@ begin
   if not FInicializado or not Assigned(FController) then
     Exit;
 
+  if Trim(Termo) = '' then
+  begin
+    PopularLista(True);
+    Exit;
+  end;
+
   try
     LimparCards;
 
-    Comercios := FController.BuscarComercios(Termo);
-
-    if Assigned(Comercios) then
+    Screen.Cursor := crHourGlass;
     try
-      Index := 0;
-      for Comercio in Comercios do
-      begin
-        if Assigned(Comercio) then
+      Comercios := FController.BuscarComercios(Termo);
+
+      if Assigned(Comercios) then
+      try
+        if Comercios.Count = 0 then
         begin
-          EstaAberto := ComercioEstaAberto(Comercio.HorarioAbertura, Comercio.HorarioFechamento);
-          AdicionarCardComercio(Comercio, EstaAberto, Index);
-          Inc(Index);
+          ExibirMensagemNenhumResultado;
+        end
+        else
+        begin
+          Index := 0;
+          for Comercio in Comercios do
+          begin
+            if Assigned(Comercio) then
+            begin
+              EstaAberto := ComercioEstaAberto(Comercio.HorarioAbertura, Comercio.HorarioFechamento);
+              AdicionarCardComercio(Comercio, EstaAberto, Index);
+              Inc(Index);
+            end;
+          end;
         end;
+      finally
+        Comercios.Free;
       end;
+
     finally
-      Comercios.Free;
+      Screen.Cursor := crDefault;
     end;
 
   except
     on E: Exception do
+    begin
+      Screen.Cursor := crDefault;
       ShowMessage('Erro ao buscar: ' + E.Message);
+    end;
   end;
+end;
+
+procedure TFormHomeC.LimparBusca;
+begin
+  eBuscaMain.Text := '';
+  FUltimaBusca := '';
+  FBuscaTimer.Enabled := False;
+  eBuscaMain.SetFocus;
+  PopularLista(True);
+end;
+
+procedure TFormHomeC.ExibirMensagemNenhumResultado;
+var
+  pMensagem: TPanel;
+  lblMensagem, lblDica: TLabel;
+begin
+  pMensagem := TPanel.Create(scbxMain);
+  pMensagem.Parent := scbxMain;
+  pMensagem.Left := FMargemLateral;
+  pMensagem.Top := FCardSpacing;
+  pMensagem.Width := scbxMain.ClientWidth - (FMargemLateral * 2) - 10;
+  pMensagem.Height := 180;
+  pMensagem.BevelOuter := bvNone;
+  pMensagem.Color := clWhite;
+  pMensagem.BorderStyle := bsSingle;
+
+  lblMensagem := TLabel.Create(pMensagem);
+  lblMensagem.Parent := pMensagem;
+  lblMensagem.Caption := '😕 Nenhum resultado encontrado';
+  lblMensagem.Font.Name := 'Segoe UI';
+  lblMensagem.Font.Size := 13;
+  lblMensagem.Font.Style := [fsBold];
+  lblMensagem.Font.Color := $00808080;
+  lblMensagem.Alignment := taCenter;
+  lblMensagem.Left := 0;
+  lblMensagem.Top := 50;
+  lblMensagem.Width := pMensagem.Width;
+
+  lblDica := TLabel.Create(pMensagem);
+  lblDica.Parent := pMensagem;
+  lblDica.Caption := 'Tente buscar por outro termo ou categoria';
+  lblDica.Font.Name := 'Segoe UI';
+  lblDica.Font.Size := 10;
+  lblDica.Font.Color := $00999999;
+  lblDica.Alignment := taCenter;
+  lblDica.Left := 0;
+  lblDica.Top := 85;
+  lblDica.Width := pMensagem.Width;
 end;
 
 procedure TFormHomeC.iButton1Click(Sender: TObject);
