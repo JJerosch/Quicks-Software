@@ -10,6 +10,7 @@ type
     FIdUser: Integer;
     FNomeComercio: string;
     FCategoria: string;
+    FIdCategoria: Integer; // ID da categoria do comércio
     FDescricao: string;
     FHorarioAbertura: TTime;  // MUDOU DE TDate PARA TTime
     FHorarioFechamento: TTime;  // MUDOU DE TDate PARA TTime
@@ -40,6 +41,7 @@ type
     property IdUser: Integer read FIdUser write FIdUser;
     property NomeComercio: string read FNomeComercio write FNomeComercio;
     property Categoria: string read FCategoria write FCategoria;
+    property IdCategoria: Integer read FIdCategoria write FIdCategoria;
     property Descricao: string read FDescricao write FDescricao;
     property HorarioAbertura: TTime read FHorarioAbertura write FHorarioAbertura;  // TTime
     property HorarioFechamento: TTime read FHorarioFechamento write FHorarioFechamento;  // TTime
@@ -95,6 +97,7 @@ begin
   FIdUser := 0;
   FNomeComercio := '';
   FCategoria := '';
+  FIdCategoria := 0;
   FDescricao := '';
   FTempoPreparoMedio := 0;
   FTaxaEntregaBase := 0;
