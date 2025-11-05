@@ -54,7 +54,6 @@ type
     pButtonAddEndereco: TPanel;
     cbEnderecos: TComboBox;
     scbxComercios: TScrollBox;
-    pgscrlCategorias: TPageScroller;
     tsLojas: TTabSheet;
     tsPerfil: TTabSheet;
     tsPedidos: TTabSheet;
@@ -95,9 +94,8 @@ type
     lblEnderecoAtualCarrinho: TLabel;
     pButtonAlterarEndereco: TPanel;
     pNumerosCarrinho: TPanel;
-    Label3: TLabel;
-    Label4: TLabel;
-    Image1: TImage;
+    lblItensCartCarrinho: TLabel;
+    iButtonBackCarrinho: TImage;
     pItensCarrinho: TPanel;
     pResumoPedido: TPanel;
     scbxCarrinhoItems: TScrollBox;
@@ -111,6 +109,26 @@ type
     lblFormaPDesc: TLabel;
     lblFormaPagamento: TLabel;
     pButtonFinalizarPedido: TPanel;
+    scbxMainPedidos: TScrollBox;
+    pHeaderPedidos: TPanel;
+    lblMeusPedidos: TLabel;
+    iButtonBackPedidos: TImage;
+    pFiltrosPedidos: TPanel;
+    lblFiltrosPedidos: TLabel;
+    pBTodosFiltrosPedidos: TPanel;
+    pBCanceladosFiltrosPedidos: TPanel;
+    pBPendentesPedidos: TPanel;
+    pBConcluidosPedidos: TPanel;
+    pMainPedidos: TPanel;
+    scbxPedidos: TScrollBox;
+    scbxCategorias: TScrollBox;
+    pHeaderMenuPrincipal: TPanel;
+    lblMenuPrincipal: TLabel;
+    lblCategorias: TLabel;
+    lblCommMenuPrincipal: TLabel;
+    pHeaderLojas: TPanel;
+    lblRestaurantesLojas: TLabel;
+    iButtonBackLojas: TImage;
 
     procedure iButton1Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
