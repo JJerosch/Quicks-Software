@@ -18,7 +18,7 @@ object FormHomeC: TFormHomeC
     Top = 0
     Width = 412
     Height = 644
-    ActivePage = tsCarrinho
+    ActivePage = tsPerfil
     Align = alClient
     TabOrder = 1
     object tsMain: TTabSheet
@@ -33,8 +33,6 @@ object FormHomeC: TFormHomeC
         Color = clWhite
         ParentBackground = False
         TabOrder = 0
-        ExplicitWidth = 412
-        ExplicitHeight = 644
         object scbxMain: TScrollBox
           Left = 0
           Top = 0
@@ -57,7 +55,6 @@ object FormHomeC: TFormHomeC
             Color = cl3DLight
             ParentBackground = False
             TabOrder = 0
-            ExplicitTop = 120
             object scbxCategorias: TScrollBox
               AlignWithMargins = True
               Left = 0
@@ -71,10 +68,6 @@ object FormHomeC: TFormHomeC
               Align = alClient
               BorderStyle = bsNone
               TabOrder = 0
-              ExplicitLeft = 3
-              ExplicitTop = 3
-              ExplicitWidth = 398
-              ExplicitHeight = 107
               object lblCategorias: TLabel
                 Left = 13
                 Top = 10
@@ -170,8 +163,6 @@ object FormHomeC: TFormHomeC
             BevelOuter = bvNone
             BorderStyle = bsNone
             TabOrder = 2
-            ExplicitTop = 307
-            ExplicitHeight = 313
             object lblCommMenuPrincipal: TLabel
               Left = 13
               Top = 12
@@ -249,7 +240,6 @@ object FormHomeC: TFormHomeC
           Align = alTop
           BevelOuter = bvNone
           TabOrder = 0
-          ExplicitTop = 8
           object scbxCategoriasL: TScrollBox
             AlignWithMargins = True
             Left = 0
@@ -291,8 +281,6 @@ object FormHomeC: TFormHomeC
           BevelOuter = bvNone
           BorderStyle = bsNone
           TabOrder = 1
-          ExplicitLeft = 3
-          ExplicitTop = 217
           object lblComerciosL: TLabel
             Left = 13
             Top = 22
@@ -322,7 +310,6 @@ object FormHomeC: TFormHomeC
           Color = clWhite
           ParentBackground = False
           TabOrder = 2
-          ExplicitTop = 35
           object lblRestaurantesLojas: TLabel
             Left = 53
             Top = 13
@@ -504,7 +491,6 @@ object FormHomeC: TFormHomeC
           Color = clWhite
           ParentBackground = False
           TabOrder = 0
-          ExplicitTop = 116
           object lblMeusPedidos: TLabel
             Left = 53
             Top = 13
@@ -665,7 +651,6 @@ object FormHomeC: TFormHomeC
           Color = clWhite
           ParentBackground = False
           TabOrder = 1
-          ExplicitTop = 188
           object lblFiltrosPedidos: TLabel
             Left = 13
             Top = 13
@@ -729,8 +714,6 @@ object FormHomeC: TFormHomeC
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 2
-          ExplicitTop = 116
-          ExplicitHeight = 450
           object scbxPedidos: TScrollBox
             AlignWithMargins = True
             Left = 0
@@ -775,7 +758,6 @@ object FormHomeC: TFormHomeC
           Color = clWindow
           ParentBackground = False
           TabOrder = 0
-          ExplicitTop = 65
           object lblEnderecoDesc: TLabel
             Left = 7
             Top = 5
@@ -837,7 +819,6 @@ object FormHomeC: TFormHomeC
           Color = clWhite
           ParentBackground = False
           TabOrder = 1
-          ExplicitTop = 26
           object lblItensCartCarrinho: TLabel
             Left = 57
             Top = 17
@@ -990,10 +971,6 @@ object FormHomeC: TFormHomeC
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 2
-          ExplicitLeft = 59
-          ExplicitTop = 153
-          ExplicitWidth = 185
-          ExplicitHeight = 41
           object scbxCarrinhoItems: TScrollBox
             Left = 0
             Top = 0
@@ -1004,9 +981,6 @@ object FormHomeC: TFormHomeC
             BevelOuter = bvNone
             BorderStyle = bsNone
             TabOrder = 0
-            ExplicitLeft = -3
-            ExplicitTop = 113
-            ExplicitHeight = 496
           end
         end
         object pResumoPedido: TPanel
@@ -1066,14 +1040,14 @@ object FormHomeC: TFormHomeC
           object lblTotalDesc: TLabel
             Left = 7
             Top = 77
-            Width = 29
+            Width = 28
             Height = 15
             Caption = 'Total:'
           end
           object lblTotal: TLabel
             Left = 333
             Top = 77
-            Width = 39
+            Width = 38
             Height = 15
             Caption = 'lblTotal'
           end
@@ -1140,8 +1114,6 @@ object FormHomeC: TFormHomeC
           Color = clCoral
           ParentBackground = False
           TabOrder = 0
-          ExplicitTop = 576
-          ExplicitWidth = 404
           object lblItensCart: TLabel
             Left = 15
             Top = 12
@@ -1152,7 +1124,7 @@ object FormHomeC: TFormHomeC
           object lblTotalCart: TLabel
             Left = 99
             Top = 12
-            Width = 61
+            Width = 60
             Height = 15
             Caption = 'lblTotalCart'
           end
@@ -1187,7 +1159,6 @@ object FormHomeC: TFormHomeC
           Align = alTop
           BevelOuter = bvNone
           TabOrder = 1
-          ExplicitTop = 8
           object scbxCategoriasProdutosComm: TScrollBox
             Left = 0
             Top = 0
@@ -1227,7 +1198,6 @@ object FormHomeC: TFormHomeC
           Align = alTop
           BevelOuter = bvNone
           TabOrder = 2
-          ExplicitTop = 36
           object lblNomeComm: TLabel
             Left = 43
             Top = 14
@@ -1430,9 +1400,6 @@ object FormHomeC: TFormHomeC
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 3
-          ExplicitTop = 254
-          ExplicitWidth = 404
-          ExplicitHeight = 187
           object scbxProdutosComm: TScrollBox
             Left = 0
             Top = 0

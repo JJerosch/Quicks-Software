@@ -22,13 +22,14 @@ type
     FCpfCnpjComercio: string;
 
     // Localização
+    FLogradouro: string;          // ← ADICIONE
     FEnderecoCompleto: string;
     FCEP: string;
     FNumero: string;
     FComplemento: string;
     FBairro: string;
     FCidade: string;
-    FEstado: string;
+    FUF: string;
 
     // Proprietário (vem do JOIN com usuarios)
     FNomeProprietario: string;
@@ -50,13 +51,14 @@ type
     property NPhoneComercio: string read FNPhoneComercio write FNPhoneComercio;
     property CpfCnpjComercio: string read FCpfCnpjComercio write FCpfCnpjComercio;
 
+    property Logradouro: string read FLogradouro write FLogradouro;                 // ← ADICIONE
     property EnderecoCompleto: string read FEnderecoCompleto write FEnderecoCompleto;
     property CEP: string read FCEP write FCEP;
     property Numero: string read FNumero write FNumero;
     property Complemento: string read FComplemento write FComplemento;
     property Bairro: string read FBairro write FBairro;
     property Cidade: string read FCidade write FCidade;
-    property Estado: string read FEstado write FEstado;
+    property UF: string read FUF write FUF;                                         // ← RENOMEIE
 
     property NomeProprietario: string read FNomeProprietario write FNomeProprietario;
     property EmailProprietario: string read FEmailProprietario write FEmailProprietario;
@@ -101,13 +103,14 @@ begin
   FEmailComercio := '';
   FNPhoneComercio := '';
   FCpfCnpjComercio := '';
+  FLogradouro := '';            // ← ADICIONE
   FEnderecoCompleto := '';
   FCEP := '';
   FNumero := '';
   FComplemento := '';
   FBairro := '';
   FCidade := '';
-  FEstado := '';
+  FUF := '';                    // ← RENOMEIE
   FNomeProprietario := '';
   FEmailProprietario := '';
   FCPFProprietario := '';

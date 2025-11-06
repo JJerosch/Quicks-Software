@@ -23,8 +23,8 @@ object DM: TDM
   end
   object DL: TFDPhysPgDriverLink
     VendorLib = 
-      'C:\Users\Jo'#227'o Jerosch\OneDrive\Documentos\Embarcadero\Studio\Pro' +
-      'jects\Quicks\lib\libpq.dll'
+      'C:\Users\pinto.7979\Documents\GitHub\Quicks-Software\lib\libpq.d' +
+      'll'
     Left = 432
     Top = 288
   end

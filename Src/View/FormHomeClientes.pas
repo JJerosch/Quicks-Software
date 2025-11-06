@@ -137,7 +137,7 @@ type
     procedure eBuscaMainChange(Sender: TObject);
     procedure eBuscaMainKeyPress(Sender: TObject; var Key: Char);
     procedure Image1Click(Sender: TObject);
-    procedure FormResize(Sender: TObject);  // ⭐ NOVO
+    procedure FormResize(Sender: TObject);
 
   private
     FIdUsuario: Integer;
@@ -359,12 +359,12 @@ begin
   eBuscaMain.Text := '';
   eBuscaMain.Font.Size := 10;
 
-  if Assigned(Image1) then
-  begin
-    Image1.Cursor := crHandPoint;
-    Image1.Hint := 'Clique para buscar';
-    Image1.ShowHint := True;
-  end;
+//  if Assigned(Image1) then
+//  begin
+//    Image1.Cursor := crHandPoint;
+//    Image1.Hint := 'Clique para buscar';
+//    Image1.ShowHint := True;
+//  end;
 
   // ⭐ Configurar layout
   ConfigurarLayout;

@@ -211,6 +211,7 @@ type
     ePrecoCustoUp: TEdit;
     Label38: TLabel;
     cbCategoriaProdutoUp: TComboBox;
+    cbEstadoCommDE: TComboBox;
 
     procedure iButton1Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -823,8 +824,10 @@ begin
   // Localização
   if Trim(Comercio.EnderecoCompleto) <> '' then
     lblENCommD.Caption := Comercio.EnderecoCompleto
+  else if Trim(Comercio.Logradouro) <> '' then
+    lblENCommD.Caption := Comercio.Logradouro + ', ' + Comercio.Bairro + ', ' + Comercio.Cidade + '/' + Comercio.UF
   else
-    lblENCommD.Caption := Comercio.Bairro + ', ' + Comercio.Cidade + '/' + Comercio.Estado;
+    lblENCommD.Caption := Comercio.Bairro + ', ' + Comercio.Cidade + '/' + Comercio.UF;
 
   if Trim(Comercio.Numero) <> '' then
     lblENCommD.Caption := lblENCommD.Caption + ', Nº ' + Comercio.Numero;
@@ -857,12 +860,16 @@ begin
 
   // Localização
   meCEPCommDE.Text := TComercioViewHelper.FormatarCEP(Comercio.CEP);
-  eEstadoCOmmDE.Text := Comercio.Estado;
-  eCidadeCommDE.Text := Comercio.Cidade;
-  eRuaCommDE.Text := Comercio.EnderecoCompleto;
+  eRuaCommDE.Text := Comercio.Logradouro;              // ← USA LOGRADOURO AGORA
   eNumeroEnderecoCommDE.Text := Comercio.Numero;
-  eBairroCommDE.Text := Comercio.Bairro;
   eComplementoCommDE.Text := Comercio.Complemento;
+  eBairroCommDE.Text := Comercio.Bairro;
+  eCidadeCommDE.Text := Comercio.Cidade;
+  // ⚠️ TROQUE eEstadoCOmmDE (Edit) por ComboUF (ComboBox):
+  // eEstadoCOmmDE.Text := Comercio.UF;  ← REMOVA ISSO
+  // ComboUF.Text := Comercio.UF;        ← ADICIONE ISSO (se tiver ComboUF)
+  // OU se for manter o Edit:
+  eEstadoCOmmDE.Text := Comercio.UF;  // ← Mas mude de Estado para UF
 
   // Proprietário
   eNPCommDE.Text := Comercio.NomeProprietario;
@@ -985,12 +992,19 @@ begin
 
       // Localização
       Comercio.CEP := TComercioViewHelper.RemoverMascaraCEP(meCEPCommDE.Text);
-      Comercio.Estado := Trim(eEstadoCOmmDE.Text);
-      Comercio.Cidade := Trim(eCidadeCommDE.Text);
-      Comercio.EnderecoCompleto := Trim(eRuaCommDE.Text);
+      Comercio.Logradouro := Trim(eRuaCommDE.Text);           // ← ADICIONE
       Comercio.Numero := Trim(eNumeroEnderecoCommDE.Text);
-      Comercio.Bairro := Trim(eBairroCommDE.Text);
       Comercio.Complemento := Trim(eComplementoCommDE.Text);
+      Comercio.Bairro := Trim(eBairroCommDE.Text);
+      Comercio.Cidade := Trim(eCidadeCommDE.Text);
+      if cbEstadoCommDE.ItemIndex = -1 then begin
+        ShowMessage('Selecione um estado e tente novamente.');
+        Exit;
+      end else begin
+      Comercio.UF := Trim(cbEstadoCommDE.Text);
+      end;                // ← RENOMEIE
+// EnderecoCompleto será preenchido AUTOMATICAMENTE pelo trigger do banco!
+// Então NÃO precisa preencher manualmente
 
       // Atualizar no banco
       if FComercioController.AtualizarComercio(Comercio) then

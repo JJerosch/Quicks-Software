@@ -752,7 +752,7 @@
             Top = 0
             Width = 1135
             Height = 611
-            ActivePage = tsAlterarSenha
+            ActivePage = tsEditar
             Align = alClient
             TabOrder = 0
             object tsVisualizar: TTabSheet
@@ -1603,7 +1603,7 @@
                     ParentFont = False
                   end
                   object Label19: TLabel
-                    Left = 16
+                    Left = 147
                     Top = 108
                     Width = 138
                     Height = 15
@@ -1617,14 +1617,14 @@
                   end
                   object eRuaCommDE: TEdit
                     Left = 46
-                    Top = 77
+                    Top = 76
                     Width = 95
                     Height = 23
                     TabOrder = 0
                   end
                   object eEstadoCOmmDE: TEdit
-                    Left = 198
-                    Top = 47
+                    Left = 334
+                    Top = 18
                     Width = 95
                     Height = 23
                     TabOrder = 1
@@ -1651,9 +1651,9 @@
                     TabOrder = 4
                   end
                   object eComplementoCommDE: TEdit
-                    Left = 161
+                    Left = 291
                     Top = 105
-                    Width = 131
+                    Width = 143
                     Height = 23
                     TabOrder = 5
                   end
@@ -1666,6 +1666,13 @@
                     MaxLength = 9
                     TabOrder = 6
                     Text = '     -   '
+                  end
+                  object cbEstadoCommDE: TComboBox
+                    Left = 198
+                    Top = 47
+                    Width = 95
+                    Height = 23
+                    TabOrder = 7
                   end
                 end
                 object pButtonAlterarSenhaE: TPanel

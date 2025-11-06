@@ -36,8 +36,8 @@ begin
     Qr.SQL.Add('  c.descricao, c.horario_abertura, c.horario_fechamento,');
     Qr.SQL.Add('  c.tempo_preparo_medio, c.taxa_entrega_base,');
     Qr.SQL.Add('  c.email_comercio, c.nphone_comercio, c.cpf_cnpj_comercio,');
-    Qr.SQL.Add('  c.endereco_completo, c.cep, c.numero, c.complemento,');
-    Qr.SQL.Add('  c.bairro, c.cidade, c.estado,');
+    Qr.SQL.Add('  c.logradouro, c.endereco_completo, c.cep, c.numero, c.complemento,');
+    Qr.SQL.Add('  c.bairro, c.cidade, c.uf,');
     Qr.SQL.Add('  u.nome_user, u.email_user, u.cpf_user, u.nphone_user');
     Qr.SQL.Add('FROM comercios c');
     Qr.SQL.Add('INNER JOIN usuarios u ON c.id_user = u.id_user');
@@ -63,13 +63,14 @@ begin
       Result.EmailComercio := Qr.FieldByName('email_comercio').AsString;
       Result.NPhoneComercio := Qr.FieldByName('nphone_comercio').AsString;
       Result.CpfCnpjComercio := Qr.FieldByName('cpf_cnpj_comercio').AsString;
+      Result.Logradouro := Qr.FieldByName('logradouro').AsString;
       Result.EnderecoCompleto := Qr.FieldByName('endereco_completo').AsString;
       Result.CEP := Qr.FieldByName('cep').AsString;
       Result.Numero := Qr.FieldByName('numero').AsString;
       Result.Complemento := Qr.FieldByName('complemento').AsString;
       Result.Bairro := Qr.FieldByName('bairro').AsString;
       Result.Cidade := Qr.FieldByName('cidade').AsString;
-      Result.Estado := Qr.FieldByName('estado').AsString;
+      Result.UF := Qr.FieldByName('uf').AsString;
       Result.NomeProprietario := Qr.FieldByName('nome_user').AsString;
       Result.EmailProprietario := Qr.FieldByName('email_user').AsString;
       Result.CPFProprietario := Qr.FieldByName('cpf_user').AsString;
@@ -124,7 +125,7 @@ begin
       Result.Complemento := Qr.FieldByName('complemento').AsString;
       Result.Bairro := Qr.FieldByName('bairro').AsString;
       Result.Cidade := Qr.FieldByName('cidade').AsString;
-      Result.Estado := Qr.FieldByName('estado').AsString;
+      Result.UF := Qr.FieldByName('uf').AsString;
       Result.NomeProprietario := Qr.FieldByName('nome_user').AsString;
       Result.EmailProprietario := Qr.FieldByName('email_user').AsString;
       Result.CPFProprietario := Qr.FieldByName('cpf_user').AsString;
@@ -154,13 +155,14 @@ begin
     Qr.SQL.Add('  taxa_entrega_base = :taxa_entrega_base,');
     Qr.SQL.Add('  email_comercio = :email_comercio,');
     Qr.SQL.Add('  nphone_comercio = :nphone_comercio,');
+    Qr.SQL.Add('  logradouro = :logradouro,');
     Qr.SQL.Add('  endereco_completo = :endereco_completo,');
     Qr.SQL.Add('  cep = :cep,');
     Qr.SQL.Add('  numero = :numero,');
     Qr.SQL.Add('  complemento = :complemento,');
     Qr.SQL.Add('  bairro = :bairro,');
     Qr.SQL.Add('  cidade = :cidade,');
-    Qr.SQL.Add('  estado = :estado');
+    Qr.SQL.Add('  uf = :uf');
     Qr.SQL.Add('WHERE id_comercio = :id_comercio');
 
     Qr.ParamByName('nome_comercio').AsString := Comercio.NomeComercio;
@@ -175,13 +177,14 @@ begin
     Qr.ParamByName('taxa_entrega_base').AsCurrency := Comercio.TaxaEntregaBase;
     Qr.ParamByName('email_comercio').AsString := Comercio.EmailComercio;
     Qr.ParamByName('nphone_comercio').AsString := Comercio.NPhoneComercio;
+    Qr.ParamByName('logradouro').AsString := Comercio.Logradouro;
     Qr.ParamByName('endereco_completo').AsString := Comercio.EnderecoCompleto;
     Qr.ParamByName('cep').AsString := Comercio.CEP;
     Qr.ParamByName('numero').AsString := Comercio.Numero;
     Qr.ParamByName('complemento').AsString := Comercio.Complemento;
     Qr.ParamByName('bairro').AsString := Comercio.Bairro;
     Qr.ParamByName('cidade').AsString := Comercio.Cidade;
-    Qr.ParamByName('estado').AsString := Comercio.Estado;
+    Qr.ParamByName('uf').AsString := Comercio.UF;
     Qr.ParamByName('id_comercio').AsInteger := Comercio.IdComercio;
 
     Qr.ExecSQL;
