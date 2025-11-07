@@ -10,8 +10,6 @@ uses
 type
   TFormHomeE = class(TForm)
     pHomeBackground: TPanel;
-    scbxMain: TScrollBox;
-    lvMain: TListView;
     pBusca: TPanel;
     Image1: TImage;
     eBuscaMain: TEdit;
@@ -24,6 +22,7 @@ type
     lblButton3: TLabel;
     lblButton4: TLabel;
     lblSair: TLabel;
+    scbxMain: TScrollBox;
     procedure iButton1MenuClick(Sender: TObject);
     procedure iButton1Click(Sender: TObject);
   private

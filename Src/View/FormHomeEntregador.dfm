@@ -21,28 +21,18 @@ object FormHomeE: TFormHomeE
     Color = clWhite
     ParentBackground = False
     TabOrder = 0
-    ExplicitLeft = 8
     object scbxMain: TScrollBox
       Left = 0
-      Top = 58
+      Top = 0
       Width = 412
-      Height = 586
+      Height = 644
       Margins.Left = 25
       Margins.Top = 15
       Margins.Right = 25
       Margins.Bottom = 10
-      VertScrollBar.Position = 24
+      Align = alClient
       BorderStyle = bsNone
-      TabOrder = 2
-      object lvMain: TListView
-        Left = 0
-        Top = -26
-        Width = 412
-        Height = 595
-        BorderStyle = bsNone
-        Columns = <>
-        TabOrder = 0
-      end
+      TabOrder = 1
     end
     object pBusca: TPanel
       Left = 0
@@ -512,17 +502,17 @@ object FormHomeE: TFormHomeE
           454E44AE426082}
         Proportional = True
       end
-    end
-    object eBuscaMain: TEdit
-      Left = 186
-      Top = 17
-      Width = 186
-      Height = 23
-      BevelInner = bvNone
-      BevelOuter = bvNone
-      TabOrder = 1
-      TextHint = 'Pesquise um restaurante ou loja ...'
-      StyleName = 'Windows'
+      object eBuscaMain: TEdit
+        Left = 186
+        Top = 17
+        Width = 186
+        Height = 23
+        BevelInner = bvNone
+        BevelOuter = bvNone
+        TabOrder = 0
+        TextHint = 'Pesquise um restaurante ou loja ...'
+        StyleName = 'Windows'
+      end
     end
   end
   object pBarraMenuLeft: TPanel

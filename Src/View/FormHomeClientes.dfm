@@ -460,6 +460,436 @@ object FormHomeC: TFormHomeC
     object tsPerfil: TTabSheet
       Caption = 'tsPerfil'
       ImageIndex = 2
+      object pcPerfil: TPageControl
+        AlignWithMargins = True
+        Left = 0
+        Top = 0
+        Width = 404
+        Height = 614
+        Margins.Left = 0
+        Margins.Top = 0
+        Margins.Right = 0
+        Margins.Bottom = 0
+        ActivePage = tsVisualizarPefil
+        Align = alClient
+        TabOrder = 0
+        object tsVisualizarPefil: TTabSheet
+          Caption = 'tsVisualizarPefil'
+          object scbxMainPerfil: TScrollBox
+            AlignWithMargins = True
+            Left = 0
+            Top = 0
+            Width = 396
+            Height = 584
+            Margins.Left = 0
+            Margins.Top = 0
+            Margins.Right = 0
+            Margins.Bottom = 0
+            Align = alClient
+            BevelOuter = bvNone
+            BorderStyle = bsNone
+            TabOrder = 0
+            ExplicitLeft = 78
+            ExplicitTop = 6
+            object pEnderecos: TPanel
+              AlignWithMargins = True
+              Left = 0
+              Top = 160
+              Width = 396
+              Height = 211
+              Margins.Left = 0
+              Margins.Top = 0
+              Margins.Right = 0
+              Margins.Bottom = 0
+              Align = alTop
+              BevelOuter = bvNone
+              Color = clWhite
+              ParentBackground = False
+              TabOrder = 0
+              object scbxEnderecos: TScrollBox
+                AlignWithMargins = True
+                Left = 0
+                Top = 0
+                Width = 396
+                Height = 211
+                Margins.Left = 0
+                Margins.Top = 0
+                Margins.Right = 0
+                Margins.Bottom = 0
+                Align = alClient
+                BevelOuter = bvNone
+                BorderStyle = bsNone
+                TabOrder = 0
+                ExplicitLeft = 9
+                ExplicitTop = 19
+                object lblEnderecos: TLabel
+                  Left = 9
+                  Top = 14
+                  Width = 71
+                  Height = 20
+                  Caption = 'Endere'#231'os'
+                  Font.Charset = DEFAULT_CHARSET
+                  Font.Color = clWindowText
+                  Font.Height = -15
+                  Font.Name = 'Segoe UI'
+                  Font.Style = [fsBold]
+                  ParentFont = False
+                end
+              end
+            end
+            object pHeaderPerfil: TPanel
+              AlignWithMargins = True
+              Left = 0
+              Top = 2
+              Width = 396
+              Height = 46
+              Margins.Left = 0
+              Margins.Top = 2
+              Margins.Right = 0
+              Margins.Bottom = 0
+              Align = alTop
+              BevelOuter = bvNone
+              Color = clWhite
+              ParentBackground = False
+              TabOrder = 1
+              ExplicitWidth = 379
+              object lblHeaderPerfil: TLabel
+                Left = 53
+                Top = 13
+                Width = 41
+                Height = 21
+                Caption = 'Perfil'
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -16
+                Font.Name = 'Segoe UI'
+                Font.Style = [fsBold]
+                ParentFont = False
+              end
+              object iButtonBackPerfil: TImage
+                Left = 7
+                Top = 8
+                Width = 30
+                Height = 30
+                Center = True
+                Picture.Data = {
+                  0954506E67496D61676589504E470D0A1A0A0000000D49484452000002000000
+                  02000806000000F478D4FA000000097048597300000B1300000B1301009A9C18
+                  000000B46558496649492A000800000006001201030001000000010000001A01
+                  050001000000560000001B010500010000005E00000028010300010000000200
+                  0000130203000100000001000000698704000100000066000000000000004800
+                  0000010000004800000001000000060000900700040000003032313001910700
+                  040000000102030000A00700040000003031303001A0030001000000FFFF0000
+                  02A00400010000000002000003A00400010000000002000000000000915FF1DA
+                  00000E164944415478DAEDD84DAA5CD715866119F7051983879096461008B89B
+                  99791499802160703ACA400CEE07627753B2742CE9DE5BB7FECE3E7BAFF53D0F
+                  2C8AEAEDDEF772BE790300C4F966F6030080E309000008240000209000008040
+                  0200000209000008240000209000008040020000020900000824000020900000
+                  8040020000020900000824000020900000804002000002090000082400002090
+                  0000804002000002090000082400002090000080400200000209000008240000
+                  2090000080400200000209000008240000209000008040020000020900000824
+                  0000209000008040020000020900000824000020900000804002000002090000
+                  0824000020900000804002000002090000082400002090000080400200000209
+                  0000082400002090000080400200000209000008240000209000008040020000
+                  0209000008240000209000008040020000020900000824000020900000804002
+                  0000020900000824000020900000804002000002090000082400002090000080
+                  4002000002090000082400002090000080400200000209000008240000209000
+                  0080400200000209000008240000209000008040020072BDFBF4FB7EF64380E3
+                  0900C8F461FC7F3CDDB7A7FBFBE9FE3DFB41C0B10400E4D9C6FFEDA7FFFF7B23
+                  02208E00802C4FC77F2302208C00801CE7C67F2302208800800C97C67F230220
+                  840080FEAE1DFF8D08800002007ABB75FC3722009A1300D0D7BDE3BF1101D098
+                  00809E1E1DFF8D0880A60400F4B3D7F86F4400342400A097BDC77F2302A01901
+                  007D8C1AFF8D0880460400F4307AFC3722009A100050DF51E3BF1101D0800080
+                  DA8E1EFF8D0880E20400D4356BFC3722000A130050D3ECF1DF8800284A00403D
+                  AB8CFF4604404102006A596DFC3722008A110050C7AAE3BF1101508800801A56
+                  1FFF8D0880220400ACAFCAF86F4400142000606DD5C67F230260710200D65575
+                  FC372200162600604DD5C77F230260510200D6D365FC372200162400602DDDC6
+                  7F230260310200D6D175FC372200162200600DDDC77F230260110200E64B19FF
+                  CDAFA7FBEE74BFCF7E082413003057DAF8FF76BAEF4FF7D3EC87403A0100F318
+                  7F601A010073187F602A0100C733FEC07402008E65FC81250800388EF1079621
+                  00E018C61F588A0080F18C3FB01C010063197F60490200C631FEC0B204008C61
+                  FC81A50900D89FF107962700605FC61F284100C07E8C3F508600807D187FA014
+                  01008F33FE403902001E63FC81920400DCCFF803650900B88FF1074A1300703B
+                  E30F942700E036C61F684100C0F58C3FD0860080EB187FA015010097197FA01D
+                  0100AF33FE404B0200CE33FE405B02005E66FC81D604003C67FC81F604007CCD
+                  F8031104007C66FC811802003E32FE40140100C61F0824004867FC8148028064
+                  C61F8825004865FC8168028044C61F8827004863FC01DE0800B2187F804F0400
+                  298C3FC0170400098C3FC0130280EE8C3FC00B04009D197F803304005D197F80
+                  5708003A32FE00170800BA31FE005710007462FC01AE2400E8C2F803DC4000D0
+                  81F107B89100A03AE30F7007014065C61FE04E0280AA8C3FC003040015197F80
+                  070900AA31FE003B10005462FC01762200A8C2F803EC48005081F107D8990060
+                  75C61F600001C0CA8C3FC020028055197F808104002B32FE008309005663FC01
+                  0E20005889F1073888006015C61FE040028015187F808309006633FE00130800
+                  6632FE009308006631FE001309006630FE009309008E66FC011620003892F107
+                  588400E028C61F6021028023187F80C508004633FE000B12008C64FC01162500
+                  18C5F8032C4C003082F107589C00606FC61FA00001C09E8C3F40110280BD187F
+                  804204007B30FE00C508001E65FC010A12003CC2F803142500B897F107284C00
+                  700FE30F509C00E056C61FA00101C02D8C3F401302806B197F80460400D730FE
+                  00CD08002E31FE000D09005E63FC019A12009C63FC011A1300BCC4F803342700
+                  78CAF8030410007CC9F8038410006C8C3F401001C007C61F208C00C0F8030412
+                  00D98C3F40280190CBF803041300998C3F40380190C7F8032000C2187F00FE20
+                  0072187F00FE240032187F00BE2200FA33FE003C23007A33FE00BC4800F465FC
+                  01384B00F464FC01789500E8C7F803709100E8C5F803701501D087F107E06A02
+                  A007E30FC04D04407DC61F809B0980DA8C3F0077110075197F00EE26006A32FE
+                  003C4400D463FC01789800A8C5F803B00B015047DAF87FF0C3E97E9EFD0860BA
+                  5F4EF77EF623BA110035248E3FC0E69FA7FBC7EC47742300D667FC8174026000
+                  01B036E30F2000861000EB32FE001F09800104C09A8C3FC06702600001B01EE3
+                  0FF03501308000588BF107784E000C2000D661FC015E26000610006B30FE00E7
+                  09800104C07CC61FE075026000013097F107B84C000C2000E631FE00D7110003
+                  0880398C3FC0F504C00002E078C61FE03602600001702CE30F703B0130800038
+                  8EF107B88F001840001CC3F803DC4F000C2000C633FE008F1100030880B18C3F
+                  C0E304C00002601CE30FB00F0130800018C3F803EC47000C2000C6F8EBE9FE75
+                  BABFCC7E08400302600001308E0800D887001840008C2502001E2700061000E3
+                  890080C708800104C0314400C0FD04C00002E0382200E03E02600001702C1100
+                  703B01308000389E0800B88D00184000CC210200AE2700061000F3880080EB08
+                  800104C05C2200E03201308000984F0400BC4E000C2000D6200200CE13000308
+                  80758800809709800104C05A4400C07302600001B01E1100F035013080005893
+                  0800F84C000C2000D62502003E1200030880B589000001308400589F0800D209
+                  800104400D220048260006100075BC3BDD8FA77B3BFB2107FAE1743FCF7E0430
+                  DD2FA77B3FFB11DD08805AD2BE04FC76BAEF4FF7D3EC8700742300EA1101003C
+                  4C00D4240200788800A84B0400703701509B0800E02E02A03E1100C0CD04400F
+                  2200809B08803E440000571300BD880000AE2200FA1101005C24007A120100BC
+                  4A00F4250200384B00F4260200789100E84F0400F08C00C8200200F88A00C821
+                  0200F89300C8220200F88300C82302001000A14400403801904B0400041300D9
+                  4400402801800800082400F84004008411006C4400401001C0974400400801C0
+                  532200208000E0252200A03901C0392200A03101C06B4400405302804B440040
+                  4302806B880080660400D71201008D08006E2102009A1000DC4A0400342000B8
+                  870800284E00702F1100509800E0112200A02801C0A34400404102803D880080
+                  6204007B110100850800F62402008A1000EC4D0400142000184104002C4E0030
+                  8A080058980060241100B02801C06822006041028023880080C508008E220200
+                  16220038920800588400E068220060010280194400C0640280594400C0440280
+                  994400C0240280D94400C004028015880080830900562102000E240058890800
+                  38880060352200E000028015890080C10400AB12010003090056260200061100
+                  AC4E04000C2000A8400400EC4C0050850800D89100A0121100B0130140352200
+                  600702808A4400C0830400558900800708002A13010077120054270200EE2000
+                  E8400400DC4800D0850800B88100A013110070250140372200E00A02808E4400
+                  C0050280AE4400C02B04009D890080330400DD89008017080012880080270400
+                  294400C0170400494400C0270280342200E08D0020930800E20900528900209A
+                  0020990800620900D28900209200001100041200F0910800A20800F84C040031
+                  04007C4D04001104003C270280F60400BC4C0400AD0900384F04006D0900789D
+                  08005A120070990800DA1100701D1100B42200E07A2200684300C06D4400D082
+                  0080DB8900A03C0100F7110140690200EE270280B204003C460400250900789C
+                  0800CA1100B00F1100942200603F2200284300C0BE440050820080FD89006079
+                  0200C61001C0D204008C230280650900184B04004B1200309E0800962300E018
+                  2200588A0080E38800601902008E250280250800389E0800A6130030870800A6
+                  1200308F0800A6110030970800A6100030DFBBD3FD78BAB7B31F72905F4FF7DD
+                  E97E9FFD10482600600D295F02FE7BBABF9DEE3FB31F02E90400ACA37B04187F
+                  58880080B5748D00E30F8B1100B09E6E1160FC61410200D6D425028C3F2C4A00
+                  C0BAAA4780F187850900585BD50830FEB0380100EBAB1601C61F0A1000504395
+                  0830FE508400803A568F00E30F850800A865D50830FE508C00807A568B00E30F
+                  050900A869950830FE50940080BA664780F187C20400D4362B028C3F142700A0
+                  BEA323C0F8430302007A382A028C3F342100A08FD11160FCA1110100BD8C8A00
+                  E30FCD0800E867EF0830FED09000809EF68A00E30F4D0900E8EBD10830FED098
+                  0080DEEE8D00E30FCD0900E8EFD60830FE10400040866B23C0F843080100392E
+                  4580F187200200B29C8B00E30F610400E4791A01C61F020900C8B445C0B76F8C
+                  3F44120090EBDDA7DFF7B31F021C4F0000402001000081040000041200001048
+                  0000402001000081040000041200001048000040200100008104000004120000
+                  1048000040200100008104000004120000104800004020010000810400000412
+                  0000104800004020010000810400000412000010480000402001000081040000
+                  0412000010480000402001000081040000041200001048000040200100008104
+                  0000041200001048000040200100008104000004120000104800004020010000
+                  8104000004120000104800004020010000810400000412000010480000402001
+                  0000810400000412000010480000402001000081040000041200001048000040
+                  2001000081040000041200001048000040200100008104000004120000104800
+                  0040200100008104000004120000104800004020010000810400000412000010
+                  4800004020010000810400000412000010480000402001000081040000041200
+                  0010480000402001000081040000041200001048000040A0FF030801D62EB80B
+                  0D7D0000000049454E44AE426082}
+                Proportional = True
+              end
+              object pButtonAlterarSenhaV: TPanel
+                Left = 302
+                Top = 11
+                Width = 86
+                Height = 26
+                BevelOuter = bvNone
+                Caption = 'Alterar Senha'
+                Color = clCoral
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWhite
+                Font.Height = -12
+                Font.Name = 'Segoe UI'
+                Font.Style = [fsBold]
+                ParentBackground = False
+                ParentFont = False
+                TabOrder = 0
+              end
+            end
+            object pInfoVisualizar: TPanel
+              AlignWithMargins = True
+              Left = 0
+              Top = 48
+              Width = 396
+              Height = 112
+              Margins.Left = 0
+              Margins.Top = 0
+              Margins.Right = 0
+              Margins.Bottom = 0
+              Align = alTop
+              BevelOuter = bvNone
+              Color = clWhite
+              ParentBackground = False
+              TabOrder = 2
+              object scbxInfoVisualizar: TScrollBox
+                AlignWithMargins = True
+                Left = 0
+                Top = 0
+                Width = 396
+                Height = 112
+                Margins.Left = 0
+                Margins.Top = 0
+                Margins.Right = 0
+                Margins.Bottom = 0
+                Align = alClient
+                BevelOuter = bvNone
+                BorderStyle = bsNone
+                TabOrder = 0
+                ExplicitHeight = 137
+                object lblDados: TLabel
+                  Left = 9
+                  Top = 8
+                  Width = 107
+                  Height = 20
+                  Caption = 'Dados Pessoais'
+                  Font.Charset = DEFAULT_CHARSET
+                  Font.Color = clWindowText
+                  Font.Height = -15
+                  Font.Name = 'Segoe UI'
+                  Font.Style = [fsBold]
+                  ParentFont = False
+                end
+                object lblNomeV: TLabel
+                  Left = 9
+                  Top = 35
+                  Width = 36
+                  Height = 15
+                  Caption = 'Nome:'
+                end
+                object lblNomeDV: TLabel
+                  Left = 63
+                  Top = 35
+                  Width = 61
+                  Height = 15
+                  Caption = 'lblNomeDV'
+                end
+                object lblCPFV: TLabel
+                  Left = 9
+                  Top = 55
+                  Width = 24
+                  Height = 15
+                  Caption = 'CPF:'
+                end
+                object lblTelefoneV: TLabel
+                  Left = 9
+                  Top = 75
+                  Width = 48
+                  Height = 15
+                  Caption = 'Telefone:'
+                end
+                object lblCPFDV: TLabel
+                  Left = 63
+                  Top = 55
+                  Width = 49
+                  Height = 15
+                  Caption = 'lblCPFDV'
+                end
+                object lblTelefoneDV: TLabel
+                  Left = 63
+                  Top = 76
+                  Width = 73
+                  Height = 15
+                  Caption = 'lblTelefoneDV'
+                end
+                object lblEmailV: TLabel
+                  Left = 9
+                  Top = 96
+                  Width = 32
+                  Height = 15
+                  Caption = 'Email:'
+                end
+                object lblEmailDV: TLabel
+                  Left = 63
+                  Top = 96
+                  Width = 57
+                  Height = 15
+                  Caption = 'lblEmailDV'
+                end
+              end
+              object pButtonEditar: TPanel
+                Left = 302
+                Top = 17
+                Width = 86
+                Height = 24
+                BevelOuter = bvNone
+                Caption = 'Editar'
+                Color = clCoral
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWhite
+                Font.Height = -12
+                Font.Name = 'Segoe UI'
+                Font.Style = [fsBold]
+                ParentBackground = False
+                ParentFont = False
+                TabOrder = 1
+              end
+            end
+            object pPagamentos: TPanel
+              AlignWithMargins = True
+              Left = 0
+              Top = 371
+              Width = 396
+              Height = 213
+              Margins.Left = 0
+              Margins.Top = 0
+              Margins.Right = 0
+              Margins.Bottom = 0
+              Align = alClient
+              BevelOuter = bvNone
+              Color = clWhite
+              ParentBackground = False
+              TabOrder = 3
+              object scbxPagamentos: TScrollBox
+                AlignWithMargins = True
+                Left = 0
+                Top = 0
+                Width = 396
+                Height = 213
+                Margins.Left = 0
+                Margins.Top = 0
+                Margins.Right = 0
+                Margins.Bottom = 0
+                Align = alClient
+                BevelOuter = bvNone
+                BorderStyle = bsNone
+                TabOrder = 0
+                ExplicitTop = 15
+                ExplicitHeight = 137
+                object lblFormasPagamento: TLabel
+                  Left = 9
+                  Top = 22
+                  Width = 157
+                  Height = 20
+                  Caption = 'Formas de Pagamento'
+                  Font.Charset = DEFAULT_CHARSET
+                  Font.Color = clWindowText
+                  Font.Height = -15
+                  Font.Name = 'Segoe UI'
+                  Font.Style = [fsBold]
+                  ParentFont = False
+                end
+              end
+            end
+          end
+        end
+        object tsEditarPerfil: TTabSheet
+          Caption = 'tsEditarPerfil'
+          ImageIndex = 1
+        end
+        object tsAtualizarSenhaPerfil: TTabSheet
+          Caption = 'tsAtualizarSenhaPerfil'
+          ImageIndex = 2
+        end
+      end
     end
     object tsPedidos: TTabSheet
       Caption = 'tsPedidos'
@@ -1040,14 +1470,14 @@ object FormHomeC: TFormHomeC
           object lblTotalDesc: TLabel
             Left = 7
             Top = 77
-            Width = 28
+            Width = 29
             Height = 15
             Caption = 'Total:'
           end
           object lblTotal: TLabel
             Left = 333
             Top = 77
-            Width = 38
+            Width = 39
             Height = 15
             Caption = 'lblTotal'
           end
@@ -1124,7 +1554,7 @@ object FormHomeC: TFormHomeC
           object lblTotalCart: TLabel
             Left = 99
             Top = 12
-            Width = 60
+            Width = 61
             Height = 15
             Caption = 'lblTotalCart'
           end
