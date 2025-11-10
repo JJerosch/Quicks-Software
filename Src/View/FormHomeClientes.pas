@@ -3,12 +3,14 @@
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.StrUtils, System.Variants,
-  System.Classes, Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
-  Vcl.ExtCtrls, Vcl.Menus, Vcl.StdCtrls, Vcl.Imaging.pngimage, Vcl.ComCtrls,
-  Data.DB, FireDAC.Comp.Client, FireDAC.Comp.DataSet, uConn,
-  System.Generics.Collections, ComercioModel, ClienteController,
-  System.DateUtils, Vcl.Mask;
+  Winapi.Windows, Winapi.Messages,
+  System.SysUtils, System.StrUtils, System.Variants, System.Classes, System.Types,
+  System.Generics.Collections, System.DateUtils,
+  Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls,
+  Vcl.Menus, Vcl.StdCtrls, Vcl.Imaging.pngimage, Vcl.ComCtrls, Vcl.Mask,
+  Data.DB,
+  FireDAC.Comp.Client, FireDAC.Comp.DataSet, FireDAC.Stan.Param, FireDAC.Stan.Intf,
+  uConn, ComercioModel, ClienteController, CategoriaHelper;
 
 type
   TCardComercioPanel = class(TPanel)
@@ -53,7 +55,6 @@ type
     lblEnderecoAtual: TLabel;
     pButtonAddEndereco: TPanel;
     cbEnderecos: TComboBox;
-    scbxComercios: TScrollBox;
     tsLojas: TTabSheet;
     tsPerfil: TTabSheet;
     tsPedidos: TTabSheet;
@@ -121,11 +122,8 @@ type
     pBConcluidosPedidos: TPanel;
     pMainPedidos: TPanel;
     scbxPedidos: TScrollBox;
-    scbxCategorias: TScrollBox;
     pHeaderMenuPrincipal: TPanel;
     lblMenuPrincipal: TLabel;
-    lblCategorias: TLabel;
-    lblCommMenuPrincipal: TLabel;
     pHeaderLojas: TPanel;
     lblRestaurantesLojas: TLabel;
     iButtonBackLojas: TImage;
@@ -228,6 +226,11 @@ type
     pButtonAlterarSenhaPagamentosE: TPanel;
     lblAlterarSenhaTitle: TLabel;
     iButtonBackAlterarSenha: TImage;
+    lblCategorias: TLabel;
+    scbxCategorias: TScrollBox;
+    pRestaurantes: TPanel;
+    lblRestaurantes: TLabel;
+    scbxRestaurantes: TScrollBox;
 
     procedure iButton1Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -235,7 +238,6 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure eBuscaMainChange(Sender: TObject);
     procedure eBuscaMainKeyPress(Sender: TObject; var Key: Char);
-    procedure Image1Click(Sender: TObject);
     procedure FormResize(Sender: TObject);
 
   private
@@ -245,24 +247,27 @@ type
     FInicializado: Boolean;
     FBuscaTimer: TTimer;
     FUltimaBusca: String;
+    FCategoriaSelecionada: String; // ⭐ NOVO - controla filtro
 
-    // ⭐ Configurações de layout
+    // Configurações de layout
     FCardHeight: Integer;
     FCardSpacing: Integer;
     FMargemLateral: Integer;
 
     procedure InicializarController;
-    procedure PopularLista(ApenasAbertos: Boolean);
+    procedure PopularCategorias; // ⭐ NOVO
+    procedure PopularRestaurantes(const Categoria: String = ''); // ⭐ ATUALIZADO
     procedure BuscarComercios(const Termo: string);
     function ComercioEstaAberto(HorarioAbertura, HorarioFechamento: TTime): Boolean;
-    procedure LimparCards;
+    procedure LimparCardsRestaurantes; // ⭐ RENOMEADO
     procedure AdicionarCardComercio(Comercio: TComercio; EstaAberto: Boolean; Index: Integer);
     procedure AbrirCardapio(IdComercio: Integer; const NomeComercio: String);
     procedure OnBuscaTimer(Sender: TObject);
     procedure LimparBusca;
     procedure ExibirMensagemNenhumResultado;
-    procedure ConfigurarLayout;  // ⭐ NOVO
-    procedure AjustarScrollBox;  // ⭐ NOVO
+    procedure ConfigurarLayout;
+    procedure AjustarScrollBox;
+    procedure OnCategoriaClick(const Categoria: string); // ⭐ NOVO
 
   public
     property IdUsuario: Integer read FIdUsuario write FIdUsuario;
@@ -295,7 +300,7 @@ begin
   FEstaAberto := EstaAberto;
   FDescricao := Descricao;
 
-  // ⭐ Configurações do painel
+  // Configurações do painel
   Self.ParentBackground := False;
   Self.BevelOuter := bvNone;
   Self.Color := clWhite;
@@ -424,13 +429,11 @@ end;
 
 procedure TCardComercioPanel.PanelMouseEnter(Sender: TObject);
 begin
-  // ⭐ Efeito hover
   Self.Color := $00F5F5F5;  // Cinza bem claro
 end;
 
 procedure TCardComercioPanel.PanelMouseLeave(Sender: TObject);
 begin
-  // ⭐ Voltar ao normal
   Self.Color := clWhite;
 end;
 
@@ -441,11 +444,12 @@ begin
   FInicializado := False;
   FController := nil;
   FUltimaBusca := '';
+  FCategoriaSelecionada := 'Todos'; // ⭐ NOVO - inicia com "Todos"
 
-  // ⭐ Configurações de layout
-  FCardHeight := 145;       // Altura de cada card
-  FCardSpacing := 15;       // Espaço entre cards
-  FMargemLateral := 20;     // Margem lateral
+  // Configurações de layout
+  FCardHeight := 145;
+  FCardSpacing := 15;
+  FMargemLateral := 20;
 
   // Timer para debounce
   FBuscaTimer := TTimer.Create(Self);
@@ -458,38 +462,50 @@ begin
   eBuscaMain.Text := '';
   eBuscaMain.Font.Size := 10;
 
-//  if Assigned(Image1) then
-//  begin
-//    Image1.Cursor := crHandPoint;
-//    Image1.Hint := 'Clique para buscar';
-//    Image1.ShowHint := True;
-//  end;
-
-  // ⭐ Configurar layout
+  // Configurar layout
   ConfigurarLayout;
-
-  // Esconder ListView
-//  if Assigned(lvMain) then
-//    lvMain.Visible := False;
 end;
 
 procedure TFormHomeC.ConfigurarLayout;
 begin
-  // ⭐ Configurar ScrollBox
+  // Configurar ScrollBox principal
   if Assigned(scbxMain) then
   begin
-    scbxMain.Align := alClient;  // Ocupar todo o espaço disponível
+    scbxMain.Align := alClient;
     scbxMain.AlignWithMargins := False;
     scbxMain.VertScrollBar.Tracking := True;
     scbxMain.VertScrollBar.Smooth := True;
     scbxMain.VertScrollBar.Increment := 20;
     scbxMain.HorzScrollBar.Visible := False;
     scbxMain.BorderStyle := bsNone;
-    scbxMain.Color := $00F8F8F8;  // Cor de fundo cinza clarinho
+    scbxMain.Color := $00F8F8F8;
     scbxMain.ParentColor := False;
   end;
 
-  // ⭐ Garantir que painéis superiores estão posicionados corretamente
+  // ⭐ Configurar ScrollBox de CATEGORIAS (horizontal)
+  if Assigned(scbxCategorias) then
+  begin
+    scbxCategorias.HorzScrollBar.Visible := True;
+    scbxCategorias.HorzScrollBar.Tracking := True;
+    scbxCategorias.HorzScrollBar.Smooth := True;
+    scbxCategorias.VertScrollBar.Visible := False;
+    scbxCategorias.BorderStyle := bsNone;
+    scbxCategorias.Color := clWhite;
+  end;
+
+  // ⭐ Configurar ScrollBox de RESTAURANTES (vertical)
+  if Assigned(scbxRestaurantes) then
+  begin
+    scbxRestaurantes.VertScrollBar.Visible := True;
+    scbxRestaurantes.VertScrollBar.Tracking := True;
+    scbxRestaurantes.VertScrollBar.Smooth := True;
+    scbxRestaurantes.VertScrollBar.Increment := 20;
+    scbxRestaurantes.HorzScrollBar.Visible := False;
+    scbxRestaurantes.BorderStyle := bsNone;
+    scbxRestaurantes.Color := $00F8F8F8;
+  end;
+
+  // Garantir que painéis superiores estão posicionados
   if Assigned(pBusca) then
   begin
     pBusca.Align := alTop;
@@ -505,13 +521,17 @@ begin
   if Assigned(pCategorias) then
   begin
     pCategorias.Align := alTop;
-    pCategorias.Height := 80;
+    pCategorias.Height := 70; // Altura suficiente para os chips
+  end;
+
+  if Assigned(pRestaurantes) then
+  begin
+    pRestaurantes.Align := alClient; // Ocupa o restante do espaço
   end;
 end;
 
 procedure TFormHomeC.FormResize(Sender: TObject);
 begin
-  // ⭐ Reajustar cards quando redimensionar a janela
   AjustarScrollBox;
 end;
 
@@ -521,18 +541,18 @@ var
   Card: TCardComercioPanel;
   NovaLargura: Integer;
 begin
-  if not Assigned(scbxMain) then
+  if not Assigned(scbxRestaurantes) then
     Exit;
 
-  // ⭐ Calcular nova largura dos cards
-  NovaLargura := scbxMain.ClientWidth - (FMargemLateral * 2) - 10;  // -10 para scrollbar
+  // Calcular nova largura dos cards
+  NovaLargura := scbxRestaurantes.ClientWidth - (FMargemLateral * 2) - 10;
 
-  // ⭐ Ajustar largura de todos os cards existentes
-  for I := 0 to scbxMain.ComponentCount - 1 do
+  // Ajustar largura de todos os cards existentes
+  for I := 0 to scbxRestaurantes.ControlCount - 1 do
   begin
-    if scbxMain.Components[I] is TCardComercioPanel then
+    if scbxRestaurantes.Controls[I] is TCardComercioPanel then
     begin
-      Card := TCardComercioPanel(scbxMain.Components[I]);
+      Card := TCardComercioPanel(scbxRestaurantes.Controls[I]);
       Card.Width := NovaLargura;
     end;
   end;
@@ -588,41 +608,52 @@ begin
   end;
 
   try
-    PopularLista(True);
+    // ⭐ Popular categorias primeiro
+    PopularCategorias;
+
+    // ⭐ Depois popular restaurantes
+    PopularRestaurantes('Todos');
   except
     on E: Exception do
-      ShowMessage('Erro ao carregar comércios: ' + E.Message);
+      ShowMessage('Erro ao carregar dados: ' + E.Message);
   end;
 end;
 
-function TFormHomeC.ComercioEstaAberto(HorarioAbertura, HorarioFechamento: TTime): Boolean;
-var
-  HoraAtual: TTime;
+// ⭐⭐⭐ NOVO - Popular chips de categorias
+procedure TFormHomeC.PopularCategorias;
 begin
-  HoraAtual := Time;
-
-  if HorarioFechamento > HorarioAbertura then
-    Result := (HoraAtual >= HorarioAbertura) and (HoraAtual <= HorarioFechamento)
-  else
-    Result := (HoraAtual >= HorarioAbertura) or (HoraAtual <= HorarioFechamento);
-end;
-
-procedure TFormHomeC.LimparCards;
-var
-  I: Integer;
-begin
-  for I := scbxMain.ComponentCount - 1 downto 0 do
+  if not Assigned(scbxCategorias) then
   begin
-    if scbxMain.Components[I] is TCardComercioPanel then
-      scbxMain.Components[I].Free;
+    ShowMessage('Erro: scbxCategorias não existe no formulário!');
+    Exit;
   end;
 
-  // ⭐ Resetar scroll para o topo
-  if Assigned(scbxMain) then
-    scbxMain.VertScrollBar.Position := 0;
+  try
+    TCategoriaHelper.PopularScrollBoxCategorias(scbxCategorias, OnCategoriaClick);
+  except
+    on E: Exception do
+    begin
+      ShowMessage('Erro ao carregar categorias: ' + E.Message + #13#10 +
+                  'Verifique se o banco de dados está conectado.');
+    end;
+  end;
 end;
 
-procedure TFormHomeC.PopularLista(ApenasAbertos: Boolean);
+// ⭐⭐⭐ NOVO - Evento quando clica em uma categoria
+procedure TFormHomeC.OnCategoriaClick(const Categoria: string);
+begin
+  FCategoriaSelecionada := Categoria;
+
+  // Atualizar seleção visual
+  TCategoriaHelper.DeselecionarTodas(scbxCategorias);
+  TCategoriaHelper.SelecionarCategoria(scbxCategorias, Categoria);
+
+  // Recarregar restaurantes com filtro
+  PopularRestaurantes(Categoria);
+end;
+
+// ⭐⭐⭐ ATUALIZADO - Popular restaurantes com filtro de categoria
+procedure TFormHomeC.PopularRestaurantes(const Categoria: String = '');
 var
   Comercios: TObjectList<TComercio>;
   Comercio: TComercio;
@@ -637,11 +668,12 @@ begin
   end;
 
   try
-    LimparCards;
+    LimparCardsRestaurantes;
 
     Screen.Cursor := crHourGlass;
     try
-      Comercios := FController.ListarComerciosDisponiveis(ApenasAbertos);
+      // Buscar todos os comércios
+      Comercios := FController.ListarComerciosDisponiveis(True);
 
       if not Assigned(Comercios) then
       begin
@@ -656,17 +688,25 @@ begin
           Exit;
         end;
 
-        // ⭐ Adicionar cards
         Index := 0;
         for Comercio in Comercios do
         begin
           if Assigned(Comercio) then
           begin
-            EstaAberto := ComercioEstaAberto(Comercio.HorarioAbertura, Comercio.HorarioFechamento);
-            AdicionarCardComercio(Comercio, EstaAberto, Index);
-            Inc(Index);
+            // ⭐ Aplicar filtro de categoria
+            if (Categoria = 'Todos') or (Categoria = '') or
+               (AnsiUpperCase(Comercio.Categoria) = AnsiUpperCase(Categoria)) then
+            begin
+              EstaAberto := ComercioEstaAberto(Comercio.HorarioAbertura, Comercio.HorarioFechamento);
+              AdicionarCardComercio(Comercio, EstaAberto, Index);
+              Inc(Index);
+            end;
           end;
         end;
+
+        // Se nenhum restaurante foi adicionado após o filtro
+        if Index = 0 then
+          ExibirMensagemNenhumResultado;
 
       finally
         Comercios.Free;
@@ -685,6 +725,33 @@ begin
   end;
 end;
 
+function TFormHomeC.ComercioEstaAberto(HorarioAbertura, HorarioFechamento: TTime): Boolean;
+var
+  HoraAtual: TTime;
+begin
+  HoraAtual := Time;
+
+  if HorarioFechamento > HorarioAbertura then
+    Result := (HoraAtual >= HorarioAbertura) and (HoraAtual <= HorarioFechamento)
+  else
+    Result := (HoraAtual >= HorarioAbertura) or (HoraAtual <= HorarioFechamento);
+end;
+
+// ⭐ RENOMEADO para deixar claro que limpa cards de restaurantes
+procedure TFormHomeC.LimparCardsRestaurantes;
+var
+  I: Integer;
+begin
+  for I := scbxRestaurantes.ControlCount - 1 downto 0 do
+  begin
+    if scbxRestaurantes.Controls[I] is TCardComercioPanel then
+      scbxRestaurantes.Controls[I].Free;
+  end;
+
+  if Assigned(scbxRestaurantes) then
+    scbxRestaurantes.VertScrollBar.Position := 0;
+end;
+
 procedure TFormHomeC.AdicionarCardComercio(Comercio: TComercio; EstaAberto: Boolean; Index: Integer);
 var
   Card: TCardComercioPanel;
@@ -695,12 +762,12 @@ begin
   if not Assigned(Comercio) then
     Exit;
 
-  // ⭐ Calcular largura disponível
-  LarguraCard := scbxMain.ClientWidth - (FMargemLateral * 2) - 10;  // -10 para scrollbar
+  // Calcular largura disponível
+  LarguraCard := scbxRestaurantes.ClientWidth - (FMargemLateral * 2) - 10;
   if LarguraCard < 300 then
-    LarguraCard := 300;  // Largura mínima
+    LarguraCard := 300;
 
-  // ⭐ Calcular posição Y (empilhado verticalmente)
+  // Calcular posição Y (empilhado verticalmente)
   PosY := FCardSpacing + (Index * (FCardHeight + FCardSpacing));
 
   // Formatar dados
@@ -708,7 +775,7 @@ begin
              FormatDateTime('hh:nn', Comercio.HorarioFechamento);
   Taxa := FormatFloat('R$ #,##0.00', Comercio.TaxaEntregaBase);
 
-  // ⭐ Criar o card
+  // Criar o card
   Card := TCardComercioPanel.CreateCard(
     Self,
     Comercio.IdComercio,
@@ -720,13 +787,11 @@ begin
     EstaAberto
   );
 
-  Card.Parent := scbxMain;
+  Card.Parent := scbxRestaurantes; // ⭐ MUDOU - agora vai para scbxRestaurantes
   Card.Left := FMargemLateral;
   Card.Top := PosY;
   Card.Width := LarguraCard;
   Card.Height := FCardHeight;
-
-  // ⭐ NÃO usar Anchors aqui, vamos redimensionar manualmente no FormResize
 end;
 
 procedure TFormHomeC.AbrirCardapio(IdComercio: Integer; const NomeComercio: String);
@@ -747,7 +812,7 @@ begin
   if Trim(eBuscaMain.Text) = '' then
   begin
     FUltimaBusca := '';
-    PopularLista(True);
+    PopularRestaurantes(FCategoriaSelecionada); // ⭐ Respeita categoria selecionada
   end
   else
   begin
@@ -783,19 +848,6 @@ begin
   end;
 end;
 
-procedure TFormHomeC.Image1Click(Sender: TObject);
-begin
-  if Trim(eBuscaMain.Text) <> '' then
-  begin
-    FBuscaTimer.Enabled := False;
-    BuscarComercios(Trim(eBuscaMain.Text));
-  end
-  else
-  begin
-    LimparBusca;
-  end;
-end;
-
 procedure TFormHomeC.BuscarComercios(const Termo: string);
 var
   Comercios: TObjectList<TComercio>;
@@ -808,12 +860,12 @@ begin
 
   if Trim(Termo) = '' then
   begin
-    PopularLista(True);
+    PopularRestaurantes(FCategoriaSelecionada);
     Exit;
   end;
 
   try
-    LimparCards;
+    LimparCardsRestaurantes;
 
     Screen.Cursor := crHourGlass;
     try
@@ -861,7 +913,7 @@ begin
   FUltimaBusca := '';
   FBuscaTimer.Enabled := False;
   eBuscaMain.SetFocus;
-  PopularLista(True);
+  PopularRestaurantes(FCategoriaSelecionada);
 end;
 
 procedure TFormHomeC.ExibirMensagemNenhumResultado;
@@ -869,11 +921,11 @@ var
   pMensagem: TPanel;
   lblMensagem, lblDica: TLabel;
 begin
-  pMensagem := TPanel.Create(scbxMain);
-  pMensagem.Parent := scbxMain;
+  pMensagem := TPanel.Create(scbxRestaurantes);
+  pMensagem.Parent := scbxRestaurantes;
   pMensagem.Left := FMargemLateral;
   pMensagem.Top := FCardSpacing;
-  pMensagem.Width := scbxMain.ClientWidth - (FMargemLateral * 2) - 10;
+  pMensagem.Width := scbxRestaurantes.ClientWidth - (FMargemLateral * 2) - 10;
   pMensagem.Height := 180;
   pMensagem.BevelOuter := bvNone;
   pMensagem.Color := clWhite;

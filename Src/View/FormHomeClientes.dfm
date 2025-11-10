@@ -18,7 +18,7 @@ object FormHomeC: TFormHomeC
     Top = 0
     Width = 412
     Height = 644
-    ActivePage = tsPerfil
+    ActivePage = tsMain
     Align = alClient
     TabOrder = 1
     object tsMain: TTabSheet
@@ -47,21 +47,46 @@ object FormHomeC: TFormHomeC
           TabOrder = 0
           UseWheelForScrolling = True
           object pCategorias: TPanel
+            AlignWithMargins = True
             Left = 0
             Top = 150
             Width = 404
-            Height = 113
+            Height = 119
+            Margins.Left = 0
+            Margins.Top = 0
+            Margins.Right = 0
+            Margins.Bottom = 0
             Align = alTop
             BevelOuter = bvNone
             Color = cl3DLight
             ParentBackground = False
             TabOrder = 0
+            object lblCategorias: TLabel
+              AlignWithMargins = True
+              Left = 3
+              Top = 3
+              Width = 381
+              Height = 20
+              Align = alTop
+              Caption = 'Categorias'
+              Color = clCoral
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -15
+              Font.Name = 'Segoe UI'
+              Font.Style = [fsBold]
+              ParentColor = False
+              ParentFont = False
+              ExplicitLeft = 21
+              ExplicitTop = 18
+              ExplicitWidth = 74
+            end
             object scbxCategorias: TScrollBox
               AlignWithMargins = True
               Left = 0
-              Top = 0
-              Width = 404
-              Height = 113
+              Top = 26
+              Width = 387
+              Height = 93
               Margins.Left = 0
               Margins.Top = 0
               Margins.Right = 0
@@ -70,22 +95,7 @@ object FormHomeC: TFormHomeC
               BorderStyle = bsNone
               TabOrder = 0
               UseWheelForScrolling = True
-              object lblCategorias: TLabel
-                Left = 13
-                Top = 10
-                Width = 74
-                Height = 20
-                Margins.Bottom = 80
-                Caption = 'Categorias'
-                Color = clCoral
-                Font.Charset = DEFAULT_CHARSET
-                Font.Color = clWindowText
-                Font.Height = -15
-                Font.Name = 'Segoe UI'
-                Font.Style = [fsBold]
-                ParentColor = False
-                ParentFont = False
-              end
+              ExplicitHeight = 140
             end
           end
           object pEndereco: TPanel
@@ -155,34 +165,6 @@ object FormHomeC: TFormHomeC
               StyleName = 'Windows'
             end
           end
-          object scbxComercios: TScrollBox
-            Left = 0
-            Top = 263
-            Width = 404
-            Height = 351
-            Align = alClient
-            BevelInner = bvNone
-            BevelOuter = bvNone
-            BorderStyle = bsNone
-            TabOrder = 2
-            UseWheelForScrolling = True
-            object lblCommMenuPrincipal: TLabel
-              Left = 13
-              Top = 12
-              Width = 181
-              Height = 20
-              Margins.Bottom = 80
-              Caption = 'Restaurantes e Com'#233'rcios'
-              Color = clCoral
-              Font.Charset = DEFAULT_CHARSET
-              Font.Color = clWindowText
-              Font.Height = -15
-              Font.Name = 'Segoe UI'
-              Font.Style = [fsBold]
-              ParentColor = False
-              ParentFont = False
-            end
-          end
           object pHeaderMenuPrincipal: TPanel
             AlignWithMargins = True
             Left = 0
@@ -197,7 +179,7 @@ object FormHomeC: TFormHomeC
             BevelOuter = bvNone
             Color = clWhite
             ParentBackground = False
-            TabOrder = 3
+            TabOrder = 2
             object lblMenuPrincipal: TLabel
               Left = 6
               Top = 13
@@ -210,6 +192,60 @@ object FormHomeC: TFormHomeC
               Font.Name = 'Segoe UI'
               Font.Style = [fsBold]
               ParentFont = False
+            end
+          end
+          object pRestaurantes: TPanel
+            AlignWithMargins = True
+            Left = 0
+            Top = 269
+            Width = 404
+            Height = 345
+            Margins.Left = 0
+            Margins.Top = 0
+            Margins.Right = 0
+            Margins.Bottom = 0
+            Align = alClient
+            BevelOuter = bvNone
+            Color = cl3DLight
+            ParentBackground = False
+            TabOrder = 3
+            ExplicitTop = 344
+            ExplicitWidth = 387
+            ExplicitHeight = 295
+            object lblRestaurantes: TLabel
+              AlignWithMargins = True
+              Left = 3
+              Top = 3
+              Width = 398
+              Height = 20
+              Align = alTop
+              Caption = 'Restaurantes e Com'#233'rcios'
+              Color = clCoral
+              Font.Charset = DEFAULT_CHARSET
+              Font.Color = clWindowText
+              Font.Height = -15
+              Font.Name = 'Segoe UI'
+              Font.Style = [fsBold]
+              ParentColor = False
+              ParentFont = False
+              ExplicitWidth = 181
+            end
+            object scbxRestaurantes: TScrollBox
+              AlignWithMargins = True
+              Left = 0
+              Top = 26
+              Width = 404
+              Height = 319
+              Margins.Left = 0
+              Margins.Top = 0
+              Margins.Right = 0
+              Margins.Bottom = 0
+              Align = alClient
+              BorderStyle = bsNone
+              TabOrder = 0
+              UseWheelForScrolling = True
+              ExplicitTop = 0
+              ExplicitHeight = 270
             end
           end
         end
@@ -3314,7 +3350,7 @@ object FormHomeC: TFormHomeC
     StyleName = 'Windows'
     object lblUserName: TLabel
       Left = 95
-      Top = 14
+      Top = 15
       Width = 109
       Height = 25
       Caption = 'lblUserName'
