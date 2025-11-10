@@ -752,7 +752,7 @@
             Top = 0
             Width = 1135
             Height = 611
-            ActivePage = tsAlterarSenha
+            ActivePage = tsEditar
             Align = alClient
             TabOrder = 0
             object tsVisualizar: TTabSheet
@@ -773,10 +773,6 @@
                 BorderStyle = bsNone
                 TabOrder = 0
                 UseWheelForScrolling = True
-                ExplicitLeft = 752
-                ExplicitTop = 504
-                ExplicitWidth = 185
-                ExplicitHeight = 41
                 object pMainPerfilVisualizar: TPanel
                   Left = 0
                   Top = 0
@@ -1703,13 +1699,34 @@
                       Width = 95
                       Height = 23
                       TabOrder = 6
-                    end
-                    object eEstadoCOmmDE: TEdit
-                      Left = 342
-                      Top = 18
-                      Width = 95
-                      Height = 23
-                      TabOrder = 7
+                      Items.Strings = (
+                        'AC'
+                        'AL'
+                        'AP'
+                        'AM'
+                        'BA'
+                        'CE'
+                        'DF'
+                        'ES'
+                        'GO'
+                        'MA'
+                        'MT'
+                        'MS'
+                        'MG'
+                        'PA'
+                        'PB'
+                        'PR'
+                        'PE'
+                        'PI'
+                        'RJ'
+                        'RN'
+                        'RS'
+                        'RO'
+                        'RR'
+                        'SC'
+                        'SP'
+                        'SE'
+                        'TO')
                     end
                   end
                   object pButtonAlterarSenhaE: TPanel

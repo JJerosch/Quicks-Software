@@ -163,7 +163,6 @@ type
     eComplementoCommDE: TEdit;
     meCEPCommDE: TMaskEdit;
     cbEstadoCommDE: TComboBox;
-    eEstadoCOmmDE: TEdit;
     pButtonAlterarSenhaE: TPanel;
     pInfoRestaurantePE: TPanel;
     Label30: TLabel;
@@ -871,7 +870,7 @@ begin
   // eEstadoCOmmDE.Text := Comercio.UF;  ← REMOVA ISSO
   // ComboUF.Text := Comercio.UF;        ← ADICIONE ISSO (se tiver ComboUF)
   // OU se for manter o Edit:
-  eEstadoCOmmDE.Text := Comercio.UF;  // ← Mas mude de Estado para UF
+  cbEstadoCOmmDE.Text := Comercio.UF;  // ← Mas mude de Estado para UF
 
   // Proprietário
   eNPCommDE.Text := Comercio.NomeProprietario;
