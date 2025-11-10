@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls,
-  Vcl.ComCtrls, Vcl.Imaging.pngimage;
+  Vcl.ComCtrls, Vcl.Imaging.pngimage, Vcl.Mask;
 
 type
   TFormHomeE = class(TForm)
@@ -23,6 +23,82 @@ type
     lblButton4: TLabel;
     lblSair: TLabel;
     scbxMain: TScrollBox;
+    pcPerfil: TPageControl;
+    tsVisualizarPefil: TTabSheet;
+    scbxMainPerfil: TScrollBox;
+    pEnderecos: TPanel;
+    scbxEnderecos: TScrollBox;
+    lblEnderecos: TLabel;
+    pHeaderPerfil: TPanel;
+    lblHeaderPerfil: TLabel;
+    iButtonBackPerfil: TImage;
+    pButtonAlterarSenhaV: TPanel;
+    pInfoVisualizar: TPanel;
+    scbxInfoVisualizar: TScrollBox;
+    lblDados: TLabel;
+    lblNomeV: TLabel;
+    lblNomeDV: TLabel;
+    lblCPFV: TLabel;
+    lblTelefoneV: TLabel;
+    lblCPFDV: TLabel;
+    lblTelefoneDV: TLabel;
+    lblEmailV: TLabel;
+    lblEmailDV: TLabel;
+    pButtonEditar: TPanel;
+    pPagamentos: TPanel;
+    scbxPagamentos: TScrollBox;
+    lblFormasPagamento: TLabel;
+    tsEditarPerfil: TTabSheet;
+    scbxMainPerfilE: TScrollBox;
+    pHeaderPerfilE: TPanel;
+    lblPerfilTitlePerfilE: TLabel;
+    iButtonBackPerfilE: TImage;
+    pButtonAlterarSenhaPerfilE: TPanel;
+    pInfoE: TPanel;
+    scbxPerfilE: TScrollBox;
+    Label3: TLabel;
+    lblNome: TLabel;
+    lblCPF: TLabel;
+    lblTelefone: TLabel;
+    lblEmail: TLabel;
+    eNomeDE: TEdit;
+    eEmailDE: TEdit;
+    meCPFDE: TMaskEdit;
+    meTelefoneDE: TMaskEdit;
+    pSalvar: TPanel;
+    tsAtualizarSenhaPerfil: TTabSheet;
+    iButtonBackAlterarSenha: TImage;
+    pAlterarSenha: TPanel;
+    lblAlterarSenha: TLabel;
+    lblSenhaAtual: TLabel;
+    lblNovaSenha: TLabel;
+    lblDigiteNovamente: TLabel;
+    eSenhaAtual: TEdit;
+    eSenhaNova: TEdit;
+    eSenhaConfirmacao: TEdit;
+    pButtonConfirmarAlterarSenha: TPanel;
+    pButtonCancelarAlterarSenha: TPanel;
+    pDicas: TPanel;
+    lblDicasTitle: TLabel;
+    lblDicas: TLabel;
+    tsEnderecosE: TTabSheet;
+    scbxMainEnderecosE: TScrollBox;
+    pEnderecosE: TPanel;
+    scbxEnderecosE: TScrollBox;
+    lblEnderecosTitle: TLabel;
+    pHeaderEnderecosE: TPanel;
+    lblPerfilTitleEnderecosE: TLabel;
+    iButtonBackEnderecosE: TImage;
+    pButtonAlterarSenhaEnderecosE: TPanel;
+    tsPagamentosE: TTabSheet;
+    scbxMainPagamentosE: TScrollBox;
+    pPagamentosE: TPanel;
+    scbxPagamentosE: TScrollBox;
+    lblPagamentosTitle: TLabel;
+    pHeaderPagamentosE: TPanel;
+    lblPerfilTitlePagamentosE: TLabel;
+    iButtonBackPagamentosE: TImage;
+    pButtonAlterarSenhaPagamentosE: TPanel;
     procedure iButton1MenuClick(Sender: TObject);
     procedure iButton1Click(Sender: TObject);
   private

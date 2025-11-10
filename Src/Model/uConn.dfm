@@ -1,7 +1,7 @@
 object DM: TDM
   OnCreate = DataModuleCreate
   Height = 480
-  Width = 640
+  Width = 639
   object FDConn: TFDConnection
     Params.Strings = (
       'Database=quicks'
@@ -23,8 +23,8 @@ object DM: TDM
   end
   object DL: TFDPhysPgDriverLink
     VendorLib = 
-      'C:\Users\pinto.7979\Documents\GitHub\Quicks-Software\lib\libpq.d' +
-      'll'
+      'C:\Users\Jo'#227'o Jerosch\OneDrive\Documentos\Embarcadero\Studio\Pro' +
+      'jects\Quicks\lib\libpq.dll'
     Left = 432
     Top = 288
   end

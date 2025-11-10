@@ -8,7 +8,7 @@ uses
   Vcl.ExtCtrls, Vcl.Menus, Vcl.StdCtrls, Vcl.Imaging.pngimage, Vcl.ComCtrls,
   Data.DB, FireDAC.Comp.Client, FireDAC.Comp.DataSet, uConn,
   System.Generics.Collections, ComercioModel, ClienteController,
-  System.DateUtils;
+  System.DateUtils, Vcl.Mask;
 
 type
   TCardComercioPanel = class(TPanel)
@@ -156,6 +156,37 @@ type
     pButtonEditar: TPanel;
     lblEnderecos: TLabel;
     lblFormasPagamento: TLabel;
+    scbxMainPerfilE: TScrollBox;
+    pHeaderPerfilE: TPanel;
+    lblPerfilTitlePerfilE: TLabel;
+    iButtonBackEditarPerfil: TImage;
+    pButtonAlterarSenhaPerfilE: TPanel;
+    pInfoE: TPanel;
+    ScrollBox3: TScrollBox;
+    Label3: TLabel;
+    Label4: TLabel;
+    Label6: TLabel;
+    Label7: TLabel;
+    Label10: TLabel;
+    pSalvar: TPanel;
+    eNomeDE: TEdit;
+    eEmailDE: TEdit;
+    meCPFDE: TMaskEdit;
+    meTelefoneDE: TMaskEdit;
+    pAlterarSenha: TPanel;
+    lblAlterarSenha: TLabel;
+    lblSenhaAtual: TLabel;
+    lblNovaSenha: TLabel;
+    lblDigiteNovamente: TLabel;
+    eSenhaAtual: TEdit;
+    eSenhaNova: TEdit;
+    eSenhaConfirmacao: TEdit;
+    pButtonConfirmarAlterarSenha: TPanel;
+    pButtonCancelarAlterarSenha: TPanel;
+    iButtonBackAlterarSenha: TImage;
+    pDicas: TPanel;
+    lblDicasTitle: TLabel;
+    lblDicas: TLabel;
 
     procedure iButton1Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
