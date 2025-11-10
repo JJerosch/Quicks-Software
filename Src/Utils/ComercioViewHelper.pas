@@ -3,7 +3,7 @@ unit ComercioViewHelper;
 interface
 
 uses
-  System.SysUtils, System.StrUtils, Vcl.StdCtrls, ComercioModel;
+  System.SysUtils, System.StrUtils, Vcl.StdCtrls, ComercioModel, FireDAC.Comp.Client, uConn;
 
 type
   TComercioViewHelper = class
@@ -168,19 +168,25 @@ begin
 end;
 
 class procedure TComercioViewHelper.PopularCategoriasComercio(ComboBox: TComboBox);
+var
+  Qry: TFDQuery;
 begin
   ComboBox.Items.Clear;
-  ComboBox.Items.Add('Restaurante');
-  ComboBox.Items.Add('Lanchonete');
-  ComboBox.Items.Add('Pizzaria');
-  ComboBox.Items.Add('Hamburgueria');
-  ComboBox.Items.Add('Açaiteria');
-  ComboBox.Items.Add('Padaria');
-  ComboBox.Items.Add('Confeitaria');
-  ComboBox.Items.Add('Mercado');
-  ComboBox.Items.Add('Farmácia');
-  ComboBox.Items.Add('Pet Shop');
-  ComboBox.Items.Add('Outros');
-end;
 
+  Qry := TFDQuery.Create(nil);
+  try
+    Qry.Connection := DM.FDConn; // substitua pelo seu DataModule e conexão
+    Qry.SQL.Text := 'SELECT nome_categoria_comm FROM categorias_comm ORDER BY nome_categoria_comm';
+    Qry.Open;
+
+    while not Qry.Eof do
+    begin
+      ComboBox.Items.Add(Qry.FieldByName('nome_categoria_comm').AsString);
+      Qry.Next;
+    end;
+
+  finally
+    Qry.Free;
+  end;
+end;
 end.
