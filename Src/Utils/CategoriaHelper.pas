@@ -165,14 +165,14 @@ begin
   try
     Qr.Connection := DM.FDConn;
     Qr.SQL.Text :=
-      'SELECT nome_categoria_comm ' +
-      'FROM categorias_comm ' +
-      'ORDER BY nome_categoria_comm';
+      'SELECT categoria ' +
+      'FROM comercios ' +
+      'ORDER BY categoria';
     Qr.Open;
 
     while not Qr.Eof do
     begin
-      Result.Add(Trim(Qr.FieldByName('nome_categoria_comm').AsString));
+      Result.Add(Trim(Qr.FieldByName('categoria').AsString));
       Qr.Next;
     end;
   finally
