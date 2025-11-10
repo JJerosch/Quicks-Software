@@ -752,432 +752,453 @@
             Top = 0
             Width = 1135
             Height = 611
-            ActivePage = tsEditar
+            ActivePage = tsAlterarSenha
             Align = alClient
             TabOrder = 0
             object tsVisualizar: TTabSheet
               Caption = 'tsVisualizar'
-              object pMainPerfilVisualizar: TPanel
+              object scbxPerfilVisualizar: TScrollBox
+                AlignWithMargins = True
                 Left = 0
                 Top = 0
                 Width = 1127
                 Height = 581
+                Margins.Left = 0
+                Margins.Top = 0
+                Margins.Right = 0
+                Margins.Bottom = 0
                 Align = alClient
-                Color = clWindow
-                ParentBackground = False
+                BevelInner = bvNone
+                BevelOuter = bvNone
+                BorderStyle = bsNone
                 TabOrder = 0
-                OnClick = pButtonAlterarSenhaEClick
-                object pInfoRestauranteNCD: TPanel
-                  Left = 24
-                  Top = 37
-                  Width = 505
-                  Height = 244
-                  BevelOuter = bvNone
-                  Color = clCoral
+                UseWheelForScrolling = True
+                ExplicitLeft = 752
+                ExplicitTop = 504
+                ExplicitWidth = 185
+                ExplicitHeight = 41
+                object pMainPerfilVisualizar: TPanel
+                  Left = 0
+                  Top = 0
+                  Width = 1127
+                  Height = 581
+                  Align = alClient
+                  Color = clWindow
                   ParentBackground = False
                   TabOrder = 0
-                  object lblDadosComercio: TLabel
-                    Left = 16
-                    Top = 12
-                    Width = 175
-                    Height = 25
-                    Caption = 'Dados do Com'#233'rcio'
-                    Color = clCream
-                    Font.Charset = DEFAULT_CHARSET
-                    Font.Color = clWhite
-                    Font.Height = -19
-                    Font.Name = 'Segoe UI'
-                    Font.Style = [fsBold]
-                    ParentColor = False
-                    ParentFont = False
-                  end
-                  object lblNComm: TLabel
-                    Left = 16
-                    Top = 43
-                    Width = 110
-                    Height = 15
-                    Caption = 'Nome do Com'#233'rcio:'
-                    Font.Charset = DEFAULT_CHARSET
-                    Font.Color = clWhite
-                    Font.Height = -12
-                    Font.Name = 'Segoe UI'
-                    Font.Style = [fsBold]
-                    ParentFont = False
-                  end
-                  object lblCAComm: TLabel
-                    Left = 16
-                    Top = 68
-                    Width = 129
-                    Height = 15
-                    Caption = 'Categoria do Com'#233'rcio:'
-                    Font.Charset = DEFAULT_CHARSET
-                    Font.Color = clWhite
-                    Font.Height = -12
-                    Font.Name = 'Segoe UI'
-                    Font.Style = [fsBold]
-                    ParentFont = False
-                  end
-                  object lblDComm: TLabel
-                    Left = 16
-                    Top = 92
-                    Width = 130
-                    Height = 15
-                    Caption = 'Descri'#231#227'o do Com'#233'rcio:'
-                    Font.Charset = DEFAULT_CHARSET
-                    Font.Color = clWhite
-                    Font.Height = -12
-                    Font.Name = 'Segoe UI'
-                    Font.Style = [fsBold]
-                    ParentFont = False
-                  end
-                  object lblNCommD: TLabel
-                    Left = 135
-                    Top = 43
-                    Width = 3
-                    Height = 15
-                  end
-                  object lblCACommD: TLabel
-                    Left = 154
-                    Top = 68
-                    Width = 3
-                    Height = 15
-                  end
-                  object mDCommD: TMemo
-                    Left = 10
-                    Top = 113
-                    Width = 485
-                    Height = 119
-                    Enabled = False
-                    Lines.Strings = (
-                      'mDCommD')
-                    ReadOnly = True
-                    TabOrder = 0
-                  end
-                end
-                object pButtonEditar: TPanel
-                  Left = 24
-                  Top = 509
-                  Width = 76
-                  Height = 44
-                  BevelOuter = bvNone
-                  Caption = 'Editar'
-                  Color = clCoral
-                  Font.Charset = DEFAULT_CHARSET
-                  Font.Color = clWhite
-                  Font.Height = -12
-                  Font.Name = 'Segoe UI'
-                  Font.Style = [fsBold]
-                  ParentBackground = False
-                  ParentFont = False
-                  TabOrder = 1
-                  OnClick = pButtonEditarClick
-                end
-                object pInfoRestauranteH: TPanel
-                  Left = 24
-                  Top = 306
-                  Width = 505
-                  Height = 180
-                  BevelOuter = bvNone
-                  Color = clCoral
-                  ParentBackground = False
-                  TabOrder = 2
-                  object lblHorariosTaxaEntregaComm: TLabel
-                    Left = 16
-                    Top = 20
-                    Width = 239
-                    Height = 25
-                    Caption = 'Hor'#225'rios e Taxa de Entrega'
-                    Color = clCream
-                    Font.Charset = DEFAULT_CHARSET
-                    Font.Color = clWhite
-                    Font.Height = -19
-                    Font.Name = 'Segoe UI'
-                    Font.Style = [fsBold]
-                    ParentColor = False
-                    ParentFont = False
-                  end
-                  object lblHFComm: TLabel
-                    Left = 16
-                    Top = 51
-                    Width = 150
-                    Height = 15
-                    Caption = 'Hor'#225'rio de funcionamento:'
-                    Font.Charset = DEFAULT_CHARSET
-                    Font.Color = clWhite
-                    Font.Height = -12
-                    Font.Name = 'Segoe UI'
-                    Font.Style = [fsBold]
-                    ParentFont = False
-                  end
-                  object lblTPComm: TLabel
-                    Left = 16
-                    Top = 75
-                    Width = 178
-                    Height = 15
-                    Caption = 'Tempo de Preparo do Com'#233'rcio:'
-                    Font.Charset = DEFAULT_CHARSET
-                    Font.Color = clWhite
-                    Font.Height = -12
-                    Font.Name = 'Segoe UI'
-                    Font.Style = [fsBold]
-                    ParentFont = False
-                  end
-                  object lblTEComm: TLabel
-                    Left = 16
-                    Top = 99
-                    Width = 91
-                    Height = 15
-                    Caption = 'Taxa de Entrega:'
-                    Font.Charset = DEFAULT_CHARSET
-                    Font.Color = clWhite
-                    Font.Height = -12
-                    Font.Name = 'Segoe UI'
-                    Font.Style = [fsBold]
-                    ParentFont = False
-                  end
-                  object lblHFCommD: TLabel
-                    Left = 175
-                    Top = 51
-                    Width = 3
-                    Height = 15
-                  end
-                  object lblTPCommD: TLabel
-                    Left = 200
-                    Top = 75
-                    Width = 3
-                    Height = 15
-                  end
-                  object lblTECommD: TLabel
-                    Left = 116
-                    Top = 99
-                    Width = 3
-                    Height = 15
-                  end
-                end
-                object pInfoRestauranteC: TPanel
-                  Left = 558
-                  Top = 41
-                  Width = 521
-                  Height = 135
-                  BevelOuter = bvNone
-                  Color = clCoral
-                  ParentBackground = False
-                  TabOrder = 3
-                  object lblContatoComm: TLabel
-                    Left = 16
-                    Top = 20
-                    Width = 72
-                    Height = 25
-                    Caption = 'Contato'
-                    Color = clCream
-                    Font.Charset = DEFAULT_CHARSET
-                    Font.Color = clWhite
-                    Font.Height = -19
-                    Font.Name = 'Segoe UI'
-                    Font.Style = [fsBold]
-                    ParentColor = False
-                    ParentFont = False
-                  end
-                  object lblEComm: TLabel
-                    Left = 16
-                    Top = 51
-                    Width = 120
-                    Height = 15
-                    Caption = 'Email do Restaurante:'
-                    Font.Charset = DEFAULT_CHARSET
-                    Font.Color = clWhite
-                    Font.Height = -12
-                    Font.Name = 'Segoe UI'
-                    Font.Style = [fsBold]
-                    ParentFont = False
-                  end
-                  object lblTComm: TLabel
-                    Left = 16
-                    Top = 75
-                    Width = 140
-                    Height = 15
-                    Caption = 'Telefone do Restaurante:'
-                    Font.Charset = DEFAULT_CHARSET
-                    Font.Color = clWhite
-                    Font.Height = -12
-                    Font.Name = 'Segoe UI'
-                    Font.Style = [fsBold]
-                    ParentFont = False
-                  end
-                  object lblECommD: TLabel
-                    Left = 142
-                    Top = 51
-                    Width = 3
-                    Height = 15
-                  end
-                  object lblTCommD: TLabel
-                    Left = 165
-                    Top = 75
-                    Width = 3
-                    Height = 15
-                  end
-                end
-                object pInfoRestauranteL: TPanel
-                  Left = 558
-                  Top = 199
-                  Width = 521
-                  Height = 135
-                  BevelOuter = bvNone
-                  Color = clCoral
-                  ParentBackground = False
-                  TabOrder = 4
-                  object lblLComm: TLabel
-                    Left = 16
-                    Top = 20
-                    Width = 101
-                    Height = 25
-                    Caption = 'Localiza'#231#227'o'
-                    Color = clCream
-                    Font.Charset = DEFAULT_CHARSET
-                    Font.Color = clWhite
-                    Font.Height = -19
-                    Font.Name = 'Segoe UI'
-                    Font.Style = [fsBold]
-                    ParentColor = False
-                    ParentFont = False
-                  end
-                  object lblENComm: TLabel
-                    Left = 16
-                    Top = 51
-                    Width = 55
-                    Height = 15
-                    Caption = 'Endere'#231'o:'
-                    Font.Charset = DEFAULT_CHARSET
-                    Font.Color = clWhite
-                    Font.Height = -12
-                    Font.Name = 'Segoe UI'
-                    Font.Style = [fsBold]
-                    ParentFont = False
-                  end
-                  object lblCEPComm: TLabel
-                    Left = 16
-                    Top = 75
-                    Width = 23
-                    Height = 15
-                    Caption = 'CEP:'
-                    Font.Charset = DEFAULT_CHARSET
-                    Font.Color = clWhite
-                    Font.Height = -12
-                    Font.Name = 'Segoe UI'
-                    Font.Style = [fsBold]
-                    ParentFont = False
-                  end
-                  object lblENCommD: TLabel
-                    Left = 77
-                    Top = 51
-                    Width = 3
-                    Height = 15
-                  end
-                  object lblCEPCommD: TLabel
-                    Left = 48
-                    Top = 75
-                    Width = 3
-                    Height = 15
-                  end
-                end
-                object pButtonAlterarSenha: TPanel
-                  Left = 132
-                  Top = 509
-                  Width = 86
-                  Height = 44
-                  BevelOuter = bvNone
-                  Caption = 'Alterar Senha'
-                  Color = clCoral
-                  Font.Charset = DEFAULT_CHARSET
-                  Font.Color = clWhite
-                  Font.Height = -12
-                  Font.Name = 'Segoe UI'
-                  Font.Style = [fsBold]
-                  ParentBackground = False
-                  ParentFont = False
-                  TabOrder = 5
                   OnClick = pButtonAlterarSenhaEClick
-                end
-                object pInfoRestauranteP: TPanel
-                  Left = 558
-                  Top = 360
-                  Width = 521
-                  Height = 129
-                  BevelOuter = bvNone
-                  Color = clCoral
-                  ParentBackground = False
-                  TabOrder = 6
-                  object lblProprietario: TLabel
-                    Left = 16
-                    Top = 20
-                    Width = 109
-                    Height = 25
-                    Caption = 'Propriet'#225'rio'
-                    Color = clCream
-                    Font.Charset = DEFAULT_CHARSET
-                    Font.Color = clWhite
-                    Font.Height = -19
-                    Font.Name = 'Segoe UI'
-                    Font.Style = [fsBold]
-                    ParentColor = False
-                    ParentFont = False
+                  object pInfoRestauranteNCD: TPanel
+                    Left = 24
+                    Top = 37
+                    Width = 505
+                    Height = 244
+                    BevelOuter = bvNone
+                    Color = clCoral
+                    ParentBackground = False
+                    TabOrder = 0
+                    object lblDadosComercio: TLabel
+                      Left = 16
+                      Top = 12
+                      Width = 175
+                      Height = 25
+                      Caption = 'Dados do Com'#233'rcio'
+                      Color = clCream
+                      Font.Charset = DEFAULT_CHARSET
+                      Font.Color = clWhite
+                      Font.Height = -19
+                      Font.Name = 'Segoe UI'
+                      Font.Style = [fsBold]
+                      ParentColor = False
+                      ParentFont = False
+                    end
+                    object lblNComm: TLabel
+                      Left = 16
+                      Top = 43
+                      Width = 110
+                      Height = 15
+                      Caption = 'Nome do Com'#233'rcio:'
+                      Font.Charset = DEFAULT_CHARSET
+                      Font.Color = clWhite
+                      Font.Height = -12
+                      Font.Name = 'Segoe UI'
+                      Font.Style = [fsBold]
+                      ParentFont = False
+                    end
+                    object lblCAComm: TLabel
+                      Left = 16
+                      Top = 68
+                      Width = 129
+                      Height = 15
+                      Caption = 'Categoria do Com'#233'rcio:'
+                      Font.Charset = DEFAULT_CHARSET
+                      Font.Color = clWhite
+                      Font.Height = -12
+                      Font.Name = 'Segoe UI'
+                      Font.Style = [fsBold]
+                      ParentFont = False
+                    end
+                    object lblDComm: TLabel
+                      Left = 16
+                      Top = 92
+                      Width = 130
+                      Height = 15
+                      Caption = 'Descri'#231#227'o do Com'#233'rcio:'
+                      Font.Charset = DEFAULT_CHARSET
+                      Font.Color = clWhite
+                      Font.Height = -12
+                      Font.Name = 'Segoe UI'
+                      Font.Style = [fsBold]
+                      ParentFont = False
+                    end
+                    object lblNCommD: TLabel
+                      Left = 135
+                      Top = 43
+                      Width = 3
+                      Height = 15
+                    end
+                    object lblCACommD: TLabel
+                      Left = 154
+                      Top = 68
+                      Width = 3
+                      Height = 15
+                    end
+                    object mDCommD: TMemo
+                      Left = 10
+                      Top = 113
+                      Width = 485
+                      Height = 119
+                      Enabled = False
+                      Lines.Strings = (
+                        'mDCommD')
+                      ReadOnly = True
+                      TabOrder = 0
+                    end
                   end
-                  object lblNPComm: TLabel
-                    Left = 16
-                    Top = 51
-                    Width = 124
-                    Height = 15
-                    Caption = 'Nome do Propriet'#225'rio:'
+                  object pButtonEditar: TPanel
+                    Left = 24
+                    Top = 509
+                    Width = 76
+                    Height = 44
+                    BevelOuter = bvNone
+                    Caption = 'Editar'
+                    Color = clCoral
                     Font.Charset = DEFAULT_CHARSET
                     Font.Color = clWhite
                     Font.Height = -12
                     Font.Name = 'Segoe UI'
                     Font.Style = [fsBold]
+                    ParentBackground = False
                     ParentFont = False
+                    TabOrder = 1
+                    OnClick = pButtonEditarClick
                   end
-                  object lblEPComm: TLabel
-                    Left = 16
-                    Top = 75
-                    Width = 119
-                    Height = 15
-                    Caption = 'Email do Propriet'#225'rio:'
-                    Font.Charset = DEFAULT_CHARSET
-                    Font.Color = clWhite
-                    Font.Height = -12
-                    Font.Name = 'Segoe UI'
-                    Font.Style = [fsBold]
-                    ParentFont = False
+                  object pInfoRestauranteH: TPanel
+                    Left = 24
+                    Top = 306
+                    Width = 505
+                    Height = 180
+                    BevelOuter = bvNone
+                    Color = clCoral
+                    ParentBackground = False
+                    TabOrder = 2
+                    object lblHorariosTaxaEntregaComm: TLabel
+                      Left = 16
+                      Top = 20
+                      Width = 239
+                      Height = 25
+                      Caption = 'Hor'#225'rios e Taxa de Entrega'
+                      Color = clCream
+                      Font.Charset = DEFAULT_CHARSET
+                      Font.Color = clWhite
+                      Font.Height = -19
+                      Font.Name = 'Segoe UI'
+                      Font.Style = [fsBold]
+                      ParentColor = False
+                      ParentFont = False
+                    end
+                    object lblHFComm: TLabel
+                      Left = 16
+                      Top = 51
+                      Width = 150
+                      Height = 15
+                      Caption = 'Hor'#225'rio de funcionamento:'
+                      Font.Charset = DEFAULT_CHARSET
+                      Font.Color = clWhite
+                      Font.Height = -12
+                      Font.Name = 'Segoe UI'
+                      Font.Style = [fsBold]
+                      ParentFont = False
+                    end
+                    object lblTPComm: TLabel
+                      Left = 16
+                      Top = 75
+                      Width = 178
+                      Height = 15
+                      Caption = 'Tempo de Preparo do Com'#233'rcio:'
+                      Font.Charset = DEFAULT_CHARSET
+                      Font.Color = clWhite
+                      Font.Height = -12
+                      Font.Name = 'Segoe UI'
+                      Font.Style = [fsBold]
+                      ParentFont = False
+                    end
+                    object lblTEComm: TLabel
+                      Left = 16
+                      Top = 99
+                      Width = 91
+                      Height = 15
+                      Caption = 'Taxa de Entrega:'
+                      Font.Charset = DEFAULT_CHARSET
+                      Font.Color = clWhite
+                      Font.Height = -12
+                      Font.Name = 'Segoe UI'
+                      Font.Style = [fsBold]
+                      ParentFont = False
+                    end
+                    object lblHFCommD: TLabel
+                      Left = 175
+                      Top = 51
+                      Width = 3
+                      Height = 15
+                    end
+                    object lblTPCommD: TLabel
+                      Left = 200
+                      Top = 75
+                      Width = 3
+                      Height = 15
+                    end
+                    object lblTECommD: TLabel
+                      Left = 116
+                      Top = 99
+                      Width = 3
+                      Height = 15
+                    end
                   end
-                  object lblCPFPComm: TLabel
-                    Left = 16
-                    Top = 99
-                    Width = 110
-                    Height = 15
-                    Caption = 'CPF do Propriet'#225'rio:'
-                    Font.Charset = DEFAULT_CHARSET
-                    Font.Color = clWhite
-                    Font.Height = -12
-                    Font.Name = 'Segoe UI'
-                    Font.Style = [fsBold]
-                    ParentFont = False
+                  object pInfoRestauranteC: TPanel
+                    Left = 558
+                    Top = 41
+                    Width = 521
+                    Height = 135
+                    BevelOuter = bvNone
+                    Color = clCoral
+                    ParentBackground = False
+                    TabOrder = 3
+                    object lblContatoComm: TLabel
+                      Left = 16
+                      Top = 20
+                      Width = 72
+                      Height = 25
+                      Caption = 'Contato'
+                      Color = clCream
+                      Font.Charset = DEFAULT_CHARSET
+                      Font.Color = clWhite
+                      Font.Height = -19
+                      Font.Name = 'Segoe UI'
+                      Font.Style = [fsBold]
+                      ParentColor = False
+                      ParentFont = False
+                    end
+                    object lblEComm: TLabel
+                      Left = 16
+                      Top = 51
+                      Width = 120
+                      Height = 15
+                      Caption = 'Email do Restaurante:'
+                      Font.Charset = DEFAULT_CHARSET
+                      Font.Color = clWhite
+                      Font.Height = -12
+                      Font.Name = 'Segoe UI'
+                      Font.Style = [fsBold]
+                      ParentFont = False
+                    end
+                    object lblTComm: TLabel
+                      Left = 16
+                      Top = 75
+                      Width = 140
+                      Height = 15
+                      Caption = 'Telefone do Restaurante:'
+                      Font.Charset = DEFAULT_CHARSET
+                      Font.Color = clWhite
+                      Font.Height = -12
+                      Font.Name = 'Segoe UI'
+                      Font.Style = [fsBold]
+                      ParentFont = False
+                    end
+                    object lblECommD: TLabel
+                      Left = 142
+                      Top = 51
+                      Width = 3
+                      Height = 15
+                    end
+                    object lblTCommD: TLabel
+                      Left = 165
+                      Top = 75
+                      Width = 3
+                      Height = 15
+                    end
                   end
-                  object lblNPCommD: TLabel
-                    Left = 146
-                    Top = 51
-                    Width = 3
-                    Height = 15
+                  object pInfoRestauranteL: TPanel
+                    Left = 558
+                    Top = 199
+                    Width = 521
+                    Height = 135
+                    BevelOuter = bvNone
+                    Color = clCoral
+                    ParentBackground = False
+                    TabOrder = 4
+                    object lblLComm: TLabel
+                      Left = 16
+                      Top = 20
+                      Width = 101
+                      Height = 25
+                      Caption = 'Localiza'#231#227'o'
+                      Color = clCream
+                      Font.Charset = DEFAULT_CHARSET
+                      Font.Color = clWhite
+                      Font.Height = -19
+                      Font.Name = 'Segoe UI'
+                      Font.Style = [fsBold]
+                      ParentColor = False
+                      ParentFont = False
+                    end
+                    object lblENComm: TLabel
+                      Left = 16
+                      Top = 51
+                      Width = 55
+                      Height = 15
+                      Caption = 'Endere'#231'o:'
+                      Font.Charset = DEFAULT_CHARSET
+                      Font.Color = clWhite
+                      Font.Height = -12
+                      Font.Name = 'Segoe UI'
+                      Font.Style = [fsBold]
+                      ParentFont = False
+                    end
+                    object lblCEPComm: TLabel
+                      Left = 16
+                      Top = 75
+                      Width = 23
+                      Height = 15
+                      Caption = 'CEP:'
+                      Font.Charset = DEFAULT_CHARSET
+                      Font.Color = clWhite
+                      Font.Height = -12
+                      Font.Name = 'Segoe UI'
+                      Font.Style = [fsBold]
+                      ParentFont = False
+                    end
+                    object lblENCommD: TLabel
+                      Left = 77
+                      Top = 51
+                      Width = 3
+                      Height = 15
+                    end
+                    object lblCEPCommD: TLabel
+                      Left = 48
+                      Top = 75
+                      Width = 3
+                      Height = 15
+                    end
                   end
-                  object lblEPCommD: TLabel
-                    Left = 144
-                    Top = 75
-                    Width = 3
-                    Height = 15
-                  end
-                  object lblCPFPCommD: TLabel
+                  object pButtonAlterarSenha: TPanel
                     Left = 132
-                    Top = 99
-                    Width = 3
-                    Height = 15
+                    Top = 509
+                    Width = 86
+                    Height = 44
+                    BevelOuter = bvNone
+                    Caption = 'Alterar Senha'
+                    Color = clCoral
+                    Font.Charset = DEFAULT_CHARSET
+                    Font.Color = clWhite
+                    Font.Height = -12
+                    Font.Name = 'Segoe UI'
+                    Font.Style = [fsBold]
+                    ParentBackground = False
+                    ParentFont = False
+                    TabOrder = 5
+                    OnClick = pButtonAlterarSenhaEClick
+                  end
+                  object pInfoRestauranteP: TPanel
+                    Left = 558
+                    Top = 360
+                    Width = 521
+                    Height = 129
+                    BevelOuter = bvNone
+                    Color = clCoral
+                    ParentBackground = False
+                    TabOrder = 6
+                    object lblProprietario: TLabel
+                      Left = 16
+                      Top = 20
+                      Width = 109
+                      Height = 25
+                      Caption = 'Propriet'#225'rio'
+                      Color = clCream
+                      Font.Charset = DEFAULT_CHARSET
+                      Font.Color = clWhite
+                      Font.Height = -19
+                      Font.Name = 'Segoe UI'
+                      Font.Style = [fsBold]
+                      ParentColor = False
+                      ParentFont = False
+                    end
+                    object lblNPComm: TLabel
+                      Left = 16
+                      Top = 51
+                      Width = 124
+                      Height = 15
+                      Caption = 'Nome do Propriet'#225'rio:'
+                      Font.Charset = DEFAULT_CHARSET
+                      Font.Color = clWhite
+                      Font.Height = -12
+                      Font.Name = 'Segoe UI'
+                      Font.Style = [fsBold]
+                      ParentFont = False
+                    end
+                    object lblEPComm: TLabel
+                      Left = 16
+                      Top = 75
+                      Width = 119
+                      Height = 15
+                      Caption = 'Email do Propriet'#225'rio:'
+                      Font.Charset = DEFAULT_CHARSET
+                      Font.Color = clWhite
+                      Font.Height = -12
+                      Font.Name = 'Segoe UI'
+                      Font.Style = [fsBold]
+                      ParentFont = False
+                    end
+                    object lblCPFPComm: TLabel
+                      Left = 16
+                      Top = 99
+                      Width = 110
+                      Height = 15
+                      Caption = 'CPF do Propriet'#225'rio:'
+                      Font.Charset = DEFAULT_CHARSET
+                      Font.Color = clWhite
+                      Font.Height = -12
+                      Font.Name = 'Segoe UI'
+                      Font.Style = [fsBold]
+                      ParentFont = False
+                    end
+                    object lblNPCommD: TLabel
+                      Left = 146
+                      Top = 51
+                      Width = 3
+                      Height = 15
+                    end
+                    object lblEPCommD: TLabel
+                      Left = 144
+                      Top = 75
+                      Width = 3
+                      Height = 15
+                    end
+                    object lblCPFPCommD: TLabel
+                      Left = 132
+                      Top = 99
+                      Width = 3
+                      Height = 15
+                    end
                   end
                 end
               end
@@ -1185,626 +1206,643 @@
             object tsEditar: TTabSheet
               Caption = 'tsEditar'
               ImageIndex = 1
-              object pMainPerfilEditar: TPanel
+              object scbxMainEditar: TScrollBox
+                AlignWithMargins = True
                 Left = 0
                 Top = 0
                 Width = 1127
                 Height = 581
+                Margins.Left = 0
+                Margins.Top = 0
+                Margins.Right = 0
+                Margins.Bottom = 0
                 Align = alClient
-                Color = clWindow
-                ParentBackground = False
+                BevelInner = bvNone
+                BevelOuter = bvNone
+                BorderStyle = bsNone
                 TabOrder = 0
-                OnClick = pButtonSalvarDadosEClick
-                object pInfoRestauranteNCDE: TPanel
-                  Left = 24
-                  Top = 37
-                  Width = 505
-                  Height = 244
-                  BevelOuter = bvNone
-                  Color = clCoral
+                UseWheelForScrolling = True
+                object pMainPerfilEditar: TPanel
+                  Left = 0
+                  Top = 0
+                  Width = 1127
+                  Height = 581
+                  Align = alClient
+                  Color = clWindow
                   ParentBackground = False
                   TabOrder = 0
-                  object Label6: TLabel
-                    Left = 16
-                    Top = 9
-                    Width = 175
-                    Height = 25
-                    Caption = 'Dados do Com'#233'rcio'
-                    Color = clCream
-                    Font.Charset = DEFAULT_CHARSET
-                    Font.Color = clWhite
-                    Font.Height = -19
-                    Font.Name = 'Segoe UI'
-                    Font.Style = [fsBold]
-                    ParentColor = False
-                    ParentFont = False
-                  end
-                  object Label8: TLabel
-                    Left = 16
-                    Top = 40
-                    Width = 110
-                    Height = 15
-                    Caption = 'Nome do Com'#233'rcio:'
-                    Font.Charset = DEFAULT_CHARSET
-                    Font.Color = clWhite
-                    Font.Height = -12
-                    Font.Name = 'Segoe UI'
-                    Font.Style = [fsBold]
-                    ParentFont = False
-                  end
-                  object Label9: TLabel
-                    Left = 16
-                    Top = 67
-                    Width = 129
-                    Height = 15
-                    Caption = 'Categoria do Com'#233'rcio:'
-                    Font.Charset = DEFAULT_CHARSET
-                    Font.Color = clWhite
-                    Font.Height = -12
-                    Font.Name = 'Segoe UI'
-                    Font.Style = [fsBold]
-                    ParentFont = False
-                  end
-                  object Label10: TLabel
-                    Left = 16
-                    Top = 91
-                    Width = 130
-                    Height = 15
-                    Caption = 'Descri'#231#227'o do Com'#233'rcio:'
-                    Font.Charset = DEFAULT_CHARSET
-                    Font.Color = clWhite
-                    Font.Height = -12
-                    Font.Name = 'Segoe UI'
-                    Font.Style = [fsBold]
-                    ParentFont = False
-                  end
-                  object mDCommDE: TMemo
-                    Left = 10
-                    Top = 114
-                    Width = 486
-                    Height = 119
-                    Lines.Strings = (
-                      'mDCommD')
-                    TabOrder = 0
-                  end
-                  object eNCommDE: TEdit
-                    Left = 147
-                    Top = 37
-                    Width = 150
-                    Height = 23
-                    TabOrder = 1
-                  end
-                  object cbCcommDE: TComboBox
-                    Left = 147
-                    Top = 64
-                    Width = 150
-                    Height = 23
-                    TabOrder = 2
-                  end
-                end
-                object pInfoRestauranteHE: TPanel
-                  Left = 24
-                  Top = 309
-                  Width = 505
-                  Height = 180
-                  BevelOuter = bvNone
-                  Color = clCoral
-                  ParentBackground = False
-                  TabOrder = 1
-                  object Label13: TLabel
-                    Left = 16
-                    Top = 20
-                    Width = 239
-                    Height = 25
-                    Caption = 'Hor'#225'rios e Taxa de Entrega'
-                    Color = clCream
-                    Font.Charset = DEFAULT_CHARSET
-                    Font.Color = clWhite
-                    Font.Height = -19
-                    Font.Name = 'Segoe UI'
-                    Font.Style = [fsBold]
-                    ParentColor = False
-                    ParentFont = False
-                  end
-                  object Label14: TLabel
-                    Left = 16
-                    Top = 51
-                    Width = 115
-                    Height = 15
-                    Caption = 'Hor'#225'rio de Abertura:'
-                    Font.Charset = DEFAULT_CHARSET
-                    Font.Color = clWhite
-                    Font.Height = -12
-                    Font.Name = 'Segoe UI'
-                    Font.Style = [fsBold]
-                    ParentFont = False
-                  end
-                  object Label15: TLabel
-                    Left = 16
-                    Top = 80
-                    Width = 178
-                    Height = 15
-                    Caption = 'Tempo de Preparo do Com'#233'rcio:'
-                    Font.Charset = DEFAULT_CHARSET
-                    Font.Color = clWhite
-                    Font.Height = -12
-                    Font.Name = 'Segoe UI'
-                    Font.Style = [fsBold]
-                    ParentFont = False
-                  end
-                  object Label16: TLabel
-                    Left = 16
-                    Top = 109
-                    Width = 94
-                    Height = 15
-                    Caption = 'Taxa de Entrega: '
-                    Font.Charset = DEFAULT_CHARSET
-                    Font.Color = clWhite
-                    Font.Height = -12
-                    Font.Name = 'Segoe UI'
-                    Font.Style = [fsBold]
-                    ParentFont = False
-                  end
-                  object Label28: TLabel
-                    Left = 210
-                    Top = 51
-                    Width = 134
-                    Height = 15
-                    Caption = 'Hor'#225'rio de Fechamento:'
-                    Font.Charset = DEFAULT_CHARSET
-                    Font.Color = clWhite
-                    Font.Height = -12
-                    Font.Name = 'Segoe UI'
-                    Font.Style = [fsBold]
-                    ParentFont = False
-                  end
-                  object eTPCommDE: TEdit
-                    Left = 198
-                    Top = 77
-                    Width = 35
-                    Height = 23
-                    NumbersOnly = True
-                    TabOrder = 0
-                    TextHint = '30'
-                  end
-                  object eTECommDE: TEdit
-                    Left = 116
-                    Top = 106
-                    Width = 117
-                    Height = 23
-                    TabOrder = 1
-                    TextHint = '0000,00'
-                  end
-                  object tpHACommDE: TTimePicker
-                    Left = 134
-                    Top = 46
-                    Width = 72
-                    Height = 25
-                    Font.Charset = DEFAULT_CHARSET
-                    Font.Color = clWindowText
-                    Font.Height = -16
-                    Font.Name = 'Segoe UI'
-                    Font.Style = []
-                    TabOrder = 2
-                    Time = 45966.617643831020000000
-                    TimeFormat = 'hh:nn'
-                  end
-                  object tpHFCommDE: TTimePicker
-                    Left = 348
-                    Top = 46
-                    Width = 72
-                    Height = 25
-                    Font.Charset = DEFAULT_CHARSET
-                    Font.Color = clWindowText
-                    Font.Height = -16
-                    Font.Name = 'Segoe UI'
-                    Font.Style = []
-                    TabOrder = 3
-                    Time = 45966.617643831020000000
-                    TimeFormat = 'hh:nn'
-                  end
-                  object meHFCommDE: TMaskEdit
-                    Left = 311
-                    Top = 96
-                    Width = 55
-                    Height = 23
-                    EditMask = '!90:00;1;_'
-                    MaxLength = 5
-                    TabOrder = 4
-                    Text = '  :  '
-                  end
-                end
-                object pButtonSalvarDadosE: TPanel
-                  Left = 142
-                  Top = 509
-                  Width = 76
-                  Height = 44
-                  BevelOuter = bvNone
-                  Caption = 'Salvar dados'
-                  Color = clCoral
-                  Font.Charset = DEFAULT_CHARSET
-                  Font.Color = clWhite
-                  Font.Height = -12
-                  Font.Name = 'Segoe UI'
-                  Font.Style = [fsBold]
-                  ParentBackground = False
-                  ParentFont = False
-                  TabOrder = 2
                   OnClick = pButtonSalvarDadosEClick
-                end
-                object pInfoRestauranteCE: TPanel
-                  Left = 558
-                  Top = 37
-                  Width = 539
-                  Height = 135
-                  BevelOuter = bvNone
-                  Color = clCoral
-                  ParentBackground = False
-                  TabOrder = 3
-                  object Label20: TLabel
-                    Left = 16
-                    Top = 20
-                    Width = 72
-                    Height = 25
-                    Caption = 'Contato'
-                    Color = clCream
-                    Font.Charset = DEFAULT_CHARSET
-                    Font.Color = clWhite
-                    Font.Height = -19
-                    Font.Name = 'Segoe UI'
-                    Font.Style = [fsBold]
-                    ParentColor = False
-                    ParentFont = False
-                  end
-                  object Label21: TLabel
-                    Left = 16
-                    Top = 51
-                    Width = 120
-                    Height = 15
-                    Caption = 'Email do Restaurante:'
-                    Font.Charset = DEFAULT_CHARSET
-                    Font.Color = clWhite
-                    Font.Height = -12
-                    Font.Name = 'Segoe UI'
-                    Font.Style = [fsBold]
-                    ParentFont = False
-                  end
-                  object Label22: TLabel
-                    Left = 16
-                    Top = 78
-                    Width = 140
-                    Height = 15
-                    Caption = 'Telefone do Restaurante:'
-                    Font.Charset = DEFAULT_CHARSET
-                    Font.Color = clWhite
-                    Font.Height = -12
-                    Font.Name = 'Segoe UI'
-                    Font.Style = [fsBold]
-                    ParentFont = False
-                  end
-                  object eECommDE: TEdit
-                    Left = 162
-                    Top = 48
-                    Width = 159
-                    Height = 23
+                  object pInfoRestauranteNCDE: TPanel
+                    Left = 24
+                    Top = 37
+                    Width = 505
+                    Height = 244
+                    BevelOuter = bvNone
+                    Color = clCoral
+                    ParentBackground = False
                     TabOrder = 0
+                    object Label6: TLabel
+                      Left = 16
+                      Top = 9
+                      Width = 175
+                      Height = 25
+                      Caption = 'Dados do Com'#233'rcio'
+                      Color = clCream
+                      Font.Charset = DEFAULT_CHARSET
+                      Font.Color = clWhite
+                      Font.Height = -19
+                      Font.Name = 'Segoe UI'
+                      Font.Style = [fsBold]
+                      ParentColor = False
+                      ParentFont = False
+                    end
+                    object Label8: TLabel
+                      Left = 16
+                      Top = 40
+                      Width = 110
+                      Height = 15
+                      Caption = 'Nome do Com'#233'rcio:'
+                      Font.Charset = DEFAULT_CHARSET
+                      Font.Color = clWhite
+                      Font.Height = -12
+                      Font.Name = 'Segoe UI'
+                      Font.Style = [fsBold]
+                      ParentFont = False
+                    end
+                    object Label9: TLabel
+                      Left = 16
+                      Top = 67
+                      Width = 129
+                      Height = 15
+                      Caption = 'Categoria do Com'#233'rcio:'
+                      Font.Charset = DEFAULT_CHARSET
+                      Font.Color = clWhite
+                      Font.Height = -12
+                      Font.Name = 'Segoe UI'
+                      Font.Style = [fsBold]
+                      ParentFont = False
+                    end
+                    object Label10: TLabel
+                      Left = 16
+                      Top = 91
+                      Width = 130
+                      Height = 15
+                      Caption = 'Descri'#231#227'o do Com'#233'rcio:'
+                      Font.Charset = DEFAULT_CHARSET
+                      Font.Color = clWhite
+                      Font.Height = -12
+                      Font.Name = 'Segoe UI'
+                      Font.Style = [fsBold]
+                      ParentFont = False
+                    end
+                    object mDCommDE: TMemo
+                      Left = 10
+                      Top = 114
+                      Width = 486
+                      Height = 119
+                      Lines.Strings = (
+                        'mDCommD')
+                      TabOrder = 0
+                    end
+                    object eNCommDE: TEdit
+                      Left = 147
+                      Top = 37
+                      Width = 150
+                      Height = 23
+                      TabOrder = 1
+                    end
+                    object cbCcommDE: TComboBox
+                      Left = 147
+                      Top = 64
+                      Width = 150
+                      Height = 23
+                      TabOrder = 2
+                    end
                   end
-                  object meTCommDE: TMaskEdit
-                    Left = 162
-                    Top = 75
-                    Width = 67
-                    Height = 23
-                    EditMask = '(99)99999-9999;1;_'
-                    MaxLength = 14
+                  object pInfoRestauranteHE: TPanel
+                    Left = 24
+                    Top = 309
+                    Width = 505
+                    Height = 180
+                    BevelOuter = bvNone
+                    Color = clCoral
+                    ParentBackground = False
                     TabOrder = 1
-                    Text = '(  )     -    '
+                    object Label13: TLabel
+                      Left = 16
+                      Top = 20
+                      Width = 239
+                      Height = 25
+                      Caption = 'Hor'#225'rios e Taxa de Entrega'
+                      Color = clCream
+                      Font.Charset = DEFAULT_CHARSET
+                      Font.Color = clWhite
+                      Font.Height = -19
+                      Font.Name = 'Segoe UI'
+                      Font.Style = [fsBold]
+                      ParentColor = False
+                      ParentFont = False
+                    end
+                    object Label14: TLabel
+                      Left = 16
+                      Top = 51
+                      Width = 115
+                      Height = 15
+                      Caption = 'Hor'#225'rio de Abertura:'
+                      Font.Charset = DEFAULT_CHARSET
+                      Font.Color = clWhite
+                      Font.Height = -12
+                      Font.Name = 'Segoe UI'
+                      Font.Style = [fsBold]
+                      ParentFont = False
+                    end
+                    object Label15: TLabel
+                      Left = 16
+                      Top = 80
+                      Width = 178
+                      Height = 15
+                      Caption = 'Tempo de Preparo do Com'#233'rcio:'
+                      Font.Charset = DEFAULT_CHARSET
+                      Font.Color = clWhite
+                      Font.Height = -12
+                      Font.Name = 'Segoe UI'
+                      Font.Style = [fsBold]
+                      ParentFont = False
+                    end
+                    object Label16: TLabel
+                      Left = 16
+                      Top = 109
+                      Width = 94
+                      Height = 15
+                      Caption = 'Taxa de Entrega: '
+                      Font.Charset = DEFAULT_CHARSET
+                      Font.Color = clWhite
+                      Font.Height = -12
+                      Font.Name = 'Segoe UI'
+                      Font.Style = [fsBold]
+                      ParentFont = False
+                    end
+                    object Label28: TLabel
+                      Left = 210
+                      Top = 51
+                      Width = 134
+                      Height = 15
+                      Caption = 'Hor'#225'rio de Fechamento:'
+                      Font.Charset = DEFAULT_CHARSET
+                      Font.Color = clWhite
+                      Font.Height = -12
+                      Font.Name = 'Segoe UI'
+                      Font.Style = [fsBold]
+                      ParentFont = False
+                    end
+                    object eTPCommDE: TEdit
+                      Left = 198
+                      Top = 77
+                      Width = 35
+                      Height = 23
+                      NumbersOnly = True
+                      TabOrder = 0
+                      TextHint = '30'
+                    end
+                    object eTECommDE: TEdit
+                      Left = 116
+                      Top = 106
+                      Width = 117
+                      Height = 23
+                      TabOrder = 1
+                      TextHint = '0000,00'
+                    end
+                    object tpHACommDE: TTimePicker
+                      Left = 134
+                      Top = 46
+                      Width = 72
+                      Height = 25
+                      Font.Charset = DEFAULT_CHARSET
+                      Font.Color = clWindowText
+                      Font.Height = -16
+                      Font.Name = 'Segoe UI'
+                      Font.Style = []
+                      TabOrder = 2
+                      Time = 45966.617643831020000000
+                      TimeFormat = 'hh:nn'
+                    end
+                    object tpHFCommDE: TTimePicker
+                      Left = 348
+                      Top = 46
+                      Width = 72
+                      Height = 25
+                      Font.Charset = DEFAULT_CHARSET
+                      Font.Color = clWindowText
+                      Font.Height = -16
+                      Font.Name = 'Segoe UI'
+                      Font.Style = []
+                      TabOrder = 3
+                      Time = 45966.617643831020000000
+                      TimeFormat = 'hh:nn'
+                    end
+                    object meHFCommDE: TMaskEdit
+                      Left = 311
+                      Top = 96
+                      Width = 55
+                      Height = 23
+                      EditMask = '!90:00;1;_'
+                      MaxLength = 5
+                      TabOrder = 4
+                      Text = '  :  '
+                    end
                   end
-                end
-                object pInfoRestauranteLE: TPanel
-                  Left = 558
-                  Top = 199
-                  Width = 539
-                  Height = 135
-                  BevelOuter = bvNone
-                  Color = clCoral
-                  ParentBackground = False
-                  TabOrder = 4
-                  object Label25: TLabel
-                    Left = 16
-                    Top = 12
-                    Width = 101
-                    Height = 25
-                    Caption = 'Localiza'#231#227'o'
-                    Color = clCream
-                    Font.Charset = DEFAULT_CHARSET
-                    Font.Color = clWhite
-                    Font.Height = -19
-                    Font.Name = 'Segoe UI'
-                    Font.Style = [fsBold]
-                    ParentColor = False
-                    ParentFont = False
-                  end
-                  object Label26: TLabel
-                    Left = 16
-                    Top = 80
-                    Width = 24
-                    Height = 15
-                    Caption = 'Rua:'
+                  object pButtonSalvarDadosE: TPanel
+                    Left = 142
+                    Top = 509
+                    Width = 76
+                    Height = 44
+                    BevelOuter = bvNone
+                    Caption = 'Salvar dados'
+                    Color = clCoral
                     Font.Charset = DEFAULT_CHARSET
                     Font.Color = clWhite
                     Font.Height = -12
                     Font.Name = 'Segoe UI'
                     Font.Style = [fsBold]
+                    ParentBackground = False
                     ParentFont = False
-                  end
-                  object Label27: TLabel
-                    Left = 16
-                    Top = 50
-                    Width = 23
-                    Height = 15
-                    Caption = 'CEP:'
-                    Font.Charset = DEFAULT_CHARSET
-                    Font.Color = clWhite
-                    Font.Height = -12
-                    Font.Name = 'Segoe UI'
-                    Font.Style = [fsBold]
-                    ParentFont = False
-                  end
-                  object Label11: TLabel
-                    Left = 147
-                    Top = 50
-                    Width = 39
-                    Height = 15
-                    Caption = 'Estado:'
-                    Font.Charset = DEFAULT_CHARSET
-                    Font.Color = clWhite
-                    Font.Height = -12
-                    Font.Name = 'Segoe UI'
-                    Font.Style = [fsBold]
-                    ParentFont = False
-                  end
-                  object Label12: TLabel
-                    Left = 147
-                    Top = 80
-                    Width = 49
-                    Height = 15
-                    Caption = 'N'#250'mero:'
-                    Font.Charset = DEFAULT_CHARSET
-                    Font.Color = clWhite
-                    Font.Height = -12
-                    Font.Name = 'Segoe UI'
-                    Font.Style = [fsBold]
-                    ParentFont = False
-                  end
-                  object Label17: TLabel
-                    Left = 297
-                    Top = 50
-                    Width = 40
-                    Height = 15
-                    Caption = 'Cidade:'
-                    Font.Charset = DEFAULT_CHARSET
-                    Font.Color = clWhite
-                    Font.Height = -12
-                    Font.Name = 'Segoe UI'
-                    Font.Style = [fsBold]
-                    ParentFont = False
-                  end
-                  object Label18: TLabel
-                    Left = 296
-                    Top = 80
-                    Width = 37
-                    Height = 15
-                    Caption = 'Bairro:'
-                    Font.Charset = DEFAULT_CHARSET
-                    Font.Color = clWhite
-                    Font.Height = -12
-                    Font.Name = 'Segoe UI'
-                    Font.Style = [fsBold]
-                    ParentFont = False
-                  end
-                  object Label19: TLabel
-                    Left = 147
-                    Top = 108
-                    Width = 138
-                    Height = 15
-                    Caption = 'Complemento(Opcional):'
-                    Font.Charset = DEFAULT_CHARSET
-                    Font.Color = clWhite
-                    Font.Height = -12
-                    Font.Name = 'Segoe UI'
-                    Font.Style = [fsBold]
-                    ParentFont = False
-                  end
-                  object eRuaCommDE: TEdit
-                    Left = 46
-                    Top = 76
-                    Width = 95
-                    Height = 23
-                    TabOrder = 0
-                  end
-                  object eEstadoCOmmDE: TEdit
-                    Left = 334
-                    Top = 18
-                    Width = 95
-                    Height = 23
-                    TabOrder = 1
-                  end
-                  object eNumeroEnderecoCommDE: TEdit
-                    Left = 198
-                    Top = 77
-                    Width = 95
-                    Height = 23
                     TabOrder = 2
+                    OnClick = pButtonSalvarDadosEClick
                   end
-                  object eCidadeCommDE: TEdit
-                    Left = 339
-                    Top = 47
-                    Width = 95
-                    Height = 23
+                  object pInfoRestauranteCE: TPanel
+                    Left = 558
+                    Top = 37
+                    Width = 539
+                    Height = 135
+                    BevelOuter = bvNone
+                    Color = clCoral
+                    ParentBackground = False
                     TabOrder = 3
+                    object Label20: TLabel
+                      Left = 16
+                      Top = 20
+                      Width = 72
+                      Height = 25
+                      Caption = 'Contato'
+                      Color = clCream
+                      Font.Charset = DEFAULT_CHARSET
+                      Font.Color = clWhite
+                      Font.Height = -19
+                      Font.Name = 'Segoe UI'
+                      Font.Style = [fsBold]
+                      ParentColor = False
+                      ParentFont = False
+                    end
+                    object Label21: TLabel
+                      Left = 16
+                      Top = 51
+                      Width = 120
+                      Height = 15
+                      Caption = 'Email do Restaurante:'
+                      Font.Charset = DEFAULT_CHARSET
+                      Font.Color = clWhite
+                      Font.Height = -12
+                      Font.Name = 'Segoe UI'
+                      Font.Style = [fsBold]
+                      ParentFont = False
+                    end
+                    object Label22: TLabel
+                      Left = 16
+                      Top = 78
+                      Width = 140
+                      Height = 15
+                      Caption = 'Telefone do Restaurante:'
+                      Font.Charset = DEFAULT_CHARSET
+                      Font.Color = clWhite
+                      Font.Height = -12
+                      Font.Name = 'Segoe UI'
+                      Font.Style = [fsBold]
+                      ParentFont = False
+                    end
+                    object eECommDE: TEdit
+                      Left = 162
+                      Top = 48
+                      Width = 159
+                      Height = 23
+                      TabOrder = 0
+                    end
+                    object meTCommDE: TMaskEdit
+                      Left = 162
+                      Top = 75
+                      Width = 67
+                      Height = 23
+                      EditMask = '(99)99999-9999;1;_'
+                      MaxLength = 14
+                      TabOrder = 1
+                      Text = '(  )     -    '
+                    end
                   end
-                  object eBairroCommDE: TEdit
-                    Left = 339
-                    Top = 77
-                    Width = 95
-                    Height = 23
+                  object pInfoRestauranteLE: TPanel
+                    Left = 558
+                    Top = 199
+                    Width = 539
+                    Height = 135
+                    BevelOuter = bvNone
+                    Color = clCoral
+                    ParentBackground = False
                     TabOrder = 4
+                    object Label25: TLabel
+                      Left = 16
+                      Top = 12
+                      Width = 101
+                      Height = 25
+                      Caption = 'Localiza'#231#227'o'
+                      Color = clCream
+                      Font.Charset = DEFAULT_CHARSET
+                      Font.Color = clWhite
+                      Font.Height = -19
+                      Font.Name = 'Segoe UI'
+                      Font.Style = [fsBold]
+                      ParentColor = False
+                      ParentFont = False
+                    end
+                    object Label26: TLabel
+                      Left = 16
+                      Top = 80
+                      Width = 67
+                      Height = 15
+                      Caption = 'Logradouro:'
+                      Font.Charset = DEFAULT_CHARSET
+                      Font.Color = clWhite
+                      Font.Height = -12
+                      Font.Name = 'Segoe UI'
+                      Font.Style = [fsBold]
+                      ParentFont = False
+                    end
+                    object Label27: TLabel
+                      Left = 16
+                      Top = 50
+                      Width = 23
+                      Height = 15
+                      Caption = 'CEP:'
+                      Font.Charset = DEFAULT_CHARSET
+                      Font.Color = clWhite
+                      Font.Height = -12
+                      Font.Name = 'Segoe UI'
+                      Font.Style = [fsBold]
+                      ParentFont = False
+                    end
+                    object Label11: TLabel
+                      Left = 147
+                      Top = 50
+                      Width = 39
+                      Height = 15
+                      Caption = 'Estado:'
+                      Font.Charset = DEFAULT_CHARSET
+                      Font.Color = clWhite
+                      Font.Height = -12
+                      Font.Name = 'Segoe UI'
+                      Font.Style = [fsBold]
+                      ParentFont = False
+                    end
+                    object Label12: TLabel
+                      Left = 285
+                      Top = 80
+                      Width = 49
+                      Height = 15
+                      Caption = 'N'#250'mero:'
+                      Font.Charset = DEFAULT_CHARSET
+                      Font.Color = clWhite
+                      Font.Height = -12
+                      Font.Name = 'Segoe UI'
+                      Font.Style = [fsBold]
+                      ParentFont = False
+                    end
+                    object Label17: TLabel
+                      Left = 297
+                      Top = 50
+                      Width = 40
+                      Height = 15
+                      Caption = 'Cidade:'
+                      Font.Charset = DEFAULT_CHARSET
+                      Font.Color = clWhite
+                      Font.Height = -12
+                      Font.Name = 'Segoe UI'
+                      Font.Style = [fsBold]
+                      ParentFont = False
+                    end
+                    object Label18: TLabel
+                      Left = 16
+                      Top = 108
+                      Width = 37
+                      Height = 15
+                      Caption = 'Bairro:'
+                      Font.Charset = DEFAULT_CHARSET
+                      Font.Color = clWhite
+                      Font.Height = -12
+                      Font.Name = 'Segoe UI'
+                      Font.Style = [fsBold]
+                      ParentFont = False
+                    end
+                    object Label19: TLabel
+                      Left = 147
+                      Top = 108
+                      Width = 138
+                      Height = 15
+                      Caption = 'Complemento(Opcional):'
+                      Font.Charset = DEFAULT_CHARSET
+                      Font.Color = clWhite
+                      Font.Height = -12
+                      Font.Name = 'Segoe UI'
+                      Font.Style = [fsBold]
+                      ParentFont = False
+                    end
+                    object eRuaCommDE: TEdit
+                      Left = 87
+                      Top = 77
+                      Width = 192
+                      Height = 23
+                      TabOrder = 0
+                    end
+                    object eNumeroEnderecoCommDE: TEdit
+                      Left = 339
+                      Top = 77
+                      Width = 95
+                      Height = 23
+                      TabOrder = 1
+                    end
+                    object eCidadeCommDE: TEdit
+                      Left = 339
+                      Top = 47
+                      Width = 95
+                      Height = 23
+                      TabOrder = 2
+                    end
+                    object eBairroCommDE: TEdit
+                      Left = 55
+                      Top = 105
+                      Width = 86
+                      Height = 23
+                      TabOrder = 3
+                    end
+                    object eComplementoCommDE: TEdit
+                      Left = 291
+                      Top = 105
+                      Width = 143
+                      Height = 23
+                      TabOrder = 4
+                    end
+                    object meCEPCommDE: TMaskEdit
+                      Left = 46
+                      Top = 47
+                      Width = 95
+                      Height = 23
+                      EditMask = '99999-999;1;_'
+                      MaxLength = 9
+                      TabOrder = 5
+                      Text = '     -   '
+                    end
+                    object cbEstadoCommDE: TComboBox
+                      Left = 198
+                      Top = 47
+                      Width = 95
+                      Height = 23
+                      TabOrder = 6
+                    end
+                    object eEstadoCOmmDE: TEdit
+                      Left = 342
+                      Top = 18
+                      Width = 95
+                      Height = 23
+                      TabOrder = 7
+                    end
                   end
-                  object eComplementoCommDE: TEdit
-                    Left = 291
-                    Top = 105
-                    Width = 143
-                    Height = 23
+                  object pButtonAlterarSenhaE: TPanel
+                    Left = 24
+                    Top = 509
+                    Width = 86
+                    Height = 44
+                    BevelOuter = bvNone
+                    Caption = 'Alterar Senha'
+                    Color = clCoral
+                    Font.Charset = DEFAULT_CHARSET
+                    Font.Color = clWhite
+                    Font.Height = -12
+                    Font.Name = 'Segoe UI'
+                    Font.Style = [fsBold]
+                    ParentBackground = False
+                    ParentFont = False
                     TabOrder = 5
+                    OnClick = pButtonAlterarSenhaEClick
                   end
-                  object meCEPCommDE: TMaskEdit
-                    Left = 46
-                    Top = 47
-                    Width = 95
-                    Height = 23
-                    EditMask = '99999-999;1;_'
-                    MaxLength = 9
+                  object pInfoRestaurantePE: TPanel
+                    Left = 558
+                    Top = 360
+                    Width = 539
+                    Height = 129
+                    BevelOuter = bvNone
+                    Color = clCoral
+                    ParentBackground = False
                     TabOrder = 6
-                    Text = '     -   '
+                    object Label30: TLabel
+                      Left = 16
+                      Top = 13
+                      Width = 109
+                      Height = 25
+                      Caption = 'Propriet'#225'rio'
+                      Color = clCream
+                      Font.Charset = DEFAULT_CHARSET
+                      Font.Color = clWhite
+                      Font.Height = -19
+                      Font.Name = 'Segoe UI'
+                      Font.Style = [fsBold]
+                      ParentColor = False
+                      ParentFont = False
+                    end
+                    object Label31: TLabel
+                      Left = 16
+                      Top = 46
+                      Width = 124
+                      Height = 15
+                      Caption = 'Nome do Propriet'#225'rio:'
+                      Font.Charset = DEFAULT_CHARSET
+                      Font.Color = clWhite
+                      Font.Height = -12
+                      Font.Name = 'Segoe UI'
+                      Font.Style = [fsBold]
+                      ParentFont = False
+                    end
+                    object Label32: TLabel
+                      Left = 16
+                      Top = 72
+                      Width = 119
+                      Height = 15
+                      Caption = 'Email do Propriet'#225'rio:'
+                      Font.Charset = DEFAULT_CHARSET
+                      Font.Color = clWhite
+                      Font.Height = -12
+                      Font.Name = 'Segoe UI'
+                      Font.Style = [fsBold]
+                      ParentFont = False
+                    end
+                    object Label33: TLabel
+                      Left = 16
+                      Top = 99
+                      Width = 110
+                      Height = 15
+                      Caption = 'CPF do Propriet'#225'rio:'
+                      Font.Charset = DEFAULT_CHARSET
+                      Font.Color = clWhite
+                      Font.Height = -12
+                      Font.Name = 'Segoe UI'
+                      Font.Style = [fsBold]
+                      ParentFont = False
+                    end
+                    object eNPCommDE: TEdit
+                      Left = 146
+                      Top = 43
+                      Width = 150
+                      Height = 23
+                      TabOrder = 0
+                    end
+                    object eEPCommDE: TEdit
+                      Left = 146
+                      Top = 69
+                      Width = 150
+                      Height = 23
+                      TabOrder = 1
+                    end
+                    object meCPFPCommDE: TMaskEdit
+                      Left = 146
+                      Top = 96
+                      Width = 150
+                      Height = 23
+                      EditMask = '999.999.999-99;1;_'
+                      MaxLength = 14
+                      TabOrder = 2
+                      Text = '   .   .   -  '
+                    end
                   end
-                  object cbEstadoCommDE: TComboBox
-                    Left = 198
-                    Top = 47
-                    Width = 95
-                    Height = 23
+                  object pButtonCancelarE: TPanel
+                    Left = 253
+                    Top = 509
+                    Width = 76
+                    Height = 44
+                    BevelOuter = bvNone
+                    Caption = 'Cancelar'
+                    Color = clCoral
+                    Font.Charset = DEFAULT_CHARSET
+                    Font.Color = clWhite
+                    Font.Height = -12
+                    Font.Name = 'Segoe UI'
+                    Font.Style = [fsBold]
+                    ParentBackground = False
+                    ParentFont = False
                     TabOrder = 7
+                    OnClick = pButtonCancelarEClick
                   end
-                end
-                object pButtonAlterarSenhaE: TPanel
-                  Left = 24
-                  Top = 509
-                  Width = 86
-                  Height = 44
-                  BevelOuter = bvNone
-                  Caption = 'Alterar Senha'
-                  Color = clCoral
-                  Font.Charset = DEFAULT_CHARSET
-                  Font.Color = clWhite
-                  Font.Height = -12
-                  Font.Name = 'Segoe UI'
-                  Font.Style = [fsBold]
-                  ParentBackground = False
-                  ParentFont = False
-                  TabOrder = 5
-                  OnClick = pButtonAlterarSenhaEClick
-                end
-                object pInfoRestaurantePE: TPanel
-                  Left = 558
-                  Top = 360
-                  Width = 539
-                  Height = 129
-                  BevelOuter = bvNone
-                  Color = clCoral
-                  ParentBackground = False
-                  TabOrder = 6
-                  object Label30: TLabel
-                    Left = 16
-                    Top = 13
-                    Width = 109
-                    Height = 25
-                    Caption = 'Propriet'#225'rio'
-                    Color = clCream
-                    Font.Charset = DEFAULT_CHARSET
-                    Font.Color = clWhite
-                    Font.Height = -19
-                    Font.Name = 'Segoe UI'
-                    Font.Style = [fsBold]
-                    ParentColor = False
-                    ParentFont = False
-                  end
-                  object Label31: TLabel
-                    Left = 16
-                    Top = 46
-                    Width = 124
-                    Height = 15
-                    Caption = 'Nome do Propriet'#225'rio:'
-                    Font.Charset = DEFAULT_CHARSET
-                    Font.Color = clWhite
-                    Font.Height = -12
-                    Font.Name = 'Segoe UI'
-                    Font.Style = [fsBold]
-                    ParentFont = False
-                  end
-                  object Label32: TLabel
-                    Left = 16
-                    Top = 72
-                    Width = 119
-                    Height = 15
-                    Caption = 'Email do Propriet'#225'rio:'
-                    Font.Charset = DEFAULT_CHARSET
-                    Font.Color = clWhite
-                    Font.Height = -12
-                    Font.Name = 'Segoe UI'
-                    Font.Style = [fsBold]
-                    ParentFont = False
-                  end
-                  object Label33: TLabel
-                    Left = 16
-                    Top = 99
-                    Width = 110
-                    Height = 15
-                    Caption = 'CPF do Propriet'#225'rio:'
-                    Font.Charset = DEFAULT_CHARSET
-                    Font.Color = clWhite
-                    Font.Height = -12
-                    Font.Name = 'Segoe UI'
-                    Font.Style = [fsBold]
-                    ParentFont = False
-                  end
-                  object eNPCommDE: TEdit
-                    Left = 146
-                    Top = 43
-                    Width = 150
-                    Height = 23
-                    TabOrder = 0
-                  end
-                  object eEPCommDE: TEdit
-                    Left = 146
-                    Top = 69
-                    Width = 150
-                    Height = 23
-                    TabOrder = 1
-                  end
-                  object meCPFPCommDE: TMaskEdit
-                    Left = 146
-                    Top = 96
-                    Width = 150
-                    Height = 23
-                    EditMask = '999.999.999-99;1;_'
-                    MaxLength = 14
-                    TabOrder = 2
-                    Text = '   .   .   -  '
-                  end
-                end
-                object pButtonCancelarE: TPanel
-                  Left = 253
-                  Top = 509
-                  Width = 76
-                  Height = 44
-                  BevelOuter = bvNone
-                  Caption = 'Cancelar'
-                  Color = clCoral
-                  Font.Charset = DEFAULT_CHARSET
-                  Font.Color = clWhite
-                  Font.Height = -12
-                  Font.Name = 'Segoe UI'
-                  Font.Style = [fsBold]
-                  ParentBackground = False
-                  ParentFont = False
-                  TabOrder = 7
-                  OnClick = pButtonCancelarEClick
                 end
               end
             end
             object tsAlterarSenha: TTabSheet
               Caption = 'tsAlterarSenha'
               ImageIndex = 2
-              object Image1: TImage
+              object iButtonBackAlterarSenha: TImage
                 Left = 3
                 Top = 17
                 Width = 54
@@ -1936,7 +1974,7 @@
                 Proportional = True
                 OnClick = iButton5Click
               end
-              object Panel1: TPanel
+              object pAlterarSenha: TPanel
                 Left = 120
                 Top = 154
                 Width = 337
@@ -1960,7 +1998,7 @@
                   ParentColor = False
                   ParentFont = False
                 end
-                object Label24: TLabel
+                object lblSenhaAtual: TLabel
                   Left = 40
                   Top = 58
                   Width = 67
@@ -1973,7 +2011,7 @@
                   Font.Style = [fsBold]
                   ParentFont = False
                 end
-                object Label29: TLabel
+                object lblNovaSenha: TLabel
                   Left = 40
                   Top = 87
                   Width = 67
@@ -1986,7 +2024,7 @@
                   Font.Style = [fsBold]
                   ParentFont = False
                 end
-                object Label23: TLabel
+                object lblDigiteNovamente: TLabel
                   Left = 40
                   Top = 110
                   Width = 101
@@ -2038,7 +2076,7 @@
                   OnClick = pButtonCancelarAlterarSenhaClick
                 end
               end
-              object Panel2: TPanel
+              object pDicas: TPanel
                 Left = 496
                 Top = 150
                 Width = 265
@@ -2047,7 +2085,7 @@
                 Color = clCoral
                 ParentBackground = False
                 TabOrder = 1
-                object Label34: TLabel
+                object lblDicasTitle: TLabel
                   Left = 10
                   Top = 12
                   Width = 246
@@ -2062,7 +2100,7 @@
                   ParentColor = False
                   ParentFont = False
                 end
-                object Label35: TLabel
+                object lblDicas: TLabel
                   Left = 8
                   Top = 59
                   Width = 248
@@ -2097,7 +2135,7 @@
           AlignWithMargins = True
           Left = 4
           Top = 13
-          Width = 445
+          Width = 573
           Height = 36
           Alignment = taLeftJustify
           BevelOuter = bvNone
@@ -2106,9 +2144,10 @@
             AlignWithMargins = True
             Left = 3
             Top = 3
-            Width = 5
+            Width = 145
             Height = 30
             Align = alLeft
+            Caption = 'lblUserIdHeader'
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
             Font.Height = -19
@@ -2119,11 +2158,12 @@
           end
           object lblUserNameHeader: TLabel
             AlignWithMargins = True
-            Left = 14
+            Left = 154
             Top = 3
-            Width = 5
+            Width = 179
             Height = 30
             Align = alLeft
+            Caption = 'lblUserNameHeader'
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
             Font.Height = -19
@@ -2134,11 +2174,12 @@
           end
           object lblNomeComercio: TLabel
             AlignWithMargins = True
-            Left = 25
+            Left = 339
             Top = 3
-            Width = 5
+            Width = 226
             Height = 30
             Align = alLeft
+            Caption = 'lblNomeComercioHeader'
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
             Font.Height = -19
