@@ -38,7 +38,7 @@ var
   Comercio: TComercio;
   EstaAberto: Boolean;
 begin
-  Result := TObjectList<TComercio>.Create(True); // ⭐ True = libera objetos automaticamente
+  Result := TObjectList<TComercio>.Create(True);
   Qr := TFDQuery.Create(nil);
   try
     Qr.Connection := DM.FDConn;
@@ -46,11 +46,15 @@ begin
     Qr.SQL.Add('SELECT ');
     Qr.SQL.Add('  c.id_comercio, c.nome_comercio, c.categoria,');
     Qr.SQL.Add('  c.descricao, c.horario_abertura, c.horario_fechamento,');
-    Qr.SQL.Add('  c.taxa_entrega_base, c.nphone_comercio');
+    Qr.SQL.Add('  c.tempo_preparo_medio, c.nphone_comercio');
     Qr.SQL.Add('FROM comercios c');
     Qr.SQL.Add('ORDER BY c.nome_comercio');
 
     Qr.Open;
+
+    // ✅ DEBUG: Log quantos registros vieram do banco
+    if Qr.IsEmpty then
+      raise Exception.Create('Nenhum comércio encontrado no banco de dados!');
 
     while not Qr.Eof do
     begin
@@ -62,15 +66,12 @@ begin
         Comercio.Descricao := Qr.FieldByName('descricao').AsString;
         Comercio.HorarioAbertura := Frac(Qr.FieldByName('horario_abertura').AsDateTime);
         Comercio.HorarioFechamento := Frac(Qr.FieldByName('horario_fechamento').AsDateTime);
-        Comercio.TaxaEntregaBase := Qr.FieldByName('taxa_entrega_base').AsCurrency;
+        Comercio.TaxaEntregaBase := Qr.FieldByName('tempo_preparo_medio').AsCurrency;
         Comercio.NPhoneComercio := Qr.FieldByName('nphone_comercio').AsString;
 
-        EstaAberto := ComercioEstaAberto(Comercio.HorarioAbertura, Comercio.HorarioFechamento);
-
-        if (not ApenasAbertos) or EstaAberto then
-          Result.Add(Comercio)
-        else
-          Comercio.Free;
+        // ✅ CORREÇÃO: Sempre adiciona à lista, independente do filtro
+        // O filtro de "aberto" é apenas visual, não remove da lista
+        Result.Add(Comercio);
 
       except
         Comercio.Free;

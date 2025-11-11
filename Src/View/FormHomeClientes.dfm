@@ -3,7 +3,7 @@ object FormHomeC: TFormHomeC
   Top = 0
   Caption = 'FormHomeC'
   ClientHeight = 644
-  ClientWidth = 412
+  ClientWidth = 410
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
   Font.Color = clWindowText
@@ -16,27 +16,29 @@ object FormHomeC: TFormHomeC
   object pcMain: TPageControl
     Left = 0
     Top = 0
-    Width = 412
+    Width = 410
     Height = 644
     ActivePage = tsMain
     Align = alClient
     TabOrder = 1
+    ExplicitWidth = 412
     object tsMain: TTabSheet
       Caption = 'tsMain'
       object pHomeBackground: TPanel
         Left = 0
         Top = 0
-        Width = 404
+        Width = 402
         Height = 614
         Align = alClient
         BevelOuter = bvNone
         Color = clWhite
         ParentBackground = False
         TabOrder = 0
+        ExplicitWidth = 404
         object scbxMain: TScrollBox
           Left = 0
           Top = 0
-          Width = 404
+          Width = 402
           Height = 614
           Margins.Left = 25
           Margins.Top = 15
@@ -46,11 +48,12 @@ object FormHomeC: TFormHomeC
           BorderStyle = bsNone
           TabOrder = 0
           UseWheelForScrolling = True
+          ExplicitWidth = 404
           object pCategorias: TPanel
             AlignWithMargins = True
             Left = 0
             Top = 150
-            Width = 404
+            Width = 402
             Height = 119
             Margins.Left = 0
             Margins.Top = 0
@@ -61,11 +64,12 @@ object FormHomeC: TFormHomeC
             Color = cl3DLight
             ParentBackground = False
             TabOrder = 0
+            ExplicitWidth = 404
             object lblCategorias: TLabel
               AlignWithMargins = True
               Left = 3
               Top = 3
-              Width = 381
+              Width = 396
               Height = 20
               Align = alTop
               Caption = 'Categorias'
@@ -77,15 +81,13 @@ object FormHomeC: TFormHomeC
               Font.Style = [fsBold]
               ParentColor = False
               ParentFont = False
-              ExplicitLeft = 21
-              ExplicitTop = 18
               ExplicitWidth = 74
             end
             object scbxCategorias: TScrollBox
               AlignWithMargins = True
               Left = 0
               Top = 26
-              Width = 387
+              Width = 402
               Height = 93
               Margins.Left = 0
               Margins.Top = 0
@@ -95,19 +97,20 @@ object FormHomeC: TFormHomeC
               BorderStyle = bsNone
               TabOrder = 0
               UseWheelForScrolling = True
-              ExplicitHeight = 140
+              ExplicitWidth = 404
             end
           end
           object pEndereco: TPanel
             Left = 0
             Top = 62
-            Width = 404
+            Width = 402
             Height = 88
             Align = alTop
             BevelOuter = bvNone
             Color = clWindow
             ParentBackground = False
             TabOrder = 1
+            ExplicitWidth = 404
             object lblEnderecoTitle: TLabel
               Left = 6
               Top = 9
@@ -169,7 +172,7 @@ object FormHomeC: TFormHomeC
             AlignWithMargins = True
             Left = 0
             Top = 27
-            Width = 404
+            Width = 402
             Height = 35
             Margins.Left = 0
             Margins.Top = 27
@@ -180,6 +183,7 @@ object FormHomeC: TFormHomeC
             Color = clWhite
             ParentBackground = False
             TabOrder = 2
+            ExplicitWidth = 404
             object lblMenuPrincipal: TLabel
               Left = 6
               Top = 13
@@ -198,7 +202,7 @@ object FormHomeC: TFormHomeC
             AlignWithMargins = True
             Left = 0
             Top = 269
-            Width = 404
+            Width = 402
             Height = 345
             Margins.Left = 0
             Margins.Top = 0
@@ -209,14 +213,12 @@ object FormHomeC: TFormHomeC
             Color = cl3DLight
             ParentBackground = False
             TabOrder = 3
-            ExplicitTop = 344
-            ExplicitWidth = 387
-            ExplicitHeight = 295
+            ExplicitWidth = 404
             object lblRestaurantes: TLabel
               AlignWithMargins = True
               Left = 3
               Top = 3
-              Width = 398
+              Width = 396
               Height = 20
               Align = alTop
               Caption = 'Restaurantes e Com'#233'rcios'
@@ -234,7 +236,7 @@ object FormHomeC: TFormHomeC
               AlignWithMargins = True
               Left = 0
               Top = 26
-              Width = 404
+              Width = 402
               Height = 319
               Margins.Left = 0
               Margins.Top = 0
@@ -244,8 +246,7 @@ object FormHomeC: TFormHomeC
               BorderStyle = bsNone
               TabOrder = 0
               UseWheelForScrolling = True
-              ExplicitTop = 0
-              ExplicitHeight = 270
+              ExplicitWidth = 404
             end
           end
         end
@@ -258,7 +259,7 @@ object FormHomeC: TFormHomeC
         AlignWithMargins = True
         Left = 0
         Top = 0
-        Width = 404
+        Width = 402
         Height = 614
         Margins.Left = 0
         Margins.Top = 0
@@ -267,11 +268,12 @@ object FormHomeC: TFormHomeC
         Align = alClient
         TabOrder = 0
         UseWheelForScrolling = True
+        ExplicitWidth = 404
         object pCategoriasL: TPanel
           AlignWithMargins = True
           Left = 0
           Top = 73
-          Width = 400
+          Width = 398
           Height = 141
           Margins.Left = 0
           Margins.Top = 0
@@ -280,11 +282,12 @@ object FormHomeC: TFormHomeC
           Align = alTop
           BevelOuter = bvNone
           TabOrder = 0
+          ExplicitWidth = 400
           object scbxCategoriasL: TScrollBox
             AlignWithMargins = True
             Left = 0
             Top = 28
-            Width = 400
+            Width = 398
             Height = 113
             Margins.Left = 0
             Margins.Top = 28
@@ -296,6 +299,7 @@ object FormHomeC: TFormHomeC
             BorderStyle = bsNone
             TabOrder = 0
             UseWheelForScrolling = True
+            ExplicitWidth = 400
             object lblCategoriasL: TLabel
               Left = 13
               Top = 10
@@ -314,7 +318,7 @@ object FormHomeC: TFormHomeC
         object scbxComerciosL: TScrollBox
           Left = 0
           Top = 214
-          Width = 400
+          Width = 398
           Height = 396
           Align = alClient
           BevelInner = bvNone
@@ -322,6 +326,7 @@ object FormHomeC: TFormHomeC
           BorderStyle = bsNone
           TabOrder = 1
           UseWheelForScrolling = True
+          ExplicitWidth = 400
           object lblComerciosL: TLabel
             Left = 13
             Top = 22
@@ -340,7 +345,7 @@ object FormHomeC: TFormHomeC
           AlignWithMargins = True
           Left = 0
           Top = 27
-          Width = 400
+          Width = 398
           Height = 46
           Margins.Left = 0
           Margins.Top = 27
@@ -351,6 +356,7 @@ object FormHomeC: TFormHomeC
           Color = clWhite
           ParentBackground = False
           TabOrder = 2
+          ExplicitWidth = 400
           object lblRestaurantesLojas: TLabel
             Left = 53
             Top = 13
@@ -505,7 +511,7 @@ object FormHomeC: TFormHomeC
         AlignWithMargins = True
         Left = 0
         Top = 0
-        Width = 404
+        Width = 402
         Height = 614
         Margins.Left = 0
         Margins.Top = 0
@@ -514,13 +520,14 @@ object FormHomeC: TFormHomeC
         ActivePage = tsAtualizarSenhaPerfil
         Align = alClient
         TabOrder = 0
+        ExplicitWidth = 404
         object tsVisualizarPefil: TTabSheet
           Caption = 'tsVisualizarPefil'
           object scbxMainPerfil: TScrollBox
             AlignWithMargins = True
             Left = 0
             Top = 0
-            Width = 396
+            Width = 394
             Height = 584
             Margins.Left = 0
             Margins.Top = 0
@@ -531,11 +538,12 @@ object FormHomeC: TFormHomeC
             BorderStyle = bsNone
             TabOrder = 0
             UseWheelForScrolling = True
+            ExplicitWidth = 396
             object pEnderecos: TPanel
               AlignWithMargins = True
               Left = 0
               Top = 160
-              Width = 396
+              Width = 394
               Height = 211
               Margins.Left = 0
               Margins.Top = 0
@@ -546,11 +554,12 @@ object FormHomeC: TFormHomeC
               Color = clWhite
               ParentBackground = False
               TabOrder = 0
+              ExplicitWidth = 396
               object scbxEnderecos: TScrollBox
                 AlignWithMargins = True
                 Left = 0
                 Top = 0
-                Width = 396
+                Width = 394
                 Height = 211
                 Margins.Left = 0
                 Margins.Top = 0
@@ -561,6 +570,7 @@ object FormHomeC: TFormHomeC
                 BorderStyle = bsNone
                 TabOrder = 0
                 UseWheelForScrolling = True
+                ExplicitWidth = 396
                 object lblEnderecos: TLabel
                   Left = 9
                   Top = 14
@@ -580,7 +590,7 @@ object FormHomeC: TFormHomeC
               AlignWithMargins = True
               Left = 0
               Top = 2
-              Width = 396
+              Width = 394
               Height = 46
               Margins.Left = 0
               Margins.Top = 2
@@ -591,6 +601,7 @@ object FormHomeC: TFormHomeC
               Color = clWhite
               ParentBackground = False
               TabOrder = 1
+              ExplicitWidth = 396
               object lblHeaderPerfil: TLabel
                 Left = 53
                 Top = 13
@@ -757,7 +768,7 @@ object FormHomeC: TFormHomeC
               AlignWithMargins = True
               Left = 0
               Top = 48
-              Width = 396
+              Width = 394
               Height = 112
               Margins.Left = 0
               Margins.Top = 0
@@ -768,11 +779,12 @@ object FormHomeC: TFormHomeC
               Color = clWhite
               ParentBackground = False
               TabOrder = 2
+              ExplicitWidth = 396
               object scbxInfoVisualizar: TScrollBox
                 AlignWithMargins = True
                 Left = 0
                 Top = 0
-                Width = 396
+                Width = 394
                 Height = 112
                 Margins.Left = 0
                 Margins.Top = 0
@@ -783,6 +795,7 @@ object FormHomeC: TFormHomeC
                 BorderStyle = bsNone
                 TabOrder = 0
                 UseWheelForScrolling = True
+                ExplicitWidth = 396
                 object lblDados: TLabel
                   Left = 9
                   Top = 8
@@ -875,7 +888,7 @@ object FormHomeC: TFormHomeC
               AlignWithMargins = True
               Left = 0
               Top = 371
-              Width = 396
+              Width = 394
               Height = 213
               Margins.Left = 0
               Margins.Top = 0
@@ -886,11 +899,12 @@ object FormHomeC: TFormHomeC
               Color = clWhite
               ParentBackground = False
               TabOrder = 3
+              ExplicitWidth = 396
               object scbxPagamentos: TScrollBox
                 AlignWithMargins = True
                 Left = 0
                 Top = 0
-                Width = 396
+                Width = 394
                 Height = 213
                 Margins.Left = 0
                 Margins.Top = 0
@@ -901,6 +915,7 @@ object FormHomeC: TFormHomeC
                 BorderStyle = bsNone
                 TabOrder = 0
                 UseWheelForScrolling = True
+                ExplicitWidth = 396
                 object lblFormasPagamento: TLabel
                   Left = 9
                   Top = 22
@@ -925,7 +940,7 @@ object FormHomeC: TFormHomeC
             AlignWithMargins = True
             Left = 0
             Top = 0
-            Width = 396
+            Width = 394
             Height = 584
             Margins.Left = 0
             Margins.Top = 0
@@ -936,11 +951,12 @@ object FormHomeC: TFormHomeC
             BorderStyle = bsNone
             TabOrder = 0
             UseWheelForScrolling = True
+            ExplicitWidth = 396
             object pHeaderPerfilE: TPanel
               AlignWithMargins = True
               Left = 0
               Top = 2
-              Width = 396
+              Width = 394
               Height = 46
               Margins.Left = 0
               Margins.Top = 2
@@ -951,6 +967,7 @@ object FormHomeC: TFormHomeC
               Color = clWhite
               ParentBackground = False
               TabOrder = 0
+              ExplicitWidth = 396
               object lblPerfilTitlePerfilE: TLabel
                 Left = 53
                 Top = 13
@@ -1117,7 +1134,7 @@ object FormHomeC: TFormHomeC
               AlignWithMargins = True
               Left = 0
               Top = 48
-              Width = 396
+              Width = 394
               Height = 112
               Margins.Left = 0
               Margins.Top = 0
@@ -1128,11 +1145,12 @@ object FormHomeC: TFormHomeC
               Color = clWhite
               ParentBackground = False
               TabOrder = 1
+              ExplicitWidth = 396
               object ScrollBox3: TScrollBox
                 AlignWithMargins = True
                 Left = 0
                 Top = 0
-                Width = 396
+                Width = 394
                 Height = 112
                 Margins.Left = 0
                 Margins.Top = 0
@@ -1142,6 +1160,7 @@ object FormHomeC: TFormHomeC
                 BevelOuter = bvNone
                 BorderStyle = bsNone
                 TabOrder = 0
+                ExplicitWidth = 396
                 object Label3: TLabel
                   Left = 9
                   Top = 8
@@ -1533,7 +1552,7 @@ object FormHomeC: TFormHomeC
             AlignWithMargins = True
             Left = 0
             Top = 0
-            Width = 396
+            Width = 394
             Height = 584
             Margins.Left = 0
             Margins.Top = 0
@@ -1544,11 +1563,12 @@ object FormHomeC: TFormHomeC
             BorderStyle = bsNone
             TabOrder = 0
             UseWheelForScrolling = True
+            ExplicitWidth = 396
             object pEnderecosE: TPanel
               AlignWithMargins = True
               Left = 0
               Top = 48
-              Width = 379
+              Width = 377
               Height = 541
               Margins.Left = 0
               Margins.Top = 0
@@ -1559,11 +1579,12 @@ object FormHomeC: TFormHomeC
               Color = clWhite
               ParentBackground = False
               TabOrder = 0
+              ExplicitWidth = 379
               object scbxEnderecosE: TScrollBox
                 AlignWithMargins = True
                 Left = 0
                 Top = 0
-                Width = 379
+                Width = 377
                 Height = 541
                 Margins.Left = 0
                 Margins.Top = 0
@@ -1574,6 +1595,7 @@ object FormHomeC: TFormHomeC
                 BorderStyle = bsNone
                 TabOrder = 0
                 UseWheelForScrolling = True
+                ExplicitWidth = 379
                 object lblEnderecosTitle: TLabel
                   Left = 9
                   Top = 14
@@ -1593,7 +1615,7 @@ object FormHomeC: TFormHomeC
               AlignWithMargins = True
               Left = 0
               Top = 2
-              Width = 379
+              Width = 377
               Height = 46
               Margins.Left = 0
               Margins.Top = 2
@@ -1604,6 +1626,7 @@ object FormHomeC: TFormHomeC
               Color = clWhite
               ParentBackground = False
               TabOrder = 1
+              ExplicitWidth = 379
               object lblPerfilTitleEnderecosE: TLabel
                 Left = 53
                 Top = 13
@@ -1775,7 +1798,7 @@ object FormHomeC: TFormHomeC
             AlignWithMargins = True
             Left = 0
             Top = 0
-            Width = 396
+            Width = 394
             Height = 584
             Margins.Left = 0
             Margins.Top = 0
@@ -1786,11 +1809,12 @@ object FormHomeC: TFormHomeC
             BorderStyle = bsNone
             TabOrder = 0
             UseWheelForScrolling = True
+            ExplicitWidth = 396
             object pPagamentosE: TPanel
               AlignWithMargins = True
               Left = 0
               Top = 48
-              Width = 396
+              Width = 394
               Height = 536
               Margins.Left = 0
               Margins.Top = 0
@@ -1801,11 +1825,12 @@ object FormHomeC: TFormHomeC
               Color = clWhite
               ParentBackground = False
               TabOrder = 0
+              ExplicitWidth = 396
               object scbxPagamentosE: TScrollBox
                 AlignWithMargins = True
                 Left = 0
                 Top = 0
-                Width = 396
+                Width = 394
                 Height = 536
                 Margins.Left = 0
                 Margins.Top = 0
@@ -1816,6 +1841,7 @@ object FormHomeC: TFormHomeC
                 BorderStyle = bsNone
                 TabOrder = 0
                 UseWheelForScrolling = True
+                ExplicitWidth = 396
                 object lblPagamentosTitle: TLabel
                   Left = 9
                   Top = 22
@@ -1835,7 +1861,7 @@ object FormHomeC: TFormHomeC
               AlignWithMargins = True
               Left = 0
               Top = 2
-              Width = 396
+              Width = 394
               Height = 46
               Margins.Left = 0
               Margins.Top = 2
@@ -1846,6 +1872,7 @@ object FormHomeC: TFormHomeC
               Color = clWhite
               ParentBackground = False
               TabOrder = 1
+              ExplicitWidth = 396
               object lblPerfilTitlePagamentosE: TLabel
                 Left = 53
                 Top = 13
@@ -2019,7 +2046,7 @@ object FormHomeC: TFormHomeC
         AlignWithMargins = True
         Left = 0
         Top = 0
-        Width = 404
+        Width = 402
         Height = 614
         Margins.Left = 0
         Margins.Top = 0
@@ -2028,11 +2055,12 @@ object FormHomeC: TFormHomeC
         Align = alClient
         TabOrder = 0
         UseWheelForScrolling = True
+        ExplicitWidth = 404
         object pHeaderPedidos: TPanel
           AlignWithMargins = True
           Left = 0
           Top = 27
-          Width = 400
+          Width = 398
           Height = 46
           Margins.Left = 0
           Margins.Top = 27
@@ -2043,6 +2071,7 @@ object FormHomeC: TFormHomeC
           Color = clWhite
           ParentBackground = False
           TabOrder = 0
+          ExplicitWidth = 400
           object lblMeusPedidos: TLabel
             Left = 53
             Top = 13
@@ -2192,7 +2221,7 @@ object FormHomeC: TFormHomeC
           AlignWithMargins = True
           Left = 0
           Top = 73
-          Width = 400
+          Width = 398
           Height = 46
           Margins.Left = 0
           Margins.Top = 0
@@ -2203,6 +2232,7 @@ object FormHomeC: TFormHomeC
           Color = clWhite
           ParentBackground = False
           TabOrder = 1
+          ExplicitWidth = 400
           object lblFiltrosPedidos: TLabel
             Left = 13
             Top = 13
@@ -2257,7 +2287,7 @@ object FormHomeC: TFormHomeC
           AlignWithMargins = True
           Left = 0
           Top = 119
-          Width = 400
+          Width = 398
           Height = 491
           Margins.Left = 0
           Margins.Top = 0
@@ -2266,11 +2296,12 @@ object FormHomeC: TFormHomeC
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 2
+          ExplicitWidth = 400
           object scbxPedidos: TScrollBox
             AlignWithMargins = True
             Left = 0
             Top = 0
-            Width = 400
+            Width = 398
             Height = 491
             Margins.Left = 0
             Margins.Top = 0
@@ -2282,6 +2313,7 @@ object FormHomeC: TFormHomeC
             BorderStyle = bsNone
             TabOrder = 0
             UseWheelForScrolling = True
+            ExplicitWidth = 400
           end
         end
       end
@@ -2293,7 +2325,7 @@ object FormHomeC: TFormHomeC
         AlignWithMargins = True
         Left = 0
         Top = 0
-        Width = 404
+        Width = 402
         Height = 614
         Margins.Left = 0
         Margins.Top = 0
@@ -2302,16 +2334,18 @@ object FormHomeC: TFormHomeC
         Align = alClient
         TabOrder = 0
         UseWheelForScrolling = True
+        ExplicitWidth = 404
         object pEnderecoCarrinho: TPanel
           Left = 0
           Top = 73
-          Width = 400
+          Width = 398
           Height = 41
           Align = alTop
           BevelOuter = bvNone
           Color = clWindow
           ParentBackground = False
           TabOrder = 0
+          ExplicitWidth = 400
           object lblEnderecoDesc: TLabel
             Left = 7
             Top = 5
@@ -2362,7 +2396,7 @@ object FormHomeC: TFormHomeC
           AlignWithMargins = True
           Left = 0
           Top = 27
-          Width = 400
+          Width = 398
           Height = 46
           Margins.Left = 0
           Margins.Top = 27
@@ -2373,6 +2407,7 @@ object FormHomeC: TFormHomeC
           Color = clWhite
           ParentBackground = False
           TabOrder = 1
+          ExplicitWidth = 400
           object lblItensCartCarrinho: TLabel
             Left = 57
             Top = 17
@@ -2516,7 +2551,7 @@ object FormHomeC: TFormHomeC
           AlignWithMargins = True
           Left = 0
           Top = 114
-          Width = 400
+          Width = 398
           Height = 350
           Margins.Left = 0
           Margins.Top = 0
@@ -2525,10 +2560,11 @@ object FormHomeC: TFormHomeC
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 2
+          ExplicitWidth = 400
           object scbxCarrinhoItems: TScrollBox
             Left = 0
             Top = 0
-            Width = 400
+            Width = 398
             Height = 350
             Align = alClient
             BevelInner = bvNone
@@ -2536,13 +2572,14 @@ object FormHomeC: TFormHomeC
             BorderStyle = bsNone
             TabOrder = 0
             UseWheelForScrolling = True
+            ExplicitWidth = 400
           end
         end
         object pResumoPedido: TPanel
           AlignWithMargins = True
           Left = 0
           Top = 464
-          Width = 400
+          Width = 398
           Height = 146
           Margins.Left = 0
           Margins.Top = 0
@@ -2551,6 +2588,7 @@ object FormHomeC: TFormHomeC
           Align = alBottom
           BevelOuter = bvNone
           TabOrder = 3
+          ExplicitWidth = 400
           object lblResumo: TLabel
             Left = 7
             Top = 6
@@ -2646,7 +2684,7 @@ object FormHomeC: TFormHomeC
         AlignWithMargins = True
         Left = 0
         Top = 0
-        Width = 404
+        Width = 402
         Height = 614
         Margins.Left = 0
         Margins.Top = 0
@@ -2655,11 +2693,12 @@ object FormHomeC: TFormHomeC
         Align = alClient
         TabOrder = 0
         UseWheelForScrolling = True
+        ExplicitWidth = 404
         object pCarrinhoComm: TPanel
           AlignWithMargins = True
           Left = 0
           Top = 572
-          Width = 400
+          Width = 398
           Height = 38
           Margins.Left = 0
           Margins.Top = 0
@@ -2670,6 +2709,7 @@ object FormHomeC: TFormHomeC
           Color = clCoral
           ParentBackground = False
           TabOrder = 0
+          ExplicitWidth = 400
           object lblItensCart: TLabel
             Left = 15
             Top = 12
@@ -2706,7 +2746,7 @@ object FormHomeC: TFormHomeC
           AlignWithMargins = True
           Left = 0
           Top = 138
-          Width = 400
+          Width = 398
           Height = 113
           Margins.Left = 0
           Margins.Top = 0
@@ -2715,10 +2755,11 @@ object FormHomeC: TFormHomeC
           Align = alTop
           BevelOuter = bvNone
           TabOrder = 1
+          ExplicitWidth = 400
           object scbxCategoriasProdutosComm: TScrollBox
             Left = 0
             Top = 0
-            Width = 400
+            Width = 398
             Height = 113
             Align = alClient
             BevelInner = bvNone
@@ -2726,6 +2767,7 @@ object FormHomeC: TFormHomeC
             BorderStyle = bsNone
             TabOrder = 0
             UseWheelForScrolling = True
+            ExplicitWidth = 400
             object lblCategoriasProdutos: TLabel
               Left = 13
               Top = 16
@@ -2745,7 +2787,7 @@ object FormHomeC: TFormHomeC
           AlignWithMargins = True
           Left = 0
           Top = 28
-          Width = 400
+          Width = 398
           Height = 110
           Margins.Left = 0
           Margins.Top = 28
@@ -2754,6 +2796,7 @@ object FormHomeC: TFormHomeC
           Align = alTop
           BevelOuter = bvNone
           TabOrder = 2
+          ExplicitWidth = 400
           object lblNomeComm: TLabel
             Left = 43
             Top = 14
@@ -2947,7 +2990,7 @@ object FormHomeC: TFormHomeC
           AlignWithMargins = True
           Left = 0
           Top = 251
-          Width = 400
+          Width = 398
           Height = 321
           Margins.Left = 0
           Margins.Top = 0
@@ -2956,10 +2999,11 @@ object FormHomeC: TFormHomeC
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 3
+          ExplicitWidth = 400
           object scbxProdutosComm: TScrollBox
             Left = 0
             Top = 0
-            Width = 400
+            Width = 398
             Height = 321
             Align = alClient
             BevelInner = bvNone
@@ -2967,6 +3011,7 @@ object FormHomeC: TFormHomeC
             BorderStyle = bsNone
             TabOrder = 0
             UseWheelForScrolling = True
+            ExplicitWidth = 400
           end
         end
       end
@@ -3163,7 +3208,7 @@ object FormHomeC: TFormHomeC
         AlignWithMargins = True
         Left = 0
         Top = 25
-        Width = 404
+        Width = 402
         Height = 46
         Margins.Left = 0
         Margins.Top = 25
@@ -3174,6 +3219,7 @@ object FormHomeC: TFormHomeC
         Color = clWhite
         ParentBackground = False
         TabOrder = 2
+        ExplicitWidth = 404
         object lblAddEndereco: TLabel
           Left = 51
           Top = 13
@@ -4992,8 +5038,8 @@ object FormHomeC: TFormHomeC
     end
     object iButtonLeave: TImage
       AlignWithMargins = True
-      Left = 17
-      Top = 578
+      Left = 8
+      Top = 583
       Width = 54
       Height = 55
       Margins.Left = 15
