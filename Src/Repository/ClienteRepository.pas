@@ -119,7 +119,7 @@ begin
         Comercio.Descricao := Qr.FieldByName('descricao').AsString;
         Comercio.HorarioAbertura := Frac(Qr.FieldByName('horario_abertura').AsDateTime);
         Comercio.HorarioFechamento := Frac(Qr.FieldByName('horario_fechamento').AsDateTime);
-        Comercio.TaxaEntregaBase := Qr.FieldByName('taxa_entrega_base').AsCurrency;
+        Comercio.TaxaEntregaBase := Qr.FieldByName('tempo_preparo_medio').AsCurrency;
         Comercio.NPhoneComercio := Qr.FieldByName('nphone_comercio').AsString;
 
         Result.Add(Comercio);

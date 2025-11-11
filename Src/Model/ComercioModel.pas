@@ -3,7 +3,6 @@
 interface
 
 type
-  // Dados principais do comércio
   TComercio = class
   private
     FIdComercio: Integer;
@@ -11,8 +10,8 @@ type
     FNomeComercio: string;
     FCategoria: string;
     FDescricao: string;
-    FHorarioAbertura: TTime;  // MUDOU DE TDate PARA TTime
-    FHorarioFechamento: TTime;  // MUDOU DE TDate PARA TTime
+    FHorarioAbertura: TTime;
+    FHorarioFechamento: TTime;
     FTempoPreparoMedio: Integer;
     FTaxaEntregaBase: Currency;
 
@@ -22,7 +21,7 @@ type
     FCpfCnpjComercio: string;
 
     // Localização
-    FLogradouro: string;          // ← ADICIONE
+    FLogradouro: string;
     FEnderecoCompleto: string;
     FCEP: string;
     FNumero: string;
@@ -51,14 +50,14 @@ type
     property NPhoneComercio: string read FNPhoneComercio write FNPhoneComercio;
     property CpfCnpjComercio: string read FCpfCnpjComercio write FCpfCnpjComercio;
 
-    property Logradouro: string read FLogradouro write FLogradouro;                 // ← ADICIONE
+    property Logradouro: string read FLogradouro write FLogradouro;
     property EnderecoCompleto: string read FEnderecoCompleto write FEnderecoCompleto;
     property CEP: string read FCEP write FCEP;
     property Numero: string read FNumero write FNumero;
     property Complemento: string read FComplemento write FComplemento;
     property Bairro: string read FBairro write FBairro;
     property Cidade: string read FCidade write FCidade;
-    property UF: string read FUF write FUF;                                         // ← RENOMEIE
+    property UF: string read FUF write FUF;
 
     property NomeProprietario: string read FNomeProprietario write FNomeProprietario;
     property EmailProprietario: string read FEmailProprietario write FEmailProprietario;
@@ -103,14 +102,14 @@ begin
   FEmailComercio := '';
   FNPhoneComercio := '';
   FCpfCnpjComercio := '';
-  FLogradouro := '';            // ← ADICIONE
+  FLogradouro := '';
   FEnderecoCompleto := '';
   FCEP := '';
   FNumero := '';
   FComplemento := '';
   FBairro := '';
   FCidade := '';
-  FUF := '';                    // ← RENOMEIE
+  FUF := '';
   FNomeProprietario := '';
   FEmailProprietario := '';
   FCPFProprietario := '';

@@ -129,7 +129,7 @@ type
     iButtonBackLojas: TImage;
     pcPerfil: TPageControl;
     tsVisualizarPefil: TTabSheet;
-    tsEditarPerfil: TTabSheet;
+    tsPerfilE: TTabSheet;
     tsAtualizarSenhaPerfil: TTabSheet;
     scbxMainPerfil: TScrollBox;
     pEnderecos: TPanel;
@@ -151,7 +151,7 @@ type
     lblTelefoneDV: TLabel;
     lblEmailV: TLabel;
     lblEmailDV: TLabel;
-    pButtonEditar: TPanel;
+    pButtonEditarDados: TPanel;
     lblEnderecos: TLabel;
     lblFormasPagamento: TLabel;
     scbxMainPerfilE: TScrollBox;
@@ -231,6 +231,8 @@ type
     pRestaurantes: TPanel;
     lblRestaurantes: TLabel;
     scbxRestaurantes: TScrollBox;
+    pButtonEditarEndereco: TPanel;
+    pButtonEditarPagamentos: TPanel;
 
     procedure iButton1Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -239,6 +241,16 @@ type
     procedure eBuscaMainChange(Sender: TObject);
     procedure eBuscaMainKeyPress(Sender: TObject; var Key: Char);
     procedure FormResize(Sender: TObject);
+    procedure iButton2Click(Sender: TObject);
+    procedure iButton3Click(Sender: TObject);
+    procedure iButton4Click(Sender: TObject);
+    procedure iCarrinhoClick(Sender: TObject);
+    procedure iButtonLeaveClick(Sender: TObject);
+    procedure pButtonAlterarSenhaVClick(Sender: TObject);
+    procedure iButtonBackAlterarSenhaClick(Sender: TObject);
+    procedure pButtonEditarDadosClick(Sender: TObject);
+    procedure pButtonEditarEnderecoClick(Sender: TObject);
+    procedure pButtonEditarPagamentosClick(Sender: TObject);
 
   private
     FIdUsuario: Integer;
@@ -544,8 +556,8 @@ begin
     Exit;
 
   NovaLargura := scbxRestaurantes.ClientWidth - (FMargemLateral * 2);
-  if NovaLargura < 300 then
-    NovaLargura := 300;
+  if NovaLargura < 250 then
+    NovaLargura := 250;
 
   for I := 0 to scbxRestaurantes.ControlCount - 1 do
   begin
@@ -635,6 +647,26 @@ begin
   TCategoriaHelper.DeselecionarTodas(scbxCategorias);
   TCategoriaHelper.SelecionarCategoria(scbxCategorias, Categoria);
   PopularRestaurantes(Categoria);
+end;
+
+procedure TFormHomeC.pButtonAlterarSenhaVClick(Sender: TObject);
+begin
+  pcPerfil.ActivePageIndex:=2;
+end;
+
+procedure TFormHomeC.pButtonEditarDadosClick(Sender: TObject);
+begin
+  pcPerfil.ActivePageIndex:=1;
+end;
+
+procedure TFormHomeC.pButtonEditarEnderecoClick(Sender: TObject);
+begin
+  pcPerfil.ActivePageIndex:=3;
+end;
+
+procedure TFormHomeC.pButtonEditarPagamentosClick(Sender: TObject);
+begin
+  pcPerfil.ActivePageIndex:=4;
 end;
 
 procedure TFormHomeC.PopularRestaurantes(const Categoria: String = '');
@@ -745,8 +777,8 @@ begin
     Exit;
 
   LarguraCard := scbxRestaurantes.ClientWidth - (FMargemLateral * 2);
-  if LarguraCard < 300 then
-    LarguraCard := 300;
+  if LarguraCard < 200 then
+    LarguraCard := 200;
 
   PosY := FCardSpacing + (Index * (FCardHeight + FCardSpacing));
 
@@ -898,8 +930,8 @@ var
   LarguraCard: Integer;
 begin
   LarguraCard := scbxRestaurantes.ClientWidth - (FMargemLateral * 2);
-  if LarguraCard < 250 then
-    LarguraCard := 250;
+  if LarguraCard < 200 then
+    LarguraCard := 200;
 
   pMensagem := TPanel.Create(scbxRestaurantes);
   pMensagem.Parent := scbxRestaurantes;
@@ -947,6 +979,37 @@ begin
     pBarraMenuLeft.Width := 57;
     pBarraMenuLeft.Height := 55;
   end;
+end;
+
+procedure TFormHomeC.iButton2Click(Sender: TObject);
+begin
+  pcMain.ActivePageIndex:=1;
+end;
+
+procedure TFormHomeC.iButton3Click(Sender: TObject);
+begin
+  pcMain.ActivePageIndex:=3;
+end;
+
+procedure TFormHomeC.iButton4Click(Sender: TObject);
+begin
+  pcMain.ActivePageIndex:=2;
+end;
+
+procedure TFormHomeC.iButtonBackAlterarSenhaClick(Sender: TObject);
+begin
+  pcPerfil.ActivePageIndex:=0;
+end;
+
+procedure TFormHomeC.iButtonLeaveClick(Sender: TObject);
+begin
+  ShowMessage('Encerrando aplicação ...');
+  Close;
+end;
+
+procedure TFormHomeC.iCarrinhoClick(Sender: TObject);
+begin
+pcMain.ActivePageIndex:=4;
 end;
 
 end.

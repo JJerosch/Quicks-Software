@@ -18,7 +18,7 @@ object FormHomeC: TFormHomeC
     Top = 0
     Width = 410
     Height = 644
-    ActivePage = tsMain
+    ActivePage = tsPerfil
     Align = alClient
     TabOrder = 1
     ExplicitWidth = 412
@@ -500,6 +500,7 @@ object FormHomeC: TFormHomeC
               0010480000402001000081040000041200001048000040A0FF030801D62EB80B
               0D7D0000000049454E44AE426082}
             Proportional = True
+            OnClick = iButtonBackAlterarSenhaClick
           end
         end
       end
@@ -517,10 +518,9 @@ object FormHomeC: TFormHomeC
         Margins.Top = 0
         Margins.Right = 0
         Margins.Bottom = 0
-        ActivePage = tsAtualizarSenhaPerfil
+        ActivePage = tsVisualizarPefil
         Align = alClient
         TabOrder = 0
-        ExplicitWidth = 404
         object tsVisualizarPefil: TTabSheet
           Caption = 'tsVisualizarPefil'
           object scbxMainPerfil: TScrollBox
@@ -570,7 +570,7 @@ object FormHomeC: TFormHomeC
                 BorderStyle = bsNone
                 TabOrder = 0
                 UseWheelForScrolling = True
-                ExplicitWidth = 396
+                ExplicitLeft = -2
                 object lblEnderecos: TLabel
                   Left = 9
                   Top = 14
@@ -583,6 +583,24 @@ object FormHomeC: TFormHomeC
                   Font.Name = 'Segoe UI'
                   Font.Style = [fsBold]
                   ParentFont = False
+                end
+                object pButtonEditarEndereco: TPanel
+                  Left = 302
+                  Top = 14
+                  Width = 86
+                  Height = 24
+                  BevelOuter = bvNone
+                  Caption = 'Editar'
+                  Color = clCoral
+                  Font.Charset = DEFAULT_CHARSET
+                  Font.Color = clWhite
+                  Font.Height = -12
+                  Font.Name = 'Segoe UI'
+                  Font.Style = [fsBold]
+                  ParentBackground = False
+                  ParentFont = False
+                  TabOrder = 0
+                  OnClick = pButtonEditarEnderecoClick
                 end
               end
             end
@@ -745,6 +763,7 @@ object FormHomeC: TFormHomeC
                   0010480000402001000081040000041200001048000040A0FF030801D62EB80B
                   0D7D0000000049454E44AE426082}
                 Proportional = True
+                OnClick = iButtonBackAlterarSenhaClick
               end
               object pButtonAlterarSenhaV: TPanel
                 Left = 302
@@ -762,6 +781,7 @@ object FormHomeC: TFormHomeC
                 ParentBackground = False
                 ParentFont = False
                 TabOrder = 0
+                OnClick = pButtonAlterarSenhaVClick
               end
             end
             object pInfoVisualizar: TPanel
@@ -866,9 +886,9 @@ object FormHomeC: TFormHomeC
                   Caption = 'lblEmailDV'
                 end
               end
-              object pButtonEditar: TPanel
+              object pButtonEditarDados: TPanel
                 Left = 302
-                Top = 17
+                Top = 8
                 Width = 86
                 Height = 24
                 BevelOuter = bvNone
@@ -882,6 +902,7 @@ object FormHomeC: TFormHomeC
                 ParentBackground = False
                 ParentFont = False
                 TabOrder = 1
+                OnClick = pButtonEditarDadosClick
               end
             end
             object pPagamentos: TPanel
@@ -915,10 +936,11 @@ object FormHomeC: TFormHomeC
                 BorderStyle = bsNone
                 TabOrder = 0
                 UseWheelForScrolling = True
-                ExplicitWidth = 396
+                ExplicitLeft = 53
+                ExplicitTop = 8
                 object lblFormasPagamento: TLabel
                   Left = 9
-                  Top = 22
+                  Top = 14
                   Width = 157
                   Height = 20
                   Caption = 'Formas de Pagamento'
@@ -929,12 +951,30 @@ object FormHomeC: TFormHomeC
                   Font.Style = [fsBold]
                   ParentFont = False
                 end
+                object pButtonEditarPagamentos: TPanel
+                  Left = 302
+                  Top = 14
+                  Width = 86
+                  Height = 24
+                  BevelOuter = bvNone
+                  Caption = 'Editar'
+                  Color = clCoral
+                  Font.Charset = DEFAULT_CHARSET
+                  Font.Color = clWhite
+                  Font.Height = -12
+                  Font.Name = 'Segoe UI'
+                  Font.Style = [fsBold]
+                  ParentBackground = False
+                  ParentFont = False
+                  TabOrder = 0
+                  OnClick = pButtonEditarPagamentosClick
+                end
               end
             end
           end
         end
-        object tsEditarPerfil: TTabSheet
-          Caption = 'tsEditarPerfil'
+        object tsPerfilE: TTabSheet
+          Caption = 'tsPerfilE'
           ImageIndex = 1
           object scbxMainPerfilE: TScrollBox
             AlignWithMargins = True
@@ -1111,6 +1151,7 @@ object FormHomeC: TFormHomeC
                   0010480000402001000081040000041200001048000040A0FF030801D62EB80B
                   0D7D0000000049454E44AE426082}
                 Proportional = True
+                OnClick = iButtonBackAlterarSenhaClick
               end
               object pButtonAlterarSenhaPerfilE: TPanel
                 Left = 302
@@ -1128,6 +1169,7 @@ object FormHomeC: TFormHomeC
                 ParentBackground = False
                 ParentFont = False
                 TabOrder = 0
+                OnClick = pButtonAlterarSenhaVClick
               end
             end
             object pInfoE: TPanel
@@ -1213,7 +1255,7 @@ object FormHomeC: TFormHomeC
                 object eEmailDE: TEdit
                   Left = 240
                   Top = 30
-                  Width = 121
+                  Width = 148
                   Height = 23
                   TabOrder = 1
                   Text = 'eEmailDE'
@@ -1237,7 +1279,7 @@ object FormHomeC: TFormHomeC
               end
               object pSalvar: TPanel
                 Left = 302
-                Top = 75
+                Top = 83
                 Width = 86
                 Height = 24
                 BevelOuter = bvNone
@@ -1401,6 +1443,7 @@ object FormHomeC: TFormHomeC
               0010480000402001000081040000041200001048000040A0FF030801D62EB80B
               0D7D0000000049454E44AE426082}
             Proportional = True
+            OnClick = iButtonBackAlterarSenhaClick
           end
           object pAlterarSenha: TPanel
             Left = 27
@@ -1770,6 +1813,7 @@ object FormHomeC: TFormHomeC
                   0010480000402001000081040000041200001048000040A0FF030801D62EB80B
                   0D7D0000000049454E44AE426082}
                 Proportional = True
+                OnClick = iButtonBackAlterarSenhaClick
               end
               object pButtonAlterarSenhaEnderecosE: TPanel
                 Left = 302
@@ -1844,7 +1888,7 @@ object FormHomeC: TFormHomeC
                 ExplicitWidth = 396
                 object lblPagamentosTitle: TLabel
                   Left = 9
-                  Top = 22
+                  Top = 12
                   Width = 157
                   Height = 20
                   Caption = 'Formas de Pagamento'
@@ -2016,6 +2060,7 @@ object FormHomeC: TFormHomeC
                   0010480000402001000081040000041200001048000040A0FF030801D62EB80B
                   0D7D0000000049454E44AE426082}
                 Proportional = True
+                OnClick = iButtonBackAlterarSenhaClick
               end
               object pButtonAlterarSenhaPagamentosE: TPanel
                 Left = 302
@@ -2215,6 +2260,7 @@ object FormHomeC: TFormHomeC
               0010480000402001000081040000041200001048000040A0FF030801D62EB80B
               0D7D0000000049454E44AE426082}
             Proportional = True
+            OnClick = iButtonBackAlterarSenhaClick
           end
         end
         object pFiltrosPedidos: TPanel
@@ -2545,6 +2591,7 @@ object FormHomeC: TFormHomeC
               0010480000402001000081040000041200001048000040A0FF030801D62EB80B
               0D7D0000000049454E44AE426082}
             Proportional = True
+            OnClick = iButtonBackAlterarSenhaClick
           end
         end
         object pItensCarrinho: TPanel
@@ -2940,6 +2987,7 @@ object FormHomeC: TFormHomeC
               0010480000402001000081040000041200001048000040A0FF030801D62EB80B
               0D7D0000000049454E44AE426082}
             Proportional = True
+            OnClick = iButtonBackAlterarSenhaClick
           end
           object lblNota: TLabel
             Left = 7
@@ -3363,6 +3411,7 @@ object FormHomeC: TFormHomeC
             0010480000402001000081040000041200001048000040A0FF030801D62EB80B
             0D7D0000000049454E44AE426082}
           Proportional = True
+          OnClick = iButtonBackAlterarSenhaClick
         end
         object Panel2: TPanel
           Left = 302
@@ -4026,6 +4075,7 @@ object FormHomeC: TFormHomeC
         74880D0000001D620300004087FE1F5DB048C4B00DBD480000000049454E44AE
         426082}
       Proportional = True
+      OnClick = iButton2Click
     end
     object iButton3: TImage
       Left = 17
@@ -4343,6 +4393,7 @@ object FormHomeC: TFormHomeC
         000068900600001AA401008006690000A0411A000068900600001AA401008006
         690000A041FF1FA1EEC55B2FFA86940000000049454E44AE426082}
       Proportional = True
+      OnClick = iButton3Click
     end
     object iButton4: TImage
       Left = 17
@@ -5035,6 +5086,7 @@ object FormHomeC: TFormHomeC
         22A20231012022222A1013002222A20231012022222A1013002222A202FD3FBB
         5137C463C0FA390000000049454E44AE426082}
       Proportional = True
+      OnClick = iButton4Click
     end
     object iButtonLeave: TImage
       AlignWithMargins = True
@@ -5343,10 +5395,11 @@ object FormHomeC: TFormHomeC
         340000D0210D000074480300001DD200004087340000D0210D00007448030000
         1DFAFFD01FFE1E60B6E11C0000000049454E44AE426082}
       Proportional = True
+      OnClick = iButtonLeaveClick
     end
     object lblButton1: TLabel
-      Left = 88
-      Top = 10
+      Left = 68
+      Top = 16
       Width = 56
       Height = 30
       Caption = 'Menu'
@@ -5369,6 +5422,7 @@ object FormHomeC: TFormHomeC
       Font.Name = 'Segoe UI'
       Font.Style = []
       ParentFont = False
+      OnClick = iButton2Click
     end
     object lblButton3: TLabel
       Left = 88
@@ -5382,6 +5436,7 @@ object FormHomeC: TFormHomeC
       Font.Name = 'Segoe UI'
       Font.Style = []
       ParentFont = False
+      OnClick = iButton3Click
     end
     object lblButton4: TLabel
       Left = 88
@@ -5395,6 +5450,7 @@ object FormHomeC: TFormHomeC
       Font.Name = 'Segoe UI'
       Font.Style = []
       ParentFont = False
+      OnClick = iButton4Click
     end
     object iCarrinho: TImage
       Left = 17
@@ -5651,6 +5707,7 @@ object FormHomeC: TFormHomeC
         00004085140000A89002000015520000A0420A000054E8FF0311D37E3DC96A69
         AA0000000049454E44AE426082}
       Proportional = True
+      OnClick = iCarrinhoClick
     end
     object lblButton5: TLabel
       Left = 88
@@ -5664,6 +5721,7 @@ object FormHomeC: TFormHomeC
       Font.Name = 'Segoe UI'
       Font.Style = []
       ParentFont = False
+      OnClick = iCarrinhoClick
     end
     object lblQuantidadeCarrinho: TLabel
       Left = 177
@@ -5680,7 +5738,7 @@ object FormHomeC: TFormHomeC
     end
     object lblSair: TLabel
       Left = 80
-      Top = 590
+      Top = 593
       Width = 36
       Height = 30
       Caption = 'Sair'
@@ -5690,6 +5748,7 @@ object FormHomeC: TFormHomeC
       Font.Name = 'Segoe UI'
       Font.Style = []
       ParentFont = False
+      OnClick = iButtonLeaveClick
     end
   end
 end
