@@ -213,6 +213,7 @@ type
     lblNPCommD: TLabel;
     lblEPCommD: TLabel;
     lblCPFPCommD: TLabel;
+    lblButton6: TLabel;
 
     procedure iButton1Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -247,6 +248,7 @@ type
     procedure ePrecoVendaUpExit(Sender: TObject);
     procedure ePrecoCustoUpExit(Sender: TObject);
     procedure ePrecoCustoAddExit(Sender: TObject);
+    procedure iButtonBackAlterarSenhaClick(Sender: TObject);
 
   private
     FIdUsuario: Integer;

@@ -3177,6 +3177,7 @@
         Font.Name = 'Segoe UI'
         Font.Style = []
         ParentFont = False
+        OnClick = iButton2Click
       end
       object lblButton3: TLabel
         Left = 88
@@ -3190,6 +3191,7 @@
         Font.Name = 'Segoe UI'
         Font.Style = []
         ParentFont = False
+        OnClick = iButton3Click
       end
       object lblButton4: TLabel
         Left = 88
@@ -3203,6 +3205,7 @@
         Font.Name = 'Segoe UI'
         Font.Style = []
         ParentFont = False
+        OnClick = iButton4Click
       end
       object iButton4: TImage
         Left = 22
@@ -4274,6 +4277,21 @@
         Font.Name = 'Segoe UI'
         Font.Style = []
         ParentFont = False
+        OnClick = iButton5Click
+      end
+      object lblButton6: TLabel
+        Left = 88
+        Top = 590
+        Width = 36
+        Height = 30
+        Caption = 'Sair'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -22
+        Font.Name = 'Segoe UI'
+        Font.Style = []
+        ParentFont = False
+        OnClick = iButton6Click
       end
     end
   end
