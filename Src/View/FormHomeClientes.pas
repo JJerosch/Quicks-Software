@@ -313,7 +313,7 @@ begin
 
   // ⭐ CRÍTICO: Definir Width ANTES de usar Self.Width
   Self.Width := CardWidth;
-  Self.Height := 145;
+  Self.Height := 100;
   Self.ParentBackground := False;
   Self.Align := alLeft;
   Self.BevelOuter := bvNone;

@@ -226,10 +226,10 @@ object FormHomeC: TFormHomeC
             end
             object scbxRestaurantes: TScrollBox
               AlignWithMargins = True
-              Left = 0
+              Left = 2
               Top = 26
               Width = 402
-              Height = 319
+              Height = 175
               Margins.Left = 0
               Margins.Top = 0
               Margins.Right = 0
@@ -238,11 +238,9 @@ object FormHomeC: TFormHomeC
               HorzScrollBar.Tracking = True
               VertScrollBar.Tracking = True
               VertScrollBar.Visible = False
-              Align = alClient
               BorderStyle = bsNone
               TabOrder = 0
               UseWheelForScrolling = True
-              ExplicitLeft = 2
             end
           end
         end
