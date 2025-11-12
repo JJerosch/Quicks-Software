@@ -315,6 +315,7 @@ begin
   Self.Width := CardWidth;
   Self.Height := 145;
   Self.ParentBackground := False;
+  Self.Align := alLeft;
   Self.BevelOuter := bvNone;
   Self.Color := clWhite;
   Self.Cursor := crHandPoint;
