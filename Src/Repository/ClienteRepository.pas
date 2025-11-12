@@ -46,7 +46,7 @@ begin
     Qr.SQL.Add('SELECT ');
     Qr.SQL.Add('  c.id_comercio, c.nome_comercio, c.categoria,');
     Qr.SQL.Add('  c.descricao, c.horario_abertura, c.horario_fechamento,');
-    Qr.SQL.Add('  c.tempo_preparo_medio, c.nphone_comercio');
+    Qr.SQL.Add('  c.taxa_entrega_base, c.nphone_comercio');
     Qr.SQL.Add('FROM comercios c');
     Qr.SQL.Add('ORDER BY c.nome_comercio');
 
@@ -66,7 +66,7 @@ begin
         Comercio.Descricao := Qr.FieldByName('descricao').AsString;
         Comercio.HorarioAbertura := Frac(Qr.FieldByName('horario_abertura').AsDateTime);
         Comercio.HorarioFechamento := Frac(Qr.FieldByName('horario_fechamento').AsDateTime);
-        Comercio.TaxaEntregaBase := Qr.FieldByName('tempo_preparo_medio').AsCurrency;
+        Comercio.TaxaEntregaBase := Qr.FieldByName('taxa_entrega_base').AsCurrency;
         Comercio.NPhoneComercio := Qr.FieldByName('nphone_comercio').AsString;
 
         // ✅ CORREÇÃO: Sempre adiciona à lista, independente do filtro
@@ -119,7 +119,7 @@ begin
         Comercio.Descricao := Qr.FieldByName('descricao').AsString;
         Comercio.HorarioAbertura := Frac(Qr.FieldByName('horario_abertura').AsDateTime);
         Comercio.HorarioFechamento := Frac(Qr.FieldByName('horario_fechamento').AsDateTime);
-        Comercio.TaxaEntregaBase := Qr.FieldByName('tempo_preparo_medio').AsCurrency;
+        Comercio.TaxaEntregaBase := Qr.FieldByName('taxa_entrega_base').AsCurrency;
         Comercio.NPhoneComercio := Qr.FieldByName('nphone_comercio').AsString;
 
         Result.Add(Comercio);

@@ -2162,7 +2162,7 @@
             Left = 3
             Top = 3
             Width = 145
-            Height = 30
+            Height = 25
             Align = alLeft
             Caption = 'lblUserIdHeader'
             Font.Charset = DEFAULT_CHARSET
@@ -2171,14 +2171,13 @@
             Font.Name = 'Segoe UI'
             Font.Style = [fsBold]
             ParentFont = False
-            ExplicitHeight = 25
           end
           object lblUserNameHeader: TLabel
             AlignWithMargins = True
             Left = 154
             Top = 3
             Width = 179
-            Height = 30
+            Height = 25
             Align = alLeft
             Caption = 'lblUserNameHeader'
             Font.Charset = DEFAULT_CHARSET
@@ -2187,14 +2186,13 @@
             Font.Name = 'Segoe UI'
             Font.Style = [fsBold]
             ParentFont = False
-            ExplicitHeight = 25
           end
           object lblNomeComercio: TLabel
             AlignWithMargins = True
             Left = 339
             Top = 3
             Width = 226
-            Height = 30
+            Height = 25
             Align = alLeft
             Caption = 'lblNomeComercioHeader'
             Font.Charset = DEFAULT_CHARSET
@@ -2203,7 +2201,6 @@
             Font.Name = 'Segoe UI'
             Font.Style = [fsBold]
             ParentFont = False
-            ExplicitHeight = 25
           end
         end
       end

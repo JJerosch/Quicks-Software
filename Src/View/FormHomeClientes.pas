@@ -5,11 +5,10 @@ interface
 uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.StrUtils, System.Variants, System.Classes, System.Types,
-  System.Generics.Collections, System.DateUtils,
+  System.Generics.Collections, System.DateUtils, RestauranteHelper,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls,
   Vcl.Menus, Vcl.StdCtrls, Vcl.Imaging.pngimage, Vcl.ComCtrls, Vcl.Mask,
-  Data.DB,
-  FireDAC.Comp.Client, FireDAC.Comp.DataSet, FireDAC.Stan.Param, FireDAC.Stan.Intf,
+  Data.DB, FireDAC.Comp.Client, FireDAC.Comp.DataSet, FireDAC.Stan.Param, FireDAC.Stan.Intf,
   uConn, ComercioModel, ClienteController, CategoriaHelper;
 
 type
@@ -230,9 +229,9 @@ type
     scbxCategorias: TScrollBox;
     pRestaurantes: TPanel;
     lblRestaurantes: TLabel;
-    scbxRestaurantes: TScrollBox;
     pButtonEditarEndereco: TPanel;
     pButtonEditarPagamentos: TPanel;
+    scbxRestaurantes: TScrollBox;
 
     procedure iButton1Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -240,7 +239,6 @@ type
     procedure FormDestroy(Sender: TObject);
     procedure eBuscaMainChange(Sender: TObject);
     procedure eBuscaMainKeyPress(Sender: TObject; var Key: Char);
-    procedure FormResize(Sender: TObject);
     procedure iButton2Click(Sender: TObject);
     procedure iButton3Click(Sender: TObject);
     procedure iButton4Click(Sender: TObject);
@@ -268,17 +266,19 @@ type
     procedure InicializarController;
     procedure PopularCategorias;
     procedure PopularRestaurantes(const Categoria: String = '');
-    procedure BuscarComercios(const Termo: string);
-    function ComercioEstaAberto(HorarioAbertura, HorarioFechamento: TTime): Boolean;
-    procedure LimparCardsRestaurantes;
-    procedure AdicionarCardComercio(Comercio: TComercio; EstaAberto: Boolean; Index: Integer);
-    procedure AbrirCardapio(IdComercio: Integer; const NomeComercio: String);
-    procedure OnBuscaTimer(Sender: TObject);
-    procedure LimparBusca;
-    procedure ExibirMensagemNenhumResultado;
-    procedure ConfigurarLayout;
-    procedure AjustarScrollBox;
     procedure OnCategoriaClick(const Categoria: string);
+    procedure OnRestauranteClick(IdComercio: Integer; const NomeComercio: string);
+    procedure OnBuscaTimer(Sender: TObject);
+    procedure ConfigurarLayout;
+    procedure AbrirCardapio(IdComercio: Integer; const NomeComercio: String);
+    procedure AdicionarCardComercio(Comercio: TComercio; EstaAberto: Boolean;
+      Index: Integer);
+    procedure BuscarComercios(const Termo: string);
+    function ComercioEstaAberto(HorarioAbertura,
+      HorarioFechamento: TTime): Boolean;
+    procedure ExibirMensagemNenhumResultado;
+    procedure LimparBusca;
+    procedure LimparCardsRestaurantes;
 
   public
     property IdUsuario: Integer read FIdUsuario write FIdUsuario;
@@ -436,8 +436,7 @@ end;
 
 procedure TCardComercioPanel.PanelClick(Sender: TObject);
 begin
-  if Assigned(Self.Owner) and (Self.Owner is TFormHomeC) then
-    TFormHomeC(Self.Owner).AbrirCardapio(FIdComercio, FNomeComercio);
+
 end;
 
 procedure TCardComercioPanel.PanelMouseEnter(Sender: TObject);
@@ -459,10 +458,6 @@ begin
   FUltimaBusca := '';
   FCategoriaSelecionada := 'Todos';
 
-  FCardHeight := 145;
-  FCardSpacing := 15;
-  FMargemLateral := 20;
-
   FBuscaTimer := TTimer.Create(Self);
   FBuscaTimer.Enabled := False;
   FBuscaTimer.Interval := 500;
@@ -477,7 +472,7 @@ end;
 
 procedure TFormHomeC.ConfigurarLayout;
 begin
-  // ⭐ CRÍTICO: Configurar hierarquia e alinhamentos
+  // Configurar hierarquia e alinhamentos
   if Assigned(pHomeBackground) then
   begin
     pHomeBackground.Align := alClient;
@@ -514,7 +509,7 @@ begin
     scbxCategorias.VertScrollBar.Visible := False;
   end;
 
-  // ⭐ CRÍTICO: pRestaurantes ocupa o RESTO
+  // pRestaurantes ocupa o RESTO
   if Assigned(pRestaurantes) then
   begin
     pRestaurantes.Align := alClient;
@@ -529,43 +524,15 @@ begin
     lblRestaurantes.Caption := '  Restaurantes e Comércios';
   end;
 
-  // ⭐ CRÍTICO: scbxRestaurantes também ocupa o RESTO
+  // ⭐ scbxRestaurantes HORIZONTAL (igual categorias)
   if Assigned(scbxRestaurantes) then
   begin
     scbxRestaurantes.Align := alClient;
-    scbxRestaurantes.VertScrollBar.Visible := True;
-    scbxRestaurantes.VertScrollBar.Tracking := True;
-    scbxRestaurantes.HorzScrollBar.Visible := False;
+    scbxRestaurantes.VertScrollBar.Visible := False;    // ⭐ SEM scroll vertical
+    scbxRestaurantes.HorzScrollBar.Visible := True;     // ⭐ COM scroll horizontal
+    scbxRestaurantes.HorzScrollBar.Tracking := True;
     scbxRestaurantes.BorderStyle := bsNone;
     scbxRestaurantes.Color := $00F8F8F8;
-  end;
-end;
-
-procedure TFormHomeC.FormResize(Sender: TObject);
-begin
-  AjustarScrollBox;
-end;
-
-procedure TFormHomeC.AjustarScrollBox;
-var
-  I: Integer;
-  Card: TCardComercioPanel;
-  NovaLargura: Integer;
-begin
-  if not Assigned(scbxRestaurantes) then
-    Exit;
-
-  NovaLargura := scbxRestaurantes.ClientWidth - (FMargemLateral * 2);
-  if NovaLargura < 250 then
-    NovaLargura := 250;
-
-  for I := 0 to scbxRestaurantes.ControlCount - 1 do
-  begin
-    if scbxRestaurantes.Controls[I] is TCardComercioPanel then
-    begin
-      Card := TCardComercioPanel(scbxRestaurantes.Controls[I]);
-      Card.Width := NovaLargura;
-    end;
   end;
 end;
 
@@ -649,6 +616,16 @@ begin
   PopularRestaurantes(Categoria);
 end;
 
+
+procedure TFormHomeC.OnRestauranteClick(IdComercio: Integer;
+  const NomeComercio: string);
+begin
+  ShowMessage('Abrindo cardápio de: ' + NomeComercio + #13#10 +
+              'ID: ' + IntToStr(IdComercio));
+  // Aqui você implementa a navegação para o cardápio
+//   pcMain.ActivePage := tsLojas;
+//   CarregarCardapio(IdComercio);
+end;
 procedure TFormHomeC.pButtonAlterarSenhaVClick(Sender: TObject);
 begin
   pcPerfil.ActivePageIndex:=2;

@@ -1169,6 +1169,11 @@ begin
   end;
 end;
 
+procedure TFormHomeD.iButtonBackAlterarSenhaClick(Sender: TObject);
+begin
+  pcPErfil.ActivePageIndex:=0;
+end;
+
 procedure TFormHomeD.lblButton1Click(Sender: TObject);
 begin
   pcMain.ActivePageIndex := 1;
