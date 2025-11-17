@@ -105,7 +105,7 @@
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
-        <DCC_UnitSearchPath>C:\Users\jpjer\OneDrive\Documentos\GitHub\Quicks-Software\Src\Utils;C:\Users\pinto.7979\Documents\GitHub\Quicks-Software\Src\Utils;C:\Users\pinto.7979\Documents\GitHub\Quicks-Software\BCrypt\bcrypt-master;C:\Users\João Jerosch\OneDrive\Documentos\Embarcadero\Studio\Projects\Quicks\Src\Utils;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>C:\Users\jpjer\OneDrive\Documentos\GitHub\Quicks-Software\Src\Utils;C:\Users\pinto.7979\Documents\GitHub\Quicks-Software\Src\Utils;C:\Users\pinto.7979\Documents\GitHub\Quicks-Software\BCrypt\bcrypt-master;C:\Users\João Jerosch\OneDrive\Documentos\Embarcadero\Studio\Projects\Quicks\Src\Utils;C:\Users\jpjer\Documents\Embarcadero\Studio\Projects\Quicks-Software\Src\Utils;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
         <AppDPIAwarenessMode>PerMonitorV2</AppDPIAwarenessMode>
@@ -180,6 +180,19 @@
         <DCCReference Include="Src\Controller\ClienteController.pas"/>
         <DCCReference Include="Src\Repository\ClienteRepository.pas"/>
         <DCCReference Include="Src\Utils\CategoriaHelper.pas"/>
+        <DCCReference Include="Src\Utils\ViaCepHelper.pas"/>
+        <DCCReference Include="Src\Model\ClienteModel.pas"/>
+        <DCCReference Include="Src\Model\EntregadorModel.pas"/>
+        <DCCReference Include="Src\Repository\ClientePerfilRepository.pas"/>
+        <DCCReference Include="Src\Service\ClientePerfilService.pas"/>
+        <DCCReference Include="Src\Service\EntregadorPerfilService.pas"/>
+        <DCCReference Include="Src\Repository\EntregadorPerfilRepository.pas"/>
+        <DCCReference Include="Src\Controller\ClientePerfilController.pas"/>
+        <DCCReference Include="Src\Model\EnderecoClienteModel.pas"/>
+        <DCCReference Include="Src\Repository\EnderecoClienteRepository.pas"/>
+        <DCCReference Include="Src\Utils\EnderecoCardHelper.pas"/>
+        <DCCReference Include="Src\Service\EnderecoClienteService.pas"/>
+        <DCCReference Include="Src\Controller\EnderecoClienteController.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

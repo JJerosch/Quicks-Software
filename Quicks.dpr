@@ -56,7 +56,20 @@ uses
   ComercioController in 'Src\Controller\ComercioController.pas',
   ClienteController in 'Src\Controller\ClienteController.pas',
   ClienteRepository in 'Src\Repository\ClienteRepository.pas',
-  CategoriaHelper in 'Src\Utils\CategoriaHelper.pas';
+  CategoriaHelper in 'Src\Utils\CategoriaHelper.pas',
+  ViaCepHelper in 'Src\Utils\ViaCepHelper.pas',
+  ClienteModel in 'Src\Model\ClienteModel.pas',
+  EntregadorModel in 'Src\Model\EntregadorModel.pas',
+  ClientePerfilRepository in 'Src\Repository\ClientePerfilRepository.pas',
+  ClientePerfilService in 'Src\Service\ClientePerfilService.pas',
+  EntregadorPerfilService in 'Src\Service\EntregadorPerfilService.pas',
+  EntregadorPerfilRepository in 'Src\Repository\EntregadorPerfilRepository.pas',
+  ClientePerfilController in 'Src\Controller\ClientePerfilController.pas',
+  EnderecoClienteModel in 'Src\Model\EnderecoClienteModel.pas',
+  EnderecoClienteRepository in 'Src\Repository\EnderecoClienteRepository.pas',
+  EnderecoCardHelper in 'Src\Utils\EnderecoCardHelper.pas',
+  EnderecoClienteService in 'Src\Service\EnderecoClienteService.pas',
+  EnderecoClienteController in 'Src\Controller\EnderecoClienteController.pas';
 
 {$R *.res}
 

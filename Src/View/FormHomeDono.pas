@@ -8,7 +8,7 @@ uses
   Vcl.ComCtrls, Vcl.Imaging.pngimage, Data.DB, Vcl.Mask, Vcl.Grids, Vcl.DBGrids,
   uConn, FireDAC.Comp.Client, System.Generics.Collections,
   ProdutoModel, ProdutoController, ProdutoViewHelper,
-  ComercioModel, ComercioController, ComercioViewHelper, Vcl.WinXPickers;
+  ComercioModel, ComercioController, ComercioViewHelper, Vcl.WinXPickers, ViaCEPHelper;
 
 type
   TFormHomeD = class(TForm)
@@ -249,6 +249,7 @@ type
     procedure ePrecoCustoUpExit(Sender: TObject);
     procedure ePrecoCustoAddExit(Sender: TObject);
     procedure iButtonBackAlterarSenhaClick(Sender: TObject);
+    procedure meCEPCommDEExit(Sender: TObject);
 
   private
     FIdUsuario: Integer;
@@ -506,6 +507,21 @@ begin
   ePrecoCustoUp.Text := '0,00';
   cbDisponivelUp.Checked := True;
   FIdProdutoSelecionado := 0;
+end;
+
+procedure TFormHomeD.meCEPCommDEExit(Sender: TObject);
+begin
+  if Length(TComercioViewHelper.RemoverMascaraCEP(meCEPCommDE.Text)) = 8 then
+  begin
+    TViaCEPHelper.PreencherCamposEndereco(
+      meCEPCommDE.Text,
+      eRuaCommDE,
+      eCidadeCommDE,
+      eBairroCommDE,
+      eComplementoCommDE,
+      cbEstadoCommDE
+    );
+  end;
 end;
 
 procedure TFormHomeD.CarregarDadosParaAtualizar(IdProduto: Integer);

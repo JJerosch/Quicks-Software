@@ -18,9 +18,11 @@ object FormHomeC: TFormHomeC
     Top = 0
     Width = 410
     Height = 644
-    ActivePage = tsMain
+    ActivePage = tsPerfil
     Align = alClient
     TabOrder = 1
+    ExplicitWidth = 408
+    ExplicitHeight = 636
     object tsMain: TTabSheet
       Caption = 'tsMain'
       object pHomeBackground: TPanel
@@ -33,6 +35,8 @@ object FormHomeC: TFormHomeC
         Color = clWhite
         ParentBackground = False
         TabOrder = 0
+        ExplicitWidth = 400
+        ExplicitHeight = 606
         object scbxMain: TScrollBox
           Left = 0
           Top = 0
@@ -46,6 +50,8 @@ object FormHomeC: TFormHomeC
           BorderStyle = bsNone
           TabOrder = 0
           UseWheelForScrolling = True
+          ExplicitWidth = 400
+          ExplicitHeight = 606
           object pCategorias: TPanel
             AlignWithMargins = True
             Left = 0
@@ -61,6 +67,7 @@ object FormHomeC: TFormHomeC
             Color = cl3DLight
             ParentBackground = False
             TabOrder = 0
+            ExplicitWidth = 400
             object lblCategorias: TLabel
               AlignWithMargins = True
               Left = 3
@@ -93,6 +100,7 @@ object FormHomeC: TFormHomeC
               BorderStyle = bsNone
               TabOrder = 0
               UseWheelForScrolling = True
+              ExplicitWidth = 400
             end
           end
           object pEndereco: TPanel
@@ -105,6 +113,7 @@ object FormHomeC: TFormHomeC
             Color = clWindow
             ParentBackground = False
             TabOrder = 1
+            ExplicitWidth = 400
             object lblEnderecoTitle: TLabel
               Left = 6
               Top = 9
@@ -149,6 +158,7 @@ object FormHomeC: TFormHomeC
               ParentBackground = False
               ParentFont = False
               TabOrder = 0
+              OnClick = pButtonAddEnderecoClick
             end
             object cbEnderecos: TComboBox
               Left = 6
@@ -177,6 +187,7 @@ object FormHomeC: TFormHomeC
             Color = clWhite
             ParentBackground = False
             TabOrder = 2
+            ExplicitWidth = 400
             object lblMenuPrincipal: TLabel
               Left = 6
               Top = 13
@@ -206,6 +217,8 @@ object FormHomeC: TFormHomeC
             Color = cl3DLight
             ParentBackground = False
             TabOrder = 3
+            ExplicitWidth = 400
+            ExplicitHeight = 337
             object lblRestaurantes: TLabel
               AlignWithMargins = True
               Left = 3
@@ -507,7 +520,7 @@ object FormHomeC: TFormHomeC
         Margins.Top = 0
         Margins.Right = 0
         Margins.Bottom = 0
-        ActivePage = tsVisualizarPefil
+        ActivePage = tsPerfilE
         Align = alClient
         TabOrder = 0
         object tsVisualizarPefil: TTabSheet
@@ -748,7 +761,7 @@ object FormHomeC: TFormHomeC
                   0010480000402001000081040000041200001048000040A0FF030801D62EB80B
                   0D7D0000000049454E44AE426082}
                 Proportional = True
-                OnClick = iButtonBackAlterarSenhaClick
+                OnClick = iButtonBackPerfilClick
               end
               object pButtonAlterarSenhaV: TPanel
                 Left = 302
@@ -1129,7 +1142,7 @@ object FormHomeC: TFormHomeC
                   0010480000402001000081040000041200001048000040A0FF030801D62EB80B
                   0D7D0000000049454E44AE426082}
                 Proportional = True
-                OnClick = iButtonBackAlterarSenhaClick
+                OnClick = iButtonBackPerfilClick
               end
               object pButtonAlterarSenhaPerfilE: TPanel
                 Left = 302
@@ -1586,7 +1599,7 @@ object FormHomeC: TFormHomeC
               AlignWithMargins = True
               Left = 0
               Top = 48
-              Width = 377
+              Width = 373
               Height = 541
               Margins.Left = 0
               Margins.Top = 0
@@ -1601,7 +1614,7 @@ object FormHomeC: TFormHomeC
                 AlignWithMargins = True
                 Left = 0
                 Top = 0
-                Width = 377
+                Width = 373
                 Height = 541
                 Margins.Left = 0
                 Margins.Top = 0
@@ -1615,9 +1628,9 @@ object FormHomeC: TFormHomeC
                 object lblEnderecosTitle: TLabel
                   Left = 9
                   Top = 14
-                  Width = 71
+                  Width = 109
                   Height = 20
-                  Caption = 'Endere'#231'os'
+                  Caption = 'Editar Endere'#231'o'
                   Font.Charset = DEFAULT_CHARSET
                   Font.Color = clWindowText
                   Font.Height = -15
@@ -1625,13 +1638,230 @@ object FormHomeC: TFormHomeC
                   Font.Style = [fsBold]
                   ParentFont = False
                 end
+                object pButtonCancelarE: TPanel
+                  Left = 109
+                  Top = 316
+                  Width = 76
+                  Height = 44
+                  BevelOuter = bvNone
+                  Caption = 'Cancelar'
+                  Color = clCoral
+                  Font.Charset = DEFAULT_CHARSET
+                  Font.Color = clWhite
+                  Font.Height = -12
+                  Font.Name = 'Segoe UI'
+                  Font.Style = [fsBold]
+                  ParentBackground = False
+                  ParentFont = False
+                  TabOrder = 0
+                  OnClick = pButtonCancelarEClick
+                end
+                object pButtonSalvarEndereco: TPanel
+                  Left = 9
+                  Top = 316
+                  Width = 76
+                  Height = 44
+                  BevelOuter = bvNone
+                  Caption = 'Salvar'
+                  Color = clCoral
+                  Font.Charset = DEFAULT_CHARSET
+                  Font.Color = clWhite
+                  Font.Height = -12
+                  Font.Name = 'Segoe UI'
+                  Font.Style = [fsBold]
+                  ParentBackground = False
+                  ParentFont = False
+                  TabOrder = 1
+                  OnClick = pButtonSalvarEnderecoClick
+                end
+                object pInfoRestauranteLE: TPanel
+                  Left = 9
+                  Top = 52
+                  Width = 344
+                  Height = 235
+                  BevelOuter = bvNone
+                  Color = clCoral
+                  ParentBackground = False
+                  TabOrder = 2
+                  object Label26: TLabel
+                    Left = 16
+                    Top = 48
+                    Width = 67
+                    Height = 15
+                    Caption = 'Logradouro:'
+                    Font.Charset = DEFAULT_CHARSET
+                    Font.Color = clWhite
+                    Font.Height = -12
+                    Font.Name = 'Segoe UI'
+                    Font.Style = [fsBold]
+                    ParentFont = False
+                  end
+                  object Label27: TLabel
+                    Left = 16
+                    Top = 18
+                    Width = 23
+                    Height = 15
+                    Caption = 'CEP:'
+                    Font.Charset = DEFAULT_CHARSET
+                    Font.Color = clWhite
+                    Font.Height = -12
+                    Font.Name = 'Segoe UI'
+                    Font.Style = [fsBold]
+                    ParentFont = False
+                  end
+                  object Label11: TLabel
+                    Left = 16
+                    Top = 77
+                    Width = 39
+                    Height = 15
+                    Caption = 'Estado:'
+                    Font.Charset = DEFAULT_CHARSET
+                    Font.Color = clWhite
+                    Font.Height = -12
+                    Font.Name = 'Segoe UI'
+                    Font.Style = [fsBold]
+                    ParentFont = False
+                  end
+                  object Label12: TLabel
+                    Left = 16
+                    Top = 162
+                    Width = 49
+                    Height = 15
+                    Caption = 'N'#250'mero:'
+                    Font.Charset = DEFAULT_CHARSET
+                    Font.Color = clWhite
+                    Font.Height = -12
+                    Font.Name = 'Segoe UI'
+                    Font.Style = [fsBold]
+                    ParentFont = False
+                  end
+                  object Label17: TLabel
+                    Left = 16
+                    Top = 106
+                    Width = 40
+                    Height = 15
+                    Caption = 'Cidade:'
+                    Font.Charset = DEFAULT_CHARSET
+                    Font.Color = clWhite
+                    Font.Height = -12
+                    Font.Name = 'Segoe UI'
+                    Font.Style = [fsBold]
+                    ParentFont = False
+                  end
+                  object Label18: TLabel
+                    Left = 16
+                    Top = 134
+                    Width = 37
+                    Height = 15
+                    Caption = 'Bairro:'
+                    Font.Charset = DEFAULT_CHARSET
+                    Font.Color = clWhite
+                    Font.Height = -12
+                    Font.Name = 'Segoe UI'
+                    Font.Style = [fsBold]
+                    ParentFont = False
+                  end
+                  object Label19: TLabel
+                    Left = 16
+                    Top = 189
+                    Width = 138
+                    Height = 15
+                    Caption = 'Complemento(Opcional):'
+                    Font.Charset = DEFAULT_CHARSET
+                    Font.Color = clWhite
+                    Font.Height = -12
+                    Font.Name = 'Segoe UI'
+                    Font.Style = [fsBold]
+                    ParentFont = False
+                  end
+                  object eLogradouroDE: TEdit
+                    Left = 89
+                    Top = 45
+                    Width = 192
+                    Height = 23
+                    TabOrder = 0
+                  end
+                  object eBairroDE: TEdit
+                    Left = 61
+                    Top = 131
+                    Width = 95
+                    Height = 23
+                    TabOrder = 1
+                  end
+                  object eCidadeDE: TEdit
+                    Left = 61
+                    Top = 103
+                    Width = 95
+                    Height = 23
+                    TabOrder = 2
+                  end
+                  object eNumeroEnderecoDe: TEdit
+                    Left = 71
+                    Top = 159
+                    Width = 86
+                    Height = 23
+                    TabOrder = 3
+                  end
+                  object eComplementoDE: TEdit
+                    Left = 159
+                    Top = 186
+                    Width = 143
+                    Height = 23
+                    TabOrder = 4
+                  end
+                  object meCEPDE: TMaskEdit
+                    Left = 46
+                    Top = 15
+                    Width = 95
+                    Height = 23
+                    EditMask = '99999-999;1;_'
+                    MaxLength = 9
+                    TabOrder = 5
+                    Text = '     -   '
+                  end
+                  object cbEstadoDE: TComboBox
+                    Left = 61
+                    Top = 74
+                    Width = 95
+                    Height = 23
+                    TabOrder = 6
+                    Items.Strings = (
+                      'AC'
+                      'AL'
+                      'AP'
+                      'AM'
+                      'BA'
+                      'CE'
+                      'DF'
+                      'ES'
+                      'GO'
+                      'MA'
+                      'MT'
+                      'MS'
+                      'MG'
+                      'PA'
+                      'PB'
+                      'PR'
+                      'PE'
+                      'PI'
+                      'RJ'
+                      'RN'
+                      'RS'
+                      'RO'
+                      'RR'
+                      'SC'
+                      'SP'
+                      'SE'
+                      'TO')
+                  end
+                end
               end
             end
             object pHeaderEnderecosE: TPanel
               AlignWithMargins = True
               Left = 0
               Top = 2
-              Width = 377
+              Width = 373
               Height = 46
               Margins.Left = 0
               Margins.Top = 2
@@ -1785,24 +2015,7 @@ object FormHomeC: TFormHomeC
                   0010480000402001000081040000041200001048000040A0FF030801D62EB80B
                   0D7D0000000049454E44AE426082}
                 Proportional = True
-                OnClick = iButtonBackAlterarSenhaClick
-              end
-              object pButtonAlterarSenhaEnderecosE: TPanel
-                Left = 302
-                Top = 11
-                Width = 86
-                Height = 26
-                BevelOuter = bvNone
-                Caption = 'Alterar Senha'
-                Color = clCoral
-                Font.Charset = DEFAULT_CHARSET
-                Font.Color = clWhite
-                Font.Height = -12
-                Font.Name = 'Segoe UI'
-                Font.Style = [fsBold]
-                ParentBackground = False
-                ParentFont = False
-                TabOrder = 0
+                OnClick = iButtonBackEnderecosEClick
               end
             end
           end
@@ -2028,7 +2241,7 @@ object FormHomeC: TFormHomeC
                   0010480000402001000081040000041200001048000040A0FF030801D62EB80B
                   0D7D0000000049454E44AE426082}
                 Proportional = True
-                OnClick = iButtonBackAlterarSenhaClick
+                OnClick = iButtonBackPerfilClick
               end
               object pButtonAlterarSenhaPagamentosE: TPanel
                 Left = 302
@@ -3176,6 +3389,7 @@ object FormHomeC: TFormHomeC
           MaxLength = 9
           TabOrder = 5
           Text = '     -   '
+          OnExit = meCEPCommDEExit
         end
         object cbEstadoCommDE: TComboBox
           Left = 71
@@ -3186,8 +3400,8 @@ object FormHomeC: TFormHomeC
         end
       end
       object pButtonSalvarDadosE: TPanel
-        Left = 157
-        Top = 415
+        Left = 29
+        Top = 375
         Width = 76
         Height = 44
         BevelOuter = bvNone
@@ -3201,6 +3415,7 @@ object FormHomeC: TFormHomeC
         ParentBackground = False
         ParentFont = False
         TabOrder = 1
+        OnClick = pButtonSalvarDadosEClick
       end
       object pHeaderEnderecoNovo: TPanel
         AlignWithMargins = True
@@ -3459,10 +3674,10 @@ object FormHomeC: TFormHomeC
     ParentBackground = False
     TabOrder = 0
     object iButton1: TImage
-      Left = 6
-      Top = 6
-      Width = 44
-      Height = 44
+      Left = 4
+      Top = 3
+      Width = 51
+      Height = 54
       Center = True
       Picture.Data = {
         0954506E67496D61676589504E470D0A1A0A0000000D49484452000002000000
@@ -5358,6 +5573,7 @@ object FormHomeC: TFormHomeC
       Font.Name = 'Segoe UI'
       Font.Style = []
       ParentFont = False
+      OnClick = lblButton1Click
     end
     object lblButton2: TLabel
       Left = 88

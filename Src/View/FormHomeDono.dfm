@@ -24,6 +24,8 @@
     Color = clWhite
     ParentBackground = False
     TabOrder = 0
+    ExplicitWidth = 1230
+    ExplicitHeight = 636
     object pListViewMain: TPanel
       Left = 89
       Top = 0
@@ -32,6 +34,8 @@
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 1
+      ExplicitWidth = 1141
+      ExplicitHeight = 636
       object pcMain: TPageControl
         Left = 0
         Top = 0
@@ -43,6 +47,8 @@
         TabOrder = 0
         Touch.ParentTabletOptions = False
         Touch.TabletOptions = [toPressAndHold]
+        ExplicitWidth = 1141
+        ExplicitHeight = 636
         object ts1Selecione: TTabSheet
           Caption = 'ts1Selecione'
           object pText: TPanel
@@ -755,6 +761,8 @@
             ActivePage = tsEditar
             Align = alClient
             TabOrder = 0
+            ExplicitWidth = 1133
+            ExplicitHeight = 603
             object tsVisualizar: TTabSheet
               Caption = 'tsVisualizar'
               object scbxPerfilVisualizar: TScrollBox
@@ -1218,6 +1226,8 @@
                 BorderStyle = bsNone
                 TabOrder = 0
                 UseWheelForScrolling = True
+                ExplicitWidth = 1125
+                ExplicitHeight = 573
                 object pMainPerfilEditar: TPanel
                   Left = 0
                   Top = 0
@@ -1228,6 +1238,8 @@
                   ParentBackground = False
                   TabOrder = 0
                   OnClick = pButtonSalvarDadosEClick
+                  ExplicitWidth = 1125
+                  ExplicitHeight = 573
                   object pInfoRestauranteNCDE: TPanel
                     Left = 24
                     Top = 37
@@ -1412,7 +1424,6 @@
                       Left = 134
                       Top = 46
                       Width = 72
-                      Height = 25
                       Font.Charset = DEFAULT_CHARSET
                       Font.Color = clWindowText
                       Font.Height = -16
@@ -1426,7 +1437,6 @@
                       Left = 348
                       Top = 46
                       Width = 72
-                      Height = 25
                       Font.Charset = DEFAULT_CHARSET
                       Font.Color = clWindowText
                       Font.Height = -16
@@ -1692,6 +1702,7 @@
                       MaxLength = 9
                       TabOrder = 5
                       Text = '     -   '
+                      OnExit = meCEPCommDEExit
                     end
                     object cbEstadoCommDE: TComboBox
                       Left = 198
@@ -2162,7 +2173,7 @@
             Left = 3
             Top = 3
             Width = 145
-            Height = 25
+            Height = 30
             Align = alLeft
             Caption = 'lblUserIdHeader'
             Font.Charset = DEFAULT_CHARSET
@@ -2171,13 +2182,14 @@
             Font.Name = 'Segoe UI'
             Font.Style = [fsBold]
             ParentFont = False
+            ExplicitHeight = 25
           end
           object lblUserNameHeader: TLabel
             AlignWithMargins = True
             Left = 154
             Top = 3
             Width = 179
-            Height = 25
+            Height = 30
             Align = alLeft
             Caption = 'lblUserNameHeader'
             Font.Charset = DEFAULT_CHARSET
@@ -2186,13 +2198,14 @@
             Font.Name = 'Segoe UI'
             Font.Style = [fsBold]
             ParentFont = False
+            ExplicitHeight = 25
           end
           object lblNomeComercio: TLabel
             AlignWithMargins = True
             Left = 339
             Top = 3
             Width = 226
-            Height = 25
+            Height = 30
             Align = alLeft
             Caption = 'lblNomeComercioHeader'
             Font.Charset = DEFAULT_CHARSET
@@ -2201,6 +2214,7 @@
             Font.Name = 'Segoe UI'
             Font.Style = [fsBold]
             ParentFont = False
+            ExplicitHeight = 25
           end
         end
       end
@@ -2220,6 +2234,7 @@
       Color = clCoral
       ParentBackground = False
       TabOrder = 0
+      ExplicitHeight = 636
       object iButton1: TImage
         Left = 17
         Top = 11

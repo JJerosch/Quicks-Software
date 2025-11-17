@@ -101,7 +101,6 @@ type
     lblUserNameHeader: TLabel;
     lblUserIdHeader: TLabel;
     Image1: TImage;
-    Image3: TImage;
 
     procedure iButton1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);

@@ -1,31 +1,32 @@
 object DM: TDM
   OnCreate = DataModuleCreate
-  Height = 480
-  Width = 639
+  Height = 600
+  Width = 799
+  PixelsPerInch = 120
   object FDConn: TFDConnection
     Params.Strings = (
       'Database=quicks'
       'User_Name=postgres'
       'Password=root'
       'DriverID=PG')
-    Left = 432
-    Top = 144
+    Left = 540
+    Top = 180
   end
   object FDQr: TFDQuery
     Connection = FDConn
-    Left = 168
-    Top = 288
+    Left = 210
+    Top = 360
   end
   object DS: TDataSource
     DataSet = FDQr
-    Left = 168
-    Top = 144
+    Left = 210
+    Top = 180
   end
   object DL: TFDPhysPgDriverLink
     VendorLib = 
-      'C:\Users\Jo'#227'o Jerosch\OneDrive\Documentos\Embarcadero\Studio\Pro' +
-      'jects\Quicks\lib\libpq.dll'
-    Left = 432
-    Top = 288
+      'C:\Users\jpjer\Documents\Embarcadero\Studio\Projects\Quicks-Soft' +
+      'ware\lib\libpq.dll'
+    Left = 540
+    Top = 360
   end
 end
