@@ -321,12 +321,12 @@ begin
   try
     Qr.Connection := DM.FDConn;
     Qr.SQL.Text :=
-      'SELECT DISTINCT cp.categoria ' +
+      'SELECT DISTINCT cp.nome_categoria as categoria ' +
       'FROM categorias_produtos cp ' +
       'INNER JOIN produtos p ON p.id_categoria = cp.id_categoria ' +
       'WHERE p.id_comercio = :id_comercio ' +
       '  AND p.disponivel_venda = true ' +
-      'ORDER BY cp.categoria';
+      'ORDER BY cp.nome_categoria';
     Qr.ParamByName('id_comercio').AsInteger := IdComercio;
     Qr.Open;
 
@@ -352,14 +352,14 @@ begin
     Qr.Connection := DM.FDConn;
     Qr.SQL.Clear;
     Qr.SQL.Add('SELECT p.id_produto, p.nome_prod, p.desc_prod, p.preco_prod,');
-    Qr.SQL.Add('       p.disponivel_venda, cp.categoria');
+    Qr.SQL.Add('       p.disponivel_venda, cp.nome_categoria as categoria');
     Qr.SQL.Add('FROM produtos p');
     Qr.SQL.Add('INNER JOIN categorias_produtos cp ON p.id_categoria = cp.id_categoria');
     Qr.SQL.Add('WHERE p.id_comercio = :id_comercio');
 
     if (Trim(Categoria) <> '') and (Categoria <> 'Todos') then
     begin
-      Qr.SQL.Add('AND cp.categoria = :categoria');
+      Qr.SQL.Add('AND cp.nome_categoria = :categoria');
       Qr.ParamByName('categoria').AsString := Categoria;
     end;
 

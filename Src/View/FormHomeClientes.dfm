@@ -18,7 +18,7 @@ object FormHomeC: TFormHomeC
     Top = 0
     Width = 410
     Height = 644
-    ActivePage = tsCommSelec
+    ActivePage = tsMain
     Align = alClient
     TabOrder = 1
     object tsMain: TTabSheet
@@ -58,7 +58,7 @@ object FormHomeC: TFormHomeC
             Margins.Bottom = 0
             Align = alTop
             BevelOuter = bvNone
-            Color = cl3DLight
+            Color = clWhite
             ParentBackground = False
             TabOrder = 0
             object lblCategorias: TLabel
@@ -191,7 +191,7 @@ object FormHomeC: TFormHomeC
             Margins.Bottom = 0
             Align = alClient
             BevelOuter = bvNone
-            Color = cl3DLight
+            Color = clWhite
             ParentBackground = False
             TabOrder = 3
             object lblRestaurantes: TLabel
@@ -3646,10 +3646,10 @@ object FormHomeC: TFormHomeC
     ParentBackground = False
     TabOrder = 0
     object iButton1: TImage
-      Left = 4
-      Top = 3
-      Width = 51
-      Height = 54
+      Left = 2
+      Top = 0
+      Width = 55
+      Height = 55
       Center = True
       Picture.Data = {
         0954506E67496D61676589504E470D0A1A0A0000000D49484452000002000000

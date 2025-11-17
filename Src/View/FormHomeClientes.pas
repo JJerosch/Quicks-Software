@@ -14,6 +14,7 @@ uses
   ProdutoModel, ProdutoViewHelper;
 
 type
+  TRestauranteClickEvent = procedure(IdComercio: Integer; const NomeComercio: string) of object;
   TCardComercioPanel = class(TPanel)
   private
     FIdComercio: Integer;
@@ -23,12 +24,14 @@ type
     FHorario: String;
     FEstaAberto: Boolean;
     FDescricao: String;
+    FOnRestauranteClick: TRestauranteClickEvent;
     procedure PanelClick(Sender: TObject);
     procedure PanelMouseEnter(Sender: TObject);
     procedure PanelMouseLeave(Sender: TObject);
   public
     constructor CreateCard(AOwner: TComponent; IdComercio: Integer; CardWidth: Integer;
       const Nome, Categoria, Taxa, Horario, Descricao: String; EstaAberto: Boolean);
+    property OnRestauranteClick: TRestauranteClickEvent read FOnRestauranteClick write FOnRestauranteClick;
   end;
 
   TFormHomeC = class(TForm)
@@ -494,7 +497,8 @@ end;
 
 procedure TCardComercioPanel.PanelClick(Sender: TObject);
 begin
-
+  if Assigned(FOnRestauranteClick) then
+    FOnRestauranteClick(FIdComercio, FNomeComercio);
 end;
 
 procedure TCardComercioPanel.PanelMouseEnter(Sender: TObject);
@@ -1711,7 +1715,7 @@ begin
     Comercio.Descricao,
     EstaAberto
   );
-
+  Card.OnRestauranteClick := OnRestauranteClick;
   Card.Left := FMargemLateral;
   Card.Top := PosY;
   Card.Parent := scbxRestaurantes;
