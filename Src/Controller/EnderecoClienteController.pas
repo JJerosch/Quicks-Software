@@ -13,24 +13,12 @@ type
   public
     constructor Create;
     destructor Destroy; override;
-
-    // Listar todos os endereços de um cliente
     function ListarEnderecos(IdCliente: Integer): TObjectList<TEnderecoCliente>;
-
-    // Obter um endereço específico
     function ObterEndereco(IdEndereco: Integer): TEnderecoCliente;
-
-    // Cadastrar novo endereço
     function CadastrarEndereco(Endereco: TEnderecoCliente): Boolean;
-
-    // Atualizar endereço existente
     function AtualizarEndereco(Endereco: TEnderecoCliente): Boolean;
-
-    // Excluir endereço
     function ExcluirEndereco(IdEndereco: Integer): Boolean;
-
-    // Definir endereço como principal
-    function DefinirComoPrincipal(IdEndereco: Integer; IdCliente: Integer): Boolean;
+    function DefinirComoPrincipal(IdEndereco, IdCliente: Integer): Boolean;
   end;
 
 implementation
@@ -204,23 +192,22 @@ begin
   end;
 end;
 
-function TEnderecoClienteController.DefinirComoPrincipal(IdEndereco: Integer; IdCliente: Integer): Boolean;
+function TEnderecoClienteController.DefinirComoPrincipal(IdEndereco, IdCliente: Integer): Boolean;
 begin
   Result := False;
 
   try
-    if IdEndereco <= 0 then
-      raise Exception.Create('ID do endereço inválido!');
+    if not Assigned(FService) then
+      Exit;
 
-    if IdCliente <= 0 then
-      raise Exception.Create('ID do cliente inválido!');
-
+    // Delega para o Service
     Result := FService.DefinirComoPrincipal(IdEndereco, IdCliente);
 
   except
     on E: Exception do
     begin
-      raise Exception.Create('Erro ao definir endereço principal: ' + E.Message);
+      Result := False;
+      raise Exception.Create('Erro no Controller ao definir principal: ' + E.Message);
     end;
   end;
 end;

@@ -18,7 +18,7 @@ object FormHomeC: TFormHomeC
     Top = 0
     Width = 410
     Height = 644
-    ActivePage = tsPerfil
+    ActivePage = tsEnderecoNovo
     Align = alClient
     TabOrder = 1
     ExplicitWidth = 408
@@ -35,8 +35,6 @@ object FormHomeC: TFormHomeC
         Color = clWhite
         ParentBackground = False
         TabOrder = 0
-        ExplicitWidth = 400
-        ExplicitHeight = 606
         object scbxMain: TScrollBox
           Left = 0
           Top = 0
@@ -50,8 +48,6 @@ object FormHomeC: TFormHomeC
           BorderStyle = bsNone
           TabOrder = 0
           UseWheelForScrolling = True
-          ExplicitWidth = 400
-          ExplicitHeight = 606
           object pCategorias: TPanel
             AlignWithMargins = True
             Left = 0
@@ -67,7 +63,6 @@ object FormHomeC: TFormHomeC
             Color = cl3DLight
             ParentBackground = False
             TabOrder = 0
-            ExplicitWidth = 400
             object lblCategorias: TLabel
               AlignWithMargins = True
               Left = 3
@@ -100,7 +95,6 @@ object FormHomeC: TFormHomeC
               BorderStyle = bsNone
               TabOrder = 0
               UseWheelForScrolling = True
-              ExplicitWidth = 400
             end
           end
           object pEndereco: TPanel
@@ -113,7 +107,6 @@ object FormHomeC: TFormHomeC
             Color = clWindow
             ParentBackground = False
             TabOrder = 1
-            ExplicitWidth = 400
             object lblEnderecoTitle: TLabel
               Left = 6
               Top = 9
@@ -128,19 +121,6 @@ object FormHomeC: TFormHomeC
               Font.Name = 'Segoe UI'
               Font.Style = [fsBold]
               ParentColor = False
-              ParentFont = False
-            end
-            object lblEnderecoAtual: TLabel
-              Left = 78
-              Top = 9
-              Width = 114
-              Height = 20
-              Caption = 'lblEnderecoAtual'
-              Font.Charset = DEFAULT_CHARSET
-              Font.Color = clWindowText
-              Font.Height = -15
-              Font.Name = 'Segoe UI'
-              Font.Style = []
               ParentFont = False
             end
             object pButtonAddEndereco: TPanel
@@ -187,7 +167,6 @@ object FormHomeC: TFormHomeC
             Color = clWhite
             ParentBackground = False
             TabOrder = 2
-            ExplicitWidth = 400
             object lblMenuPrincipal: TLabel
               Left = 6
               Top = 13
@@ -217,8 +196,6 @@ object FormHomeC: TFormHomeC
             Color = cl3DLight
             ParentBackground = False
             TabOrder = 3
-            ExplicitWidth = 400
-            ExplicitHeight = 337
             object lblRestaurantes: TLabel
               AlignWithMargins = True
               Left = 3
@@ -520,9 +497,11 @@ object FormHomeC: TFormHomeC
         Margins.Top = 0
         Margins.Right = 0
         Margins.Bottom = 0
-        ActivePage = tsPerfilE
+        ActivePage = tsEnderecosE
         Align = alClient
         TabOrder = 0
+        ExplicitWidth = 400
+        ExplicitHeight = 606
         object tsVisualizarPefil: TTabSheet
           Caption = 'tsVisualizarPefil'
           object scbxMainPerfil: TScrollBox
@@ -984,6 +963,8 @@ object FormHomeC: TFormHomeC
             BorderStyle = bsNone
             TabOrder = 0
             UseWheelForScrolling = True
+            ExplicitWidth = 392
+            ExplicitHeight = 576
             object pHeaderPerfilE: TPanel
               AlignWithMargins = True
               Left = 0
@@ -999,6 +980,7 @@ object FormHomeC: TFormHomeC
               Color = clWhite
               ParentBackground = False
               TabOrder = 0
+              ExplicitWidth = 392
               object lblPerfilTitlePerfilE: TLabel
                 Left = 53
                 Top = 13
@@ -1178,6 +1160,7 @@ object FormHomeC: TFormHomeC
               Color = clWhite
               ParentBackground = False
               TabOrder = 1
+              ExplicitWidth = 392
               object ScrollBox3: TScrollBox
                 AlignWithMargins = True
                 Left = 0
@@ -1192,6 +1175,7 @@ object FormHomeC: TFormHomeC
                 BevelOuter = bvNone
                 BorderStyle = bsNone
                 TabOrder = 0
+                ExplicitWidth = 392
                 object Label3: TLabel
                   Left = 9
                   Top = 8
@@ -3380,7 +3364,7 @@ object FormHomeC: TFormHomeC
           Height = 23
           TabOrder = 4
         end
-        object meCEPCommDE: TMaskEdit
+        object meCEPNovoDE: TMaskEdit
           Left = 71
           Top = 50
           Width = 111
@@ -3389,7 +3373,7 @@ object FormHomeC: TFormHomeC
           MaxLength = 9
           TabOrder = 5
           Text = '     -   '
-          OnExit = meCEPCommDEExit
+          OnExit = meCEPNovoDEExit
         end
         object cbEstadoCommDE: TComboBox
           Left = 71
@@ -3577,23 +3561,6 @@ object FormHomeC: TFormHomeC
           Proportional = True
           OnClick = iButtonBackAlterarSenhaClick
         end
-        object Panel2: TPanel
-          Left = 302
-          Top = 11
-          Width = 86
-          Height = 26
-          BevelOuter = bvNone
-          Caption = 'Alterar Senha'
-          Color = clCoral
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWhite
-          Font.Height = -12
-          Font.Name = 'Segoe UI'
-          Font.Style = [fsBold]
-          ParentBackground = False
-          ParentFont = False
-          TabOrder = 0
-        end
       end
     end
   end
@@ -3607,31 +3574,43 @@ object FormHomeC: TFormHomeC
     ParentBackground = False
     TabOrder = 2
     StyleName = 'Windows'
-    object lblUserName: TLabel
-      Left = 95
-      Top = 15
-      Width = 109
-      Height = 25
-      Caption = 'lblUserName'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -19
-      Font.Name = 'Segoe UI'
-      Font.Style = []
-      ParentFont = False
-    end
-    object lblUserId: TLabel
+    object Panel1: TPanel
       Left = 63
-      Top = 15
-      Width = 75
-      Height = 25
-      Caption = 'lblUserId'
-      Font.Charset = DEFAULT_CHARSET
-      Font.Color = clWindowText
-      Font.Height = -19
-      Font.Name = 'Segoe UI'
-      Font.Style = []
-      ParentFont = False
+      Top = 13
+      Width = 141
+      Height = 29
+      Alignment = taLeftJustify
+      BevelOuter = bvNone
+      TabOrder = 2
+      object lblUserId: TLabel
+        Left = 0
+        Top = 0
+        Width = 81
+        Height = 29
+        Align = alLeft
+        Caption = 'lblUserId'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -19
+        Font.Name = 'Segoe UI'
+        Font.Style = []
+        ParentFont = False
+      end
+      object lblUserName: TLabel
+        Left = 81
+        Top = 0
+        Width = 101
+        Height = 29
+        Align = alLeft
+        Caption = 'lblUserName'
+        Font.Charset = DEFAULT_CHARSET
+        Font.Color = clWindowText
+        Font.Height = -19
+        Font.Name = 'Segoe UI'
+        Font.Style = []
+        ParentFont = False
+        ExplicitLeft = 40
+      end
     end
     object eBuscaMain: TEdit
       Left = 210

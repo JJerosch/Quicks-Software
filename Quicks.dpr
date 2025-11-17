@@ -69,7 +69,8 @@ uses
   EnderecoClienteRepository in 'Src\Repository\EnderecoClienteRepository.pas',
   EnderecoCardHelper in 'Src\Utils\EnderecoCardHelper.pas',
   EnderecoClienteService in 'Src\Service\EnderecoClienteService.pas',
-  EnderecoClienteController in 'Src\Controller\EnderecoClienteController.pas';
+  EnderecoClienteController in 'Src\Controller\EnderecoClienteController.pas',
+  EnderecoCardPanel in 'Src\Utils\EnderecoCardPanel.pas';
 
 {$R *.res}
 

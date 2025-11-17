@@ -19,7 +19,7 @@ type
     function CadastrarEndereco(Endereco: TEnderecoCliente): Boolean;
     function AtualizarEndereco(Endereco: TEnderecoCliente): Boolean;
     function ExcluirEndereco(IdEndereco: Integer): Boolean;
-    function DefinirComoPrincipal(IdEndereco: Integer; IdCliente: Integer): Boolean;
+    function DefinirComoPrincipal(IdEndereco, IdCliente: Integer): Boolean;
   end;
 
 implementation
@@ -69,9 +69,24 @@ begin
   Result := FRepository.ExcluirEndereco(IdEndereco);
 end;
 
-function TEnderecoClienteService.DefinirComoPrincipal(IdEndereco: Integer; IdCliente: Integer): Boolean;
+function TEnderecoClienteService.DefinirComoPrincipal(IdEndereco, IdCliente: Integer): Boolean;
 begin
-  Result := FRepository.DefinirComoPrincipal(IdEndereco, IdCliente);
+  Result := False;
+
+  try
+    if not Assigned(FRepository) then
+      Exit;
+
+    // Delega para o Repository
+    Result := FRepository.DefinirComoPrincipal(IdEndereco, IdCliente);
+
+  except
+    on E: Exception do
+    begin
+      Result := False;
+      raise Exception.Create('Erro no Service ao definir principal: ' + E.Message);
+    end;
+  end;
 end;
 
 end.

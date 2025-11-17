@@ -1,4 +1,4 @@
-unit EnderecoClienteRepository;
+﻿unit EnderecoClienteRepository;
 
 interface
 
@@ -117,7 +117,7 @@ begin
       Qr.ExecSQL;
     end;
 
-    // Inserir novo endere�o
+    // Inserir novo endereço
     Qr.SQL.Clear;
     Qr.SQL.Add('INSERT INTO enderecos_clientes (');
     Qr.SQL.Add('  id_cliente, apelido, logradouro, cep, numero,');
@@ -168,7 +168,7 @@ begin
       Qr.ExecSQL;
     end;
 
-    // Atualizar endere�o
+    // Atualizar endereço
     Qr.SQL.Clear;
     Qr.SQL.Add('UPDATE enderecos_clientes SET');
     Qr.SQL.Add('  apelido = :apelido,');
@@ -228,31 +228,39 @@ var
   Qr: TFDQuery;
 begin
   Result := False;
+
+  if not Assigned(DM) or not DM.FDConn.Connected then
+  begin
+    raise Exception.Create('Banco de dados não conectado!');
+  end;
+
   Qr := TFDQuery.Create(nil);
   try
     Qr.Connection := DM.FDConn;
 
-    // Desmarcar todos como principal
-    Qr.SQL.Clear;
-    Qr.SQL.Add('UPDATE enderecos_clientes');
-    Qr.SQL.Add('SET principal = FALSE');
-    Qr.SQL.Add('WHERE id_cliente = :id_cliente');
-    Qr.ParamByName('id_cliente').AsInteger := IdCliente;
-    Qr.ExecSQL;
+    // ⭐ A TRIGGER faz o trabalho de remover principal dos outros
+    Qr.SQL.Text :=
+      'UPDATE enderecos_clientes ' +
+      'SET principal = true ' +
+      'WHERE id_endereco = :id_endereco ' +
+      'AND id_cliente = :id_cliente';
 
-    // Marcar o selecionado como principal
-    Qr.SQL.Clear;
-    Qr.SQL.Add('UPDATE enderecos_clientes');
-    Qr.SQL.Add('SET principal = TRUE');
-    Qr.SQL.Add('WHERE id_endereco = :id_endereco');
     Qr.ParamByName('id_endereco').AsInteger := IdEndereco;
+    Qr.ParamByName('id_cliente').AsInteger := IdCliente;
+
     Qr.ExecSQL;
 
     Result := True;
 
-  finally
-    Qr.Free;
+  except
+    on E: Exception do
+    begin
+      Result := False;
+      raise Exception.Create('Erro no Repository ao definir principal: ' + E.Message);
+    end;
   end;
+
+  Qr.Free;
 end;
 
 end.

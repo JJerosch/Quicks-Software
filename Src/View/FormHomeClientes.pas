@@ -10,7 +10,7 @@ uses
   Vcl.Menus, Vcl.StdCtrls, Vcl.Imaging.pngimage, Vcl.ComCtrls, Vcl.Mask,
   Data.DB, FireDAC.Comp.Client, FireDAC.Comp.DataSet, FireDAC.Stan.Param, FireDAC.Stan.Intf,
   uConn, ComercioModel, ClienteController, CategoriaHelper, ClientePerfilController, ClienteModel,
-  ViaCepHelper, EnderecoCardHelper, EnderecoClienteModel, EnderecoClienteController;
+  ViaCepHelper, EnderecoCardHelper, EnderecoClienteModel, EnderecoClienteController, EnderecoCardPanel;
 
 type
   TCardComercioPanel = class(TPanel)
@@ -52,7 +52,6 @@ type
     pCategorias: TPanel;
     pEndereco: TPanel;
     lblEnderecoTitle: TLabel;
-    lblEnderecoAtual: TLabel;
     pButtonAddEndereco: TPanel;
     cbEnderecos: TComboBox;
     tsLojas: TTabSheet;
@@ -60,8 +59,6 @@ type
     tsPedidos: TTabSheet;
     tsCarrinho: TTabSheet;
     pBusca: TPanel;
-    lblUserName: TLabel;
-    lblUserId: TLabel;
     eBuscaMain: TEdit;
     tsCommSelec: TTabSheet;
     eBuscaProdutoComm: TEdit;
@@ -199,13 +196,12 @@ type
     eCidadeCommDE: TEdit;
     eBairroCommDE: TEdit;
     eComplementoCommDE: TEdit;
-    meCEPCommDE: TMaskEdit;
+    meCEPNovoDE: TMaskEdit;
     cbEstadoCommDE: TComboBox;
     pButtonSalvarDadosE: TPanel;
     pHeaderEnderecoNovo: TPanel;
     lblAddEndereco: TLabel;
     iButtonBackEnderecoNovo: TImage;
-    Panel2: TPanel;
     tsEnderecosE: TTabSheet;
     tsPagamentosE: TTabSheet;
     scbxMainEnderecosE: TScrollBox;
@@ -249,6 +245,9 @@ type
     eComplementoDE: TEdit;
     meCEPDE: TMaskEdit;
     cbEstadoDE: TComboBox;
+    Panel1: TPanel;
+    lblUserId: TLabel;
+    lblUserName: TLabel;
 
     procedure iButton1Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -270,7 +269,7 @@ type
     procedure pButtonCancelarEClick(Sender: TObject);
     procedure iButtonBackEnderecosEClick(Sender: TObject);
     procedure pButtonSalvarDadosEClick(Sender: TObject);
-    procedure meCEPCommDEExit(Sender: TObject);
+    procedure meCEPNovoDEExit(Sender: TObject);
     procedure pButtonAddEnderecoClick(Sender: TObject);
     procedure lblButton1Click(Sender: TObject);
     procedure iButtonBackPerfilClick(Sender: TObject);
@@ -299,11 +298,9 @@ type
     procedure OnBuscaTimer(Sender: TObject);
     procedure ConfigurarLayout;
     procedure AbrirCardapio(IdComercio: Integer; const NomeComercio: String);
-    procedure AdicionarCardComercio(Comercio: TComercio; EstaAberto: Boolean;
-      Index: Integer);
+    procedure AdicionarCardComercio(Comercio: TComercio; EstaAberto: Boolean; Index: Integer);
     procedure BuscarComercios(const Termo: string);
-    function ComercioEstaAberto(HorarioAbertura,
-      HorarioFechamento: TTime): Boolean;
+    function ComercioEstaAberto(HorarioAbertura, HorarioFechamento: TTime): Boolean;
     procedure ExibirMensagemNenhumResultado;
     procedure LimparBusca;
     procedure LimparCardsRestaurantes;
@@ -324,6 +321,14 @@ type
     procedure CadastrarNovoEndereco;
     procedure LimparCamposNovoEndereco;
     procedure BuscarCEPNovoEndereco;
+
+    procedure CarregarEnderecosNoComboBox;
+    procedure OnComboBoxEnderecosChange(Sender: TObject);
+    procedure DefinirEnderecoPrincipal(IdEndereco: Integer);
+    procedure ExcluirEndereco(IdEndereco: Integer);
+    procedure AtualizarCardsPrincipal;
+    procedure OnCardEditarClick(Sender: TObject);
+    procedure OnCardExcluirClick(Sender: TObject);
   public
     property IdUsuario: Integer read FIdUsuario write FIdUsuario;
     property NomeUsuario: String read FNomeUsuario write FNomeUsuario;
@@ -506,8 +511,8 @@ begin
 
   // ⭐ CRIAR CONTROLLERS ⭐
   FController := nil;
-  FPerfilController := TClientePerfilController.Create;
-  FEnderecoController := TEnderecoClienteController.Create;  // ← IMPORTANTE!
+  FPerfilController := nil;
+  FEnderecoController := nil;  // ← IMPORTANTE!
 
   // Timer de busca
   FBuscaTimer := TTimer.Create(Self);
@@ -594,6 +599,38 @@ begin
   end;
 end;
 
+procedure TFormHomeC.DefinirEnderecoPrincipal(IdEndereco: Integer);
+var
+  Qr: TFDQuery;
+  IdCliente: Integer;
+begin
+  // Buscar id_clie
+  Qr := TFDQuery.Create(nil);
+  try
+    Qr.Connection := DM.FDConn;
+    Qr.SQL.Text := 'SELECT id_clie FROM clientes WHERE id_user = :id_user';
+    Qr.ParamByName('id_user').AsInteger := FIdUsuario;
+    Qr.Open;
+
+    if Qr.IsEmpty then Exit;
+    IdCliente := Qr.FieldByName('id_clie').AsInteger;
+  finally
+    Qr.Free;
+  end;
+
+  try
+    // ⭐ CHAMA O CONTROLLER QUE CHAMA SERVICE QUE CHAMA REPOSITORY
+    if FEnderecoController.DefinirComoPrincipal(IdEndereco, IdCliente) then
+    begin
+      // Atualiza visual dos cards
+      AtualizarCardsPrincipal;
+    end;
+  except
+    on E: Exception do
+      ShowMessage('Erro ao definir principal: ' + E.Message);
+  end;
+end;
+
 procedure TFormHomeC.InicializarController;
 begin
   if FInicializado then
@@ -612,6 +649,10 @@ begin
 
     if not Assigned(FController) then
       FController := TClienteController.Create;
+    if not Assigned(FPerfilController) then
+      FPerfilController:= TClientePerfilController.Create;
+    if not Assigned(FEnderecoController) then
+      FEnderecoController := TEnderecoClienteController.Create;
 
     FInicializado := True;
 
@@ -655,9 +696,25 @@ begin
   end;
 
   try
+    if FIdUsuario > 0 then
+    begin
+      lblUserName.Caption := FNomeUsuario;
+      lblUserId.Caption := 'ID: ' + IntToStr(FIdUsuario);
+
+      // ⭐ COMENTAR TEMPORARIAMENTE PARA TESTAR:
+      CarregarEnderecos;
+      CarregarEnderecosNoComboBox;
+    end
+    else
+    begin
+      lblUserName.Caption := 'Visitante';
+      lblUserId.Caption := '';
+    end;
+
     PopularCategorias;
     PopularRestaurantes('Todos');
     Application.ProcessMessages;
+
   except
     on E: Exception do
       ShowMessage('Erro ao carregar dados: ' + E.Message);
@@ -677,6 +734,37 @@ begin
   end;
 end;
 
+procedure TFormHomeC.OnCardEditarClick(Sender: TObject);
+var
+  Card: TEnderecoCardPanel;
+begin
+  if Sender is TEnderecoCardPanel then
+  begin
+    Card := TEnderecoCardPanel(Sender);
+    FIdEnderecoSelecionado := Card.IdEndereco;
+    CarregarDadosEnderecoParaEdicao(Card.IdEndereco);
+    pcPerfil.ActivePageIndex := 3; // tsEnderecosE
+  end;
+end;
+
+procedure TFormHomeC.OnCardExcluirClick(Sender: TObject);
+var
+  Card: TEnderecoCardPanel;
+begin
+  if Sender is TEnderecoCardPanel then
+  begin
+    Card := TEnderecoCardPanel(Sender);
+
+    if MessageDlg('Deseja realmente excluir este endereço?',
+                  mtConfirmation,
+                  [mbYes, mbNo],
+                  0) = mrYes then
+    begin
+      ExcluirEndereco(Card.IdEndereco);
+    end;
+  end;
+end;
+
 procedure TFormHomeC.OnCategoriaClick(const Categoria: string);
 begin
   FCategoriaSelecionada := Categoria;
@@ -686,16 +774,23 @@ begin
 end;
 
 
+procedure TFormHomeC.OnComboBoxEnderecosChange(Sender: TObject);
+var
+  IdEndereco: Integer;
+begin
+  if cbEnderecos.ItemIndex < 0 then
+    Exit;
+
+  // Pega o ID do endereço selecionado
+  IdEndereco := Integer(cbEnderecos.Items.Objects[cbEnderecos.ItemIndex]);
+
+  // ⭐ CHAMA AQUI!
+  DefinirEnderecoPrincipal(IdEndereco);
+end;
+
 procedure TFormHomeC.OnEnderecoCardClick(IdEndereco: Integer);
 begin
-  // Desselecionar todos os cards
-  TEnderecoCardHelper.DeselecionarTodos(scbxEnderecos);
-
-  // Armazenar ID do endereço selecionado
-  FIdEnderecoSelecionado := IdEndereco;
-
-  // Feedback visual (opcional)
-  ShowMessage('Endereço selecionado! Clique em "Editar Endereço" para modificá-lo.');
+  cbEnderecos.OnChange := Self.OnComboBoxEnderecosChange;
 end;
 
 procedure TFormHomeC.OnRestauranteClick(IdComercio: Integer;
@@ -844,87 +939,91 @@ var
   Endereco: TEnderecoCliente;
   Apelido: string;
   MarcarPrincipal: Boolean;
+  Qr: TFDQuery;
+  IdCliente: Integer;
 begin
-  // ========== VERIFICAÇÕES DE SEGURANÇA ==========
+  // ========== VERIFICAR CONTROLLER LOGO NO INÍCIO ==========
 
-  // 1. Verificar se Controller foi criado
   if not Assigned(FEnderecoController) then
   begin
-    ShowMessage('Erro: Sistema de endereços não inicializado!' + #13#10 +
-                'Por favor, reinicie o aplicativo.');
-    Exit;
-  end;
-
-  // 2. Verificar se usuário está identificado
-  if FIdUsuario <= 0 then
-  begin
-    ShowMessage('Erro: Usuário não identificado!' + #13#10 +
-                'Por favor, faça login novamente.');
-    Exit;
-  end;
-
-  // 3. Verificar DataModule
-  if not Assigned(DM) then
-  begin
-    ShowMessage('Erro: Conexão com banco de dados não disponível!');
-    Exit;
-  end;
-
-  // 4. Verificar conexão com banco
-  if not DM.FDConn.Connected then
-  begin
+    ShowMessage('Erro: Controller não existe!' + #13#10 +
+                'Tentando criar...');
     try
-      DM.FDConn.Connected := True;
+      FEnderecoController := TEnderecoClienteController.Create;
+      ShowMessage('Controller criado com sucesso!');
     except
       on E: Exception do
       begin
-        ShowMessage('Erro ao conectar com banco de dados: ' + E.Message);
+        ShowMessage('ERRO ao criar controller: ' + E.Message);
         Exit;
       end;
     end;
   end;
 
-  // ========== VALIDAÇÕES DOS CAMPOS ==========
+  // ========== BUSCAR id_clie ==========
 
-  if Trim(meCEPCommDE.Text) = '' then
+  Qr := TFDQuery.Create(nil);
+  try
+    Qr.Connection := DM.FDConn;
+    Qr.SQL.Text := 'SELECT id_clie FROM clientes WHERE id_user = :id_user';
+    Qr.ParamByName('id_user').AsInteger := FIdUsuario;
+    Qr.Open;
+
+    if Qr.IsEmpty then
+    begin
+      ShowMessage('Cliente não encontrado!');
+      Exit;
+    end;
+
+    IdCliente := Qr.FieldByName('id_clie').AsInteger;
+
+  finally
+    Qr.Free;
+  end;
+
+  // ========== VERIFICAR DataModule ==========
+
+  if not Assigned(DM) or not DM.FDConn.Connected then
+  begin
+    ShowMessage('Erro: Banco não conectado!');
+    Exit;
+  end;
+
+  // ========== VALIDAÇÕES ==========
+
+  if Trim(meCEPNovoDE.Text) = '' then
   begin
     ShowMessage('Informe o CEP!');
-    meCEPCommDE.SetFocus;
     Exit;
   end;
 
   if Trim(eLogradouroCommDE.Text) = '' then
   begin
     ShowMessage('Informe o logradouro!');
-    eLogradouroCommDE.SetFocus;
     Exit;
   end;
 
   if Trim(eNumeroEnderecoCommDE.Text) = '' then
   begin
     ShowMessage('Informe o número!');
-    eNumeroEnderecoCommDE.SetFocus;
     Exit;
   end;
 
   if Trim(eBairroCommDE.Text) = '' then
   begin
     ShowMessage('Informe o bairro!');
-    eBairroCommDE.SetFocus;
     Exit;
   end;
 
   if Trim(eCidadeCommDE.Text) = '' then
   begin
     ShowMessage('Informe a cidade!');
-    eCidadeCommDE.SetFocus;
     Exit;
   end;
 
   if Trim(cbEstadoCommDE.Text) = '' then
   begin
     ShowMessage('Selecione o estado!');
-    cbEstadoCommDE.SetFocus;
     Exit;
   end;
 
@@ -932,77 +1031,55 @@ begin
 
   Apelido := InputBox('Apelido do Endereço',
                       'Digite um nome para este endereço:' + #13#10 +
-                      '(Ex: Casa, Trabalho, Casa dos Pais)',
+                      '(Ex: Casa, Trabalho)',
                       'Casa');
 
   if Trim(Apelido) = '' then
   begin
-    ShowMessage('É necessário dar um nome ao endereço!');
+    ShowMessage('Dê um nome ao endereço!');
     Exit;
   end;
 
   // ========== PERGUNTAR SE É PRINCIPAL ==========
 
-  MarcarPrincipal := MessageDlg('Deseja marcar este endereço como PRINCIPAL?',
+  MarcarPrincipal := MessageDlg('Marcar como principal?',
                                 mtConfirmation,
                                 [mbYes, mbNo],
                                 0) = mrYes;
 
-  // ========== SALVAR NO BANCO ==========
+  // ========== CRIAR E PREENCHER ENDERECO ==========
 
-  Endereco := nil;
+  Endereco := TEnderecoCliente.Create;
   try
-    try
-      // Criar objeto
-      Endereco := TEnderecoCliente.Create;
+    Endereco.IdCliente := IdCliente;
+    Endereco.Apelido := Trim(Apelido);
+    Endereco.Logradouro := Trim(eLogradouroCommDE.Text);
+    Endereco.CEP := Trim(meCEPNovoDE.Text);
+    Endereco.Numero := Trim(eNumeroEnderecoCommDE.Text);
+    Endereco.Complemento := Trim(eComplementoCommDE.Text);
+    Endereco.Bairro := Trim(eBairroCommDE.Text);
+    Endereco.Cidade := Trim(eCidadeCommDE.Text);
+    Endereco.UF := Trim(cbEstadoCommDE.Text);
+    Endereco.Principal := MarcarPrincipal;
 
-      // Preencher dados
-      Endereco.IdCliente := FIdUsuario;
-      Endereco.Apelido := Trim(Apelido);
-      Endereco.Logradouro := Trim(eLogradouroCommDE.Text);
-      Endereco.CEP := Trim(meCEPCommDE.Text);
-      Endereco.Numero := Trim(eNumeroEnderecoCommDE.Text);
-      Endereco.Complemento := Trim(eComplementoCommDE.Text);
-      Endereco.Bairro := Trim(eBairroCommDE.Text);
-      Endereco.Cidade := Trim(eCidadeCommDE.Text);
-      Endereco.UF := Trim(cbEstadoCommDE.Text);
-      Endereco.Principal := MarcarPrincipal;
+    // ========== SALVAR ==========
 
-      // Tentar cadastrar
-      if FEnderecoController.CadastrarEndereco(Endereco) then
-      begin
-        ShowMessage('✅ Endereço cadastrado com sucesso!');
-
-        // Limpar campos
-        LimparCamposNovoEndereco;
-
-        // Voltar para visualização
-        pcPerfil.ActivePageIndex := 0;
-
-        // Recarregar cards
-        CarregarEnderecos;
-      end
-      else
-      begin
-        ShowMessage('❌ Erro ao cadastrar endereço!' + #13#10 +
-                    'Verifique os dados e tente novamente.');
-      end;
-
-    except
-      on E: Exception do
-      begin
-        ShowMessage('❌ Erro ao cadastrar endereço:' + #13#10 +
-                    E.Message + #13#10#13#10 +
-                    'Se o erro persistir, contate o suporte.');
-      end;
+    if FEnderecoController.CadastrarEndereco(Endereco) then
+    begin
+      ShowMessage('✅ Endereço cadastrado com sucesso!');
+      LimparCamposNovoEndereco;
+      pcPerfil.ActivePageIndex := 0;
+      CarregarEnderecos;
+    end
+    else
+    begin
+      ShowMessage('❌ Erro ao cadastrar!');
     end;
 
   finally
-    if Assigned(Endereco) then
-      Endereco.Free;
+    Endereco.Free;
   end;
 end;
-
 procedure TFormHomeC.CancelarEdicaoEndereco;
 begin
   // Limpar campos
@@ -1046,9 +1123,10 @@ begin
 end;
 
 procedure TFormHomeC.SalvarEndereco;
-begin
-  var
+var
   Endereco: TEnderecoCliente;
+  Qr: TFDQuery;
+  IdCliente: Integer;
 begin
   // Validar campos obrigatórios
   if Trim(eLogradouroDE.Text) = '' then
@@ -1086,12 +1164,31 @@ begin
     Exit;
   end;
 
+  // Buscar id_clie
+  Qr := TFDQuery.Create(nil);
+  try
+    Qr.Connection := DM.FDConn;
+    Qr.SQL.Text := 'SELECT id_clie FROM clientes WHERE id_user = :id_user';
+    Qr.ParamByName('id_user').AsInteger := FIdUsuario;
+    Qr.Open;
+
+    if Qr.IsEmpty then
+    begin
+      ShowMessage('Cliente não encontrado!');
+      Exit;
+    end;
+
+    IdCliente := Qr.FieldByName('id_clie').AsInteger;
+  finally
+    Qr.Free;
+  end;
+
   try
     // Criar objeto de endereço
     Endereco := TEnderecoCliente.Create;
     try
       Endereco.IdEndereco := FIdEnderecoSelecionado;
-      Endereco.IdCliente := FIdUsuario;
+      Endereco.IdCliente := IdCliente;
       Endereco.Logradouro := Trim(eLogradouroDE.Text);
       Endereco.CEP := Trim(meCEPDE.Text);
       Endereco.Numero := Trim(eNumeroEnderecoDe.Text);
@@ -1110,6 +1207,7 @@ begin
 
         // Recarregar cards
         CarregarEnderecos;
+        CarregarEnderecosNoComboBox;
 
         // Voltar para visualização
         pcPerfil.ActivePageIndex := 0; // tsVisualizarPefil
@@ -1125,8 +1223,6 @@ begin
     on E: Exception do
       ShowMessage('Erro ao salvar endereço: ' + E.Message);
   end;
-end;
-
 end;
 
 procedure TFormHomeC.CarregarDadosPerfil;
@@ -1174,37 +1270,83 @@ procedure TFormHomeC.CarregarEnderecos;
 var
   Enderecos: TObjectList<TEnderecoCliente>;
   Endereco: TEnderecoCliente;
-  Card: TEnderecoCard;
+  Card: TEnderecoCardPanel;
   Y, CardHeight, Spacing: Integer;
+  Qr: TFDQuery;
+  IdCliente: Integer;
 begin
+  // ⭐ PROTEÇÃO 1: Verificar se controller existe
+  if not Assigned(FEnderecoController) then
+  begin
+    ShowMessage('Erro: Controller de endereços não foi criado!');
+    Exit;
+  end;
+
+  // ⭐ PROTEÇÃO 2: Verificar se DataModule existe
+  if not Assigned(DM) or not DM.FDConn.Connected then
+  begin
+    ShowMessage('Erro: Banco de dados não conectado!');
+    Exit;
+  end;
+
+  // ⭐ PROTEÇÃO 3: Verificar se scbxEnderecos existe
+  if not Assigned(scbxEnderecos) then
+  begin
+    ShowMessage('Erro: ScrollBox de endereços não existe!');
+    Exit;
+  end;
+
+  // Buscar id_clie
+  Qr := TFDQuery.Create(nil);
+  try
+    Qr.Connection := DM.FDConn;
+    Qr.SQL.Text := 'SELECT id_clie FROM clientes WHERE id_user = :id_user';
+    Qr.ParamByName('id_user').AsInteger := FIdUsuario;
+    Qr.Open;
+
+    if Qr.IsEmpty then
+    begin
+      ShowMessage('Cliente não encontrado no banco!');
+      Exit;
+    end;
+
+    IdCliente := Qr.FieldByName('id_clie').AsInteger;
+  finally
+    Qr.Free;
+  end;
+
   // Limpar cards existentes
-  TEnderecoCardHelper.LimparCards(scbxEnderecos);
+  for Y := scbxEnderecos.ControlCount - 1 downto 0 do
+  begin
+    if scbxEnderecos.Controls[Y] is TEnderecoCardPanel then
+      scbxEnderecos.Controls[Y].Free;
+  end;
 
   try
-    // Buscar endereços do cliente
-    Enderecos := FEnderecoController.ListarEnderecos(FIdUsuario);
+    Enderecos := FEnderecoController.ListarEnderecos(IdCliente);
 
     if not Assigned(Enderecos) then
+    begin
+      ShowMessage('Erro: Lista de endereços retornou nil!');
       Exit;
+    end;
 
     try
       if Enderecos.Count = 0 then
       begin
-        // Exibir mensagem "Nenhum endereço cadastrado"
         ExibirMensagemSemEnderecos;
         Exit;
       end;
 
-      CardHeight := 120;
+      CardHeight := 130;
       Spacing := 10;
       Y := Spacing;
 
-      // Criar cards para cada endereço
       for Endereco in Enderecos do
       begin
         if Assigned(Endereco) then
         begin
-          Card := TEnderecoCard.CreateCard(
+          Card := TEnderecoCardPanel.CreateCard(
             Self,
             Endereco.IdEndereco,
             Endereco.Apelido,
@@ -1222,7 +1364,8 @@ begin
           Card.Left := 10;
           Card.Width := scbxEnderecos.ClientWidth - 20;
           Card.Anchors := [akLeft, akTop, akRight];
-          Card.OnCardClick := OnEnderecoCardClick;
+          Card.OnEditar := OnCardEditarClick;
+          Card.OnExcluir := OnCardExcluirClick;
 
           Inc(Y, CardHeight + Spacing);
         end;
@@ -1236,6 +1379,99 @@ begin
     on E: Exception do
       ShowMessage('Erro ao carregar endereços: ' + E.Message);
   end;
+end;
+
+procedure TFormHomeC.CarregarEnderecosNoComboBox;
+var
+  Enderecos: TObjectList<TEnderecoCliente>;
+  Endereco: TEnderecoCliente;
+  Qr: TFDQuery;
+  IdCliente: Integer;
+  IdxPrincipal: Integer;
+begin
+  // ⭐ PROTEÇÃO 1: Verificar se controller existe
+  if not Assigned(FEnderecoController) then
+  begin
+    ShowMessage('Erro: Controller de endereços não foi criado!');
+    Exit;
+  end;
+
+  // ⭐ PROTEÇÃO 2: Verificar se cbEnderecos existe
+  if not Assigned(cbEnderecos) then
+  begin
+    ShowMessage('Erro: ComboBox de endereços não existe!');
+    Exit;
+  end;
+
+  // ⭐ PROTEÇÃO 3: Verificar se DataModule existe
+  if not Assigned(DM) or not DM.FDConn.Connected then
+  begin
+    ShowMessage('Erro: Banco de dados não conectado!');
+    Exit;
+  end;
+
+  // Buscar id_clie
+  Qr := TFDQuery.Create(nil);
+  try
+    Qr.Connection := DM.FDConn;
+    Qr.SQL.Text := 'SELECT id_clie FROM clientes WHERE id_user = :id_user';
+    Qr.ParamByName('id_user').AsInteger := FIdUsuario;
+    Qr.Open;
+
+    if Qr.IsEmpty then
+      Exit;
+
+    IdCliente := Qr.FieldByName('id_clie').AsInteger;
+  finally
+    Qr.Free;
+  end;
+
+  cbEnderecos.Clear;
+  cbEnderecos.OnChange := nil;
+
+  try
+    Enderecos := FEnderecoController.ListarEnderecos(IdCliente);
+
+    if not Assigned(Enderecos) or (Enderecos.Count = 0) then
+    begin
+      cbEnderecos.Enabled := False;
+      Exit;
+    end;
+
+    try
+      IdxPrincipal := -1;
+
+      for Endereco in Enderecos do
+      begin
+        if Assigned(Endereco) then
+        begin
+          cbEnderecos.Items.AddObject(
+            Format('%s - %s, %s', [Endereco.Apelido, Endereco.Logradouro, Endereco.Numero]),
+            TObject(Endereco.IdEndereco)
+          );
+
+          if Endereco.Principal then
+            IdxPrincipal := cbEnderecos.Items.Count - 1;
+        end;
+      end;
+
+      if IdxPrincipal >= 0 then
+        cbEnderecos.ItemIndex := IdxPrincipal
+      else if cbEnderecos.Items.Count > 0 then
+        cbEnderecos.ItemIndex := 0;
+
+      cbEnderecos.Enabled := True;
+
+    finally
+      Enderecos.Free;
+    end;
+
+  except
+    on E: Exception do
+      ShowMessage('Erro ao carregar combo: ' + E.Message);
+  end;
+
+  cbEnderecos.OnChange := OnComboBoxEnderecosChange;
 end;
 
 function TFormHomeC.ComercioEstaAberto(HorarioAbertura, HorarioFechamento: TTime): Boolean;
@@ -1270,14 +1506,14 @@ end;
 
 procedure TFormHomeC.LimparCamposNovoEndereco;
 begin
-  meCEPCommDE.Clear;
+  meCEPNovoDE.Clear;
   eLogradouroCommDE.Clear;
   eCidadeCommDE.Clear;
   eNumeroEnderecoCommDE.Clear;
   cbEstadoCommDE.ItemIndex := -1;
   eBairroCommDE.Clear;
   eComplementoCommDE.Clear;
-  meCEPCommDE.SetFocus;
+  meCEPNovoDE.SetFocus;
 end;
 
 procedure TFormHomeC.LimparCardsRestaurantes;
@@ -1294,9 +1530,9 @@ begin
     scbxRestaurantes.VertScrollBar.Position := 0;
 end;
 
-procedure TFormHomeC.meCEPCommDEExit(Sender: TObject);
+procedure TFormHomeC.meCEPNovoDEExit(Sender: TObject);
 begin
-  if Trim(meCEPCommDE.Text) <> '' then
+  if Trim(meCEPNovoDE.Text) <> '' then
     BuscarCEPNovoEndereco;
 end;
 
@@ -1337,6 +1573,27 @@ begin
   Card.Top := PosY;
   Card.Parent := scbxRestaurantes;
   Card.Visible := True;
+end;
+
+procedure TFormHomeC.AtualizarCardsPrincipal;
+var
+  I: Integer;
+  Card: TEnderecoCardPanel;
+  IdPrincipal: Integer;
+begin
+  if cbEnderecos.ItemIndex < 0 then
+    Exit;
+
+  IdPrincipal := Integer(cbEnderecos.Items.Objects[cbEnderecos.ItemIndex]);
+
+  for I := 0 to scbxEnderecos.ControlCount - 1 do
+  begin
+    if scbxEnderecos.Controls[I] is TEnderecoCardPanel then
+    begin
+      Card := TEnderecoCardPanel(scbxEnderecos.Controls[I]);
+      Card.Principal := (Card.IdEndereco = IdPrincipal);
+    end;
+  end;
 end;
 
 procedure TFormHomeC.AbrirCardapio(IdComercio: Integer; const NomeComercio: String);
@@ -1395,7 +1652,7 @@ var
   CEP: string;
   Endereco: TEndereco;
 begin
-  CEP := Trim(meCEPCommDE.Text);
+  CEP := Trim(meCEPNovoDE.Text);
 
   // Remover formatação
   CEP := StringReplace(CEP, '-', '', [rfReplaceAll]);
@@ -1405,7 +1662,7 @@ begin
   if Length(CEP) <> 8 then
   begin
     ShowMessage('CEP inválido! Digite 8 dígitos.');
-    meCEPCommDE.SetFocus;
+    meCEPNovoDE.SetFocus;
     Exit;
   end;
 
@@ -1425,7 +1682,7 @@ begin
     else
     begin
       ShowMessage('CEP não encontrado!');
-      meCEPCommDE.SetFocus;
+      meCEPNovoDE.SetFocus;
     end;
 
   finally
@@ -1500,6 +1757,24 @@ begin
   eBuscaMain.SetFocus;
   PopularRestaurantes(FCategoriaSelecionada);
 end;
+
+procedure TFormHomeC.ExcluirEndereco(IdEndereco: Integer);
+begin
+  try
+    if FEnderecoController.ExcluirEndereco(IdEndereco) then
+    begin
+      ShowMessage('Endereço excluído com sucesso!');
+      CarregarEnderecos;
+      CarregarEnderecosNoComboBox;
+    end
+    else
+      ShowMessage('Erro ao excluir endereço!');
+  except
+    on E: Exception do
+      ShowMessage('Erro: ' + E.Message);
+  end;
+end;
+
 
 procedure TFormHomeC.ExibirDadosPerfilVisualizacao(Cliente: TCliente);
 begin

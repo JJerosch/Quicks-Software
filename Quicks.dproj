@@ -193,6 +193,7 @@
         <DCCReference Include="Src\Utils\EnderecoCardHelper.pas"/>
         <DCCReference Include="Src\Service\EnderecoClienteService.pas"/>
         <DCCReference Include="Src\Controller\EnderecoClienteController.pas"/>
+        <DCCReference Include="Src\Utils\EnderecoCardPanel.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>
