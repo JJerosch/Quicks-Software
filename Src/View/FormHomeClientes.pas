@@ -10,7 +10,8 @@ uses
   Vcl.Menus, Vcl.StdCtrls, Vcl.Imaging.pngimage, Vcl.ComCtrls, Vcl.Mask,
   Data.DB, FireDAC.Comp.Client, FireDAC.Comp.DataSet, FireDAC.Stan.Param, FireDAC.Stan.Intf,
   uConn, ComercioModel, ClienteController, CategoriaHelper, ClientePerfilController, ClienteModel,
-  ViaCepHelper, EnderecoCardHelper, EnderecoClienteModel, EnderecoClienteController, EnderecoCardPanel;
+  ViaCepHelper, EnderecoCardHelper, EnderecoClienteModel, EnderecoClienteController, EnderecoCardPanel,
+  ProdutoModel, ProdutoViewHelper;
 
 type
   TCardComercioPanel = class(TPanel)
@@ -273,6 +274,7 @@ type
     procedure pButtonAddEnderecoClick(Sender: TObject);
     procedure lblButton1Click(Sender: TObject);
     procedure iButtonBackPerfilClick(Sender: TObject);
+    procedure iButtonBackCommClick(Sender: TObject);
 
   private
     FIdUsuario: Integer;
@@ -285,7 +287,9 @@ type
     FBuscaTimer: TTimer;
     FUltimaBusca: String;
     FCategoriaSelecionada: String;
-
+    FIdComercioSelecionado: Integer;
+    FNomeComercioSelecionado: String;
+    FCategoriaProdutoSelecionada: String;
     FCardHeight: Integer;
     FCardSpacing: Integer;
     FMargemLateral: Integer;
@@ -304,6 +308,10 @@ type
     procedure ExibirMensagemNenhumResultado;
     procedure LimparBusca;
     procedure LimparCardsRestaurantes;
+    procedure CarregarProdutosComercio(const Categoria: String = '');
+    procedure OnCategoriaProdutoClick(Sender: TObject);
+    procedure OnProdutoCardClick(IdProduto: Integer; const NomeProduto: string; Preco: Currency);
+    procedure VoltarParaLojas;
 
     procedure CarregarDadosPerfil;
     procedure ExibirDadosPerfilVisualizacao(Cliente: TCliente);
@@ -509,6 +517,9 @@ begin
   FUltimaBusca := '';
   FCategoriaSelecionada := 'Todos';
 
+  FIdComercioSelecionado := 0;
+  FNomeComercioSelecionado := '';
+  FCategoriaProdutoSelecionada := 'Todos';
   // ⭐ CRIAR CONTROLLERS ⭐
   FController := nil;
   FPerfilController := nil;
@@ -774,6 +785,49 @@ begin
 end;
 
 
+procedure TFormHomeC.OnCategoriaProdutoClick(Sender: TObject);
+var
+  Panel: TPanel;
+  i: Integer;
+  Categoria: String;
+begin
+  if not (Sender is TPanel) then
+    Exit;
+
+  Panel := TPanel(Sender);
+
+  // Obter categoria clicada
+  if Panel.Tag = 0 then
+    Categoria := 'Todos'
+  else
+    Categoria := Panel.Caption;
+
+  FCategoriaProdutoSelecionada := Categoria;
+
+  // Atualizar visual de todos os painéis (desselecionar todos)
+  for i := 0 to scbxCategoriasProdutosComm.ControlCount - 1 do
+  begin
+    if scbxCategoriasProdutosComm.Controls[i] is TPanel then
+    begin
+      if scbxCategoriasProdutosComm.Controls[i] = Panel then
+      begin
+        // Selecionado - Laranja
+        TPanel(scbxCategoriasProdutosComm.Controls[i]).Color := $00FF6600;
+        TPanel(scbxCategoriasProdutosComm.Controls[i]).Font.Color := clWhite;
+      end
+      else
+      begin
+        // Não selecionado - Branco
+        TPanel(scbxCategoriasProdutosComm.Controls[i]).Color := clWhite;
+        TPanel(scbxCategoriasProdutosComm.Controls[i]).Font.Color := $00666666;
+      end;
+    end;
+  end;
+
+  // Recarregar produtos da categoria selecionada
+  CarregarProdutosComercio(Categoria);
+end;
+
 procedure TFormHomeC.OnComboBoxEnderecosChange(Sender: TObject);
 var
   IdEndereco: Integer;
@@ -793,15 +847,61 @@ begin
   cbEnderecos.OnChange := Self.OnComboBoxEnderecosChange;
 end;
 
+procedure TFormHomeC.OnProdutoCardClick(IdProduto: Integer;
+  const NomeProduto: string; Preco: Currency);
+var
+  Quantidade: String;
+  QtdInt: Integer;
+begin
+  // Perguntar quantidade
+  Quantidade := InputBox('Adicionar ao Carrinho',
+                         'Quantas unidades de "' + NomeProduto + '"?' + #13#10 +
+                         'Preço unitário: R$ ' + FormatFloat('#,##0.00', Preco),
+                         '1');
+
+  // Validar quantidade
+  if not TryStrToInt(Quantidade, QtdInt) or (QtdInt <= 0) then
+  begin
+    ShowMessage('Quantidade inválida!');
+    Exit;
+  end;
+
+  // ⭐ AQUI você implementa a lógica de adicionar ao carrinho
+  ShowMessage(
+    'Produto adicionado ao carrinho:' + #13#10#13#10 +
+    'Nome: ' + NomeProduto + #13#10 +
+    'Quantidade: ' + IntToStr(QtdInt) + #13#10 +
+    'Preço unitário: R$ ' + FormatFloat('#,##0.00', Preco) + #13#10 +
+    'Subtotal: R$ ' + FormatFloat('#,##0.00', Preco * QtdInt) + #13#10#13#10 +
+    '✅ Item adicionado com sucesso!'
+  );
+
+  // TODO: Implementar lógica real de carrinho
+  // - Criar TObjectList<TItemCarrinho>
+  // - Incrementar contador lblItensCart
+  // - Atualizar lblTotalCart
+  // - Persistir na memória
+
+  // Exemplo básico:
+  // if not Assigned(FCarrinho) then
+  //   FCarrinho := TObjectList<TItemCarrinho>.Create(True);
+  //
+  // Item := TItemCarrinho.Create;
+  // Item.IdProduto := IdProduto;
+  // Item.NomeProduto := NomeProduto;
+  // Item.Preco := Preco;
+  // Item.Quantidade := QtdInt;
+  // FCarrinho.Add(Item);
+  //
+  // AtualizarResumoCarrinho;
+end;
+
 procedure TFormHomeC.OnRestauranteClick(IdComercio: Integer;
   const NomeComercio: string);
 begin
-  ShowMessage('Abrindo cardápio de: ' + NomeComercio + #13#10 +
-              'ID: ' + IntToStr(IdComercio));
-  // Aqui você implementa a navegação para o cardápio
-//   pcMain.ActivePage := tsLojas;
-//   CarregarCardapio(IdComercio);
+  AbrirCardapio(IdComercio, NomeComercio);
 end;
+
 procedure TFormHomeC.pButtonAddEnderecoClick(Sender: TObject);
 begin
   pcMain.ActivePageIndex:=6; // tsEnderecoNovo (verifique o índice!)
@@ -1225,6 +1325,21 @@ begin
   end;
 end;
 
+procedure TFormHomeC.VoltarParaLojas;
+begin
+  // Limpar dados do comércio selecionado
+  FIdComercioSelecionado := 0;
+  FNomeComercioSelecionado := '';
+  FCategoriaProdutoSelecionada := '';
+
+  // Limpar scrollboxes
+  scbxCategoriasProdutosComm.DestroyComponents;
+  scbxProdutosComm.DestroyComponents;
+
+  // Voltar para tsLojas
+  pcMain.ActivePage := tsLojas;
+end;
+
 procedure TFormHomeC.CarregarDadosPerfil;
 var
   Cliente: TCliente;
@@ -1474,6 +1589,34 @@ begin
   cbEnderecos.OnChange := OnComboBoxEnderecosChange;
 end;
 
+procedure TFormHomeC.CarregarProdutosComercio(const Categoria: String);
+begin
+  if FIdComercioSelecionado <= 0 then
+  begin
+    ShowMessage('Nenhum comércio selecionado!');
+    Exit;
+  end;
+
+  try
+    Screen.Cursor := crHourGlass;
+
+    TProdutoViewHelper.PopularScrollBoxProdutos(
+      scbxProdutosComm,
+      FIdComercioSelecionado,
+      Categoria,
+      OnProdutoCardClick
+    );
+
+  except
+    on E: Exception do
+    begin
+      Screen.Cursor := crDefault;
+      ShowMessage('Erro ao carregar produtos: ' + E.Message);
+    end;
+  end;
+
+  Screen.Cursor := crDefault;
+end;
 function TFormHomeC.ComercioEstaAberto(HorarioAbertura, HorarioFechamento: TTime): Boolean;
 var
   HoraAtual: TTime;
@@ -1597,9 +1740,62 @@ begin
 end;
 
 procedure TFormHomeC.AbrirCardapio(IdComercio: Integer; const NomeComercio: String);
+var
+  Qr: TFDQuery;
 begin
-  ShowMessage('Abrindo cardápio de: ' + NomeComercio + #13#10 +
-              'ID: ' + IntToStr(IdComercio));
+  FIdComercioSelecionado := IdComercio;
+  FNomeComercioSelecionado := NomeComercio;
+  FCategoriaProdutoSelecionada := 'Todos';
+
+  // Buscar dados do comércio
+  Qr := TFDQuery.Create(nil);
+  try
+    Qr.Connection := DM.FDConn;
+    Qr.SQL.Text :=
+      'SELECT taxa_entrega_base, avaliacao_media, ' +
+      '       horario_abertura, horario_fechamento, categoria ' +
+      'FROM comercios ' +
+      'WHERE id_comercio = :id_comercio';
+    Qr.ParamByName('id_comercio').AsInteger := IdComercio;
+    Qr.Open;
+
+    if not Qr.IsEmpty then
+    begin
+      // Atualizar labels com informações do comércio
+      lblNomeComm.Caption := NomeComercio;
+
+      lblTaxaEntrega.Caption := 'Taxa: R$ ' +
+        FormatFloat('0.00', Qr.FieldByName('taxa_entrega_base').AsFloat);
+
+      // Verificar se o campo avaliacao_media existe
+      if Qr.FindField('avaliacao_media') <> nil then
+        lblNota.Caption := 'Avaliação: ' +
+          FormatFloat('0.0', Qr.FieldByName('avaliacao_media').AsFloat) + ' ⭐'
+      else
+        lblNota.Caption := 'Avaliação: --';
+
+      lblHorarioFunc.Caption := 'Horário: ' +
+        FormatDateTime('hh:nn', Frac(Qr.FieldByName('horario_abertura').AsDateTime)) + ' - ' +
+        FormatDateTime('hh:nn', Frac(Qr.FieldByName('horario_fechamento').AsDateTime));
+
+      lblCategoria.Caption := '📍 ' + Qr.FieldByName('categoria').AsString;
+    end;
+  finally
+    Qr.Free;
+  end;
+
+  // Popular categorias de produtos
+  TProdutoViewHelper.PopularScrollBoxCategoriasProduto(
+    scbxCategoriasProdutosComm,
+    IdComercio,
+    OnCategoriaProdutoClick
+  );
+
+  // Carregar todos os produtos inicialmente
+  CarregarProdutosComercio('Todos');
+
+  // Mudar para a aba tsCommSelec
+  pcMain.ActivePage := tsCommSelec;
 end;
 
 procedure TFormHomeC.eBuscaMainChange(Sender: TObject);
@@ -1890,9 +2086,17 @@ end;
 
 procedure TFormHomeC.iButtonBackAlterarSenhaClick(Sender: TObject);
 begin
-  pcMain.ActivePageIndex := 0;
-  if pcMain.ActivePageIndex=6 then begin
-    LimparCamposNovoEndereco;
+  VoltarParaLojas;
+end;
+
+procedure TFormHomeC.iButtonBackCommClick(Sender: TObject);
+begin
+  if MessageDlg('Deseja voltar? Os itens no carrinho serão mantidos.',
+                mtConfirmation,
+                [mbYes, mbNo],
+                0) = mrYes then
+  begin
+    VoltarParaLojas;
   end;
 end;
 

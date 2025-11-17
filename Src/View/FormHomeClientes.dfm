@@ -18,11 +18,9 @@ object FormHomeC: TFormHomeC
     Top = 0
     Width = 410
     Height = 644
-    ActivePage = tsEnderecoNovo
+    ActivePage = tsCommSelec
     Align = alClient
     TabOrder = 1
-    ExplicitWidth = 408
-    ExplicitHeight = 636
     object tsMain: TTabSheet
       Caption = 'tsMain'
       object pHomeBackground: TPanel
@@ -500,8 +498,6 @@ object FormHomeC: TFormHomeC
         ActivePage = tsEnderecosE
         Align = alClient
         TabOrder = 0
-        ExplicitWidth = 400
-        ExplicitHeight = 606
         object tsVisualizarPefil: TTabSheet
           Caption = 'tsVisualizarPefil'
           object scbxMainPerfil: TScrollBox
@@ -963,8 +959,6 @@ object FormHomeC: TFormHomeC
             BorderStyle = bsNone
             TabOrder = 0
             UseWheelForScrolling = True
-            ExplicitWidth = 392
-            ExplicitHeight = 576
             object pHeaderPerfilE: TPanel
               AlignWithMargins = True
               Left = 0
@@ -980,7 +974,6 @@ object FormHomeC: TFormHomeC
               Color = clWhite
               ParentBackground = False
               TabOrder = 0
-              ExplicitWidth = 392
               object lblPerfilTitlePerfilE: TLabel
                 Left = 53
                 Top = 13
@@ -1160,7 +1153,6 @@ object FormHomeC: TFormHomeC
               Color = clWhite
               ParentBackground = False
               TabOrder = 1
-              ExplicitWidth = 392
               object ScrollBox3: TScrollBox
                 AlignWithMargins = True
                 Left = 0
@@ -1175,7 +1167,6 @@ object FormHomeC: TFormHomeC
                 BevelOuter = bvNone
                 BorderStyle = bsNone
                 TabOrder = 0
-                ExplicitWidth = 392
                 object Label3: TLabel
                   Left = 9
                   Top = 8
@@ -3136,7 +3127,7 @@ object FormHomeC: TFormHomeC
               0010480000402001000081040000041200001048000040A0FF030801D62EB80B
               0D7D0000000049454E44AE426082}
             Proportional = True
-            OnClick = iButtonBackAlterarSenhaClick
+            OnClick = iButtonBackCommClick
           end
           object lblNota: TLabel
             Left = 7
@@ -3585,7 +3576,7 @@ object FormHomeC: TFormHomeC
       object lblUserId: TLabel
         Left = 0
         Top = 0
-        Width = 81
+        Width = 75
         Height = 29
         Align = alLeft
         Caption = 'lblUserId'
@@ -3595,11 +3586,12 @@ object FormHomeC: TFormHomeC
         Font.Name = 'Segoe UI'
         Font.Style = []
         ParentFont = False
+        ExplicitHeight = 25
       end
       object lblUserName: TLabel
-        Left = 81
+        Left = 75
         Top = 0
-        Width = 101
+        Width = 109
         Height = 29
         Align = alLeft
         Caption = 'lblUserName'
@@ -3609,7 +3601,8 @@ object FormHomeC: TFormHomeC
         Font.Name = 'Segoe UI'
         Font.Style = []
         ParentFont = False
-        ExplicitLeft = 40
+        ExplicitLeft = 81
+        ExplicitHeight = 25
       end
     end
     object eBuscaMain: TEdit
