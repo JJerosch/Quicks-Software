@@ -70,7 +70,12 @@ uses
   EnderecoCardHelper in 'Src\Utils\EnderecoCardHelper.pas',
   EnderecoClienteService in 'Src\Service\EnderecoClienteService.pas',
   EnderecoClienteController in 'Src\Controller\EnderecoClienteController.pas',
-  EnderecoCardPanel in 'Src\Utils\EnderecoCardPanel.pas';
+  EnderecoCardPanel in 'Src\Utils\EnderecoCardPanel.pas',
+  FormaPagamentoClienteModel in 'Src\Model\FormaPagamentoClienteModel.pas',
+  FormaPagamentoClienteRepository in 'Src\Repository\FormaPagamentoClienteRepository.pas',
+  PagamentoCardPanel in 'Src\Utils\PagamentoCardPanel.pas',
+  FormaPagamentoClienteController in 'Src\Controller\FormaPagamentoClienteController.pas',
+  FormaPagamentoClienteService in 'Src\Service\FormaPagamentoClienteService.pas';
 
 {$R *.res}
 

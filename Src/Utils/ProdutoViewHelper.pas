@@ -110,7 +110,7 @@ begin
   lblNome.Font.Name := 'Segoe UI';
   lblNome.Font.Size := 11;
   lblNome.Font.Style := [fsBold];
-  lblNome.Font.Color := clBlack;
+  lblNome.Font.Color := $00517CFF;
   lblNome.Cursor := crHandPoint;
   lblNome.OnClick := CardClick;
   lblNome.Transparent := True;
@@ -127,7 +127,7 @@ begin
   lblCategoria.Caption := '🏷️ ' + FCategoria;
   lblCategoria.Font.Name := 'Segoe UI';
   lblCategoria.Font.Size := 8;
-  lblCategoria.Font.Color := $00808080;
+  lblCategoria.Font.Color := clBlack;
   lblCategoria.Cursor := crHandPoint;
   lblCategoria.OnClick := CardClick;
   lblCategoria.Transparent := True;
@@ -144,7 +144,7 @@ begin
     lblDescricao.Caption := FDescricao;
   lblDescricao.Font.Name := 'Segoe UI';
   lblDescricao.Font.Size := 8;
-  lblDescricao.Font.Color := $00666666;
+  lblDescricao.Font.Color := clBlack;
   lblDescricao.Cursor := crHandPoint;
   lblDescricao.OnClick := CardClick;
   lblDescricao.AutoSize := False;
@@ -162,7 +162,7 @@ begin
   lblPreco.Font.Name := 'Segoe UI';
   lblPreco.Font.Size := 12;
   lblPreco.Font.Style := [fsBold];
-  lblPreco.Font.Color := $00FF6600; // Laranja
+  lblPreco.Font.Color := $00517CFF; // Laranja
   lblPreco.Cursor := crHandPoint;
   lblPreco.OnClick := CardClick;
   lblPreco.Transparent := True;
@@ -185,14 +185,14 @@ begin
   if FDisponivel then
   begin
     pStatus.Caption := 'DISPONÍVEL';
-    pStatus.Color := $0000BB00; // Verde
-    pStatus.Font.Color := clWhite;
+    pStatus.Color := $00FF6600; // Laranja vibrante
+    pStatus.Font.Color := clBlack;
   end
   else
   begin
     pStatus.Caption := 'INDISPONÍVEL';
-    pStatus.Color := $000000BB; // Vermelho
-    pStatus.Font.Color := clWhite;
+    pStatus.Color := $00CCCCCC; // Cinza
+    pStatus.Font.Color := clBlack;
   end;
 end;
 
@@ -205,9 +205,9 @@ end;
 procedure TProdutoCard.CardMouseEnter(Sender: TObject);
 begin
   if FDisponivel then
-    Self.Color := $00FFE4CC // Laranja claro
+    Self.Color := clSilver
   else
-    Self.Color := $00F5F5F5; // Cinza claro
+    Self.Color := clWhite;
 end;
 
 procedure TProdutoCard.CardMouseLeave(Sender: TObject);
@@ -430,13 +430,13 @@ begin
     Panel.Parent := ScrollBox;
     Panel.Left := PosX;
     Panel.Top := 5;
-    Panel.Height := 35;
+    Panel.Height := 40;
     Panel.Width := 100;
     Panel.Caption := 'Todos';
-    Panel.BevelOuter := bvNone;
-    Panel.Color := $00FF6600; // Laranja - começa selecionado
+    Panel.BevelOuter := bvSpace;
+    Panel.Color := $00517CFF; // Laranja vibrante - começa selecionado
     Panel.Font.Name := 'Segoe UI';
-    Panel.Font.Size := 9;
+    Panel.Font.Size := 10;
     Panel.Font.Style := [fsBold];
     Panel.Font.Color := clWhite;
     Panel.Cursor := crHandPoint;
@@ -451,15 +451,15 @@ begin
       Panel.Parent := ScrollBox;
       Panel.Left := PosX;
       Panel.Top := 5;
-      Panel.Height := 35;
-      Panel.Width := 120;
+      Panel.Height := 40;
+      Panel.Width := 140;
       Panel.Caption := Categorias[i];
-      Panel.BevelOuter := bvNone;
-      Panel.Color := clWhite;
+      Panel.BevelOuter := bvLowered;
+      Panel.Color := $00517CFF;
       Panel.Font.Name := 'Segoe UI';
-      Panel.Font.Size := 9;
+      Panel.Font.Size := 10;
       Panel.Font.Style := [fsBold];
-      Panel.Font.Color := $00666666;
+      Panel.Font.Color := clWhite;
       Panel.Cursor := crHandPoint;
       Panel.Tag := i + 1;
       Panel.Hint := Categorias[i];

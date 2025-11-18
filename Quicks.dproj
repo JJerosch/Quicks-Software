@@ -194,6 +194,11 @@
         <DCCReference Include="Src\Service\EnderecoClienteService.pas"/>
         <DCCReference Include="Src\Controller\EnderecoClienteController.pas"/>
         <DCCReference Include="Src\Utils\EnderecoCardPanel.pas"/>
+        <DCCReference Include="Src\Model\FormaPagamentoClienteModel.pas"/>
+        <DCCReference Include="Src\Repository\FormaPagamentoClienteRepository.pas"/>
+        <DCCReference Include="Src\Utils\PagamentoCardPanel.pas"/>
+        <DCCReference Include="Src\Controller\FormaPagamentoClienteController.pas"/>
+        <DCCReference Include="Src\Service\FormaPagamentoClienteService.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

@@ -85,7 +85,7 @@ begin
   lblTexto.Font.Name := 'Segoe UI';
   lblTexto.Font.Size := 10;
   lblTexto.Font.Style := [fsBold];
-  lblTexto.Font.Color := $00666666;
+  lblTexto.Font.Color := $00517CFF;
   lblTexto.Cursor := crHandPoint;
   lblTexto.OnClick := ChipClick;
   lblTexto.Transparent := True;
@@ -122,7 +122,7 @@ begin
   if FSelecionado then
   begin
     // Estilo selecionado - laranja
-    Self.Color := $00FF6600;
+    Self.Color := $00517CFF;
 
     // Atualizar cor da label
     for i := 0 to Self.ControlCount - 1 do
@@ -145,7 +145,7 @@ begin
       if Self.Controls[i] is TLabel then
       begin
         lbl := TLabel(Self.Controls[i]);
-        lbl.Font.Color := $00666666;
+        lbl.Font.Color := $00517CFF;
       end;
     end;
   end;

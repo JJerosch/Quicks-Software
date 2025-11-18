@@ -11,7 +11,8 @@ uses
   Data.DB, FireDAC.Comp.Client, FireDAC.Comp.DataSet, FireDAC.Stan.Param, FireDAC.Stan.Intf,
   uConn, ComercioModel, ClienteController, CategoriaHelper, ClientePerfilController, ClienteModel,
   ViaCepHelper, EnderecoCardHelper, EnderecoClienteModel, EnderecoClienteController, EnderecoCardPanel,
-  ProdutoModel, ProdutoViewHelper;
+  ProdutoModel, ProdutoViewHelper,
+  FormaPagamentoClienteModel, FormaPagamentoClienteController, PagamentoCardPanel;
 
 type
   TRestauranteClickEvent = procedure(IdComercio: Integer; const NomeComercio: string) of object;
@@ -65,15 +66,12 @@ type
     pBusca: TPanel;
     eBuscaMain: TEdit;
     tsCommSelec: TTabSheet;
-    eBuscaProdutoComm: TEdit;
     scbxMainCommSelec: TScrollBox;
     pCarrinhoComm: TPanel;
     lblItensCart: TLabel;
     lblTotalCart: TLabel;
     pButtonCartComm: TPanel;
     pCategoriasProdutosComm: TPanel;
-    scbxCategoriasProdutosComm: TScrollBox;
-    lblCategoriasProdutos: TLabel;
     pInfoComm: TPanel;
     lblNomeComm: TLabel;
     iButtonBackComm: TImage;
@@ -83,7 +81,6 @@ type
     lblCategoria: TLabel;
     pButtonAvalienos: TPanel;
     pProdutosComm: TPanel;
-    scbxProdutosComm: TScrollBox;
     scbxMainLojas: TScrollBox;
     pCategoriasL: TPanel;
     scbxCategoriasL: TScrollBox;
@@ -153,8 +150,6 @@ type
     lblEmailV: TLabel;
     lblEmailDV: TLabel;
     pButtonEditarDados: TPanel;
-    lblEnderecos: TLabel;
-    lblFormasPagamento: TLabel;
     scbxMainPerfilE: TScrollBox;
     pHeaderPerfilE: TPanel;
     lblPerfilTitlePerfilE: TLabel;
@@ -195,13 +190,13 @@ type
     lblCidade: TLabel;
     lblBairro: TLabel;
     lblComplemento: TLabel;
-    eLogradouroCommDE: TEdit;
-    eNumeroEnderecoCommDE: TEdit;
-    eCidadeCommDE: TEdit;
-    eBairroCommDE: TEdit;
-    eComplementoCommDE: TEdit;
-    meCEPNovoDE: TMaskEdit;
-    cbEstadoCommDE: TComboBox;
+    eLogradouroNovoD: TEdit;
+    eNumeroEnderecoNovoD: TEdit;
+    eCidadeNovoD: TEdit;
+    eBairroNovoD: TEdit;
+    eComplementoNovoD: TEdit;
+    meCEPNovoD: TMaskEdit;
+    cbEstadoNovoD: TComboBox;
     pButtonSalvarDadosE: TPanel;
     pHeaderEnderecoNovo: TPanel;
     lblAddEndereco: TLabel;
@@ -228,8 +223,6 @@ type
     scbxCategorias: TScrollBox;
     pRestaurantes: TPanel;
     lblRestaurantes: TLabel;
-    pButtonEditarEndereco: TPanel;
-    pButtonEditarPagamentos: TPanel;
     scbxRestaurantes: TScrollBox;
     lblEnderecosTitle: TLabel;
     pButtonCancelarE: TPanel;
@@ -252,6 +245,16 @@ type
     Panel1: TPanel;
     lblUserId: TLabel;
     lblUserName: TLabel;
+    lblCategoriasProdutos: TLabel;
+    scbxCategoriasProdutosComm: TScrollBox;
+    lblProdutosComm: TLabel;
+    scbxProdutosComm: TScrollBox;
+    Label1: TLabel;
+    eApelidoDE: TEdit;
+    Label2: TLabel;
+    eApelidoNovoD: TEdit;
+    lblFormasPagamento: TLabel;
+    lblEnderecos: TLabel;
 
     procedure iButton1Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -273,7 +276,7 @@ type
     procedure pButtonCancelarEClick(Sender: TObject);
     procedure iButtonBackEnderecosEClick(Sender: TObject);
     procedure pButtonSalvarDadosEClick(Sender: TObject);
-    procedure meCEPNovoDEExit(Sender: TObject);
+    procedure meCEPNovoDExit(Sender: TObject);
     procedure pButtonAddEnderecoClick(Sender: TObject);
     procedure lblButton1Click(Sender: TObject);
     procedure iButtonBackPerfilClick(Sender: TObject);
@@ -296,6 +299,20 @@ type
     FCardHeight: Integer;
     FCardSpacing: Integer;
     FMargemLateral: Integer;
+    FPagamentoController: TFormaPagamentoClienteController;
+    FIdPagamentoSelecionado: Integer;
+
+    procedure SalvarDadosPessoais;
+
+    procedure CarregarPagamentos;
+    procedure OnPagamentoCardEditar(Sender: TObject);
+    procedure OnPagamentoCardExcluir(Sender: TObject);
+    procedure OnPagamentoCardDefinirPrincipal(Sender: TObject);
+    procedure ExcluirPagamento(IdPagamento: Integer);
+    procedure DefinirPagamentoPrincipal(IdPagamento: Integer);
+    procedure ExibirMensagemSemPagamentos;
+    procedure AtualizarCardsPagamentoPrincipal;
+    procedure pButtonAdicionarPagamentoClick(Sender: TObject);
 
     procedure InicializarController;
     procedure PopularCategorias;
@@ -399,7 +416,7 @@ begin
   lblNome.Font.Name := 'Segoe UI';
   lblNome.Font.Size := 12;
   lblNome.Font.Style := [fsBold];
-  lblNome.Font.Color := clBlack;
+  lblNome.Font.Color := $00517CFF;
   lblNome.Cursor := crHandPoint;
   lblNome.OnClick := PanelClick;
   lblNome.Transparent := True;
@@ -413,7 +430,7 @@ begin
   lblCategoria.Caption := '📍 ' + Categoria;
   lblCategoria.Font.Name := 'Segoe UI';
   lblCategoria.Font.Size := 9;
-  lblCategoria.Font.Color := $00808080;
+  lblCategoria.Font.Color := clBlack;
   lblCategoria.Cursor := crHandPoint;
   lblCategoria.OnClick := PanelClick;
   lblCategoria.Transparent := True;
@@ -428,7 +445,7 @@ begin
   lblTaxa.Font.Name := 'Segoe UI';
   lblTaxa.Font.Size := 9;
   lblTaxa.Font.Style := [fsBold];
-  lblTaxa.Font.Color := $00FF6600;
+  lblTaxa.Font.Color := clBlack;
   lblTaxa.Cursor := crHandPoint;
   lblTaxa.OnClick := PanelClick;
   lblTaxa.Transparent := True;
@@ -442,7 +459,7 @@ begin
   lblHorario.Caption := '🕐 ' + Horario;
   lblHorario.Font.Name := 'Segoe UI';
   lblHorario.Font.Size := 8;
-  lblHorario.Font.Color := $00666666;
+  lblHorario.Font.Color := clBlack;
   lblHorario.Cursor := crHandPoint;
   lblHorario.OnClick := PanelClick;
   lblHorario.Transparent := True;
@@ -466,12 +483,12 @@ begin
 
   if EstaAberto then
   begin
-    pStatus.Color := $0000BB00;
+    pStatus.Color := clGreen;
     pStatus.Font.Color := clWhite;
   end
   else
   begin
-    pStatus.Color := $000000BB;
+    pStatus.Color := clRed;
     pStatus.Font.Color := clWhite;
   end;
 
@@ -486,7 +503,7 @@ begin
     lblDescricao.Caption := Descricao;
   lblDescricao.Font.Name := 'Segoe UI';
   lblDescricao.Font.Size := 8;
-  lblDescricao.Font.Color := $00999999;
+  lblDescricao.Font.Color := clBlack;
   lblDescricao.Cursor := crHandPoint;
   lblDescricao.OnClick := PanelClick;
   lblDescricao.AutoSize := False;
@@ -503,31 +520,35 @@ end;
 
 procedure TCardComercioPanel.PanelMouseEnter(Sender: TObject);
 begin
-  Self.Color := $00F5F5F5;
+  Self.Color := clSilver;
+  Self.Font.Color := clWhite;
 end;
 
 procedure TCardComercioPanel.PanelMouseLeave(Sender: TObject);
 begin
   Self.Color := clWhite;
+  Self.Font.Color := clBlack;
 end;
 
 { TFormHomeC }
 
 procedure TFormHomeC.FormCreate(Sender: TObject);
 begin
-  // Flags de inicialização
   FInicializado := False;
   FIdEnderecoSelecionado := 0;
+  FIdPagamentoSelecionado := 0;
   FUltimaBusca := '';
   FCategoriaSelecionada := 'Todos';
 
   FIdComercioSelecionado := 0;
   FNomeComercioSelecionado := '';
   FCategoriaProdutoSelecionada := 'Todos';
-  // ⭐ CRIAR CONTROLLERS ⭐
+
+  // ⭐ CRIAR CONTROLLERS
   FController := nil;
   FPerfilController := nil;
-  FEnderecoController := nil;  // ← IMPORTANTE!
+  FEnderecoController := nil;
+  FPagamentoController := nil;
 
   // Timer de busca
   FBuscaTimer := TTimer.Create(Self);
@@ -554,7 +575,7 @@ begin
   if Assigned(pHomeBackground) then
   begin
     pHomeBackground.Align := alClient;
-    pHomeBackground.Color := $00F8F8F8;
+    pHomeBackground.Color := $00517CFF;
     pHomeBackground.BevelOuter := bvNone;
   end;
 
@@ -564,7 +585,7 @@ begin
     scbxMain.VertScrollBar.Tracking := True;
     scbxMain.HorzScrollBar.Visible := False;
     scbxMain.BorderStyle := bsNone;
-    scbxMain.Color := $00F8F8F8;
+    scbxMain.Color := $00517CFF;
   end;
 
   // Ordem dos painéis (de cima para baixo)
@@ -591,7 +612,7 @@ begin
   if Assigned(pRestaurantes) then
   begin
     pRestaurantes.Align := alClient;
-    pRestaurantes.Color := $00F8F8F8;
+    pRestaurantes.Color := $00517CFF;
     pRestaurantes.BevelOuter := bvNone;
   end;
 
@@ -610,7 +631,7 @@ begin
     scbxRestaurantes.HorzScrollBar.Visible := True;     // ⭐ COM scroll horizontal
     scbxRestaurantes.HorzScrollBar.Tracking := True;
     scbxRestaurantes.BorderStyle := bsNone;
-    scbxRestaurantes.Color := $00F8F8F8;
+    scbxRestaurantes.Color := $00517CFF;
   end;
 end;
 
@@ -646,6 +667,45 @@ begin
   end;
 end;
 
+procedure TFormHomeC.DefinirPagamentoPrincipal(IdPagamento: Integer);
+var
+  Qr: TFDQuery;
+  IdCliente: Integer;
+begin
+  // Buscar id_clie
+  Qr := TFDQuery.Create(nil);
+  try
+    Qr.Connection := DM.FDConn;
+    Qr.SQL.Text := 'SELECT id_clie FROM clientes WHERE id_user = :id_user';
+    Qr.ParamByName('id_user').AsInteger := FIdUsuario;
+    Qr.Open;
+
+    if Qr.IsEmpty then
+    begin
+      ShowMessage('Cliente não encontrado!');
+      Exit;
+    end;
+
+    IdCliente := Qr.FieldByName('id_clie').AsInteger;
+  finally
+    Qr.Free;
+  end;
+
+  try
+    if FPagamentoController.DefinirComoPrincipal(IdPagamento, IdCliente) then
+    begin
+      ShowMessage('✅ Forma de pagamento definida como PRINCIPAL!');
+      AtualizarCardsPagamentoPrincipal; // Atualizar visual
+    end
+    else
+      ShowMessage('❌ Não foi possível definir como principal!');
+  except
+    on E: Exception do
+      ShowMessage('Erro ao definir principal: ' + E.Message);
+  end;
+end;
+
+
 procedure TFormHomeC.InicializarController;
 begin
   if FInicializado then
@@ -664,10 +724,15 @@ begin
 
     if not Assigned(FController) then
       FController := TClienteController.Create;
+
     if not Assigned(FPerfilController) then
-      FPerfilController:= TClientePerfilController.Create;
+      FPerfilController := TClientePerfilController.Create;
+
     if not Assigned(FEnderecoController) then
       FEnderecoController := TEnderecoClienteController.Create;
+
+    if not Assigned(FPagamentoController) then // ⭐ ADICIONAR
+      FPagamentoController := TFormaPagamentoClienteController.Create;
 
     FInicializado := True;
 
@@ -690,7 +755,10 @@ begin
   if Assigned(FBuscaTimer) then
     FreeAndNil(FBuscaTimer);
 
-  if Assigned(FEnderecoController) then  // ⭐ IMPORTANTE!
+  if Assigned(FPagamentoController) then  // ⭐ ADICIONAR
+    FreeAndNil(FPagamentoController);
+
+  if Assigned(FEnderecoController) then
     FreeAndNil(FEnderecoController);
 
   if Assigned(FPerfilController) then
@@ -716,9 +784,9 @@ begin
       lblUserName.Caption := FNomeUsuario;
       lblUserId.Caption := 'ID: ' + IntToStr(FIdUsuario);
 
-      // ⭐ COMENTAR TEMPORARIAMENTE PARA TESTAR:
       CarregarEnderecos;
       CarregarEnderecosNoComboBox;
+      CarregarPagamentos; // ⭐ ADICIONAR
     end
     else
     begin
@@ -816,14 +884,14 @@ begin
       if scbxCategoriasProdutosComm.Controls[i] = Panel then
       begin
         // Selecionado - Laranja
-        TPanel(scbxCategoriasProdutosComm.Controls[i]).Color := $00FF6600;
+        TPanel(scbxCategoriasProdutosComm.Controls[i]).Color := $00517CFF;
         TPanel(scbxCategoriasProdutosComm.Controls[i]).Font.Color := clWhite;
       end
       else
       begin
         // Não selecionado - Branco
         TPanel(scbxCategoriasProdutosComm.Controls[i]).Color := clWhite;
-        TPanel(scbxCategoriasProdutosComm.Controls[i]).Font.Color := $00666666;
+        TPanel(scbxCategoriasProdutosComm.Controls[i]).Font.Color := $00517CFF;
       end;
     end;
   end;
@@ -849,6 +917,64 @@ end;
 procedure TFormHomeC.OnEnderecoCardClick(IdEndereco: Integer);
 begin
   cbEnderecos.OnChange := Self.OnComboBoxEnderecosChange;
+end;
+
+procedure TFormHomeC.OnPagamentoCardDefinirPrincipal(Sender: TObject);
+begin
+
+end;
+
+procedure TFormHomeC.OnPagamentoCardEditar(Sender: TObject);
+var
+  Card: TPagamentoCardPanel;
+begin
+  if Sender is TPagamentoCardPanel then
+  begin
+    Card := TPagamentoCardPanel(Sender);
+    FIdPagamentoSelecionado := Card.IdPagamento;
+
+    // TODO: Implementar tela de edição
+    ShowMessage('Editar pagamento ID: ' + IntToStr(Card.IdPagamento) + #13#10 +
+                'Em desenvolvimento...');
+
+    // Quando implementar:
+    // CarregarDadosPagamentoParaEdicao(Card.IdPagamento);
+    // pcPerfil.ActivePageIndex := 5; // Tab de edição de pagamento
+  end;
+end;
+
+procedure TFormHomeC.OnPagamentoCardExcluir(Sender: TObject);
+var
+  Card: TPagamentoCardPanel;
+begin
+  if Sender is TPagamentoCardPanel then
+  begin
+    Card := TPagamentoCardPanel(Sender);
+
+    // Verificar se é o principal
+    if Card.Principal then
+    begin
+      if MessageDlg(
+        'Este é o pagamento PRINCIPAL!' + #13#10 +
+        'Se excluí-lo, você precisará definir outro como principal.' + #13#10#13#10 +
+        'Deseja realmente excluir?',
+        mtWarning,
+        [mbYes, mbNo],
+        0) = mrNo then
+        Exit;
+    end
+    else
+    begin
+      if MessageDlg(
+        'Deseja realmente excluir esta forma de pagamento?',
+        mtConfirmation,
+        [mbYes, mbNo],
+        0) = mrNo then
+        Exit;
+    end;
+
+    ExcluirPagamento(Card.IdPagamento);
+  end;
 end;
 
 procedure TFormHomeC.OnProdutoCardClick(IdProduto: Integer;
@@ -912,6 +1038,22 @@ begin
   if pcMain.ActivePageIndex=6 then begin
     LimparCamposNovoEndereco;
   end;
+end;
+
+procedure TFormHomeC.pButtonAdicionarPagamentoClick(Sender: TObject);
+begin
+  // TODO: Implementar tela de seleção de tipo de pagamento
+  ShowMessage(
+    'Escolha o tipo de pagamento:' + #13#10#13#10 +
+    '1. 💳 Cartão (Crédito/Débito)' + #13#10 +
+    '2. 🔄 Pix' + #13#10 +
+    '3. 🏦 Transferência Bancária' + #13#10#13#10 +
+    'Em desenvolvimento...'
+  );
+
+  // Quando implementar:
+  // pcPerfil.ActivePageIndex := 6; // Tab "Adicionar Pagamento"
+  // LimparCamposNovoPagamento;
 end;
 
 procedure TFormHomeC.pButtonAlterarSenhaVClick(Sender: TObject);
@@ -1041,7 +1183,6 @@ end;
 procedure TFormHomeC.CadastrarNovoEndereco;
 var
   Endereco: TEnderecoCliente;
-  Apelido: string;
   MarcarPrincipal: Boolean;
   Qr: TFDQuery;
   IdCliente: Integer;
@@ -1094,53 +1235,47 @@ begin
   end;
 
   // ========== VALIDAÇÕES ==========
+  if Trim(eApelidoNovoD.Text) = '' then
+  begin
+    ShowMessage('Informe um apelido para o endereço!' + #13#10 +
+                '(Ex: Casa, Trabalho, Apartamento)');
+    eApelidoNovoD.SetFocus;
+    Exit;
+  end;
 
-  if Trim(meCEPNovoDE.Text) = '' then
+  if Trim(meCEPNovoD.Text) = '' then
   begin
     ShowMessage('Informe o CEP!');
     Exit;
   end;
 
-  if Trim(eLogradouroCommDE.Text) = '' then
+  if Trim(eLogradouroNovoD.Text) = '' then
   begin
     ShowMessage('Informe o logradouro!');
     Exit;
   end;
 
-  if Trim(eNumeroEnderecoCommDE.Text) = '' then
+  if Trim(eNumeroEnderecoNovoD.Text) = '' then
   begin
     ShowMessage('Informe o número!');
     Exit;
   end;
 
-  if Trim(eBairroCommDE.Text) = '' then
+  if Trim(eBairroNovoD.Text) = '' then
   begin
     ShowMessage('Informe o bairro!');
     Exit;
   end;
 
-  if Trim(eCidadeCommDE.Text) = '' then
+  if Trim(eCidadeNovoD.Text) = '' then
   begin
     ShowMessage('Informe a cidade!');
     Exit;
   end;
 
-  if Trim(cbEstadoCommDE.Text) = '' then
+  if Trim(cbEstadoNovoD.Text) = '' then
   begin
     ShowMessage('Selecione o estado!');
-    Exit;
-  end;
-
-  // ========== PEDIR APELIDO ==========
-
-  Apelido := InputBox('Apelido do Endereço',
-                      'Digite um nome para este endereço:' + #13#10 +
-                      '(Ex: Casa, Trabalho)',
-                      'Casa');
-
-  if Trim(Apelido) = '' then
-  begin
-    ShowMessage('Dê um nome ao endereço!');
     Exit;
   end;
 
@@ -1156,24 +1291,26 @@ begin
   Endereco := TEnderecoCliente.Create;
   try
     Endereco.IdCliente := IdCliente;
-    Endereco.Apelido := Trim(Apelido);
-    Endereco.Logradouro := Trim(eLogradouroCommDE.Text);
-    Endereco.CEP := Trim(meCEPNovoDE.Text);
-    Endereco.Numero := Trim(eNumeroEnderecoCommDE.Text);
-    Endereco.Complemento := Trim(eComplementoCommDE.Text);
-    Endereco.Bairro := Trim(eBairroCommDE.Text);
-    Endereco.Cidade := Trim(eCidadeCommDE.Text);
-    Endereco.UF := Trim(cbEstadoCommDE.Text);
+    Endereco.Apelido := Trim(eApelidoNovoD.Text);
+    Endereco.Logradouro := Trim(eLogradouroNovoD.Text);
+    Endereco.CEP := Trim(meCEPNovoD.Text);
+    Endereco.Numero := Trim(eNumeroEnderecoNovoD.Text);
+    Endereco.Complemento := Trim(eComplementoNovoD.Text);
+    Endereco.Bairro := Trim(eBairroNovoD.Text);
+    Endereco.Cidade := Trim(eCidadeNovoD.Text);
+    Endereco.UF := Trim(cbEstadoNovoD.Text);
     Endereco.Principal := MarcarPrincipal;
 
     // ========== SALVAR ==========
 
     if FEnderecoController.CadastrarEndereco(Endereco) then
     begin
-      ShowMessage('✅ Endereço cadastrado com sucesso!');
+      ShowMessage('✅ Endereço "' + Trim(eApelidoNovoD.Text) + '" cadastrado com sucesso!');
       LimparCamposNovoEndereco;
-      pcPerfil.ActivePageIndex := 0;
+      pcMain.ActivePageIndex := 2; // Voltar para Perfil
+      pcPerfil.ActivePageIndex := 0; // Tab Visualizar
       CarregarEnderecos;
+      CarregarEnderecosNoComboBox;
     end
     else
     begin
@@ -1214,7 +1351,7 @@ begin
         eBairroDE.Text := Endereco.Bairro;
         eCidadeDE.Text := Endereco.Cidade;
         cbEstadoDE.Text := Endereco.UF;
-
+        eApelidoDE.Text := Endereco.Apelido;
       finally
         Endereco.Free;
       end;
@@ -1226,12 +1363,24 @@ begin
   end;
 end;
 
+procedure TFormHomeC.SalvarDadosPessoais;
+begin
+
+end;
+
 procedure TFormHomeC.SalvarEndereco;
 var
   Endereco: TEnderecoCliente;
   Qr: TFDQuery;
   IdCliente: Integer;
 begin
+  if Trim(eApelidoDE.Text) = '' then
+  begin
+    ShowMessage('Informe um apelido para o endereço!' + #13#10 +
+                '(Ex: Casa, Trabalho, Apartamento)');
+    eApelidoDE.SetFocus;
+    Exit;
+  end;
   // Validar campos obrigatórios
   if Trim(eLogradouroDE.Text) = '' then
   begin
@@ -1268,6 +1417,13 @@ begin
     Exit;
   end;
 
+   if Trim(eApelidoDE.Text) = '' then
+  begin
+    ShowMessage('Informe um apelido para o endereço!' + #13#10 +
+                '(Ex: Casa, Trabalho, Apartamento)');
+    eApelidoDE.SetFocus;
+    Exit;
+  end;
   // Buscar id_clie
   Qr := TFDQuery.Create(nil);
   try
@@ -1300,7 +1456,7 @@ begin
       Endereco.Bairro := Trim(eBairroDE.Text);
       Endereco.Cidade := Trim(eCidadeDE.Text);
       Endereco.UF := Trim(cbEstadoDE.Text);
-
+      Endereco.Apelido := Trim(eApelidoDE.Text);
       // Salvar no banco
       if FEnderecoController.AtualizarEndereco(Endereco) then
       begin
@@ -1593,6 +1749,112 @@ begin
   cbEnderecos.OnChange := OnComboBoxEnderecosChange;
 end;
 
+procedure TFormHomeC.CarregarPagamentos;
+var
+  Pagamentos: TObjectList<TFormaPagamentoCliente>;
+  Pagamento: TFormaPagamentoCliente;
+  Card: TPagamentoCardPanel;
+  Y, CardHeight, Spacing: Integer;
+  Qr: TFDQuery;
+  IdCliente: Integer;
+begin
+  // ⭐ PROTEÇÃO 1: Verificar se controller existe
+  if not Assigned(FPagamentoController) then
+  begin
+    ShowMessage('Erro: Controller de pagamentos não foi criado!');
+    Exit;
+  end;
+
+  // ⭐ PROTEÇÃO 2: Verificar se DataModule existe
+  if not Assigned(DM) or not DM.FDConn.Connected then
+  begin
+    ShowMessage('Erro: Banco de dados não conectado!');
+    Exit;
+  end;
+
+  // ⭐ PROTEÇÃO 3: Verificar se scbxPagamentosE existe
+  if not Assigned(scbxPagamentosE) then
+  begin
+    ShowMessage('Erro: ScrollBox de pagamentos não existe!');
+    Exit;
+  end;
+
+  // Buscar id_clie
+  Qr := TFDQuery.Create(nil);
+  try
+    Qr.Connection := DM.FDConn;
+    Qr.SQL.Text := 'SELECT id_clie FROM clientes WHERE id_user = :id_user';
+    Qr.ParamByName('id_user').AsInteger := FIdUsuario;
+    Qr.Open;
+
+    if Qr.IsEmpty then
+    begin
+      ShowMessage('Cliente não encontrado no banco!');
+      Exit;
+    end;
+
+    IdCliente := Qr.FieldByName('id_clie').AsInteger;
+  finally
+    Qr.Free;
+  end;
+
+  // Limpar cards existentes
+  for Y := scbxPagamentosE.ControlCount - 1 downto 0 do
+  begin
+    if scbxPagamentosE.Controls[Y] is TPagamentoCardPanel then
+      scbxPagamentosE.Controls[Y].Free;
+  end;
+
+  try
+    Pagamentos := FPagamentoController.ListarPagamentos(IdCliente);
+
+    if not Assigned(Pagamentos) then
+    begin
+      ShowMessage('Erro: Lista de pagamentos retornou nil!');
+      Exit;
+    end;
+
+    try
+      if Pagamentos.Count = 0 then
+      begin
+        ExibirMensagemSemPagamentos;
+        Exit;
+      end;
+
+      CardHeight := 120;
+      Spacing := 10;
+      Y := Spacing;
+
+      for Pagamento in Pagamentos do
+      begin
+        if Assigned(Pagamento) then
+        begin
+          // ⭐ USAR O NOVO CONSTRUTOR
+          Card := TPagamentoCardPanel.CreateCardFromModel(Self, Pagamento);
+
+          Card.Parent := scbxPagamentosE;
+          Card.Top := Y;
+          Card.Left := 10;
+          Card.Width := scbxPagamentosE.ClientWidth - 20;
+          Card.Anchors := [akLeft, akTop, akRight];
+          Card.OnEditar := OnPagamentoCardEditar;
+          Card.OnExcluir := OnPagamentoCardExcluir;
+          Card.OnDefinirPrincipal := OnPagamentoCardDefinirPrincipal; // ⭐ NOVO
+
+          Inc(Y, CardHeight + Spacing);
+        end;
+      end;
+
+    finally
+      Pagamentos.Free;
+    end;
+
+  except
+    on E: Exception do
+      ShowMessage('Erro ao carregar formas de pagamento: ' + E.Message);
+  end;
+end;
+
 procedure TFormHomeC.CarregarProdutosComercio(const Categoria: String);
 begin
   if FIdComercioSelecionado <= 0 then
@@ -1649,18 +1911,19 @@ begin
   eBairroDE.Clear;
   eCidadeDE.Clear;
   cbEstadoDE.ItemIndex := -1;
+  eApelidoDE.Clear;
 end;
 
 procedure TFormHomeC.LimparCamposNovoEndereco;
-begin
-  meCEPNovoDE.Clear;
-  eLogradouroCommDE.Clear;
-  eCidadeCommDE.Clear;
-  eNumeroEnderecoCommDE.Clear;
-  cbEstadoCommDE.ItemIndex := -1;
-  eBairroCommDE.Clear;
-  eComplementoCommDE.Clear;
-  meCEPNovoDE.SetFocus;
+begin  // ⭐ CAMPO RENOMEADO
+  meCEPNovoD.SetFocus;
+  eLogradouroNovoD.Clear;
+  eCidadeNovoD.Clear;
+  eNumeroEnderecoNovoD.Clear;
+  cbEstadoNovoD.ItemIndex := -1;
+  eBairroNovoD.Clear;
+  eComplementoNovoD.Clear;
+  eApelidoNovoD.Clear;
 end;
 
 procedure TFormHomeC.LimparCardsRestaurantes;
@@ -1677,9 +1940,9 @@ begin
     scbxRestaurantes.VertScrollBar.Position := 0;
 end;
 
-procedure TFormHomeC.meCEPNovoDEExit(Sender: TObject);
+procedure TFormHomeC.meCEPNovoDExit(Sender: TObject);
 begin
-  if Trim(meCEPNovoDE.Text) <> '' then
+  if Trim(meCEPNovoD.Text) <> '' then
     BuscarCEPNovoEndereco;
 end;
 
@@ -1720,6 +1983,71 @@ begin
   Card.Top := PosY;
   Card.Parent := scbxRestaurantes;
   Card.Visible := True;
+end;
+
+procedure TFormHomeC.AtualizarCardsPagamentoPrincipal;
+var
+  I: Integer;
+  Card: TPagamentoCardPanel;
+  Pagamentos: TObjectList<TFormaPagamentoCliente>;
+  Pagamento: TFormaPagamentoCliente;
+  Qr: TFDQuery;
+  IdCliente: Integer;
+  IdPrincipal: Integer;
+begin
+  // Buscar id_clie
+  Qr := TFDQuery.Create(nil);
+  try
+    Qr.Connection := DM.FDConn;
+    Qr.SQL.Text := 'SELECT id_clie FROM clientes WHERE id_user = :id_user';
+    Qr.ParamByName('id_user').AsInteger := FIdUsuario;
+    Qr.Open;
+
+    if Qr.IsEmpty then Exit;
+    IdCliente := Qr.FieldByName('id_clie').AsInteger;
+  finally
+    Qr.Free;
+  end;
+
+  try
+    // Buscar pagamentos atualizados do banco
+    Pagamentos := FPagamentoController.ListarPagamentos(IdCliente);
+
+    if not Assigned(Pagamentos) then
+      Exit;
+
+    try
+      // Encontrar qual é o principal
+      IdPrincipal := 0;
+      for Pagamento in Pagamentos do
+      begin
+        if Pagamento.Principal then
+        begin
+          IdPrincipal := Pagamento.IdPagamento;
+          Break;
+        end;
+      end;
+
+      // Atualizar visual de todos os cards
+      for I := 0 to scbxPagamentosE.ControlCount - 1 do
+      begin
+        if scbxPagamentosE.Controls[I] is TPagamentoCardPanel then
+        begin
+          Card := TPagamentoCardPanel(scbxPagamentosE.Controls[I]);
+
+          // Define se este card é o principal
+          Card.Principal := (Card.IdPagamento = IdPrincipal);
+        end;
+      end;
+
+    finally
+      Pagamentos.Free;
+    end;
+
+  except
+    on E: Exception do
+      ShowMessage('Erro ao atualizar visual dos cards: ' + E.Message);
+  end;
 end;
 
 procedure TFormHomeC.AtualizarCardsPrincipal;
@@ -1852,7 +2180,8 @@ var
   CEP: string;
   Endereco: TEndereco;
 begin
-  CEP := Trim(meCEPNovoDE.Text);
+  CEP := Trim(meCEPNovoD.Text);  // ⭐ CAMPO RENOMEADO
+  CEP := Trim(meCEPNovoD.Text);
 
   // Remover formatação
   CEP := StringReplace(CEP, '-', '', [rfReplaceAll]);
@@ -1862,7 +2191,7 @@ begin
   if Length(CEP) <> 8 then
   begin
     ShowMessage('CEP inválido! Digite 8 dígitos.');
-    meCEPNovoDE.SetFocus;
+    meCEPNovoD.SetFocus;
     Exit;
   end;
 
@@ -1873,16 +2202,16 @@ begin
 
     if not Endereco.Erro then
     begin
-      eLogradouroCommDE.Text := Endereco.Logradouro;
-      eBairroCommDE.Text := Endereco.Bairro;
-      eCidadeCommDE.Text := Endereco.Localidade;
-      cbEstadoCommDE.Text := Endereco.UF;
-      eNumeroEnderecoCommDE.SetFocus;
+      eLogradouroNovoD.Text := Endereco.Logradouro;  // ⭐ CAMPO RENOMEADO
+      eBairroNovoD.Text := Endereco.Bairro;          // ⭐ CAMPO RENOMEADO
+      eCidadeNovoD.Text := Endereco.Localidade;      // ⭐ CAMPO RENOMEADO
+      cbEstadoNovoD.Text := Endereco.UF;             // ⭐ CAMPO RENOMEADO
+      eNumeroEnderecoNovoD.SetFocus;
     end
     else
     begin
       ShowMessage('CEP não encontrado!');
-      meCEPNovoDE.SetFocus;
+      meCEPNovoD.SetFocus;
     end;
 
   finally
@@ -1976,6 +2305,22 @@ begin
 end;
 
 
+procedure TFormHomeC.ExcluirPagamento(IdPagamento: Integer);
+begin
+  try
+    if FPagamentoController.ExcluirPagamento(IdPagamento) then
+    begin
+      ShowMessage('✅ Forma de pagamento excluída com sucesso!');
+      CarregarPagamentos; // Recarregar lista
+    end
+    else
+      ShowMessage('❌ Não foi possível excluir a forma de pagamento!');
+  except
+    on E: Exception do
+      ShowMessage('Erro ao excluir: ' + E.Message);
+  end;
+end;
+
 procedure TFormHomeC.ExibirDadosPerfilVisualizacao(Cliente: TCliente);
 begin
   // Dados pessoais
@@ -2012,7 +2357,7 @@ begin
   lblMensagem.Font.Name := 'Segoe UI';
   lblMensagem.Font.Size := 13;
   lblMensagem.Font.Style := [fsBold];
-  lblMensagem.Font.Color := $00808080;
+  lblMensagem.Font.Color := clBlack;
   lblMensagem.Alignment := taCenter;
   lblMensagem.Left := 0;
   lblMensagem.Top := 50;
@@ -2023,7 +2368,7 @@ begin
   lblDica.Caption := 'Tente buscar por outro termo ou categoria';
   lblDica.Font.Name := 'Segoe UI';
   lblDica.Font.Size := 10;
-  lblDica.Font.Color := $00999999;
+  lblDica.Font.Color := clBlack;
   lblDica.Alignment := taCenter;
   lblDica.Left := 0;
   lblDica.Top := 85;
@@ -2042,13 +2387,42 @@ begin
   pMensagem.Width := scbxEnderecos.ClientWidth - 20;
   pMensagem.Height := 100;
   pMensagem.BevelOuter := bvNone;
-  pMensagem.Color := $00F5F5F5;
+  pMensagem.Color := clBlack;
   pMensagem.Anchors := [akLeft, akTop, akRight];
 
   lblMensagem := TLabel.Create(pMensagem);
   lblMensagem.Parent := pMensagem;
   lblMensagem.Caption := '📍 Nenhum endereço cadastrado' + #13#10 +
                          'Clique em "Adicionar Endereço" para cadastrar';
+  lblMensagem.Font.Name := 'Segoe UI';
+  lblMensagem.Font.Size := 10;
+  lblMensagem.Font.Color := clBlack;
+  lblMensagem.Alignment := taCenter;
+  lblMensagem.Layout := tlCenter;
+  lblMensagem.WordWrap := True;
+  lblMensagem.Align := alClient;
+end;
+
+procedure TFormHomeC.ExibirMensagemSemPagamentos;
+var
+  pMensagem: TPanel;
+  lblMensagem: TLabel;
+begin
+  pMensagem := TPanel.Create(scbxPagamentosE);
+  pMensagem.Parent := scbxPagamentosE;
+  pMensagem.Left := 10;
+  pMensagem.Top := 10;
+  pMensagem.Width := scbxPagamentosE.ClientWidth - 20;
+  pMensagem.Height := 100;
+  pMensagem.BevelOuter := bvNone;
+  pMensagem.Color := $00F5F5F5;
+  pMensagem.Anchors := [akLeft, akTop, akRight];
+
+  lblMensagem := TLabel.Create(pMensagem);
+  lblMensagem.Parent := pMensagem;
+  lblMensagem.Caption :=
+    '💳 Nenhuma forma de pagamento cadastrada' + #13#10#13#10 +
+    'Clique em "Adicionar Forma de Pagamento" para cadastrar';
   lblMensagem.Font.Name := 'Segoe UI';
   lblMensagem.Font.Size := 10;
   lblMensagem.Font.Color := $00808080;
@@ -2060,15 +2434,15 @@ end;
 
 procedure TFormHomeC.iButton1Click(Sender: TObject);
 begin
-  if pBarraMenuLeft.Width = 55 then
+  if pBarraMenuLeft.Width = 57 then
   begin
     pBarraMenuLeft.Width := 300;
     pBarraMenuLeft.Height := 1000;
   end
   else
   begin
-    pBarraMenuLeft.Width := 55;
-    pBarraMenuLeft.Height := 55;
+    pBarraMenuLeft.Width := 57;
+    pBarraMenuLeft.Height := 57;
   end;
 end;
 
