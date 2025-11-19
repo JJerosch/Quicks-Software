@@ -26,6 +26,7 @@ type
     constructor Create; virtual;
     function TipoPagamentoToString: String;
     function DescricaoCompleta: String; virtual; abstract;
+    function GetIcone: String; virtual;
   end;
 
   // ⭐ Cartão (Crédito ou Débito)
@@ -48,6 +49,8 @@ type
     constructor Create; override;
     function DescricaoCompleta: String; override;
     function EstaVencido: Boolean;
+    function GetIcone: String; override;
+    function ValidarDados(out MsgErro: String): Boolean;
   end;
 
   // ⭐ Pix
@@ -63,6 +66,8 @@ type
 
     constructor Create; override;
     function DescricaoCompleta: String; override;
+    function GetIcone: String; override;
+    function ValidarDados(out MsgErro: String): Boolean;
   end;
 
   // ⭐ Transferência Bancária
@@ -86,12 +91,14 @@ type
 
     constructor Create; override;
     function DescricaoCompleta: String; override;
+    function GetIcone: String; override;
+    function ValidarDados(out MsgErro: String): Boolean;
   end;
 
 implementation
 
 uses
-  System.SysUtils, System.DateUtils;
+  System.SysUtils, System.DateUtils, System.StrUtils;
 
 { TFormaPagamentoCliente }
 
@@ -114,6 +121,18 @@ begin
     tpDinheiro: Result := 'Dinheiro';
   else
     Result := 'Desconhecido';
+  end;
+end;
+
+function TFormaPagamentoCliente.GetIcone: String;
+begin
+  case FTipoPagamento of
+    tpCartao: Result := '💳';
+    tpPix: Result := '🔄';
+    tpTransferencia: Result := '🏦';
+    tpDinheiro: Result := '💵';
+  else
+    Result := '💰';
   end;
 end;
 
@@ -160,6 +179,77 @@ begin
   end;
 end;
 
+function TPagamentoCartao.GetIcone: String;
+begin
+  // Ícone baseado na bandeira
+  if ContainsText(FBandeira, 'Visa') then
+    Result := '💳'
+  else if ContainsText(FBandeira, 'Master') then
+    Result := '💳'
+  else if ContainsText(FBandeira, 'Elo') then
+    Result := '💳'
+  else if ContainsText(FBandeira, 'Amex') then
+    Result := '💳'
+  else
+    Result := '💳';
+end;
+
+function TPagamentoCartao.ValidarDados(out MsgErro: String): Boolean;
+begin
+  Result := False;
+  MsgErro := '';
+
+  if Trim(FApelido) = '' then
+  begin
+    MsgErro := 'Informe um apelido para o cartão!';
+    Exit;
+  end;
+
+  if Trim(FNumeroCartao) = '' then
+  begin
+    MsgErro := 'Informe o número do cartão!';
+    Exit;
+  end;
+
+  if Length(FNumeroCartao) < 4 then
+  begin
+    MsgErro := 'Número do cartão inválido!';
+    Exit;
+  end;
+
+  if Trim(FNomeTitular) = '' then
+  begin
+    MsgErro := 'Informe o nome do titular!';
+    Exit;
+  end;
+
+  if Trim(FBandeira) = '' then
+  begin
+    MsgErro := 'Selecione a bandeira!';
+    Exit;
+  end;
+
+  if Trim(FValidade) = '' then
+  begin
+    MsgErro := 'Informe a validade!';
+    Exit;
+  end;
+
+  if Length(FValidade) <> 7 then // MM/YYYY
+  begin
+    MsgErro := 'Validade inválida! Use o formato MM/AAAA';
+    Exit;
+  end;
+
+  if EstaVencido then
+  begin
+    MsgErro := 'Este cartão está vencido!';
+    Exit;
+  end;
+
+  Result := True;
+end;
+
 { TPagamentoPix }
 
 constructor TPagamentoPix.Create;
@@ -174,6 +264,37 @@ end;
 function TPagamentoPix.DescricaoCompleta: String;
 begin
   Result := Format('Pix - %s: %s', [FTipoChavePix, FChavePix]);
+end;
+
+function TPagamentoPix.GetIcone: String;
+begin
+  Result := '🔄';
+end;
+
+function TPagamentoPix.ValidarDados(out MsgErro: String): Boolean;
+begin
+  Result := False;
+  MsgErro := '';
+
+  if Trim(FApelido) = '' then
+  begin
+    MsgErro := 'Informe um apelido para a chave Pix!';
+    Exit;
+  end;
+
+  if Trim(FChavePix) = '' then
+  begin
+    MsgErro := 'Informe a chave Pix!';
+    Exit;
+  end;
+
+  if Trim(FTipoChavePix) = '' then
+  begin
+    MsgErro := 'Selecione o tipo de chave Pix!';
+    Exit;
+  end;
+
+  Result := True;
 end;
 
 { TPagamentoTransferencia }
@@ -195,6 +316,55 @@ function TPagamentoTransferencia.DescricaoCompleta: String;
 begin
   Result := Format('%s - Ag: %s Conta: %s-%s (%s)',
     [FBanco, FAgencia, FConta, FDigitoConta, FTipoConta]);
+end;
+
+function TPagamentoTransferencia.GetIcone: String;
+begin
+  Result := '🏦';
+end;
+
+function TPagamentoTransferencia.ValidarDados(out MsgErro: String): Boolean;
+begin
+  Result := False;
+  MsgErro := '';
+
+  if Trim(FApelido) = '' then
+  begin
+    MsgErro := 'Informe um apelido para a conta!';
+    Exit;
+  end;
+
+  if Trim(FBanco) = '' then
+  begin
+    MsgErro := 'Informe o banco!';
+    Exit;
+  end;
+
+  if Trim(FCodigoBanco) = '' then
+  begin
+    MsgErro := 'Informe o código do banco!';
+    Exit;
+  end;
+
+  if Trim(FAgencia) = '' then
+  begin
+    MsgErro := 'Informe a agência!';
+    Exit;
+  end;
+
+  if Trim(FConta) = '' then
+  begin
+    MsgErro := 'Informe o número da conta!';
+    Exit;
+  end;
+
+  if Trim(FTipoConta) = '' then
+  begin
+    MsgErro := 'Selecione o tipo de conta!';
+    Exit;
+  end;
+
+  Result := True;
 end;
 
 end.

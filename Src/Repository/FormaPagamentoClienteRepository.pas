@@ -380,22 +380,173 @@ end;
 
 // ⭐ Métodos de atualização seguem a mesma lógica do cadastro
 function TFormaPagamentoClienteRepository.AtualizarCartao(Cartao: TPagamentoCartao): Boolean;
+var
+  Qr: TFDQuery;
 begin
-  // Implementação similar ao CadastrarCartao, mas com UPDATE
   Result := False;
-  // TODO: Implementar
+  Qr := TFDQuery.Create(nil);
+  try
+    Qr.Connection := DM.FDConn;
+    DM.FDConn.StartTransaction;
+
+    try
+      // 1. Se marcar como principal, desmarcar outros
+      if Cartao.Principal then
+      begin
+        Qr.SQL.Text :=
+          'UPDATE formas_pagamento_clientes SET principal = FALSE ' +
+          'WHERE id_cliente = :id_cliente AND id_pagamento <> :id_pagamento';
+        Qr.ParamByName('id_cliente').AsInteger := Cartao.IdCliente;
+        Qr.ParamByName('id_pagamento').AsInteger := Cartao.IdPagamento;
+        Qr.ExecSQL;
+      end;
+
+      // 2. Atualizar tabela base
+      Qr.SQL.Text :=
+        'UPDATE formas_pagamento_clientes ' +
+        'SET apelido = :apelido, principal = :principal, data_atualizacao = CURRENT_TIMESTAMP ' +
+        'WHERE id_pagamento = :id_pagamento';
+      Qr.ParamByName('apelido').AsString := Cartao.Apelido;
+      Qr.ParamByName('principal').AsBoolean := Cartao.Principal;
+      Qr.ParamByName('id_pagamento').AsInteger := Cartao.IdPagamento;
+      Qr.ExecSQL;
+
+      // 3. Atualizar dados específicos do cartão
+      Qr.SQL.Text :=
+        'UPDATE pagamentos_cartao ' +
+        'SET numero_cartao = :numero_cartao, nome_titular = :nome_titular, ' +
+        '    bandeira = :bandeira, tipo_cartao = :tipo_cartao, validade = :validade ' +
+        'WHERE id_pagamento = :id_pagamento';
+      Qr.ParamByName('numero_cartao').AsString := Cartao.NumeroCartao;
+      Qr.ParamByName('nome_titular').AsString := Cartao.NomeTitular;
+      Qr.ParamByName('bandeira').AsString := Cartao.Bandeira;
+      Qr.ParamByName('tipo_cartao').AsString := Cartao.TipoCartao;
+      Qr.ParamByName('validade').AsString := Cartao.Validade;
+      Qr.ParamByName('id_pagamento').AsInteger := Cartao.IdPagamento;
+      Qr.ExecSQL;
+
+      DM.FDConn.Commit;
+      Result := True;
+    except
+      DM.FDConn.Rollback;
+      raise;
+    end;
+  finally
+    Qr.Free;
+  end;
 end;
+
 
 function TFormaPagamentoClienteRepository.AtualizarPix(Pix: TPagamentoPix): Boolean;
+var
+  Qr: TFDQuery;
 begin
   Result := False;
-  // TODO: Implementar
+  Qr := TFDQuery.Create(nil);
+  try
+    Qr.Connection := DM.FDConn;
+    DM.FDConn.StartTransaction;
+
+    try
+      // 1. Se marcar como principal, desmarcar outros
+      if Pix.Principal then
+      begin
+        Qr.SQL.Text :=
+          'UPDATE formas_pagamento_clientes SET principal = FALSE ' +
+          'WHERE id_cliente = :id_cliente AND id_pagamento <> :id_pagamento';
+        Qr.ParamByName('id_cliente').AsInteger := Pix.IdCliente;
+        Qr.ParamByName('id_pagamento').AsInteger := Pix.IdPagamento;
+        Qr.ExecSQL;
+      end;
+
+      // 2. Atualizar tabela base
+      Qr.SQL.Text :=
+        'UPDATE formas_pagamento_clientes ' +
+        'SET apelido = :apelido, principal = :principal, data_atualizacao = CURRENT_TIMESTAMP ' +
+        'WHERE id_pagamento = :id_pagamento';
+      Qr.ParamByName('apelido').AsString := Pix.Apelido;
+      Qr.ParamByName('principal').AsBoolean := Pix.Principal;
+      Qr.ParamByName('id_pagamento').AsInteger := Pix.IdPagamento;
+      Qr.ExecSQL;
+
+      // 3. Atualizar dados específicos do Pix
+      Qr.SQL.Text :=
+        'UPDATE pagamentos_pix ' +
+        'SET chave_pix = :chave_pix, tipo_chave_pix = :tipo_chave_pix ' +
+        'WHERE id_pagamento = :id_pagamento';
+      Qr.ParamByName('chave_pix').AsString := Pix.ChavePix;
+      Qr.ParamByName('tipo_chave_pix').AsString := Pix.TipoChavePix;
+      Qr.ParamByName('id_pagamento').AsInteger := Pix.IdPagamento;
+      Qr.ExecSQL;
+
+      DM.FDConn.Commit;
+      Result := True;
+    except
+      DM.FDConn.Rollback;
+      raise;
+    end;
+  finally
+    Qr.Free;
+  end;
 end;
 
+
 function TFormaPagamentoClienteRepository.AtualizarTransferencia(Transferencia: TPagamentoTransferencia): Boolean;
+var
+  Qr: TFDQuery;
 begin
   Result := False;
-  // TODO: Implementar
+  Qr := TFDQuery.Create(nil);
+  try
+    Qr.Connection := DM.FDConn;
+    DM.FDConn.StartTransaction;
+
+    try
+      // 1. Se marcar como principal, desmarcar outros
+      if Transferencia.Principal then
+      begin
+        Qr.SQL.Text :=
+          'UPDATE formas_pagamento_clientes SET principal = FALSE ' +
+          'WHERE id_cliente = :id_cliente AND id_pagamento <> :id_pagamento';
+        Qr.ParamByName('id_cliente').AsInteger := Transferencia.IdCliente;
+        Qr.ParamByName('id_pagamento').AsInteger := Transferencia.IdPagamento;
+        Qr.ExecSQL;
+      end;
+
+      // 2. Atualizar tabela base
+      Qr.SQL.Text :=
+        'UPDATE formas_pagamento_clientes ' +
+        'SET apelido = :apelido, principal = :principal, data_atualizacao = CURRENT_TIMESTAMP ' +
+        'WHERE id_pagamento = :id_pagamento';
+      Qr.ParamByName('apelido').AsString := Transferencia.Apelido;
+      Qr.ParamByName('principal').AsBoolean := Transferencia.Principal;
+      Qr.ParamByName('id_pagamento').AsInteger := Transferencia.IdPagamento;
+      Qr.ExecSQL;
+
+      // 3. Atualizar dados específicos da transferência
+      Qr.SQL.Text :=
+        'UPDATE pagamentos_transferencia ' +
+        'SET banco = :banco, codigo_banco = :codigo_banco, agencia = :agencia, ' +
+        '    conta = :conta, digito_conta = :digito_conta, tipo_conta = :tipo_conta ' +
+        'WHERE id_pagamento = :id_pagamento';
+      Qr.ParamByName('banco').AsString := Transferencia.Banco;
+      Qr.ParamByName('codigo_banco').AsString := Transferencia.CodigoBanco;
+      Qr.ParamByName('agencia').AsString := Transferencia.Agencia;
+      Qr.ParamByName('conta').AsString := Transferencia.Conta;
+      Qr.ParamByName('digito_conta').AsString := Transferencia.DigitoC;
+      Qr.ParamByName('tipo_conta').AsString := Transferencia.TipoConta;
+      Qr.ParamByName('id_pagamento').AsInteger := Transferencia.IdPagamento;
+      Qr.ExecSQL;
+
+      DM.FDConn.Commit;
+      Result := True;
+    except
+      DM.FDConn.Rollback;
+      raise;
+    end;
+  finally
+    Qr.Free;
+  end;
 end;
 
 function TFormaPagamentoClienteRepository.ObterPagamento(IdPagamento: Integer): TFormaPagamentoCliente;

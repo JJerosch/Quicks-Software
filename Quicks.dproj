@@ -199,6 +199,7 @@
         <DCCReference Include="Src\Utils\PagamentoCardPanel.pas"/>
         <DCCReference Include="Src\Controller\FormaPagamentoClienteController.pas"/>
         <DCCReference Include="Src\Service\FormaPagamentoClienteService.pas"/>
+        <DCCReference Include="Src\Model\CarrinhoModel.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

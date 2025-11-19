@@ -34,6 +34,8 @@ object FormLogin: TFormLogin
     Color = clCoral
     ParentBackground = False
     TabOrder = 0
+    ExplicitLeft = 734
+    ExplicitHeight = 634
     object lblLogin: TLabel
       AlignWithMargins = True
       Left = 4
@@ -222,6 +224,7 @@ object FormLogin: TFormLogin
       TabOrder = 1
       OnClick = pSairClick
       OnResize = pSairResize
+      ExplicitTop = 588
       object shSair: TShape
         Left = 0
         Top = 0
@@ -259,6 +262,8 @@ object FormLogin: TFormLogin
     BevelOuter = bvNone
     Caption = 'pLeft'
     TabOrder = 1
+    ExplicitWidth = 734
+    ExplicitHeight = 634
     object iLoginLeft: TImage
       AlignWithMargins = True
       Left = 0

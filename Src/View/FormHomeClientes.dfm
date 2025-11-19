@@ -515,7 +515,7 @@ object FormHomeC: TFormHomeC
         Margins.Top = 0
         Margins.Right = 0
         Margins.Bottom = 0
-        ActivePage = tsVisualizarPefil
+        ActivePage = tsAtualizarSenhaPerfil
         Align = alClient
         TabOrder = 0
         object tsVisualizarPefil: TTabSheet
@@ -550,27 +550,12 @@ object FormHomeC: TFormHomeC
               Color = clWhite
               ParentBackground = False
               TabOrder = 0
-              object lblEnderecos: TLabel
-                Left = 0
-                Top = 0
-                Width = 394
-                Height = 20
-                Align = alTop
-                Caption = 'Endere'#231'os'
-                Font.Charset = DEFAULT_CHARSET
-                Font.Color = clWindowText
-                Font.Height = -15
-                Font.Name = 'Segoe UI'
-                Font.Style = [fsBold]
-                ParentFont = False
-                ExplicitWidth = 196
-              end
               object scbxEnderecos: TScrollBox
                 AlignWithMargins = True
                 Left = 0
-                Top = 20
+                Top = 82
                 Width = 394
-                Height = 191
+                Height = 129
                 Margins.Left = 0
                 Margins.Top = 0
                 Margins.Right = 0
@@ -582,6 +567,62 @@ object FormHomeC: TFormHomeC
                 UseWheelForScrolling = True
                 ExplicitTop = 0
                 ExplicitHeight = 211
+              end
+              object Panel2: TPanel
+                Left = 0
+                Top = 0
+                Width = 394
+                Height = 82
+                Align = alTop
+                BevelOuter = bvNone
+                Color = clWindow
+                ParentBackground = False
+                TabOrder = 1
+                ExplicitTop = 6
+                object Label5: TLabel
+                  Left = 6
+                  Top = 9
+                  Width = 68
+                  Height = 20
+                  Margins.Bottom = 80
+                  Caption = 'Endere'#231'o:'
+                  Color = clCoral
+                  Font.Charset = DEFAULT_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -15
+                  Font.Name = 'Segoe UI'
+                  Font.Style = [fsBold]
+                  ParentColor = False
+                  ParentFont = False
+                end
+                object pButtonEnderecoNovoPerfil: TPanel
+                  Left = 279
+                  Top = 32
+                  Width = 115
+                  Height = 37
+                  Caption = '+Endere'#231'o'
+                  Color = clCoral
+                  Font.Charset = DEFAULT_CHARSET
+                  Font.Color = clWhite
+                  Font.Height = -12
+                  Font.Name = 'Segoe UI'
+                  Font.Style = []
+                  ParentBackground = False
+                  ParentFont = False
+                  TabOrder = 0
+                  OnClick = pButtonAddEnderecoClick
+                end
+                object cbEnderecoPerfil: TComboBox
+                  Left = 6
+                  Top = 40
+                  Width = 267
+                  Height = 23
+                  BevelInner = bvNone
+                  BevelOuter = bvNone
+                  Style = csDropDownList
+                  TabOrder = 1
+                  StyleName = 'Windows'
+                end
               end
             end
             object pHeaderPerfil: TPanel
@@ -897,29 +938,12 @@ object FormHomeC: TFormHomeC
               Color = clWhite
               ParentBackground = False
               TabOrder = 3
-              object lblFormasPagamento: TLabel
-                Left = 0
-                Top = 0
-                Width = 394
-                Height = 20
-                Align = alTop
-                Caption = 'Formas de Pagamento'
-                Font.Charset = DEFAULT_CHARSET
-                Font.Color = clWindowText
-                Font.Height = -15
-                Font.Name = 'Segoe UI'
-                Font.Style = [fsBold]
-                ParentFont = False
-                ExplicitLeft = 17
-                ExplicitTop = 22
-                ExplicitWidth = 157
-              end
               object scbxPagamentos: TScrollBox
                 AlignWithMargins = True
                 Left = 0
-                Top = 20
+                Top = 79
                 Width = 394
-                Height = 193
+                Height = 134
                 Margins.Left = 0
                 Margins.Top = 0
                 Margins.Right = 0
@@ -931,6 +955,62 @@ object FormHomeC: TFormHomeC
                 UseWheelForScrolling = True
                 ExplicitTop = 0
                 ExplicitHeight = 213
+              end
+              object Panel4: TPanel
+                Left = 0
+                Top = 0
+                Width = 394
+                Height = 79
+                Align = alTop
+                BevelOuter = bvNone
+                Color = clWindow
+                ParentBackground = False
+                TabOrder = 1
+                ExplicitTop = 3
+                object Label8: TLabel
+                  Left = 6
+                  Top = 9
+                  Width = 157
+                  Height = 20
+                  Margins.Bottom = 80
+                  Caption = 'Formas de Pagamento'
+                  Color = clCoral
+                  Font.Charset = DEFAULT_CHARSET
+                  Font.Color = clBlack
+                  Font.Height = -15
+                  Font.Name = 'Segoe UI'
+                  Font.Style = [fsBold]
+                  ParentColor = False
+                  ParentFont = False
+                end
+                object pButtonAdicionarPagamento: TPanel
+                  Left = 284
+                  Top = 32
+                  Width = 115
+                  Height = 37
+                  Caption = '+Forma Pagamento'
+                  Color = clCoral
+                  Font.Charset = DEFAULT_CHARSET
+                  Font.Color = clWhite
+                  Font.Height = -12
+                  Font.Name = 'Segoe UI'
+                  Font.Style = []
+                  ParentBackground = False
+                  ParentFont = False
+                  TabOrder = 0
+                  OnClick = pButtonAdicionarPagamentoClick
+                end
+                object cbPagamentosPerfil: TComboBox
+                  Left = 6
+                  Top = 40
+                  Width = 267
+                  Height = 23
+                  BevelInner = bvNone
+                  BevelOuter = bvNone
+                  Style = csDropDownList
+                  TabOrder = 1
+                  StyleName = 'Windows'
+                end
               end
             end
           end
@@ -2042,12 +2122,29 @@ object FormHomeC: TFormHomeC
               Color = clWhite
               ParentBackground = False
               TabOrder = 0
-              object scbxPagamentosE: TScrollBox
-                AlignWithMargins = True
+              object lblPagamentosTitle: TLabel
                 Left = 0
                 Top = 0
                 Width = 394
-                Height = 536
+                Height = 20
+                Align = alTop
+                Caption = 'Formas de Pagamento'
+                Font.Charset = DEFAULT_CHARSET
+                Font.Color = clWindowText
+                Font.Height = -15
+                Font.Name = 'Segoe UI'
+                Font.Style = [fsBold]
+                ParentFont = False
+                ExplicitLeft = 9
+                ExplicitTop = 12
+                ExplicitWidth = 157
+              end
+              object scbxPagamentosE: TScrollBox
+                AlignWithMargins = True
+                Left = 0
+                Top = 20
+                Width = 394
+                Height = 516
                 Margins.Left = 0
                 Margins.Top = 0
                 Margins.Right = 0
@@ -2057,19 +2154,8 @@ object FormHomeC: TFormHomeC
                 BorderStyle = bsNone
                 TabOrder = 0
                 UseWheelForScrolling = True
-                object lblPagamentosTitle: TLabel
-                  Left = 9
-                  Top = 12
-                  Width = 157
-                  Height = 20
-                  Caption = 'Formas de Pagamento'
-                  Font.Charset = DEFAULT_CHARSET
-                  Font.Color = clWindowText
-                  Font.Height = -15
-                  Font.Name = 'Segoe UI'
-                  Font.Style = [fsBold]
-                  ParentFont = False
-                end
+                ExplicitTop = 0
+                ExplicitHeight = 536
               end
             end
             object pHeaderPagamentosE: TPanel

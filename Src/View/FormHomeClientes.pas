@@ -15,6 +15,18 @@ uses
   FormaPagamentoClienteModel, FormaPagamentoClienteController, PagamentoCardPanel;
 
 type
+TCardEventHandler = class
+  private
+    FFormSelecao: TForm;
+    FTipoSelecionado: Integer;
+  public
+    constructor Create(AFormSelecao: TForm);
+    procedure OnCardClick(Sender: TObject);
+    procedure OnCardMouseEnter(Sender: TObject);
+    procedure OnCardMouseLeave(Sender: TObject);
+    property TipoSelecionado: Integer read FTipoSelecionado write FTipoSelecionado;
+  end;
+
   TRestauranteClickEvent = procedure(IdComercio: Integer; const NomeComercio: string) of object;
   TCardComercioPanel = class(TPanel)
   private
@@ -212,7 +224,6 @@ type
     scbxMainPagamentosE: TScrollBox;
     pPagamentosE: TPanel;
     scbxPagamentosE: TScrollBox;
-    lblPagamentosTitle: TLabel;
     pHeaderPagamentosE: TPanel;
     lblPerfilTitlePagamentosE: TLabel;
     iButtonBackPagamentosE: TImage;
@@ -253,8 +264,15 @@ type
     eApelidoDE: TEdit;
     Label2: TLabel;
     eApelidoNovoD: TEdit;
-    lblFormasPagamento: TLabel;
-    lblEnderecos: TLabel;
+    Panel2: TPanel;
+    Label5: TLabel;
+    pButtonEnderecoNovoPerfil: TPanel;
+    cbEnderecoPerfil: TComboBox;
+    Panel4: TPanel;
+    Label8: TLabel;
+    pButtonAdicionarPagamento: TPanel;
+    cbPagamentosPerfil: TComboBox;
+    lblPagamentosTitle: TLabel;
 
     procedure iButton1Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -281,6 +299,7 @@ type
     procedure lblButton1Click(Sender: TObject);
     procedure iButtonBackPerfilClick(Sender: TObject);
     procedure iButtonBackCommClick(Sender: TObject);
+    procedure pButtonAdicionarPagamentoClick(Sender: TObject);
 
   private
     FIdUsuario: Integer;
@@ -304,15 +323,21 @@ type
 
     procedure SalvarDadosPessoais;
 
+    procedure AbrirCadastroCartao(IdCliente: Integer);
+    procedure AbrirCadastroPix(IdCliente: Integer);
+    procedure AbrirCadastroTransferencia(IdCliente: Integer);
+
     procedure CarregarPagamentos;
     procedure OnPagamentoCardEditar(Sender: TObject);
+    procedure EditarCartao(Cartao: TPagamentoCartao);
+    procedure EditarPix(Pix: TPagamentoPix);
+    procedure EditarTransferencia(Transferencia: TPagamentoTransferencia);
     procedure OnPagamentoCardExcluir(Sender: TObject);
     procedure OnPagamentoCardDefinirPrincipal(Sender: TObject);
     procedure ExcluirPagamento(IdPagamento: Integer);
     procedure DefinirPagamentoPrincipal(IdPagamento: Integer);
     procedure ExibirMensagemSemPagamentos;
     procedure AtualizarCardsPagamentoPrincipal;
-    procedure pButtonAdicionarPagamentoClick(Sender: TObject);
 
     procedure InicializarController;
     procedure PopularCategorias;
@@ -920,26 +945,82 @@ begin
 end;
 
 procedure TFormHomeC.OnPagamentoCardDefinirPrincipal(Sender: TObject);
+var
+  Card: TPagamentoCardPanel;
 begin
+  if not (Sender is TPagamentoCardPanel) then
+    Exit;
 
+  Card := TPagamentoCardPanel(Sender);
+
+  // Confirmar com o usuário
+  if MessageDlg(
+    'Deseja definir esta forma de pagamento como PRINCIPAL?',
+    mtConfirmation,
+    [mbYes, mbNo],
+    0) = mrYes then
+  begin
+    DefinirPagamentoPrincipal(Card.IdPagamento);
+  end;
 end;
 
 procedure TFormHomeC.OnPagamentoCardEditar(Sender: TObject);
 var
   Card: TPagamentoCardPanel;
+  Pagamento: TFormaPagamentoCliente;
 begin
-  if Sender is TPagamentoCardPanel then
-  begin
-    Card := TPagamentoCardPanel(Sender);
-    FIdPagamentoSelecionado := Card.IdPagamento;
+  if not (Sender is TPagamentoCardPanel) then
+    Exit;
 
-    // TODO: Implementar tela de edição
-    ShowMessage('Editar pagamento ID: ' + IntToStr(Card.IdPagamento) + #13#10 +
-                'Em desenvolvimento...');
+  Card := TPagamentoCardPanel(Sender);
 
-    // Quando implementar:
-    // CarregarDadosPagamentoParaEdicao(Card.IdPagamento);
-    // pcPerfil.ActivePageIndex := 5; // Tab de edição de pagamento
+  try
+    // Buscar o pagamento completo do banco
+    Pagamento := FPagamentoController.ObterPagamento(Card.IdPagamento);
+
+    if not Assigned(Pagamento) then
+    begin
+      ShowMessage('Erro ao carregar dados do pagamento!');
+      Exit;
+    end;
+
+    try
+      // ⭐ IDENTIFICAR O TIPO E ABRIR O FORMULÁRIO CORRETO
+      case Pagamento.TipoPagamento of
+        tpCartao:
+          begin
+            if Pagamento is TPagamentoCartao then
+              EditarCartao(TPagamentoCartao(Pagamento))
+            else
+              ShowMessage('Erro: Tipo de pagamento incompatível!');
+          end;
+
+        tpPix:
+          begin
+            if Pagamento is TPagamentoPix then
+              EditarPix(TPagamentoPix(Pagamento))
+            else
+              ShowMessage('Erro: Tipo de pagamento incompatível!');
+          end;
+
+        tpTransferencia:
+          begin
+            if Pagamento is TPagamentoTransferencia then
+              EditarTransferencia(TPagamentoTransferencia(Pagamento))
+            else
+              ShowMessage('Erro: Tipo de pagamento incompatível!');
+          end;
+      else
+        ShowMessage('Tipo de pagamento não suportado para edição!');
+      end;
+
+    finally
+      Pagamento.Free;
+    end;
+
+  except
+    on E: Exception do
+      ShowMessage('Erro ao editar: ' + E.Message);
   end;
 end;
 
@@ -1041,19 +1122,203 @@ begin
 end;
 
 procedure TFormHomeC.pButtonAdicionarPagamentoClick(Sender: TObject);
-begin
-  // TODO: Implementar tela de seleção de tipo de pagamento
-  ShowMessage(
-    'Escolha o tipo de pagamento:' + #13#10#13#10 +
-    '1. 💳 Cartão (Crédito/Débito)' + #13#10 +
-    '2. 🔄 Pix' + #13#10 +
-    '3. 🏦 Transferência Bancária' + #13#10#13#10 +
-    'Em desenvolvimento...'
-  );
+var
+  FormSelecao: TForm;
+  pFundo, pCartao, pPix, pTransferencia, pBotoes: TPanel;
+  lblTitulo, lblSubtitulo: TLabel;
+  btnCancelar: TButton;
+  EventHandler: TCardEventHandler;
+  Qr: TFDQuery;
+  IdCliente: Integer;
 
-  // Quando implementar:
-  // pcPerfil.ActivePageIndex := 6; // Tab "Adicionar Pagamento"
-  // LimparCamposNovoPagamento;
+  function CriarCardOpcao(Parent: TWinControl; Top: Integer;
+    const Icone, Titulo, Descricao: String; Tag: Integer): TPanel;
+  var
+    lblTitulo, lblDesc, lblIcone: TLabel;
+  begin
+    Result := TPanel.Create(Parent);
+    Result.Parent := Parent;
+    Result.Left := 30;
+    Result.Top := Top;
+    Result.Width := 540;
+    Result.Height := 85;
+    Result.BevelOuter := bvNone;
+    Result.Color := clWhite;
+    Result.Cursor := crHandPoint;
+    Result.Tag := Tag;
+    Result.ParentBackground := False;
+    Result.BorderStyle := bsSingle;
+    Result.BorderWidth := 1;
+
+    Result.OnClick := EventHandler.OnCardClick;
+    Result.OnMouseEnter := EventHandler.OnCardMouseEnter;
+    Result.OnMouseLeave := EventHandler.OnCardMouseLeave;
+
+    // Ícone
+    lblIcone := TLabel.Create(Result);
+    lblIcone.Parent := Result;
+    lblIcone.Caption := Icone;
+    lblIcone.Font.Name := 'Segoe UI';
+    lblIcone.Font.Size := 24;
+    lblIcone.Left := 20;
+    lblIcone.Top := 20;
+    lblIcone.Cursor := crHandPoint;
+    lblIcone.Transparent := True;
+    lblIcone.OnClick := EventHandler.OnCardClick;
+
+    // Título
+    lblTitulo := TLabel.Create(Result);
+    lblTitulo.Parent := Result;
+    lblTitulo.Caption := Titulo;
+    lblTitulo.Font.Name := 'Segoe UI';
+    lblTitulo.Font.Size := 12;
+    lblTitulo.Font.Style := [fsBold];
+    lblTitulo.Font.Color := $00333333;
+    lblTitulo.Left := 75;
+    lblTitulo.Top := 20;
+    lblTitulo.Cursor := crHandPoint;
+    lblTitulo.Transparent := True;
+    lblTitulo.OnClick := EventHandler.OnCardClick;
+
+    // Descrição
+    lblDesc := TLabel.Create(Result);
+    lblDesc.Parent := Result;
+    lblDesc.Caption := Descricao;
+    lblDesc.Font.Name := 'Segoe UI';
+    lblDesc.Font.Size := 9;
+    lblDesc.Font.Color := $00808080;
+    lblDesc.Left := 75;
+    lblDesc.Top := 48;
+    lblDesc.Cursor := crHandPoint;
+    lblDesc.Transparent := True;
+    lblDesc.OnClick := EventHandler.OnCardClick;
+  end;
+
+begin
+  // ⭐ BUSCAR id_clie PRIMEIRO
+  Qr := TFDQuery.Create(nil);
+  try
+    Qr.Connection := DM.FDConn;
+    Qr.SQL.Text := 'SELECT id_clie FROM clientes WHERE id_user = :id_user';
+    Qr.ParamByName('id_user').AsInteger := FIdUsuario;
+    Qr.Open;
+
+    if Qr.IsEmpty then
+    begin
+      ShowMessage('Cliente não encontrado!');
+      Exit;
+    end;
+
+    IdCliente := Qr.FieldByName('id_clie').AsInteger;
+  finally
+    Qr.Free;
+  end;
+
+  FormSelecao := TForm.Create(nil);
+  EventHandler := TCardEventHandler.Create(FormSelecao);
+  try
+    FormSelecao.BorderStyle := bsDialog;
+    FormSelecao.Position := poScreenCenter;
+    FormSelecao.Width := 600;
+    FormSelecao.Height := 520;
+    FormSelecao.Caption := 'Adicionar Forma de Pagamento';
+    FormSelecao.Color := $00F5F5F5;
+    FormSelecao.Font.Name := 'Segoe UI';
+
+    // Painel de fundo
+    pFundo := TPanel.Create(FormSelecao);
+    pFundo.Parent := FormSelecao;
+    pFundo.Align := alClient;
+    pFundo.BevelOuter := bvNone;
+    pFundo.Color := $00F5F5F5;
+    pFundo.ParentBackground := False;
+
+    // Título
+    lblTitulo := TLabel.Create(pFundo);
+    lblTitulo.Parent := pFundo;
+    lblTitulo.Caption := '💰 Adicionar Forma de Pagamento';
+    lblTitulo.Font.Name := 'Segoe UI';
+    lblTitulo.Font.Size := 16;
+    lblTitulo.Font.Style := [fsBold];
+    lblTitulo.Font.Color := $00517CFF;
+    lblTitulo.Left := 30;
+    lblTitulo.Top := 25;
+    lblTitulo.Transparent := True;
+
+    // Subtítulo
+    lblSubtitulo := TLabel.Create(pFundo);
+    lblSubtitulo.Parent := pFundo;
+    lblSubtitulo.Caption := 'Escolha o tipo de pagamento que deseja cadastrar:';
+    lblSubtitulo.Font.Name := 'Segoe UI';
+    lblSubtitulo.Font.Size := 10;
+    lblSubtitulo.Font.Color := $00666666;
+    lblSubtitulo.Left := 30;
+    lblSubtitulo.Top := 60;
+    lblSubtitulo.Transparent := True;
+
+    // Cards de opções
+    pCartao := CriarCardOpcao(pFundo, 100,
+      '💳',
+      'Cartão de Crédito ou Débito',
+      'Visa, Mastercard, Elo, Amex, Hipercard e outros',
+      1
+    );
+
+    pPix := CriarCardOpcao(pFundo, 195,
+      '🔄',
+      'Pix',
+      'CPF, CNPJ, Email, Telefone ou Chave Aleatória',
+      2
+    );
+
+    pTransferencia := CriarCardOpcao(pFundo, 290,
+      '🏦',
+      'Transferência Bancária',
+      'TED ou DOC - Conta Corrente ou Poupança',
+      3
+    );
+
+    // Painel de botões
+    pBotoes := TPanel.Create(pFundo);
+    pBotoes.Parent := pFundo;
+    pBotoes.Left := 0;
+    pBotoes.Top := 400;
+    pBotoes.Width := 600;
+    pBotoes.Height := 80;
+    pBotoes.BevelOuter := bvNone;
+    pBotoes.Color := $00EEEEEE;
+    pBotoes.Align := alBottom;
+
+    // Botão Cancelar
+    btnCancelar := TButton.Create(pBotoes);
+    btnCancelar.Parent := pBotoes;
+    btnCancelar.Caption := 'Cancelar';
+    btnCancelar.Left := 430;
+    btnCancelar.Top := 20;
+    btnCancelar.Width := 140;
+    btnCancelar.Height := 40;
+    btnCancelar.Font.Name := 'Segoe UI';
+    btnCancelar.Font.Size := 10;
+    btnCancelar.Font.Style := [fsBold];
+    btnCancelar.Cursor := crHandPoint;
+    btnCancelar.ModalResult := mrCancel;
+
+    // Exibir e processar
+    if FormSelecao.ShowModal = mrOk then
+    begin
+      case EventHandler.TipoSelecionado of
+        1: AbrirCadastroCartao(IdCliente);        // ⭐ PASSAR IdCliente
+        2: AbrirCadastroPix(IdCliente);           // ⭐ PASSAR IdCliente
+        3: AbrirCadastroTransferencia(IdCliente); // ⭐ PASSAR IdCliente
+      else
+        ShowMessage('Nenhuma opção foi selecionada.');
+      end;
+    end;
+
+  finally
+    EventHandler.Free;
+    FormSelecao.Free;
+  end;
 end;
 
 procedure TFormHomeC.pButtonAlterarSenhaVClick(Sender: TObject);
@@ -1772,10 +2037,17 @@ begin
     Exit;
   end;
 
-  // ⭐ PROTEÇÃO 3: Verificar se scbxPagamentosE existe
+  // ⭐ PROTEÇÃO 3: Verificar se scbxPagamentosE existe (para edição)
   if not Assigned(scbxPagamentosE) then
   begin
     ShowMessage('Erro: ScrollBox de pagamentos não existe!');
+    Exit;
+  end;
+
+  // ⭐ PROTEÇÃO 4: Verificar se scbxPagamentos existe (para visualização)
+  if not Assigned(scbxPagamentos) then
+  begin
+    ShowMessage('Erro: ScrollBox de visualização de pagamentos não existe!');
     Exit;
   end;
 
@@ -1798,11 +2070,17 @@ begin
     Qr.Free;
   end;
 
-  // Limpar cards existentes
+  // ⭐ Limpar cards existentes em AMBOS os ScrollBoxes
   for Y := scbxPagamentosE.ControlCount - 1 downto 0 do
   begin
     if scbxPagamentosE.Controls[Y] is TPagamentoCardPanel then
       scbxPagamentosE.Controls[Y].Free;
+  end;
+
+  for Y := scbxPagamentos.ControlCount - 1 downto 0 do
+  begin
+    if scbxPagamentos.Controls[Y] is TPagamentoCardPanel then
+      scbxPagamentos.Controls[Y].Free;
   end;
 
   try
@@ -1829,9 +2107,8 @@ begin
       begin
         if Assigned(Pagamento) then
         begin
-          // ⭐ USAR O NOVO CONSTRUTOR
+          // ⭐ CARD PARA EDIÇÃO (scbxPagamentosE)
           Card := TPagamentoCardPanel.CreateCardFromModel(Self, Pagamento);
-
           Card.Parent := scbxPagamentosE;
           Card.Top := Y;
           Card.Left := 10;
@@ -1839,7 +2116,18 @@ begin
           Card.Anchors := [akLeft, akTop, akRight];
           Card.OnEditar := OnPagamentoCardEditar;
           Card.OnExcluir := OnPagamentoCardExcluir;
-          Card.OnDefinirPrincipal := OnPagamentoCardDefinirPrincipal; // ⭐ NOVO
+          Card.OnDefinirPrincipal := OnPagamentoCardDefinirPrincipal;
+
+          // ⭐ CARD PARA VISUALIZAÇÃO (scbxPagamentos)
+          Card := TPagamentoCardPanel.CreateCardFromModel(Self, Pagamento);
+          Card.Parent := scbxPagamentos;
+          Card.Top := Y;
+          Card.Left := 10;
+          Card.Width := scbxPagamentos.ClientWidth - 20;
+          Card.Anchors := [akLeft, akTop, akRight];
+          Card.OnEditar := OnPagamentoCardEditar;
+          Card.OnExcluir := OnPagamentoCardExcluir;
+          Card.OnDefinirPrincipal := OnPagamentoCardDefinirPrincipal;
 
           Inc(Y, CardHeight + Spacing);
         end;
@@ -2071,6 +2359,728 @@ begin
   end;
 end;
 
+procedure TFormHomeC.AbrirCadastroCartao(IdCliente: Integer);
+var
+  FormCadastro: TForm;
+  pFundo, pHeader, pDados, pBotoes: TPanel;
+  lblTitulo, lblNumero, lblNome, lblBandeira, lblTipo, lblValidade, lblApelido: TLabel;
+  eNumeroCartao, eNomeTitular, eValidade, eApelido: TEdit;
+  cbBandeira, cbTipoCartao: TComboBox;
+  chkPrincipal: TCheckBox;
+  btnSalvar, btnCancelar: TButton;
+  Cartao: TPagamentoCartao;
+  MsgErro: String;
+begin
+  FormCadastro := TForm.Create(nil);
+  try
+    FormCadastro.BorderStyle := bsDialog;
+    FormCadastro.Position := poScreenCenter;
+    FormCadastro.Width := 500;
+    FormCadastro.Height := 550;
+    FormCadastro.Caption := 'Cadastrar Cartão';
+    FormCadastro.Color := $00F5F5F5;
+    FormCadastro.Font.Name := 'Segoe UI';
+
+    // ========== PAINEL DE FUNDO ==========
+    pFundo := TPanel.Create(FormCadastro);
+    pFundo.Parent := FormCadastro;
+    pFundo.Align := alClient;
+    pFundo.BevelOuter := bvNone;
+    pFundo.Color := $00F5F5F5;
+    pFundo.ParentBackground := False;
+
+    // ========== HEADER ==========
+    pHeader := TPanel.Create(pFundo);
+    pHeader.Parent := pFundo;
+    pHeader.Align := alTop;
+    pHeader.Height := 60;
+    pHeader.BevelOuter := bvNone;
+    pHeader.Color := $00517CFF;
+    pHeader.ParentBackground := False;
+
+    lblTitulo := TLabel.Create(pHeader);
+    lblTitulo.Parent := pHeader;
+    lblTitulo.Caption := '💳 Cadastrar Cartão';
+    lblTitulo.Font.Size := 14;
+    lblTitulo.Font.Style := [fsBold];
+    lblTitulo.Font.Color := clWhite;
+    lblTitulo.Left := 20;
+    lblTitulo.Top := 20;
+    lblTitulo.Transparent := True;
+
+    // ========== PAINEL DE DADOS ==========
+    pDados := TPanel.Create(pFundo);
+    pDados.Parent := pFundo;
+    pDados.Align := alClient;
+    pDados.BevelOuter := bvNone;
+    pDados.Color := $00F5F5F5;
+    pDados.ParentBackground := False;
+
+    // Apelido
+    lblApelido := TLabel.Create(pDados);
+    lblApelido.Parent := pDados;
+    lblApelido.Caption := 'Apelido (Ex: Meu Cartão, Cartão Principal):';
+    lblApelido.Left := 30;
+    lblApelido.Top := 20;
+    lblApelido.Font.Size := 9;
+
+    eApelido := TEdit.Create(pDados);
+    eApelido.Parent := pDados;
+    eApelido.Left := 30;
+    eApelido.Top := 42;
+    eApelido.Width := 430;
+    eApelido.Height := 25;
+    eApelido.Font.Size := 10;
+    eApelido.TextHint := 'Digite um apelido';
+
+    // Número do Cartão
+    lblNumero := TLabel.Create(pDados);
+    lblNumero.Parent := pDados;
+    lblNumero.Caption := 'Número do Cartão (últimos 4 dígitos):';
+    lblNumero.Left := 30;
+    lblNumero.Top := 80;
+    lblNumero.Font.Size := 9;
+
+    eNumeroCartao := TEdit.Create(pDados);
+    eNumeroCartao.Parent := pDados;
+    eNumeroCartao.Left := 30;
+    eNumeroCartao.Top := 102;
+    eNumeroCartao.Width := 200;
+    eNumeroCartao.Height := 25;
+    eNumeroCartao.Font.Size := 10;
+    eNumeroCartao.MaxLength := 4;
+    eNumeroCartao.NumbersOnly := True;
+    eNumeroCartao.TextHint := '0000';
+
+    // Nome do Titular
+    lblNome := TLabel.Create(pDados);
+    lblNome.Parent := pDados;
+    lblNome.Caption := 'Nome do Titular (como está no cartão):';
+    lblNome.Left := 30;
+    lblNome.Top := 140;
+    lblNome.Font.Size := 9;
+
+    eNomeTitular := TEdit.Create(pDados);
+    eNomeTitular.Parent := pDados;
+    eNomeTitular.Left := 30;
+    eNomeTitular.Top := 162;
+    eNomeTitular.Width := 430;
+    eNomeTitular.Height := 25;
+    eNomeTitular.Font.Size := 10;
+    eNomeTitular.CharCase := ecUpperCase;
+    eNomeTitular.TextHint := 'NOME COMPLETO';
+
+    // Bandeira
+    lblBandeira := TLabel.Create(pDados);
+    lblBandeira.Parent := pDados;
+    lblBandeira.Caption := 'Bandeira:';
+    lblBandeira.Left := 30;
+    lblBandeira.Top := 200;
+    lblBandeira.Font.Size := 9;
+
+    cbBandeira := TComboBox.Create(pDados);
+    cbBandeira.Parent := pDados;
+    cbBandeira.Left := 30;
+    cbBandeira.Top := 222;
+    cbBandeira.Width := 200;
+    cbBandeira.Height := 25;
+    cbBandeira.Style := csDropDownList;
+    cbBandeira.Items.Add('Visa');
+    cbBandeira.Items.Add('Mastercard');
+    cbBandeira.Items.Add('Elo');
+    cbBandeira.Items.Add('American Express');
+    cbBandeira.Items.Add('Hipercard');
+    cbBandeira.Items.Add('Diners Club');
+    cbBandeira.Items.Add('Outra');
+
+    // Tipo de Cartão
+    lblTipo := TLabel.Create(pDados);
+    lblTipo.Parent := pDados;
+    lblTipo.Caption := 'Tipo:';
+    lblTipo.Left := 260;
+    lblTipo.Top := 200;
+    lblTipo.Font.Size := 9;
+
+    cbTipoCartao := TComboBox.Create(pDados);
+    cbTipoCartao.Parent := pDados;
+    cbTipoCartao.Left := 260;
+    cbTipoCartao.Top := 222;
+    cbTipoCartao.Width := 200;
+    cbTipoCartao.Height := 25;
+    cbTipoCartao.Style := csDropDownList;
+    cbTipoCartao.Items.Add('Crédito');
+    cbTipoCartao.Items.Add('Débito');
+    cbTipoCartao.ItemIndex := 0;
+
+    // Validade
+    lblValidade := TLabel.Create(pDados);
+    lblValidade.Parent := pDados;
+    lblValidade.Caption := 'Validade (MM/AAAA):';
+    lblValidade.Left := 30;
+    lblValidade.Top := 260;
+    lblValidade.Font.Size := 9;
+
+    eValidade := TEdit.Create(pDados);
+    eValidade.Parent := pDados;
+    eValidade.Left := 30;
+    eValidade.Top := 282;
+    eValidade.Width := 120;
+    eValidade.Height := 25;
+    eValidade.Font.Size := 10;
+    eValidade.MaxLength := 7;
+    eValidade.TextHint := '12/2030';
+
+    // CheckBox Principal
+    chkPrincipal := TCheckBox.Create(pDados);
+    chkPrincipal.Parent := pDados;
+    chkPrincipal.Caption := 'Definir como forma de pagamento principal';
+    chkPrincipal.Left := 30;
+    chkPrincipal.Top := 330;
+    chkPrincipal.Width := 350;
+    chkPrincipal.Font.Size := 9;
+    chkPrincipal.Font.Style := [fsBold];
+
+    // ========== PAINEL DE BOTÕES ==========
+    pBotoes := TPanel.Create(pFundo);
+    pBotoes.Parent := pFundo;
+    pBotoes.Align := alBottom;
+    pBotoes.Height := 70;
+    pBotoes.BevelOuter := bvNone;
+    pBotoes.Color := $00EEEEEE;
+    pBotoes.ParentBackground := False;
+
+    // Botão Cancelar
+    btnCancelar := TButton.Create(pBotoes);
+    btnCancelar.Parent := pBotoes;
+    btnCancelar.Caption := 'Cancelar';
+    btnCancelar.Left := 250;
+    btnCancelar.Top := 15;
+    btnCancelar.Width := 110;
+    btnCancelar.Height := 40;
+    btnCancelar.Font.Size := 10;
+    btnCancelar.Font.Style := [fsBold];
+    btnCancelar.Cursor := crHandPoint;
+    btnCancelar.ModalResult := mrCancel;
+
+    // Botão Salvar
+    btnSalvar := TButton.Create(pBotoes);
+    btnSalvar.Parent := pBotoes;
+    btnSalvar.Caption := 'Salvar';
+    btnSalvar.Left := 370;
+    btnSalvar.Top := 15;
+    btnSalvar.Width := 110;
+    btnSalvar.Height := 40;
+    btnSalvar.Font.Size := 10;
+    btnSalvar.Font.Style := [fsBold];
+    btnSalvar.Cursor := crHandPoint;
+    btnSalvar.ModalResult := mrOk;
+
+    // ========== EXIBIR E PROCESSAR ==========
+    if FormCadastro.ShowModal = mrOk then
+    begin
+      // Criar objeto Cartao
+      Cartao := TPagamentoCartao.Create;
+      try
+        Cartao.IdCliente := IdCliente;
+        Cartao.Apelido := Trim(eApelido.Text);
+        Cartao.NumeroCartao := Trim(eNumeroCartao.Text);
+        Cartao.NomeTitular := Trim(eNomeTitular.Text);
+        Cartao.Bandeira := cbBandeira.Text;
+        Cartao.TipoCartao := cbTipoCartao.Text;
+        Cartao.Validade := Trim(eValidade.Text);
+        Cartao.Principal := chkPrincipal.Checked;
+
+        // Validar dados
+        if not Cartao.ValidarDados(MsgErro) then
+        begin
+          ShowMessage('❌ ' + MsgErro);
+          Exit;
+        end;
+
+        // Salvar no banco usando o Controller
+        if FPagamentoController.CadastrarCartao(Cartao) then
+        begin
+          ShowMessage('✅ Cartão cadastrado com sucesso!');
+          CarregarPagamentos; // Recarregar lista
+        end
+        else
+          ShowMessage('❌ Erro ao cadastrar cartão!');
+
+      finally
+        Cartao.Free;
+      end;
+    end;
+
+  finally
+    FormCadastro.Free;
+  end;
+end;
+
+procedure TFormHomeC.AbrirCadastroPix(IdCliente: Integer);
+var
+  FormCadastro: TForm;
+  pFundo, pHeader, pDados, pBotoes: TPanel;
+  lblTitulo, lblChave, lblTipo, lblApelido: TLabel;
+  eChavePix, eApelido: TEdit;
+  cbTipoChave: TComboBox;
+  chkPrincipal: TCheckBox;
+  btnSalvar, btnCancelar: TButton;
+  Pix: TPagamentoPix;
+  MsgErro: String;
+begin
+  FormCadastro := TForm.Create(nil);
+  try
+    FormCadastro.BorderStyle := bsDialog;
+    FormCadastro.Position := poScreenCenter;
+    FormCadastro.Width := 500;
+    FormCadastro.Height := 420;
+    FormCadastro.Caption := 'Cadastrar Pix';
+    FormCadastro.Color := $00F5F5F5;
+    FormCadastro.Font.Name := 'Segoe UI';
+
+    // ========== PAINEL DE FUNDO ==========
+    pFundo := TPanel.Create(FormCadastro);
+    pFundo.Parent := FormCadastro;
+    pFundo.Align := alClient;
+    pFundo.BevelOuter := bvNone;
+    pFundo.Color := $00F5F5F5;
+    pFundo.ParentBackground := False;
+
+    // ========== HEADER ==========
+    pHeader := TPanel.Create(pFundo);
+    pHeader.Parent := pFundo;
+    pHeader.Align := alTop;
+    pHeader.Height := 60;
+    pHeader.BevelOuter := bvNone;
+    pHeader.Color := $00517CFF;
+    pHeader.ParentBackground := False;
+
+    lblTitulo := TLabel.Create(pHeader);
+    lblTitulo.Parent := pHeader;
+    lblTitulo.Caption := '🔄 Cadastrar Pix';
+    lblTitulo.Font.Size := 14;
+    lblTitulo.Font.Style := [fsBold];
+    lblTitulo.Font.Color := clWhite;
+    lblTitulo.Left := 20;
+    lblTitulo.Top := 20;
+    lblTitulo.Transparent := True;
+
+    // ========== PAINEL DE DADOS ==========
+    pDados := TPanel.Create(pFundo);
+    pDados.Parent := pFundo;
+    pDados.Align := alClient;
+    pDados.BevelOuter := bvNone;
+    pDados.Color := $00F5F5F5;
+    pDados.ParentBackground := False;
+
+    // Apelido
+    lblApelido := TLabel.Create(pDados);
+    lblApelido.Parent := pDados;
+    lblApelido.Caption := 'Apelido (Ex: Meu Pix, Pix Principal):';
+    lblApelido.Left := 30;
+    lblApelido.Top := 20;
+    lblApelido.Font.Size := 9;
+
+    eApelido := TEdit.Create(pDados);
+    eApelido.Parent := pDados;
+    eApelido.Left := 30;
+    eApelido.Top := 42;
+    eApelido.Width := 430;
+    eApelido.Height := 25;
+    eApelido.Font.Size := 10;
+    eApelido.TextHint := 'Digite um apelido';
+
+    // Tipo de Chave
+    lblTipo := TLabel.Create(pDados);
+    lblTipo.Parent := pDados;
+    lblTipo.Caption := 'Tipo de Chave:';
+    lblTipo.Left := 30;
+    lblTipo.Top := 80;
+    lblTipo.Font.Size := 9;
+
+    cbTipoChave := TComboBox.Create(pDados);
+    cbTipoChave.Parent := pDados;
+    cbTipoChave.Left := 30;
+    cbTipoChave.Top := 102;
+    cbTipoChave.Width := 430;
+    cbTipoChave.Height := 25;
+    cbTipoChave.Style := csDropDownList;
+    cbTipoChave.Items.Add('CPF');
+    cbTipoChave.Items.Add('CNPJ');
+    cbTipoChave.Items.Add('Email');
+    cbTipoChave.Items.Add('Telefone');
+    cbTipoChave.Items.Add('Aleatória');
+
+    // Chave Pix
+    lblChave := TLabel.Create(pDados);
+    lblChave.Parent := pDados;
+    lblChave.Caption := 'Chave Pix:';
+    lblChave.Left := 30;
+    lblChave.Top := 140;
+    lblChave.Font.Size := 9;
+
+    eChavePix := TEdit.Create(pDados);
+    eChavePix.Parent := pDados;
+    eChavePix.Left := 30;
+    eChavePix.Top := 162;
+    eChavePix.Width := 430;
+    eChavePix.Height := 25;
+    eChavePix.Font.Size := 10;
+    eChavePix.TextHint := 'Digite sua chave Pix';
+
+    // CheckBox Principal
+    chkPrincipal := TCheckBox.Create(pDados);
+    chkPrincipal.Parent := pDados;
+    chkPrincipal.Caption := 'Definir como forma de pagamento principal';
+    chkPrincipal.Left := 30;
+    chkPrincipal.Top := 210;
+    chkPrincipal.Width := 350;
+    chkPrincipal.Font.Size := 9;
+    chkPrincipal.Font.Style := [fsBold];
+
+    // ========== PAINEL DE BOTÕES ==========
+    pBotoes := TPanel.Create(pFundo);
+    pBotoes.Parent := pFundo;
+    pBotoes.Align := alBottom;
+    pBotoes.Height := 70;
+    pBotoes.BevelOuter := bvNone;
+    pBotoes.Color := $00EEEEEE;
+    pBotoes.ParentBackground := False;
+
+    // Botão Cancelar
+    btnCancelar := TButton.Create(pBotoes);
+    btnCancelar.Parent := pBotoes;
+    btnCancelar.Caption := 'Cancelar';
+    btnCancelar.Left := 250;
+    btnCancelar.Top := 15;
+    btnCancelar.Width := 110;
+    btnCancelar.Height := 40;
+    btnCancelar.Font.Size := 10;
+    btnCancelar.Font.Style := [fsBold];
+    btnCancelar.Cursor := crHandPoint;
+    btnCancelar.ModalResult := mrCancel;
+
+    // Botão Salvar
+    btnSalvar := TButton.Create(pBotoes);
+    btnSalvar.Parent := pBotoes;
+    btnSalvar.Caption := 'Salvar';
+    btnSalvar.Left := 370;
+    btnSalvar.Top := 15;
+    btnSalvar.Width := 110;
+    btnSalvar.Height := 40;
+    btnSalvar.Font.Size := 10;
+    btnSalvar.Font.Style := [fsBold];
+    btnSalvar.Cursor := crHandPoint;
+    btnSalvar.ModalResult := mrOk;
+
+    // ========== EXIBIR E PROCESSAR ==========
+    if FormCadastro.ShowModal = mrOk then
+    begin
+      // Criar objeto Pix
+      Pix := TPagamentoPix.Create;
+      try
+        Pix.IdCliente := IdCliente;
+        Pix.Apelido := Trim(eApelido.Text);
+        Pix.ChavePix := Trim(eChavePix.Text);
+        Pix.TipoChavePix := cbTipoChave.Text;
+        Pix.Principal := chkPrincipal.Checked;
+
+        // Validar dados
+        if not Pix.ValidarDados(MsgErro) then
+        begin
+          ShowMessage('❌ ' + MsgErro);
+          Exit;
+        end;
+
+        // Salvar no banco usando o Controller
+        if FPagamentoController.CadastrarPix(Pix) then
+        begin
+          ShowMessage('✅ Chave Pix cadastrada com sucesso!');
+          CarregarPagamentos; // Recarregar lista
+        end
+        else
+          ShowMessage('❌ Erro ao cadastrar Pix!');
+
+      finally
+        Pix.Free;
+      end;
+    end;
+
+  finally
+    FormCadastro.Free;
+  end;
+end;
+
+procedure TFormHomeC.AbrirCadastroTransferencia(IdCliente: Integer);
+var
+  FormCadastro: TForm;
+  pFundo, pHeader, pDados, pBotoes: TPanel;
+  lblTitulo, lblBanco, lblCodigo, lblAgencia, lblConta, lblDigito, lblTipo, lblApelido: TLabel;
+  eBanco, eCodigoBanco, eAgencia, eConta, eDigitoConta, eApelido: TEdit;
+  cbTipoConta: TComboBox;
+  chkPrincipal: TCheckBox;
+  btnSalvar, btnCancelar: TButton;
+  Transferencia: TPagamentoTransferencia;
+  MsgErro: String;
+begin
+  FormCadastro := TForm.Create(nil);
+  try
+    FormCadastro.BorderStyle := bsDialog;
+    FormCadastro.Position := poScreenCenter;
+    FormCadastro.Width := 500;
+    FormCadastro.Height := 600;
+    FormCadastro.Caption := 'Cadastrar Transferência Bancária';
+    FormCadastro.Color := $00F5F5F5;
+    FormCadastro.Font.Name := 'Segoe UI';
+
+    // ========== PAINEL DE FUNDO ==========
+    pFundo := TPanel.Create(FormCadastro);
+    pFundo.Parent := FormCadastro;
+    pFundo.Align := alClient;
+    pFundo.BevelOuter := bvNone;
+    pFundo.Color := $00F5F5F5;
+    pFundo.ParentBackground := False;
+
+    // ========== HEADER ==========
+    pHeader := TPanel.Create(pFundo);
+    pHeader.Parent := pFundo;
+    pHeader.Align := alTop;
+    pHeader.Height := 60;
+    pHeader.BevelOuter := bvNone;
+    pHeader.Color := $00517CFF;
+    pHeader.ParentBackground := False;
+
+    lblTitulo := TLabel.Create(pHeader);
+    lblTitulo.Parent := pHeader;
+    lblTitulo.Caption := '🏦 Cadastrar Transferência Bancária';
+    lblTitulo.Font.Size := 14;
+    lblTitulo.Font.Style := [fsBold];
+    lblTitulo.Font.Color := clWhite;
+    lblTitulo.Left := 20;
+    lblTitulo.Top := 20;
+    lblTitulo.Transparent := True;
+
+    // ========== PAINEL DE DADOS ==========
+    pDados := TPanel.Create(pFundo);
+    pDados.Parent := pFundo;
+    pDados.Align := alClient;
+    pDados.BevelOuter := bvNone;
+    pDados.Color := $00F5F5F5;
+    pDados.ParentBackground := False;
+
+    // Apelido
+    lblApelido := TLabel.Create(pDados);
+    lblApelido.Parent := pDados;
+    lblApelido.Caption := 'Apelido (Ex: Conta Salário, Conta Investimento):';
+    lblApelido.Left := 30;
+    lblApelido.Top := 20;
+    lblApelido.Font.Size := 9;
+
+    eApelido := TEdit.Create(pDados);
+    eApelido.Parent := pDados;
+    eApelido.Left := 30;
+    eApelido.Top := 42;
+    eApelido.Width := 430;
+    eApelido.Height := 25;
+    eApelido.Font.Size := 10;
+    eApelido.TextHint := 'Digite um apelido';
+
+    // Banco
+    lblBanco := TLabel.Create(pDados);
+    lblBanco.Parent := pDados;
+    lblBanco.Caption := 'Nome do Banco:';
+    lblBanco.Left := 30;
+    lblBanco.Top := 80;
+    lblBanco.Font.Size := 9;
+
+    eBanco := TEdit.Create(pDados);
+    eBanco.Parent := pDados;
+    eBanco.Left := 30;
+    eBanco.Top := 102;
+    eBanco.Width := 280;
+    eBanco.Height := 25;
+    eBanco.Font.Size := 10;
+    eBanco.TextHint := 'Ex: Banco do Brasil';
+
+    // Código do Banco
+    lblCodigo := TLabel.Create(pDados);
+    lblCodigo.Parent := pDados;
+    lblCodigo.Caption := 'Código:';
+    lblCodigo.Left := 330;
+    lblCodigo.Top := 80;
+    lblCodigo.Font.Size := 9;
+
+    eCodigoBanco := TEdit.Create(pDados);
+    eCodigoBanco.Parent := pDados;
+    eCodigoBanco.Left := 330;
+    eCodigoBanco.Top := 102;
+    eCodigoBanco.Width := 130;
+    eCodigoBanco.Height := 25;
+    eCodigoBanco.Font.Size := 10;
+    eCodigoBanco.MaxLength := 3;
+    eCodigoBanco.NumbersOnly := True;
+    eCodigoBanco.TextHint := '001';
+
+    // Agência
+    lblAgencia := TLabel.Create(pDados);
+    lblAgencia.Parent := pDados;
+    lblAgencia.Caption := 'Agência:';
+    lblAgencia.Left := 30;
+    lblAgencia.Top := 140;
+    lblAgencia.Font.Size := 9;
+
+    eAgencia := TEdit.Create(pDados);
+    eAgencia.Parent := pDados;
+    eAgencia.Left := 30;
+    eAgencia.Top := 162;
+    eAgencia.Width := 150;
+    eAgencia.Height := 25;
+    eAgencia.Font.Size := 10;
+    eAgencia.NumbersOnly := True;
+    eAgencia.TextHint := '0000';
+
+    // Conta
+    lblConta := TLabel.Create(pDados);
+    lblConta.Parent := pDados;
+    lblConta.Caption := 'Conta:';
+    lblConta.Left := 200;
+    lblConta.Top := 140;
+    lblConta.Font.Size := 9;
+
+    eConta := TEdit.Create(pDados);
+    eConta.Parent := pDados;
+    eConta.Left := 200;
+    eConta.Top := 162;
+    eConta.Width := 180;
+    eConta.Height := 25;
+    eConta.Font.Size := 10;
+    eConta.NumbersOnly := True;
+    eConta.TextHint := '00000000';
+
+    // Dígito
+    lblDigito := TLabel.Create(pDados);
+    lblDigito.Parent := pDados;
+    lblDigito.Caption := 'Dígito:';
+    lblDigito.Left := 400;
+    lblDigito.Top := 140;
+    lblDigito.Font.Size := 9;
+
+    eDigitoConta := TEdit.Create(pDados);
+    eDigitoConta.Parent := pDados;
+    eDigitoConta.Left := 400;
+    eDigitoConta.Top := 162;
+    eDigitoConta.Width := 60;
+    eDigitoConta.Height := 25;
+    eDigitoConta.Font.Size := 10;
+    eDigitoConta.MaxLength := 1;
+    eDigitoConta.TextHint := '0';
+
+    // Tipo de Conta
+    lblTipo := TLabel.Create(pDados);
+    lblTipo.Parent := pDados;
+    lblTipo.Caption := 'Tipo de Conta:';
+    lblTipo.Left := 30;
+    lblTipo.Top := 200;
+    lblTipo.Font.Size := 9;
+
+    cbTipoConta := TComboBox.Create(pDados);
+    cbTipoConta.Parent := pDados;
+    cbTipoConta.Left := 30;
+    cbTipoConta.Top := 222;
+    cbTipoConta.Width := 200;
+    cbTipoConta.Height := 25;
+    cbTipoConta.Style := csDropDownList;
+    cbTipoConta.Items.Add('Corrente');
+    cbTipoConta.Items.Add('Poupança');
+    cbTipoConta.ItemIndex := 0;
+
+    // CheckBox Principal
+    chkPrincipal := TCheckBox.Create(pDados);
+    chkPrincipal.Parent := pDados;
+    chkPrincipal.Caption := 'Definir como forma de pagamento principal';
+    chkPrincipal.Left := 30;
+    chkPrincipal.Top := 270;
+    chkPrincipal.Width := 350;
+    chkPrincipal.Font.Size := 9;
+    chkPrincipal.Font.Style := [fsBold];
+
+    // ========== PAINEL DE BOTÕES ==========
+    pBotoes := TPanel.Create(pFundo);
+    pBotoes.Parent := pFundo;
+    pBotoes.Align := alBottom;
+    pBotoes.Height := 70;
+    pBotoes.BevelOuter := bvNone;
+    pBotoes.Color := $00EEEEEE;
+    pBotoes.ParentBackground := False;
+
+    // Botão Cancelar
+    btnCancelar := TButton.Create(pBotoes);
+    btnCancelar.Parent := pBotoes;
+    btnCancelar.Caption := 'Cancelar';
+    btnCancelar.Left := 250;
+    btnCancelar.Top := 15;
+    btnCancelar.Width := 110;
+    btnCancelar.Height := 40;
+    btnCancelar.Font.Size := 10;
+    btnCancelar.Font.Style := [fsBold];
+    btnCancelar.Cursor := crHandPoint;
+    btnCancelar.ModalResult := mrCancel;
+
+    // Botão Salvar
+    btnSalvar := TButton.Create(pBotoes);
+    btnSalvar.Parent := pBotoes;
+    btnSalvar.Caption := 'Salvar';
+    btnSalvar.Left := 370;
+    btnSalvar.Top := 15;
+    btnSalvar.Width := 110;
+    btnSalvar.Height := 40;
+    btnSalvar.Font.Size := 10;
+    btnSalvar.Font.Style := [fsBold];
+    btnSalvar.Cursor := crHandPoint;
+    btnSalvar.ModalResult := mrOk;
+
+    // ========== EXIBIR E PROCESSAR ==========
+    if FormCadastro.ShowModal = mrOk then
+    begin
+      // Criar objeto Transferencia
+      Transferencia := TPagamentoTransferencia.Create;
+      try
+        Transferencia.IdCliente := IdCliente;
+        Transferencia.Apelido := Trim(eApelido.Text);
+        Transferencia.Banco := Trim(eBanco.Text);
+        Transferencia.CodigoBanco := Trim(eCodigoBanco.Text);
+        Transferencia.Agencia := Trim(eAgencia.Text);
+        Transferencia.Conta := Trim(eConta.Text);
+        Transferencia.DigitoC := Trim(eDigitoConta.Text);
+        Transferencia.TipoConta := cbTipoConta.Text;
+        Transferencia.Principal := chkPrincipal.Checked;
+
+        // Validar dados
+        if not Transferencia.ValidarDados(MsgErro) then
+        begin
+          ShowMessage('❌ ' + MsgErro);
+          Exit;
+        end;
+
+        // Salvar no banco usando o Controller
+        if FPagamentoController.CadastrarTransferencia(Transferencia) then
+        begin
+          ShowMessage('✅ Transferência cadastrada com sucesso!');
+          CarregarPagamentos; // Recarregar lista
+        end
+        else
+          ShowMessage('❌ Erro ao cadastrar transferência!');
+
+      finally
+        Transferencia.Free;
+      end;
+    end;
+
+  finally
+    FormCadastro.Free;
+  end;
+end;
+
 procedure TFormHomeC.AbrirCardapio(IdComercio: Integer; const NomeComercio: String);
 var
   Qr: TFDQuery;
@@ -2287,6 +3297,712 @@ begin
   PopularRestaurantes(FCategoriaSelecionada);
 end;
 
+procedure TFormHomeC.EditarCartao(Cartao: TPagamentoCartao);
+var
+  FormEdicao: TForm;
+  pFundo, pHeader, pDados, pBotoes: TPanel;
+  lblTitulo, lblNumero, lblNome, lblBandeira, lblTipo, lblValidade, lblApelido: TLabel;
+  eNumeroCartao, eNomeTitular, eValidade, eApelido: TEdit;
+  cbBandeira, cbTipoCartao: TComboBox;
+  chkPrincipal: TCheckBox;
+  btnSalvar, btnCancelar: TButton;
+  MsgErro: String;
+begin
+  FormEdicao := TForm.Create(nil);
+  try
+    FormEdicao.BorderStyle := bsDialog;
+    FormEdicao.Position := poScreenCenter;
+    FormEdicao.Width := 500;
+    FormEdicao.Height := 550;
+    FormEdicao.Caption := 'Editar Cartão';
+    FormEdicao.Color := $00F5F5F5;
+    FormEdicao.Font.Name := 'Segoe UI';
+
+    // ========== PAINEL DE FUNDO ==========
+    pFundo := TPanel.Create(FormEdicao);
+    pFundo.Parent := FormEdicao;
+    pFundo.Align := alClient;
+    pFundo.BevelOuter := bvNone;
+    pFundo.Color := $00F5F5F5;
+    pFundo.ParentBackground := False;
+
+    // ========== HEADER ==========
+    pHeader := TPanel.Create(pFundo);
+    pHeader.Parent := pFundo;
+    pHeader.Align := alTop;
+    pHeader.Height := 60;
+    pHeader.BevelOuter := bvNone;
+    pHeader.Color := $00517CFF;
+    pHeader.ParentBackground := False;
+
+    lblTitulo := TLabel.Create(pHeader);
+    lblTitulo.Parent := pHeader;
+    lblTitulo.Caption := '✏️ Editar Cartão';
+    lblTitulo.Font.Size := 14;
+    lblTitulo.Font.Style := [fsBold];
+    lblTitulo.Font.Color := clWhite;
+    lblTitulo.Left := 20;
+    lblTitulo.Top := 20;
+    lblTitulo.Transparent := True;
+
+    // ========== PAINEL DE DADOS ==========
+    pDados := TPanel.Create(pFundo);
+    pDados.Parent := pFundo;
+    pDados.Align := alClient;
+    pDados.BevelOuter := bvNone;
+    pDados.Color := $00F5F5F5;
+    pDados.ParentBackground := False;
+
+    // Apelido
+    lblApelido := TLabel.Create(pDados);
+    lblApelido.Parent := pDados;
+    lblApelido.Caption := 'Apelido:';
+    lblApelido.Left := 30;
+    lblApelido.Top := 20;
+    lblApelido.Font.Size := 9;
+
+    eApelido := TEdit.Create(pDados);
+    eApelido.Parent := pDados;
+    eApelido.Left := 30;
+    eApelido.Top := 42;
+    eApelido.Width := 430;
+    eApelido.Height := 25;
+    eApelido.Font.Size := 10;
+    eApelido.Text := Cartao.Apelido; // ⭐ PREENCHER COM DADOS ATUAIS
+
+    // Número do Cartão
+    lblNumero := TLabel.Create(pDados);
+    lblNumero.Parent := pDados;
+    lblNumero.Caption := 'Número do Cartão (últimos 4 dígitos):';
+    lblNumero.Left := 30;
+    lblNumero.Top := 80;
+    lblNumero.Font.Size := 9;
+
+    eNumeroCartao := TEdit.Create(pDados);
+    eNumeroCartao.Parent := pDados;
+    eNumeroCartao.Left := 30;
+    eNumeroCartao.Top := 102;
+    eNumeroCartao.Width := 200;
+    eNumeroCartao.Height := 25;
+    eNumeroCartao.Font.Size := 10;
+    eNumeroCartao.MaxLength := 4;
+    eNumeroCartao.NumbersOnly := True;
+    eNumeroCartao.Text := Cartao.NumeroCartao; // ⭐ PREENCHER
+
+    // Nome do Titular
+    lblNome := TLabel.Create(pDados);
+    lblNome.Parent := pDados;
+    lblNome.Caption := 'Nome do Titular:';
+    lblNome.Left := 30;
+    lblNome.Top := 140;
+    lblNome.Font.Size := 9;
+
+    eNomeTitular := TEdit.Create(pDados);
+    eNomeTitular.Parent := pDados;
+    eNomeTitular.Left := 30;
+    eNomeTitular.Top := 162;
+    eNomeTitular.Width := 430;
+    eNomeTitular.Height := 25;
+    eNomeTitular.Font.Size := 10;
+    eNomeTitular.CharCase := ecUpperCase;
+    eNomeTitular.Text := Cartao.NomeTitular; // ⭐ PREENCHER
+
+    // Bandeira
+    lblBandeira := TLabel.Create(pDados);
+    lblBandeira.Parent := pDados;
+    lblBandeira.Caption := 'Bandeira:';
+    lblBandeira.Left := 30;
+    lblBandeira.Top := 200;
+    lblBandeira.Font.Size := 9;
+
+    cbBandeira := TComboBox.Create(pDados);
+    cbBandeira.Parent := pDados;
+    cbBandeira.Left := 30;
+    cbBandeira.Top := 222;
+    cbBandeira.Width := 200;
+    cbBandeira.Height := 25;
+    cbBandeira.Style := csDropDownList;
+    cbBandeira.Items.Add('Visa');
+    cbBandeira.Items.Add('Mastercard');
+    cbBandeira.Items.Add('Elo');
+    cbBandeira.Items.Add('American Express');
+    cbBandeira.Items.Add('Hipercard');
+    cbBandeira.Items.Add('Diners Club');
+    cbBandeira.Items.Add('Outra');
+    cbBandeira.Text := Cartao.Bandeira; // ⭐ PREENCHER
+
+    // Tipo de Cartão
+    lblTipo := TLabel.Create(pDados);
+    lblTipo.Parent := pDados;
+    lblTipo.Caption := 'Tipo:';
+    lblTipo.Left := 260;
+    lblTipo.Top := 200;
+    lblTipo.Font.Size := 9;
+
+    cbTipoCartao := TComboBox.Create(pDados);
+    cbTipoCartao.Parent := pDados;
+    cbTipoCartao.Left := 260;
+    cbTipoCartao.Top := 222;
+    cbTipoCartao.Width := 200;
+    cbTipoCartao.Height := 25;
+    cbTipoCartao.Style := csDropDownList;
+    cbTipoCartao.Items.Add('Crédito');
+    cbTipoCartao.Items.Add('Débito');
+    cbTipoCartao.Text := Cartao.TipoCartao; // ⭐ PREENCHER
+
+    // Validade
+    lblValidade := TLabel.Create(pDados);
+    lblValidade.Parent := pDados;
+    lblValidade.Caption := 'Validade (MM/AAAA):';
+    lblValidade.Left := 30;
+    lblValidade.Top := 260;
+    lblValidade.Font.Size := 9;
+
+    eValidade := TEdit.Create(pDados);
+    eValidade.Parent := pDados;
+    eValidade.Left := 30;
+    eValidade.Top := 282;
+    eValidade.Width := 120;
+    eValidade.Height := 25;
+    eValidade.Font.Size := 10;
+    eValidade.MaxLength := 7;
+    eValidade.Text := Cartao.Validade; // ⭐ PREENCHER
+
+    // CheckBox Principal
+    chkPrincipal := TCheckBox.Create(pDados);
+    chkPrincipal.Parent := pDados;
+    chkPrincipal.Caption := 'Definir como forma de pagamento principal';
+    chkPrincipal.Left := 30;
+    chkPrincipal.Top := 330;
+    chkPrincipal.Width := 350;
+    chkPrincipal.Font.Size := 9;
+    chkPrincipal.Font.Style := [fsBold];
+    chkPrincipal.Checked := Cartao.Principal; // ⭐ PREENCHER
+
+    // ========== PAINEL DE BOTÕES ==========
+    pBotoes := TPanel.Create(pFundo);
+    pBotoes.Parent := pFundo;
+    pBotoes.Align := alBottom;
+    pBotoes.Height := 70;
+    pBotoes.BevelOuter := bvNone;
+    pBotoes.Color := $00EEEEEE;
+    pBotoes.ParentBackground := False;
+
+    // Botão Cancelar
+    btnCancelar := TButton.Create(pBotoes);
+    btnCancelar.Parent := pBotoes;
+    btnCancelar.Caption := 'Cancelar';
+    btnCancelar.Left := 250;
+    btnCancelar.Top := 15;
+    btnCancelar.Width := 110;
+    btnCancelar.Height := 40;
+    btnCancelar.Font.Size := 10;
+    btnCancelar.Font.Style := [fsBold];
+    btnCancelar.Cursor := crHandPoint;
+    btnCancelar.ModalResult := mrCancel;
+
+    // Botão Salvar
+    btnSalvar := TButton.Create(pBotoes);
+    btnSalvar.Parent := pBotoes;
+    btnSalvar.Caption := 'Salvar Alterações';
+    btnSalvar.Left := 370;
+    btnSalvar.Top := 15;
+    btnSalvar.Width := 110;
+    btnSalvar.Height := 40;
+    btnSalvar.Font.Size := 10;
+    btnSalvar.Font.Style := [fsBold];
+    btnSalvar.Cursor := crHandPoint;
+    btnSalvar.ModalResult := mrOk;
+
+    // ========== EXIBIR E PROCESSAR ==========
+    if FormEdicao.ShowModal = mrOk then
+    begin
+      // Atualizar dados do objeto
+      Cartao.Apelido := Trim(eApelido.Text);
+      Cartao.NumeroCartao := Trim(eNumeroCartao.Text);
+      Cartao.NomeTitular := Trim(eNomeTitular.Text);
+      Cartao.Bandeira := cbBandeira.Text;
+      Cartao.TipoCartao := cbTipoCartao.Text;
+      Cartao.Validade := Trim(eValidade.Text);
+      Cartao.Principal := chkPrincipal.Checked;
+
+      // Validar dados
+      if not Cartao.ValidarDados(MsgErro) then
+      begin
+        ShowMessage('❌ ' + MsgErro);
+        Exit;
+      end;
+
+      // Atualizar no banco
+      if FPagamentoController.AtualizarCartao(Cartao) then
+      begin
+        ShowMessage('✅ Cartão atualizado com sucesso!');
+        CarregarPagamentos; // Recarregar lista
+      end
+      else
+        ShowMessage('❌ Erro ao atualizar cartão!');
+    end;
+
+  finally
+    FormEdicao.Free;
+  end;
+end;
+
+
+procedure TFormHomeC.EditarPix(Pix: TPagamentoPix);
+var
+  FormEdicao: TForm;
+  pFundo, pHeader, pDados, pBotoes: TPanel;
+  lblTitulo, lblChave, lblTipo, lblApelido: TLabel;
+  eChavePix, eApelido: TEdit;
+  cbTipoChave: TComboBox;
+  chkPrincipal: TCheckBox;
+  btnSalvar, btnCancelar: TButton;
+  MsgErro: String;
+begin
+  FormEdicao := TForm.Create(nil);
+  try
+    FormEdicao.BorderStyle := bsDialog;
+    FormEdicao.Position := poScreenCenter;
+    FormEdicao.Width := 500;
+    FormEdicao.Height := 420;
+    FormEdicao.Caption := 'Editar Pix';
+    FormEdicao.Color := $00F5F5F5;
+    FormEdicao.Font.Name := 'Segoe UI';
+
+    // ========== PAINEL DE FUNDO ==========
+    pFundo := TPanel.Create(FormEdicao);
+    pFundo.Parent := FormEdicao;
+    pFundo.Align := alClient;
+    pFundo.BevelOuter := bvNone;
+    pFundo.Color := $00F5F5F5;
+    pFundo.ParentBackground := False;
+
+    // ========== HEADER ==========
+    pHeader := TPanel.Create(pFundo);
+    pHeader.Parent := pFundo;
+    pHeader.Align := alTop;
+    pHeader.Height := 60;
+    pHeader.BevelOuter := bvNone;
+    pHeader.Color := $00517CFF;
+    pHeader.ParentBackground := False;
+
+    lblTitulo := TLabel.Create(pHeader);
+    lblTitulo.Parent := pHeader;
+    lblTitulo.Caption := '✏️ Editar Pix';
+    lblTitulo.Font.Size := 14;
+    lblTitulo.Font.Style := [fsBold];
+    lblTitulo.Font.Color := clWhite;
+    lblTitulo.Left := 20;
+    lblTitulo.Top := 20;
+    lblTitulo.Transparent := True;
+
+    // ========== PAINEL DE DADOS ==========
+    pDados := TPanel.Create(pFundo);
+    pDados.Parent := pFundo;
+    pDados.Align := alClient;
+    pDados.BevelOuter := bvNone;
+    pDados.Color := $00F5F5F5;
+    pDados.ParentBackground := False;
+
+    // Apelido
+    lblApelido := TLabel.Create(pDados);
+    lblApelido.Parent := pDados;
+    lblApelido.Caption := 'Apelido:';
+    lblApelido.Left := 30;
+    lblApelido.Top := 20;
+    lblApelido.Font.Size := 9;
+
+    eApelido := TEdit.Create(pDados);
+    eApelido.Parent := pDados;
+    eApelido.Left := 30;
+    eApelido.Top := 42;
+    eApelido.Width := 430;
+    eApelido.Height := 25;
+    eApelido.Font.Size := 10;
+    eApelido.Text := Pix.Apelido; // ⭐ PREENCHER
+
+    // Tipo de Chave
+    lblTipo := TLabel.Create(pDados);
+    lblTipo.Parent := pDados;
+    lblTipo.Caption := 'Tipo de Chave:';
+    lblTipo.Left := 30;
+    lblTipo.Top := 80;
+    lblTipo.Font.Size := 9;
+
+    cbTipoChave := TComboBox.Create(pDados);
+    cbTipoChave.Parent := pDados;
+    cbTipoChave.Left := 30;
+    cbTipoChave.Top := 102;
+    cbTipoChave.Width := 430;
+    cbTipoChave.Height := 25;
+    cbTipoChave.Style := csDropDownList;
+    cbTipoChave.Items.Add('CPF');
+    cbTipoChave.Items.Add('CNPJ');
+    cbTipoChave.Items.Add('Email');
+    cbTipoChave.Items.Add('Telefone');
+    cbTipoChave.Items.Add('Aleatória');
+    cbTipoChave.Text := Pix.TipoChavePix; // ⭐ PREENCHER
+
+    // Chave Pix
+    lblChave := TLabel.Create(pDados);
+    lblChave.Parent := pDados;
+    lblChave.Caption := 'Chave Pix:';
+    lblChave.Left := 30;
+    lblChave.Top := 140;
+    lblChave.Font.Size := 9;
+
+    eChavePix := TEdit.Create(pDados);
+    eChavePix.Parent := pDados;
+    eChavePix.Left := 30;
+    eChavePix.Top := 162;
+    eChavePix.Width := 430;
+    eChavePix.Height := 25;
+    eChavePix.Font.Size := 10;
+    eChavePix.Text := Pix.ChavePix; // ⭐ PREENCHER
+
+    // CheckBox Principal
+    chkPrincipal := TCheckBox.Create(pDados);
+    chkPrincipal.Parent := pDados;
+    chkPrincipal.Caption := 'Definir como forma de pagamento principal';
+    chkPrincipal.Left := 30;
+    chkPrincipal.Top := 210;
+    chkPrincipal.Width := 350;
+    chkPrincipal.Font.Size := 9;
+    chkPrincipal.Font.Style := [fsBold];
+    chkPrincipal.Checked := Pix.Principal; // ⭐ PREENCHER
+
+    // ========== PAINEL DE BOTÕES ==========
+    pBotoes := TPanel.Create(pFundo);
+    pBotoes.Parent := pFundo;
+    pBotoes.Align := alBottom;
+    pBotoes.Height := 70;
+    pBotoes.BevelOuter := bvNone;
+    pBotoes.Color := $00EEEEEE;
+    pBotoes.ParentBackground := False;
+
+    // Botão Cancelar
+    btnCancelar := TButton.Create(pBotoes);
+    btnCancelar.Parent := pBotoes;
+    btnCancelar.Caption := 'Cancelar';
+    btnCancelar.Left := 250;
+    btnCancelar.Top := 15;
+    btnCancelar.Width := 110;
+    btnCancelar.Height := 40;
+    btnCancelar.Font.Size := 10;
+    btnCancelar.Font.Style := [fsBold];
+    btnCancelar.Cursor := crHandPoint;
+    btnCancelar.ModalResult := mrCancel;
+
+    // Botão Salvar
+    btnSalvar := TButton.Create(pBotoes);
+    btnSalvar.Parent := pBotoes;
+    btnSalvar.Caption := 'Salvar Alterações';
+    btnSalvar.Left := 370;
+    btnSalvar.Top := 15;
+    btnSalvar.Width := 110;
+    btnSalvar.Height := 40;
+    btnSalvar.Font.Size := 10;
+    btnSalvar.Font.Style := [fsBold];
+    btnSalvar.Cursor := crHandPoint;
+    btnSalvar.ModalResult := mrOk;
+
+    // ========== EXIBIR E PROCESSAR ==========
+    if FormEdicao.ShowModal = mrOk then
+    begin
+      // Atualizar dados do objeto
+      Pix.Apelido := Trim(eApelido.Text);
+      Pix.ChavePix := Trim(eChavePix.Text);
+      Pix.TipoChavePix := cbTipoChave.Text;
+      Pix.Principal := chkPrincipal.Checked;
+
+      // Validar dados
+      if not Pix.ValidarDados(MsgErro) then
+      begin
+        ShowMessage('❌ ' + MsgErro);
+        Exit;
+      end;
+
+      // Atualizar no banco
+      if FPagamentoController.AtualizarPix(Pix) then
+      begin
+        ShowMessage('✅ Pix atualizado com sucesso!');
+        CarregarPagamentos; // Recarregar lista
+      end
+      else
+        ShowMessage('❌ Erro ao atualizar Pix!');
+    end;
+
+  finally
+    FormEdicao.Free;
+  end;
+end;
+
+
+procedure TFormHomeC.EditarTransferencia(
+  Transferencia: TPagamentoTransferencia);
+var
+  FormEdicao: TForm;
+  pFundo, pHeader, pDados, pBotoes: TPanel;
+  lblTitulo, lblBanco, lblCodigo, lblAgencia, lblConta, lblDigito, lblTipo, lblApelido: TLabel;
+  eBanco, eCodigoBanco, eAgencia, eConta, eDigitoConta, eApelido: TEdit;
+  cbTipoConta: TComboBox;
+  chkPrincipal: TCheckBox;
+  btnSalvar, btnCancelar: TButton;
+  MsgErro: String;
+begin
+  FormEdicao := TForm.Create(nil);
+  try
+    FormEdicao.BorderStyle := bsDialog;
+    FormEdicao.Position := poScreenCenter;
+    FormEdicao.Width := 500;
+    FormEdicao.Height := 600;
+    FormEdicao.Caption := 'Editar Transferência Bancária';
+    FormEdicao.Color := $00F5F5F5;
+    FormEdicao.Font.Name := 'Segoe UI';
+
+    // ========== PAINEL DE FUNDO ==========
+    pFundo := TPanel.Create(FormEdicao);
+    pFundo.Parent := FormEdicao;
+    pFundo.Align := alClient;
+    pFundo.BevelOuter := bvNone;
+    pFundo.Color := $00F5F5F5;
+    pFundo.ParentBackground := False;
+
+    // ========== HEADER ==========
+    pHeader := TPanel.Create(pFundo);
+    pHeader.Parent := pFundo;
+    pHeader.Align := alTop;
+    pHeader.Height := 60;
+    pHeader.BevelOuter := bvNone;
+    pHeader.Color := $00517CFF;
+    pHeader.ParentBackground := False;
+
+    lblTitulo := TLabel.Create(pHeader);
+    lblTitulo.Parent := pHeader;
+    lblTitulo.Caption := '✏️ Editar Transferência Bancária';
+    lblTitulo.Font.Size := 14;
+    lblTitulo.Font.Style := [fsBold];
+    lblTitulo.Font.Color := clWhite;
+    lblTitulo.Left := 20;
+    lblTitulo.Top := 20;
+    lblTitulo.Transparent := True;
+
+    // ========== PAINEL DE DADOS ==========
+    pDados := TPanel.Create(pFundo);
+    pDados.Parent := pFundo;
+    pDados.Align := alClient;
+    pDados.BevelOuter := bvNone;
+    pDados.Color := $00F5F5F5;
+    pDados.ParentBackground := False;
+
+    // Apelido
+    lblApelido := TLabel.Create(pDados);
+    lblApelido.Parent := pDados;
+    lblApelido.Caption := 'Apelido:';
+    lblApelido.Left := 30;
+    lblApelido.Top := 20;
+    lblApelido.Font.Size := 9;
+
+    eApelido := TEdit.Create(pDados);
+    eApelido.Parent := pDados;
+    eApelido.Left := 30;
+    eApelido.Top := 42;
+    eApelido.Width := 430;
+    eApelido.Height := 25;
+    eApelido.Font.Size := 10;
+    eApelido.Text := Transferencia.Apelido; // ⭐ PREENCHER
+
+    // Banco
+    lblBanco := TLabel.Create(pDados);
+    lblBanco.Parent := pDados;
+    lblBanco.Caption := 'Nome do Banco:';
+    lblBanco.Left := 30;
+    lblBanco.Top := 80;
+    lblBanco.Font.Size := 9;
+
+    eBanco := TEdit.Create(pDados);
+    eBanco.Parent := pDados;
+    eBanco.Left := 30;
+    eBanco.Top := 102;
+    eBanco.Width := 280;
+    eBanco.Height := 25;
+    eBanco.Font.Size := 10;
+    eBanco.Text := Transferencia.Banco; // ⭐ PREENCHER
+
+    // Código do Banco
+    lblCodigo := TLabel.Create(pDados);
+    lblCodigo.Parent := pDados;
+    lblCodigo.Caption := 'Código:';
+    lblCodigo.Left := 330;
+    lblCodigo.Top := 80;
+    lblCodigo.Font.Size := 9;
+
+    eCodigoBanco := TEdit.Create(pDados);
+    eCodigoBanco.Parent := pDados;
+    eCodigoBanco.Left := 330;
+    eCodigoBanco.Top := 102;
+    eCodigoBanco.Width := 130;
+    eCodigoBanco.Height := 25;
+    eCodigoBanco.Font.Size := 10;
+    eCodigoBanco.MaxLength := 3;
+    eCodigoBanco.NumbersOnly := True;
+    eCodigoBanco.Text := Transferencia.CodigoBanco; // ⭐ PREENCHER
+
+    // Agência
+    lblAgencia := TLabel.Create(pDados);
+    lblAgencia.Parent := pDados;
+    lblAgencia.Caption := 'Agência:';
+    lblAgencia.Left := 30;
+    lblAgencia.Top := 140;
+    lblAgencia.Font.Size := 9;
+
+    eAgencia := TEdit.Create(pDados);
+    eAgencia.Parent := pDados;
+    eAgencia.Left := 30;
+    eAgencia.Top := 162;
+    eAgencia.Width := 150;
+    eAgencia.Height := 25;
+    eAgencia.Font.Size := 10;
+    eAgencia.NumbersOnly := True;
+    eAgencia.Text := Transferencia.Agencia; // ⭐ PREENCHER
+
+    // Conta
+    lblConta := TLabel.Create(pDados);
+    lblConta.Parent := pDados;
+    lblConta.Caption := 'Conta:';
+    lblConta.Left := 200;
+    lblConta.Top := 140;
+    lblConta.Font.Size := 9;
+
+    eConta := TEdit.Create(pDados);
+    eConta.Parent := pDados;
+    eConta.Left := 200;
+    eConta.Top := 162;
+    eConta.Width := 180;
+    eConta.Height := 25;
+    eConta.Font.Size := 10;
+    eConta.NumbersOnly := True;
+    eConta.Text := Transferencia.Conta; // ⭐ PREENCHER
+
+    // Dígito
+    lblDigito := TLabel.Create(pDados);
+    lblDigito.Parent := pDados;
+    lblDigito.Caption := 'Dígito:';
+    lblDigito.Left := 400;
+    lblDigito.Top := 140;
+    lblDigito.Font.Size := 9;
+
+    eDigitoConta := TEdit.Create(pDados);
+    eDigitoConta.Parent := pDados;
+    eDigitoConta.Left := 400;
+    eDigitoConta.Top := 162;
+    eDigitoConta.Width := 60;
+    eDigitoConta.Height := 25;
+    eDigitoConta.Font.Size := 10;
+    eDigitoConta.MaxLength := 1;
+    eDigitoConta.Text := Transferencia.DigitoC; // ⭐ PREENCHER
+
+    // Tipo de Conta
+    lblTipo := TLabel.Create(pDados);
+    lblTipo.Parent := pDados;
+    lblTipo.Caption := 'Tipo de Conta:';
+    lblTipo.Left := 30;
+    lblTipo.Top := 200;
+    lblTipo.Font.Size := 9;
+
+    cbTipoConta := TComboBox.Create(pDados);
+    cbTipoConta.Parent := pDados;
+    cbTipoConta.Left := 30;
+    cbTipoConta.Top := 222;
+    cbTipoConta.Width := 200;
+    cbTipoConta.Height := 25;
+    cbTipoConta.Style := csDropDownList;
+    cbTipoConta.Items.Add('Corrente');
+    cbTipoConta.Items.Add('Poupança');
+    cbTipoConta.Text := Transferencia.TipoConta; // ⭐ PREENCHER
+
+    // CheckBox Principal
+    chkPrincipal := TCheckBox.Create(pDados);
+    chkPrincipal.Parent := pDados;
+    chkPrincipal.Caption := 'Definir como forma de pagamento principal';
+    chkPrincipal.Left := 30;
+    chkPrincipal.Top := 270;
+    chkPrincipal.Width := 350;
+    chkPrincipal.Font.Size := 9;
+    chkPrincipal.Font.Style := [fsBold];
+    chkPrincipal.Checked := Transferencia.Principal; // ⭐ PREENCHER
+
+    // ========== PAINEL DE BOTÕES ==========
+    pBotoes := TPanel.Create(pFundo);
+    pBotoes.Parent := pFundo;
+    pBotoes.Align := alBottom;
+    pBotoes.Height := 70;
+    pBotoes.BevelOuter := bvNone;
+    pBotoes.Color := $00EEEEEE;
+    pBotoes.ParentBackground := False;
+
+    // Botão Cancelar
+    btnCancelar := TButton.Create(pBotoes);
+    btnCancelar.Parent := pBotoes;
+    btnCancelar.Caption := 'Cancelar';
+    btnCancelar.Left := 250;
+    btnCancelar.Top := 15;
+    btnCancelar.Width := 110;
+    btnCancelar.Height := 40;
+    btnCancelar.Font.Size := 10;
+    btnCancelar.Font.Style := [fsBold];
+    btnCancelar.Cursor := crHandPoint;
+    btnCancelar.ModalResult := mrCancel;
+
+    // Botão Salvar
+    btnSalvar := TButton.Create(pBotoes);
+    btnSalvar.Parent := pBotoes;
+    btnSalvar.Caption := 'Salvar Alterações';
+    btnSalvar.Left := 370;
+    btnSalvar.Top := 15;
+    btnSalvar.Width := 110;
+    btnSalvar.Height := 40;
+    btnSalvar.Font.Size := 10;
+    btnSalvar.Font.Style := [fsBold];
+    btnSalvar.Cursor := crHandPoint;
+    btnSalvar.ModalResult := mrOk;
+
+    // ========== EXIBIR E PROCESSAR ==========
+    if FormEdicao.ShowModal = mrOk then
+    begin
+      // Atualizar dados do objeto
+      Transferencia.Apelido := Trim(eApelido.Text);
+      Transferencia.Banco := Trim(eBanco.Text);
+      Transferencia.CodigoBanco := Trim(eCodigoBanco.Text);
+      Transferencia.Agencia := Trim(eAgencia.Text);
+      Transferencia.Conta := Trim(eConta.Text);
+      Transferencia.DigitoC := Trim(eDigitoConta.Text);
+      Transferencia.TipoConta := cbTipoConta.Text;
+      Transferencia.Principal := chkPrincipal.Checked;
+
+      // Validar dados
+      if not Transferencia.ValidarDados(MsgErro) then
+      begin
+        ShowMessage('❌ ' + MsgErro);
+        Exit;
+      end;
+
+      // Atualizar no banco
+      if FPagamentoController.AtualizarTransferencia(Transferencia) then
+      begin
+        ShowMessage('✅ Transferência atualizada com sucesso!');
+        CarregarPagamentos; // Recarregar lista
+      end
+      else
+        ShowMessage('❌ Erro ao atualizar transferência!');
+    end;
+
+  finally
+    FormEdicao.Free;
+  end;
+end;
+
 procedure TFormHomeC.ExcluirEndereco(IdEndereco: Integer);
 begin
   try
@@ -2498,6 +4214,40 @@ end;
 procedure TFormHomeC.iCarrinhoClick(Sender: TObject);
 begin
 pcMain.ActivePageIndex:=4;
+end;
+
+{ TCardEventHandler }
+
+constructor TCardEventHandler.Create(AFormSelecao: TForm);
+begin
+  inherited Create;
+  FFormSelecao := AFormSelecao;
+  FTipoSelecionado := 0;
+end;
+
+procedure TCardEventHandler.OnCardClick(Sender: TObject);
+begin
+  if Sender is TPanel then
+    FTipoSelecionado := TPanel(Sender).Tag
+  else if Sender is TLabel then
+    FTipoSelecionado := TPanel(TLabel(Sender).Parent).Tag;
+
+  if Assigned(FFormSelecao) then
+    FFormSelecao.ModalResult := mrOk;
+end;
+procedure TCardEventHandler.OnCardMouseEnter(Sender: TObject);
+begin
+  if Sender is TPanel then
+  begin
+    TPanel(Sender).Color := $00FFF4E6;
+    TPanel(Sender).BringToFront;
+  end;
+end;
+
+procedure TCardEventHandler.OnCardMouseLeave(Sender: TObject);
+begin
+  if Sender is TPanel then
+    TPanel(Sender).Color := clWhite;
 end;
 
 end.
