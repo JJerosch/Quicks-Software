@@ -299,6 +299,7 @@ TCardEventHandler = class
     procedure pSalvarClick(Sender: TObject);
     procedure pButtonConfirmarAlterarSenhaClick(Sender: TObject);
     procedure pButtonCancelarAlterarSenhaClick(Sender: TObject);
+    procedure iButtonBackLojasClick(Sender: TObject);
 
   private
     FIdUsuario: Integer;
@@ -319,6 +320,7 @@ TCardEventHandler = class
     FMargemLateral: Integer;
     FPagamentoController: TFormaPagamentoClienteController;
     FIdPagamentoSelecionado: Integer;
+    FCategoriaSelecionadaLojas: String;
 
     procedure SalvarDadosPessoais;
     procedure AlterarSenha;
@@ -358,6 +360,14 @@ TCardEventHandler = class
     procedure OnCategoriaProdutoClick(Sender: TObject);
     procedure OnProdutoCardClick(IdProduto: Integer; const NomeProduto: string; Preco: Currency);
     procedure VoltarParaLojas;
+    procedure PopularCategoriasLojas;
+    procedure PopularRestaurantesLojas(const Categoria: String = '');
+    procedure OnCategoriaClickLojas(const Categoria: string);
+    procedure OnRestauranteClickLojas(IdComercio: Integer; const NomeComercio: string);
+    procedure LimparCardsRestaurantesLojas;
+    procedure ExibirMensagemNenhumResultadoLojas;
+    procedure AdicionarCardComercioLojas(Comercio: TComercio; EstaAberto: Boolean; Index: Integer; CardWidth: Integer);
+    procedure ConfigurarLayoutLojas;
 
     procedure CarregarDadosPerfil;
     procedure ExibirDadosPerfilVisualizacao(Cliente: TCliente);
@@ -565,7 +575,7 @@ begin
   FIdPagamentoSelecionado := 0;
   FUltimaBusca := '';
   FCategoriaSelecionada := 'Todos';
-
+  FCategoriaSelecionadaLojas := 'Todos';
   FIdComercioSelecionado := 0;
   FNomeComercioSelecionado := '';
   FCategoriaProdutoSelecionada := 'Todos';
@@ -660,6 +670,48 @@ begin
     scbxRestaurantes.Color := $00517CFF;
   end;
 end;
+
+procedure TFormHomeC.ConfigurarLayoutLojas;
+begin
+  // ⭐ Configurar scbxMainLojas
+  if Assigned(scbxMainLojas) then
+  begin
+    scbxMainLojas.Align := alClient;
+    scbxMainLojas.VertScrollBar.Tracking := True;
+    scbxMainLojas.HorzScrollBar.Visible := False;
+    scbxMainLojas.BorderStyle := bsNone;
+    scbxMainLojas.Color := $00517CFF;
+  end;
+
+  // ⭐ Ordem dos painéis em Lojas
+  if Assigned(pHeaderLojas) then
+    pHeaderLojas.Align := alTop;
+
+  if Assigned(pCategoriasL) then
+  begin
+    pCategoriasL.Align := alTop;
+    pCategoriasL.Height := 70;
+  end;
+
+  if Assigned(scbxCategoriasL) then
+  begin
+    scbxCategoriasL.Align := alClient;
+    scbxCategoriasL.HorzScrollBar.Visible := True;
+    scbxCategoriasL.VertScrollBar.Visible := False;
+  end;
+
+  // ⭐ scbxComerciosL - Scroll VERTICAL (diferente do Main)
+  if Assigned(scbxComerciosL) then
+  begin
+    scbxComerciosL.Align := alClient;
+    scbxComerciosL.VertScrollBar.Visible := True;     // ⭐ COM scroll vertical
+    scbxComerciosL.HorzScrollBar.Visible := False;    // ⭐ SEM scroll horizontal
+    scbxComerciosL.VertScrollBar.Tracking := True;
+    scbxComerciosL.BorderStyle := bsNone;
+    scbxComerciosL.Color := $00517CFF;
+  end;
+end;
+
 
 procedure TFormHomeC.DefinirEnderecoPrincipal(IdEndereco: Integer);
 var
@@ -828,6 +880,8 @@ begin
 
     PopularCategorias;
     PopularRestaurantes('Todos');
+    PopularCategoriasLojas;
+    PopularRestaurantesLojas('Todos');
     Application.ProcessMessages;
 
   except
@@ -846,6 +900,19 @@ begin
   except
     on E: Exception do
       ShowMessage('Erro ao carregar categorias: ' + E.Message);
+  end;
+end;
+
+procedure TFormHomeC.PopularCategoriasLojas;
+begin
+  if not Assigned(scbxCategoriasL) then
+    Exit;
+
+  try
+    TCategoriaHelper.PopularScrollBoxCategorias(scbxCategoriasL, OnCategoriaClickLojas);
+  except
+    on E: Exception do
+      ShowMessage('Erro ao carregar categorias em Lojas: ' + E.Message);
   end;
 end;
 
@@ -886,6 +953,15 @@ begin
   TCategoriaHelper.DeselecionarTodas(scbxCategorias);
   TCategoriaHelper.SelecionarCategoria(scbxCategorias, Categoria);
   PopularRestaurantes(Categoria);
+end;
+
+
+procedure TFormHomeC.OnCategoriaClickLojas(const Categoria: string);
+begin
+  FCategoriaSelecionadaLojas := Categoria;
+  TCategoriaHelper.DeselecionarTodas(scbxCategoriasL);
+  TCategoriaHelper.SelecionarCategoria(scbxCategoriasL, Categoria);
+  PopularRestaurantesLojas(Categoria);
 end;
 
 
@@ -1115,6 +1191,12 @@ begin
 end;
 
 procedure TFormHomeC.OnRestauranteClick(IdComercio: Integer;
+  const NomeComercio: string);
+begin
+  AbrirCardapio(IdComercio, NomeComercio);
+end;
+
+procedure TFormHomeC.OnRestauranteClickLojas(IdComercio: Integer;
   const NomeComercio: string);
 begin
   AbrirCardapio(IdComercio, NomeComercio);
@@ -1464,6 +1546,84 @@ begin
     end;
   end;
 end;
+
+procedure TFormHomeC.PopularRestaurantesLojas(const Categoria: String);
+var
+  Comercios: TObjectList<TComercio>;
+  Comercio: TComercio;
+  EstaAberto: Boolean;
+  Index: Integer;
+  CardWidth: Integer;
+begin
+  if not FInicializado or not Assigned(FController) then
+  begin
+    InicializarController;
+    if not FInicializado then
+      Exit;
+  end;
+
+  try
+    LimparCardsRestaurantesLojas;
+    Screen.Cursor := crHourGlass;
+
+    try
+      Comercios := FController.ListarComerciosDisponiveis(False);
+
+      if not Assigned(Comercios) then
+        Exit;
+
+      try
+        if Comercios.Count = 0 then
+        begin
+          ExibirMensagemNenhumResultadoLojas;
+          Exit;
+        end;
+
+        // Calcular largura do card
+        CardWidth := scbxComerciosL.ClientWidth - (FMargemLateral * 2);
+        if CardWidth < 200 then
+          CardWidth := 200;
+
+        Index := 0;
+        for Comercio in Comercios do
+        begin
+          if Assigned(Comercio) then
+          begin
+            if (Categoria = 'Todos') or (Categoria = '') or
+               (AnsiUpperCase(Comercio.Categoria) = AnsiUpperCase(Categoria)) then
+            begin
+              EstaAberto := ComercioEstaAberto(Comercio.HorarioAbertura, Comercio.HorarioFechamento);
+              AdicionarCardComercioLojas(Comercio, EstaAberto, Index, CardWidth);
+              Inc(Index);
+            end;
+          end;
+        end;
+
+        if Index = 0 then
+          ExibirMensagemNenhumResultadoLojas
+        else
+        begin
+          scbxComerciosL.Invalidate;
+          Application.ProcessMessages;
+        end;
+
+      finally
+        Comercios.Free;
+      end;
+
+    finally
+      Screen.Cursor := crDefault;
+    end;
+
+  except
+    on E: Exception do
+    begin
+      Screen.Cursor := crDefault;
+      ShowMessage('Erro ao popular lojas: ' + E.Message);
+    end;
+  end;
+end;
+
 
 procedure TFormHomeC.pSalvarClick(Sender: TObject);
 begin
@@ -2518,6 +2678,22 @@ begin
     scbxRestaurantes.VertScrollBar.Position := 0;
 end;
 
+procedure TFormHomeC.LimparCardsRestaurantesLojas;
+var
+  I: Integer;
+begin
+  if not Assigned(scbxComerciosL) then
+    Exit;
+
+  for I := scbxComerciosL.ControlCount - 1 downto 0 do
+  begin
+    if scbxComerciosL.Controls[I] is TCardComercioPanel then
+      scbxComerciosL.Controls[I].Free;
+  end;
+
+  scbxComerciosL.VertScrollBar.Position := 0;
+end;
+
 procedure TFormHomeC.meCEPNovoDExit(Sender: TObject);
 begin
   if Trim(meCEPNovoD.Text) <> '' then
@@ -2562,6 +2738,41 @@ begin
   Card.Parent := scbxRestaurantes;
   Card.Visible := True;
 end;
+
+procedure TFormHomeC.AdicionarCardComercioLojas(Comercio: TComercio; EstaAberto: Boolean; Index: Integer; CardWidth: Integer);
+var
+  Card: TCardComercioPanel;
+  Horario, Taxa: String;
+  PosY: Integer;
+begin
+  if not Assigned(Comercio) then
+    Exit;
+
+  PosY := FCardSpacing + (Index * (FCardHeight + FCardSpacing));
+
+  Horario := FormatDateTime('hh:nn', Comercio.HorarioAbertura) + ' - ' +
+             FormatDateTime('hh:nn', Comercio.HorarioFechamento);
+  Taxa := FormatFloat('R$ #,##0.00', Comercio.TaxaEntregaBase);
+
+  Card := TCardComercioPanel.CreateCard(
+    Self,
+    Comercio.IdComercio,
+    CardWidth,
+    Comercio.NomeComercio,
+    Comercio.Categoria,
+    Taxa,
+    Horario,
+    Comercio.Descricao,
+    EstaAberto
+  );
+
+  Card.OnRestauranteClick := OnRestauranteClickLojas; // ⭐ USAR EVENTO DE LOJAS
+  Card.Left := FMargemLateral;
+  Card.Top := PosY;
+  Card.Parent := scbxComerciosL; // ⭐ PARENT É scbxComerciosL
+  Card.Visible := True;
+end;
+
 
 procedure TFormHomeC.AlterarSenha;
 var
@@ -4533,6 +4744,51 @@ begin
   lblDica.Width := pMensagem.Width;
 end;
 
+procedure TFormHomeC.ExibirMensagemNenhumResultadoLojas;
+var
+  pMensagem: TPanel;
+  lblMensagem, lblDica: TLabel;
+  LarguraCard: Integer;
+begin
+  LarguraCard := scbxComerciosL.ClientWidth - (FMargemLateral * 2);
+  if LarguraCard < 200 then
+    LarguraCard := 200;
+
+  pMensagem := TPanel.Create(scbxComerciosL);
+  pMensagem.Parent := scbxComerciosL;
+  pMensagem.Left := FMargemLateral;
+  pMensagem.Top := FCardSpacing;
+  pMensagem.Width := LarguraCard;
+  pMensagem.Height := 180;
+  pMensagem.BevelOuter := bvNone;
+  pMensagem.Color := clWhite;
+  pMensagem.BorderStyle := bsSingle;
+
+  lblMensagem := TLabel.Create(pMensagem);
+  lblMensagem.Parent := pMensagem;
+  lblMensagem.Caption := '😕 Nenhum resultado encontrado';
+  lblMensagem.Font.Name := 'Segoe UI';
+  lblMensagem.Font.Size := 13;
+  lblMensagem.Font.Style := [fsBold];
+  lblMensagem.Font.Color := clBlack;
+  lblMensagem.Alignment := taCenter;
+  lblMensagem.Left := 0;
+  lblMensagem.Top := 50;
+  lblMensagem.Width := pMensagem.Width;
+
+  lblDica := TLabel.Create(pMensagem);
+  lblDica.Parent := pMensagem;
+  lblDica.Caption := 'Tente buscar por outra categoria';
+  lblDica.Font.Name := 'Segoe UI';
+  lblDica.Font.Size := 10;
+  lblDica.Font.Color := clBlack;
+  lblDica.Alignment := taCenter;
+  lblDica.Left := 0;
+  lblDica.Top := 85;
+  lblDica.Width := pMensagem.Width;
+end;
+
+
 procedure TFormHomeC.ExibirMensagemSemEnderecos;
 var
   pMensagem: TPanel;
@@ -4606,7 +4862,9 @@ end;
 
 procedure TFormHomeC.iButton2Click(Sender: TObject);
 begin
-  pcMain.ActivePageIndex:=1;
+  pcMain.ActivePageIndex := 1; // tsLojas
+  PopularCategoriasLojas;
+  PopularRestaurantesLojas(FCategoriaSelecionadaLojas);
 end;
 
 procedure TFormHomeC.iButton3Click(Sender: TObject);
@@ -4639,6 +4897,11 @@ end;
 procedure TFormHomeC.iButtonBackEnderecosEClick(Sender: TObject);
 begin
   CancelarEdicaoEndereco;
+end;
+
+procedure TFormHomeC.iButtonBackLojasClick(Sender: TObject);
+begin
+  pcMain.ActivePageIndex:=0;
 end;
 
 procedure TFormHomeC.iButtonBackPerfilClick(Sender: TObject);

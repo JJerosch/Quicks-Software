@@ -18,7 +18,7 @@ object FormHomeC: TFormHomeC
     Top = 0
     Width = 410
     Height = 644
-    ActivePage = tsPerfil
+    ActivePage = tsLojas
     Align = alClient
     TabOrder = 1
     ExplicitWidth = 408
@@ -276,7 +276,7 @@ object FormHomeC: TFormHomeC
           Left = 0
           Top = 73
           Width = 398
-          Height = 141
+          Height = 60
           Margins.Left = 0
           Margins.Top = 0
           Margins.Right = 0
@@ -297,18 +297,17 @@ object FormHomeC: TFormHomeC
             Font.Name = 'Segoe UI'
             Font.Style = [fsBold]
             ParentFont = False
-            ExplicitLeft = 13
-            ExplicitTop = 10
-            ExplicitWidth = 81
+            ExplicitLeft = -2
+            ExplicitTop = -2
           end
           object scbxCategoriasL: TScrollBox
             AlignWithMargins = True
             Left = 0
-            Top = 49
+            Top = 21
             Width = 398
-            Height = 92
+            Height = 39
             Margins.Left = 0
-            Margins.Top = 28
+            Margins.Top = 0
             Margins.Right = 0
             Margins.Bottom = 0
             Align = alClient
@@ -317,8 +316,8 @@ object FormHomeC: TFormHomeC
             BorderStyle = bsNone
             TabOrder = 0
             UseWheelForScrolling = True
-            ExplicitTop = 28
-            ExplicitHeight = 113
+            ExplicitTop = 36
+            ExplicitHeight = 60
           end
         end
         object pHeaderLojas: TPanel
@@ -479,16 +478,15 @@ object FormHomeC: TFormHomeC
               0010480000402001000081040000041200001048000040A0FF030801D62EB80B
               0D7D0000000049454E44AE426082}
             Proportional = True
-            OnClick = iButtonLeaveClick
+            OnClick = iButtonBackLojasClick
           end
         end
         object pComerciosL: TPanel
           Left = 0
-          Top = 214
+          Top = 133
           Width = 398
-          Height = 379
+          Height = 452
           Align = alTop
-          Caption = 'pCom'#233'rcios'
           TabOrder = 2
           object lblComerciosL: TLabel
             Left = 1
@@ -509,17 +507,13 @@ object FormHomeC: TFormHomeC
             Left = 1
             Top = 22
             Width = 396
-            Height = 356
-            Align = alClient
+            Height = 192
+            Align = alTop
             BevelInner = bvNone
             BevelOuter = bvNone
             BorderStyle = bsNone
             TabOrder = 0
             UseWheelForScrolling = True
-            ExplicitLeft = 0
-            ExplicitTop = 214
-            ExplicitWidth = 398
-            ExplicitHeight = 396
           end
         end
       end
@@ -3513,18 +3507,18 @@ object FormHomeC: TFormHomeC
     TabOrder = 2
     StyleName = 'Windows'
     object pUserHeader: TPanel
-      Left = 68
-      Top = 13
-      Width = 136
-      Height = 29
+      Left = 55
+      Top = 14
+      Width = 149
+      Height = 27
       Alignment = taLeftJustify
       BevelOuter = bvNone
       TabOrder = 1
       object lblUserId: TLabel
         Left = 0
         Top = 0
-        Width = 75
-        Height = 29
+        Width = 54
+        Height = 27
         Align = alLeft
         Caption = 'lblUserId'
         Font.Charset = DEFAULT_CHARSET
@@ -3533,13 +3527,12 @@ object FormHomeC: TFormHomeC
         Font.Name = 'Segoe UI'
         Font.Style = []
         ParentFont = False
-        ExplicitHeight = 25
       end
       object lblUserName: TLabel
-        Left = 75
+        Left = 54
         Top = 0
-        Width = 109
-        Height = 29
+        Width = 119
+        Height = 27
         Align = alLeft
         Caption = 'lblUserName'
         Font.Charset = DEFAULT_CHARSET
@@ -3548,7 +3541,7 @@ object FormHomeC: TFormHomeC
         Font.Name = 'Segoe UI'
         Font.Style = []
         ParentFont = False
-        ExplicitHeight = 25
+        ExplicitLeft = 30
       end
     end
     object eBuscaMain: TEdit
