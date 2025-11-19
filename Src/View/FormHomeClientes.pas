@@ -11,7 +11,7 @@ uses
   Data.DB, FireDAC.Comp.Client, FireDAC.Comp.DataSet, FireDAC.Stan.Param, FireDAC.Stan.Intf,
   uConn, ComercioModel, ClienteController, CategoriaHelper, ClientePerfilController, ClienteModel,
   ViaCepHelper, EnderecoCardHelper, EnderecoClienteModel, EnderecoClienteController, EnderecoCardPanel,
-  ProdutoModel, ProdutoViewHelper,
+  ProdutoModel, ProdutoViewHelper, BCrypt,
   FormaPagamentoClienteModel, FormaPagamentoClienteController, PagamentoCardPanel;
 
 type
@@ -96,9 +96,6 @@ TCardEventHandler = class
     scbxMainLojas: TScrollBox;
     pCategoriasL: TPanel;
     scbxCategoriasL: TScrollBox;
-    lblCategoriasL: TLabel;
-    scbxComerciosL: TScrollBox;
-    lblComerciosL: TLabel;
     scbxMainCarrinho: TScrollBox;
     pEnderecoCarrinho: TPanel;
     lblEnderecoDesc: TLabel;
@@ -214,20 +211,12 @@ TCardEventHandler = class
     lblAddEndereco: TLabel;
     iButtonBackEnderecoNovo: TImage;
     tsEnderecosE: TTabSheet;
-    tsPagamentosE: TTabSheet;
     scbxMainEnderecosE: TScrollBox;
     pEnderecosE: TPanel;
     scbxEnderecosE: TScrollBox;
     pHeaderEnderecosE: TPanel;
     lblPerfilTitleEnderecosE: TLabel;
     iButtonBackEnderecosE: TImage;
-    scbxMainPagamentosE: TScrollBox;
-    pPagamentosE: TPanel;
-    scbxPagamentosE: TScrollBox;
-    pHeaderPagamentosE: TPanel;
-    lblPerfilTitlePagamentosE: TLabel;
-    iButtonBackPagamentosE: TImage;
-    pButtonAlterarSenhaPagamentosE: TPanel;
     lblAlterarSenhaTitle: TLabel;
     iButtonBackAlterarSenha: TImage;
     lblCategorias: TLabel;
@@ -253,7 +242,7 @@ TCardEventHandler = class
     eComplementoDE: TEdit;
     meCEPDE: TMaskEdit;
     cbEstadoDE: TComboBox;
-    Panel1: TPanel;
+    pUserHeader: TPanel;
     lblUserId: TLabel;
     lblUserName: TLabel;
     lblCategoriasProdutos: TLabel;
@@ -264,15 +253,18 @@ TCardEventHandler = class
     eApelidoDE: TEdit;
     Label2: TLabel;
     eApelidoNovoD: TEdit;
-    Panel2: TPanel;
-    Label5: TLabel;
+    pEnderecoPerfil: TPanel;
+    lblEndereco: TLabel;
     pButtonEnderecoNovoPerfil: TPanel;
-    cbEnderecoPerfil: TComboBox;
-    Panel4: TPanel;
-    Label8: TLabel;
+    cbEnderecosPerfil: TComboBox;
+    pPagamentosPerfil: TPanel;
+    lblPagamentos: TLabel;
     pButtonAdicionarPagamento: TPanel;
     cbPagamentosPerfil: TComboBox;
-    lblPagamentosTitle: TLabel;
+    lblCategoriasL: TLabel;
+    pComerciosL: TPanel;
+    scbxComerciosL: TScrollBox;
+    lblComerciosL: TLabel;
 
     procedure iButton1Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -300,6 +292,13 @@ TCardEventHandler = class
     procedure iButtonBackPerfilClick(Sender: TObject);
     procedure iButtonBackCommClick(Sender: TObject);
     procedure pButtonAdicionarPagamentoClick(Sender: TObject);
+    procedure lblButton5Click(Sender: TObject);
+    procedure cbPagamentosPerfilChange(Sender: TObject);
+    procedure cbEnderecosPerfilChange(Sender: TObject);
+    procedure cbEnderecosChange(Sender: TObject);
+    procedure pSalvarClick(Sender: TObject);
+    procedure pButtonConfirmarAlterarSenhaClick(Sender: TObject);
+    procedure pButtonCancelarAlterarSenhaClick(Sender: TObject);
 
   private
     FIdUsuario: Integer;
@@ -322,6 +321,7 @@ TCardEventHandler = class
     FIdPagamentoSelecionado: Integer;
 
     procedure SalvarDadosPessoais;
+    procedure AlterarSenha;
 
     procedure AbrirCadastroCartao(IdCliente: Integer);
     procedure AbrirCadastroPix(IdCliente: Integer);
@@ -330,6 +330,7 @@ TCardEventHandler = class
     procedure CarregarPagamentos;
     procedure OnPagamentoCardEditar(Sender: TObject);
     procedure EditarCartao(Cartao: TPagamentoCartao);
+    procedure CarregarPagamentosNoComboBox;
     procedure EditarPix(Pix: TPagamentoPix);
     procedure EditarTransferencia(Transferencia: TPagamentoTransferencia);
     procedure OnPagamentoCardExcluir(Sender: TObject);
@@ -360,7 +361,7 @@ TCardEventHandler = class
 
     procedure CarregarDadosPerfil;
     procedure ExibirDadosPerfilVisualizacao(Cliente: TCliente);
-    procedure CarregarDadosPerfilEdicao(Cliente: TCliente);
+    procedure CarregarDadosPerfilEdicao;
     procedure LimparCamposAlterarSenha;
 
     procedure CarregarEnderecos;
@@ -775,6 +776,11 @@ begin
   pcMain.ActivePageIndex:=0;
 end;
 
+procedure TFormHomeC.lblButton5Click(Sender: TObject);
+begin
+  pcMain.ActivePageIndex:=0;
+end;
+
 procedure TFormHomeC.FormDestroy(Sender: TObject);
 begin
   if Assigned(FBuscaTimer) then
@@ -811,7 +817,8 @@ begin
 
       CarregarEnderecos;
       CarregarEnderecosNoComboBox;
-      CarregarPagamentos; // ⭐ ADICIONAR
+      CarregarPagamentos;
+      CarregarPagamentosNoComboBox; // ⭐ VERIFICAR SE ESTA LINHA EXISTE
     end
     else
     begin
@@ -1326,6 +1333,12 @@ begin
   pcPerfil.ActivePageIndex:=2;
 end;
 
+procedure TFormHomeC.pButtonCancelarAlterarSenhaClick(Sender: TObject);
+begin
+  pcPerfil.ActivePageIndex := 0; // tsVisualizarPefil
+  LimparCamposAlterarSenha;
+end;
+
 procedure TFormHomeC.pButtonCancelarEClick(Sender: TObject);
 begin
   // Limpar campos
@@ -1338,9 +1351,16 @@ begin
   pcPerfil.ActivePageIndex := 0; // tsVisualizarPefil
 end;
 
+procedure TFormHomeC.pButtonConfirmarAlterarSenhaClick(Sender: TObject);
+begin
+  AlterarSenha;
+end;
+
+
 procedure TFormHomeC.pButtonEditarDadosClick(Sender: TObject);
 begin
   pcPerfil.ActivePageIndex:=1;
+  CarregarDadosPerfilEdicao;
 end;
 
 procedure TFormHomeC.pButtonEditarEnderecoClick(Sender: TObject);
@@ -1443,6 +1463,12 @@ begin
       ShowMessage('Erro ao popular lista: ' + E.Message);
     end;
   end;
+end;
+
+procedure TFormHomeC.pSalvarClick(Sender: TObject);
+begin
+  SalvarDadosPessoais;
+  pcPerfil.ActivePageIndex:=0;
 end;
 
 procedure TFormHomeC.CadastrarNovoEndereco;
@@ -1629,8 +1655,76 @@ begin
 end;
 
 procedure TFormHomeC.SalvarDadosPessoais;
+var
+  Cliente: TCliente;
 begin
+  // Validações
+  if Trim(eNomeDE.Text) = '' then
+  begin
+    ShowMessage('⚠️ Nome não pode estar vazio!');
+    eNomeDE.SetFocus;
+    Exit;
+  end;
 
+  if Trim(eEmailDE.Text) = '' then
+  begin
+    ShowMessage('⚠️ Email não pode estar vazio!');
+    eEmailDE.SetFocus;
+    Exit;
+  end;
+
+  // Validar formato de email
+  if not (Pos('@', eEmailDE.Text) > 0) then
+  begin
+    ShowMessage('⚠️ Email inválido!');
+    eEmailDE.SetFocus;
+    Exit;
+  end;
+
+  if Trim(meTelefoneDE.Text) = '' then
+  begin
+    ShowMessage('⚠️ Telefone não pode estar vazio!');
+    meTelefoneDE.SetFocus;
+    Exit;
+  end;
+
+  try
+    Cliente := TCliente.Create;
+    try
+      Cliente.IdUser := FIdUsuario;
+      Cliente.NomeUser := Trim(eNomeDE.Text);
+      Cliente.EmailUser := Trim(eEmailDE.Text);
+      Cliente.CpfUser := Trim(meCPFDE.Text);
+      Cliente.NPhoneUser := Trim(meTelefoneDE.Text);
+
+      // Atualizar no banco
+      if FPerfilController.AtualizarPerfil(Cliente) then
+      begin
+        ShowMessage('✅ Dados atualizados com sucesso!');
+
+        // Atualizar nome no header
+        FNomeUsuario := Cliente.NomeUser;
+        lblUserName.Caption := FNomeUsuario;
+
+        // Voltar para visualização
+        pcPerfil.ActivePageIndex := 0; // tsVisualizarPefil
+
+        // Recarregar dados na visualização
+        ExibirDadosPerfilVisualizacao(Cliente);
+      end
+      else
+      begin
+        ShowMessage('❌ Erro ao atualizar dados!');
+      end;
+
+    finally
+      Cliente.Free;
+    end;
+
+  except
+    on E: Exception do
+      ShowMessage('Erro ao salvar: ' + E.Message);
+  end;
 end;
 
 procedure TFormHomeC.SalvarEndereco;
@@ -1785,27 +1879,40 @@ begin
   end;
 end;
 
-procedure TFormHomeC.CarregarDadosPerfilEdicao(Cliente: TCliente);
+procedure TFormHomeC.CarregarDadosPerfilEdicao;
+var
+  Cliente: TCliente;
 begin
-  // Dados pessoais
-  eNomeDE.Text := Cliente.NomeUser;
-  eEmailDE.Text := Cliente.EmailUser;
-  meCPFDE.Text := Cliente.CpfUser;
-  meTelefoneDE.Text := Cliente.NPhoneUser;
+  try
+    Cliente := FPerfilController.ObterPerfil(FIdUsuario);
 
-  // Endereço
-  eLogradouroDE.Text := Cliente.Logradouro;
-  meCEPDE.Text := Cliente.CEP;
-  eNumeroEnderecoDE.Text := Cliente.Numero;
-  eComplementoDE.Text := Cliente.Complemento;
-  eBairroDE.Text := Cliente.Bairro;
-  eCidadeDE.Text := Cliente.Cidade;
-  cbEstadoDE.Text := Cliente.UF;
+    if Assigned(Cliente) then
+    begin
+      try
+        // Preencher campos de edição
+        eNomeDE.Text := Cliente.NomeUser;
+        eEmailDE.Text := Cliente.EmailUser;
+        meCPFDE.Text := Cliente.CpfUser;
+        meTelefoneDE.Text := Cliente.NPhoneUser;
 
-  // Tornar campos somente leitura
-  meCPFDE.ReadOnly := True;
+        // CPF não pode ser editado
+        meCPFDE.ReadOnly := True;
+        meCPFDE.Color := clBtnFace;
+
+      finally
+        Cliente.Free;
+      end;
+    end
+    else
+    begin
+      ShowMessage('Erro ao carregar dados do perfil!');
+    end;
+
+  except
+    on E: Exception do
+      ShowMessage('Erro ao carregar dados: ' + E.Message);
+  end;
 end;
-
 procedure TFormHomeC.CarregarEnderecos;
 var
   Enderecos: TObjectList<TEnderecoCliente>;
@@ -1929,21 +2036,20 @@ var
   IdCliente: Integer;
   IdxPrincipal: Integer;
 begin
-  // ⭐ PROTEÇÃO 1: Verificar se controller existe
+  // Verificações de segurança
   if not Assigned(FEnderecoController) then
   begin
     ShowMessage('Erro: Controller de endereços não foi criado!');
     Exit;
   end;
 
-  // ⭐ PROTEÇÃO 2: Verificar se cbEnderecos existe
-  if not Assigned(cbEnderecos) then
+  // ⭐ Verificar se PELO MENOS UM dos ComboBoxes existe
+  if not Assigned(cbEnderecosPerfil) and not Assigned(cbEnderecos) then
   begin
-    ShowMessage('Erro: ComboBox de endereços não existe!');
+    ShowMessage('Erro: Nenhum ComboBox de endereços existe!');
     Exit;
   end;
 
-  // ⭐ PROTEÇÃO 3: Verificar se DataModule existe
   if not Assigned(DM) or not DM.FDConn.Connected then
   begin
     ShowMessage('Erro: Banco de dados não conectado!');
@@ -1966,15 +2072,31 @@ begin
     Qr.Free;
   end;
 
-  cbEnderecos.Clear;
-  cbEnderecos.OnChange := nil;
+  // ⭐ Limpar AMBOS os ComboBoxes (se existirem)
+  if Assigned(cbEnderecosPerfil) then
+  begin
+    cbEnderecosPerfil.Clear;
+    cbEnderecosPerfil.OnChange := nil;
+  end;
+
+  if Assigned(cbEnderecos) then
+  begin
+    cbEnderecos.Clear;
+    cbEnderecos.OnChange := nil;
+  end;
 
   try
     Enderecos := FEnderecoController.ListarEnderecos(IdCliente);
 
     if not Assigned(Enderecos) or (Enderecos.Count = 0) then
     begin
-      cbEnderecos.Enabled := False;
+      // Desabilitar AMBOS se não houver endereços
+      if Assigned(cbEnderecosPerfil) then
+        cbEnderecosPerfil.Enabled := False;
+
+      if Assigned(cbEnderecos) then
+        cbEnderecos.Enabled := False;
+
       Exit;
     end;
 
@@ -1985,22 +2107,54 @@ begin
       begin
         if Assigned(Endereco) then
         begin
-          cbEnderecos.Items.AddObject(
-            Format('%s - %s, %s', [Endereco.Apelido, Endereco.Logradouro, Endereco.Numero]),
-            TObject(Endereco.IdEndereco)
-          );
+          // ⭐ Adicionar em cbEnderecosPerfil (Perfil)
+          if Assigned(cbEnderecosPerfil) then
+          begin
+            cbEnderecosPerfil.Items.AddObject(
+              Format('%s - %s, %s', [Endereco.Apelido, Endereco.Logradouro, Endereco.Numero]),
+              TObject(Endereco.IdEndereco)
+            );
+          end;
 
+          // ⭐ Adicionar em cbEnderecos (Menu/Carrinho)
+          if Assigned(cbEnderecos) then
+          begin
+            cbEnderecos.Items.AddObject(
+              Format('%s - %s, %s', [Endereco.Apelido, Endereco.Logradouro, Endereco.Numero]),
+              TObject(Endereco.IdEndereco)
+            );
+          end;
+
+          // Encontrar índice do principal
           if Endereco.Principal then
-            IdxPrincipal := cbEnderecos.Items.Count - 1;
+          begin
+            if Assigned(cbEnderecosPerfil) then
+              IdxPrincipal := cbEnderecosPerfil.Items.Count - 1;
+            // cbEnderecos terá o mesmo índice
+          end;
         end;
       end;
 
-      if IdxPrincipal >= 0 then
-        cbEnderecos.ItemIndex := IdxPrincipal
-      else if cbEnderecos.Items.Count > 0 then
-        cbEnderecos.ItemIndex := 0;
+      // ⭐ Selecionar principal em AMBOS
+      if Assigned(cbEnderecosPerfil) then
+      begin
+        if IdxPrincipal >= 0 then
+          cbEnderecosPerfil.ItemIndex := IdxPrincipal
+        else if cbEnderecosPerfil.Items.Count > 0 then
+          cbEnderecosPerfil.ItemIndex := 0;
 
-      cbEnderecos.Enabled := True;
+        cbEnderecosPerfil.Enabled := True;
+      end;
+
+      if Assigned(cbEnderecos) then
+      begin
+        if IdxPrincipal >= 0 then
+          cbEnderecos.ItemIndex := IdxPrincipal
+        else if cbEnderecos.Items.Count > 0 then
+          cbEnderecos.ItemIndex := 0;
+
+        cbEnderecos.Enabled := True;
+      end;
 
     finally
       Enderecos.Free;
@@ -2011,7 +2165,12 @@ begin
       ShowMessage('Erro ao carregar combo: ' + E.Message);
   end;
 
-  cbEnderecos.OnChange := OnComboBoxEnderecosChange;
+  // ⭐ Conectar OnChange de AMBOS
+  if Assigned(cbEnderecosPerfil) then
+    cbEnderecosPerfil.OnChange := cbEnderecosPerfilChange;
+
+  if Assigned(cbEnderecos) then
+    cbEnderecos.OnChange := cbEnderecosChange;
 end;
 
 procedure TFormHomeC.CarregarPagamentos;
@@ -2023,35 +2182,24 @@ var
   Qr: TFDQuery;
   IdCliente: Integer;
 begin
-  // ⭐ PROTEÇÃO 1: Verificar se controller existe
   if not Assigned(FPagamentoController) then
   begin
     ShowMessage('Erro: Controller de pagamentos não foi criado!');
     Exit;
   end;
 
-  // ⭐ PROTEÇÃO 2: Verificar se DataModule existe
   if not Assigned(DM) or not DM.FDConn.Connected then
   begin
     ShowMessage('Erro: Banco de dados não conectado!');
     Exit;
   end;
 
-  // ⭐ PROTEÇÃO 3: Verificar se scbxPagamentosE existe (para edição)
-  if not Assigned(scbxPagamentosE) then
+  if not Assigned(scbxPagamentos) then
   begin
     ShowMessage('Erro: ScrollBox de pagamentos não existe!');
     Exit;
   end;
 
-  // ⭐ PROTEÇÃO 4: Verificar se scbxPagamentos existe (para visualização)
-  if not Assigned(scbxPagamentos) then
-  begin
-    ShowMessage('Erro: ScrollBox de visualização de pagamentos não existe!');
-    Exit;
-  end;
-
-  // Buscar id_clie
   Qr := TFDQuery.Create(nil);
   try
     Qr.Connection := DM.FDConn;
@@ -2068,13 +2216,6 @@ begin
     IdCliente := Qr.FieldByName('id_clie').AsInteger;
   finally
     Qr.Free;
-  end;
-
-  // ⭐ Limpar cards existentes em AMBOS os ScrollBoxes
-  for Y := scbxPagamentosE.ControlCount - 1 downto 0 do
-  begin
-    if scbxPagamentosE.Controls[Y] is TPagamentoCardPanel then
-      scbxPagamentosE.Controls[Y].Free;
   end;
 
   for Y := scbxPagamentos.ControlCount - 1 downto 0 do
@@ -2107,18 +2248,6 @@ begin
       begin
         if Assigned(Pagamento) then
         begin
-          // ⭐ CARD PARA EDIÇÃO (scbxPagamentosE)
-          Card := TPagamentoCardPanel.CreateCardFromModel(Self, Pagamento);
-          Card.Parent := scbxPagamentosE;
-          Card.Top := Y;
-          Card.Left := 10;
-          Card.Width := scbxPagamentosE.ClientWidth - 20;
-          Card.Anchors := [akLeft, akTop, akRight];
-          Card.OnEditar := OnPagamentoCardEditar;
-          Card.OnExcluir := OnPagamentoCardExcluir;
-          Card.OnDefinirPrincipal := OnPagamentoCardDefinirPrincipal;
-
-          // ⭐ CARD PARA VISUALIZAÇÃO (scbxPagamentos)
           Card := TPagamentoCardPanel.CreateCardFromModel(Self, Pagamento);
           Card.Parent := scbxPagamentos;
           Card.Top := Y;
@@ -2141,6 +2270,124 @@ begin
     on E: Exception do
       ShowMessage('Erro ao carregar formas de pagamento: ' + E.Message);
   end;
+end;
+
+procedure TFormHomeC.CarregarPagamentosNoComboBox;
+var
+  Pagamentos: TObjectList<TFormaPagamentoCliente>;
+  Pagamento: TFormaPagamentoCliente;
+  Qr: TFDQuery;
+  IdCliente: Integer;
+  IdxPrincipal: Integer;
+  Descricao: String;
+begin
+  // Verificações de segurança
+  if not Assigned(FPagamentoController) then
+  begin
+    ShowMessage('Erro: Controller de pagamentos não foi criado!');
+    Exit;
+  end;
+
+  if not Assigned(cbPagamentosPerfil) then
+  begin
+    ShowMessage('Erro: ComboBox de pagamentos não existe!');
+    Exit;
+  end;
+
+  if not Assigned(DM) or not DM.FDConn.Connected then
+  begin
+    ShowMessage('Erro: Banco de dados não conectado!');
+    Exit;
+  end;
+
+  // Buscar id_clie
+  Qr := TFDQuery.Create(nil);
+  try
+    Qr.Connection := DM.FDConn;
+    Qr.SQL.Text := 'SELECT id_clie FROM clientes WHERE id_user = :id_user';
+    Qr.ParamByName('id_user').AsInteger := FIdUsuario;
+    Qr.Open;
+
+    if Qr.IsEmpty then
+      Exit;
+
+    IdCliente := Qr.FieldByName('id_clie').AsInteger;
+  finally
+    Qr.Free;
+  end;
+
+  cbPagamentosPerfil.Clear;
+  cbPagamentosPerfil.OnChange := nil;
+
+  try
+    Pagamentos := FPagamentoController.ListarPagamentos(IdCliente);
+
+    if not Assigned(Pagamentos) or (Pagamentos.Count = 0) then
+    begin
+      cbPagamentosPerfil.Enabled := False;
+
+      // Esconder botão se não houver pagamentos
+      if Assigned(pEnderecoPerfil) then
+        pEnderecoPerfil.Visible := False;
+
+      Exit;
+    end;
+
+    try
+      IdxPrincipal := -1;
+
+      for Pagamento in Pagamentos do
+      begin
+        if Assigned(Pagamento) then
+        begin
+          // Criar descrição amigável
+          if Pagamento is TPagamentoCartao then
+            Descricao := Format('%s - %s **** %s',
+              [Pagamento.Apelido,
+               TPagamentoCartao(Pagamento).Bandeira,
+               TPagamentoCartao(Pagamento).NumeroCartao])
+          else if Pagamento is TPagamentoPix then
+            Descricao := Format('%s - Pix: %s',
+              [Pagamento.Apelido,
+               TPagamentoPix(Pagamento).ChavePix])
+          else if Pagamento is TPagamentoTransferencia then
+            Descricao := Format('%s - %s',
+              [Pagamento.Apelido,
+               TPagamentoTransferencia(Pagamento).Banco])
+          else
+            Descricao := Pagamento.Apelido;
+
+          cbPagamentosPerfil.Items.AddObject(
+            Descricao,
+            TObject(Pagamento.IdPagamento)
+          );
+
+          if Pagamento.Principal then
+            IdxPrincipal := cbPagamentosPerfil.Items.Count - 1;
+        end;
+      end;
+
+      if IdxPrincipal >= 0 then
+        cbPagamentosPerfil.ItemIndex := IdxPrincipal
+      else if cbPagamentosPerfil.Items.Count > 0 then
+        cbPagamentosPerfil.ItemIndex := 0;
+
+      cbPagamentosPerfil.Enabled := True;
+
+      // Mostrar botão se houver pagamentos
+      if Assigned(pEnderecoPerfil) then
+        pEnderecoPerfil.Visible := True;
+
+    finally
+      Pagamentos.Free;
+    end;
+
+  except
+    on E: Exception do
+      ShowMessage('Erro ao carregar pagamentos no combo: ' + E.Message);
+  end;
+
+  cbPagamentosPerfil.OnChange := cbPagamentosPerfilChange;
 end;
 
 procedure TFormHomeC.CarregarProdutosComercio(const Categoria: String);
@@ -2171,6 +2418,49 @@ begin
 
   Screen.Cursor := crDefault;
 end;
+procedure TFormHomeC.cbEnderecosChange(Sender: TObject);
+var
+  IdEndereco: Integer;
+begin
+  if cbEnderecos.ItemIndex < 0 then
+    Exit;
+
+  IdEndereco := Integer(cbEnderecos.Items.Objects[cbEnderecos.ItemIndex]);
+  DefinirEnderecoPrincipal(IdEndereco);
+
+  // ⭐ Sincronizar com cbEnderecosPerfil (Perfil)
+  if Assigned(cbEnderecosPerfil) then
+    cbEnderecosPerfil.ItemIndex := cbEnderecos.ItemIndex;
+end;
+
+procedure TFormHomeC.cbEnderecosPerfilChange(Sender: TObject);
+var
+  IdEndereco: Integer;
+begin
+  if cbEnderecosPerfil.ItemIndex < 0 then
+    Exit;
+
+  IdEndereco := Integer(cbEnderecosPerfil.Items.Objects[cbEnderecosPerfil.ItemIndex]);
+  DefinirEnderecoPrincipal(IdEndereco);
+
+  // ⭐ Sincronizar com cbEnderecos (Menu)
+  if Assigned(cbEnderecos) then
+    cbEnderecos.ItemIndex := cbEnderecosPerfil.ItemIndex;
+end;
+
+
+procedure TFormHomeC.cbPagamentosPerfilChange(Sender: TObject);
+var
+  IdPagamento: Integer;
+begin
+  if cbPagamentosPerfil.ItemIndex < 0 then
+    Exit;
+
+  IdPagamento := Integer(cbPagamentosPerfil.Items.Objects[cbPagamentosPerfil.ItemIndex]);
+  DefinirPagamentoPrincipal(IdPagamento);
+end;
+
+
 function TFormHomeC.ComercioEstaAberto(HorarioAbertura, HorarioFechamento: TTime): Boolean;
 var
   HoraAtual: TTime;
@@ -2273,6 +2563,158 @@ begin
   Card.Visible := True;
 end;
 
+procedure TFormHomeC.AlterarSenha;
+var
+  SenhaAtual, SenhaNova, SenhaConfirmacao: String;
+  SenhaHashArmazenadaBanco: String;
+  SenhaNovaHash: String;
+  Qr: TFDQuery;
+  PasswordRehashNeeded: Boolean;
+begin
+  // ========== OBTER VALORES DOS CAMPOS ==========
+
+  SenhaAtual := Trim(eSenhaAtual.Text);
+  SenhaNova := Trim(eSenhaNova.Text);
+  SenhaConfirmacao := Trim(eSenhaConfirmacao.Text);
+
+  // ========== VALIDAÇÕES BÁSICAS ==========
+
+  if SenhaAtual = '' then
+  begin
+    ShowMessage('⚠️ Digite a senha atual!');
+    eSenhaAtual.SetFocus;
+    Exit;
+  end;
+
+  if SenhaNova = '' then
+  begin
+    ShowMessage('⚠️ Digite a nova senha!');
+    eSenhaNova.SetFocus;
+    Exit;
+  end;
+
+  if SenhaConfirmacao = '' then
+  begin
+    ShowMessage('⚠️ Confirme a nova senha!');
+    eSenhaConfirmacao.SetFocus;
+    Exit;
+  end;
+
+  if SenhaAtual = SenhaNova then
+  begin
+    ShowMessage('⚠️ A nova senha deve ser diferente da senha atual!');
+    eSenhaNova.SetFocus;
+    Exit;
+  end;
+
+  if SenhaNova <> SenhaConfirmacao then
+  begin
+    ShowMessage('⚠️ A nova senha e a confirmação não conferem!');
+    eSenhaConfirmacao.SetFocus;
+    Exit;
+  end;
+
+  if Length(SenhaNova) < 6 then
+  begin
+    ShowMessage('⚠️ A senha deve ter no mínimo 6 caracteres!');
+    eSenhaNova.SetFocus;
+    Exit;
+  end;
+
+  // ========== BUSCAR HASH DA SENHA NO BANCO ==========
+
+  Qr := TFDQuery.Create(nil);
+  try
+    Qr.Connection := DM.FDConn;
+
+    // ⭐ TABELA CORRETA: usuarios
+    Qr.SQL.Text := 'SELECT senha_user FROM usuarios WHERE id_user = :id_user';
+    Qr.ParamByName('id_user').AsInteger := FIdUsuario;
+    Qr.Open;
+
+    if Qr.IsEmpty then
+    begin
+      ShowMessage('❌ Usuário não encontrado!');
+      Exit;
+    end;
+
+    // Obter hash armazenado no banco
+    SenhaHashArmazenadaBanco := Qr.FieldByName('senha_user').AsString;
+
+  finally
+    Qr.Free;
+  end;
+
+  // ========== VERIFICAR SENHA ATUAL COM BCRYPT ==========
+
+  try
+    // ⭐ SINTAXE CORRETA: TBCrypt.CheckPassword
+    // Retorna TRUE se a senha estiver correta
+    if not TBCrypt.CheckPassword(SenhaAtual, SenhaHashArmazenadaBanco, {out}PasswordRehashNeeded) then
+    begin
+      ShowMessage('❌ Senha atual incorreta!');
+      eSenhaAtual.SetFocus;
+      eSenhaAtual.SelectAll;
+      Exit;
+    end;
+  except
+    on E: Exception do
+    begin
+      ShowMessage('❌ Erro ao verificar senha: ' + E.Message);
+      Exit;
+    end;
+  end;
+
+  // ========== GERAR HASH DA NOVA SENHA ==========
+
+  try
+    // ⭐ SINTAXE CORRETA: TBCrypt.HashPassword
+    // Gera automaticamente o salt e retorna o hash completo no formato $2a$...
+    SenhaNovaHash := TBCrypt.HashPassword(SenhaNova);
+  except
+    on E: Exception do
+    begin
+      ShowMessage('❌ Erro ao gerar hash da nova senha: ' + E.Message);
+      Exit;
+    end;
+  end;
+
+  // ========== ATUALIZAR SENHA NO BANCO ==========
+
+  Qr := TFDQuery.Create(nil);
+  try
+    Qr.Connection := DM.FDConn;
+
+    // ⭐ TABELA CORRETA: usuarios
+    Qr.SQL.Text :=
+      'UPDATE usuarios ' +
+      'SET senha_user = :senha_nova ' +
+      'WHERE id_user = :id_user';
+
+    Qr.ParamByName('senha_nova').AsString := SenhaNovaHash;  // ⭐ HASH COMPLETO ($2a$12$...)
+    Qr.ParamByName('id_user').AsInteger := FIdUsuario;
+
+    Qr.ExecSQL;
+
+    ShowMessage('✅ Senha alterada com sucesso!');
+
+    // Limpar campos
+    LimparCamposAlterarSenha;
+
+    // Voltar para visualização
+    pcPerfil.ActivePageIndex := 0; // tsVisualizarPefil
+
+  except
+    on E: Exception do
+    begin
+      ShowMessage('❌ Erro ao atualizar senha no banco: ' + E.Message);
+    end;
+  end;
+
+  if Assigned(Qr) then
+    Qr.Free;
+end;
+
 procedure TFormHomeC.AtualizarCardsPagamentoPrincipal;
 var
   I: Integer;
@@ -2317,11 +2759,11 @@ begin
       end;
 
       // Atualizar visual de todos os cards
-      for I := 0 to scbxPagamentosE.ControlCount - 1 do
+      for I := 0 to scbxPagamentos.ControlCount - 1 do
       begin
-        if scbxPagamentosE.Controls[I] is TPagamentoCardPanel then
+        if scbxPagamentos.Controls[I] is TPagamentoCardPanel then
         begin
-          Card := TPagamentoCardPanel(scbxPagamentosE.Controls[I]);
+          Card := TPagamentoCardPanel(scbxPagamentos.Controls[I]);
 
           // Define se este card é o principal
           Card.Principal := (Card.IdPagamento = IdPrincipal);
@@ -4124,11 +4566,11 @@ var
   pMensagem: TPanel;
   lblMensagem: TLabel;
 begin
-  pMensagem := TPanel.Create(scbxPagamentosE);
-  pMensagem.Parent := scbxPagamentosE;
+  pMensagem := TPanel.Create(scbxPagamentos);
+  pMensagem.Parent := scbxPagamentos;
   pMensagem.Left := 10;
   pMensagem.Top := 10;
-  pMensagem.Width := scbxPagamentosE.ClientWidth - 20;
+  pMensagem.Width := scbxPagamentos.ClientWidth - 20;
   pMensagem.Height := 100;
   pMensagem.BevelOuter := bvNone;
   pMensagem.Color := $00F5F5F5;
