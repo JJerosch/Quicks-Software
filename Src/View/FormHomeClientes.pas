@@ -11,7 +11,7 @@ uses
   Data.DB, FireDAC.Comp.Client, FireDAC.Comp.DataSet, FireDAC.Stan.Param, FireDAC.Stan.Intf,
   uConn, ComercioModel, ClienteController, CategoriaHelper, ClientePerfilController, ClienteModel,
   ViaCepHelper, EnderecoCardHelper, EnderecoClienteModel, EnderecoClienteController, EnderecoCardPanel,
-  ProdutoModel, ProdutoViewHelper, BCrypt,
+  ProdutoModel, ProdutoViewHelper, BCrypt, CarrinhoModel, CarrinhoHelper,
   FormaPagamentoClienteModel, FormaPagamentoClienteController, PagamentoCardPanel;
 
 type
@@ -100,7 +100,6 @@ TCardEventHandler = class
     pEnderecoCarrinho: TPanel;
     lblEnderecoDesc: TLabel;
     lblEnderecoAtualCarrinho: TLabel;
-    pButtonAlterarEndereco: TPanel;
     pNumerosCarrinho: TPanel;
     lblItensCartCarrinho: TLabel;
     iButtonBackCarrinho: TImage;
@@ -111,7 +110,7 @@ TCardEventHandler = class
     lblSubtotal: TLabel;
     lblSubtotalDesc: TLabel;
     lblTaxa: TLabel;
-    lblTaxadesc: TLabel;
+    lblTaxaDesc: TLabel;
     lblTotalDesc: TLabel;
     lblTotal: TLabel;
     lblFormaPDesc: TLabel;
@@ -265,6 +264,23 @@ TCardEventHandler = class
     pComerciosL: TPanel;
     scbxComerciosL: TScrollBox;
     lblComerciosL: TLabel;
+    tsProdutoSelec: TTabSheet;
+    scbxProdutoSelec: TScrollBox;
+    pProdutoSelecInfo: TPanel;
+    pHeaderProdutoSelec: TPanel;
+    lblNomeProdutoSelec: TLabel;
+    iButtonBackProdutoSelec: TImage;
+    lblPrecoProdutoSelec: TLabel;
+    lblCategoriaProdutoSelec: TLabel;
+    lblDescricaoProdutoSelec: TLabel;
+    pControlesQuantidade: TPanel;
+    btnMenosQtd: TPanel;
+    mObservacaoProdutoSelec: TMemo;
+    btnMaisQtd: TPanel;
+    eQuantidadeProdutoSelec: TEdit;
+    lblSubtotalProdutoSelec: TLabel;
+    Panel1: TPanel;
+    lblSubtotalProdutoSelecD: TLabel;
 
     procedure iButton1Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -300,6 +316,10 @@ TCardEventHandler = class
     procedure pButtonConfirmarAlterarSenhaClick(Sender: TObject);
     procedure pButtonCancelarAlterarSenhaClick(Sender: TObject);
     procedure iButtonBackLojasClick(Sender: TObject);
+    procedure btnMenosQtdClick(Sender: TObject);
+    procedure btnMaisQtdClick(Sender: TObject);
+    procedure eQuantidadeProdutoSelecChange(Sender: TObject);
+    procedure Panel1Click(Sender: TObject);
 
   private
     FIdUsuario: Integer;
@@ -321,6 +341,9 @@ TCardEventHandler = class
     FPagamentoController: TFormaPagamentoClienteController;
     FIdPagamentoSelecionado: Integer;
     FCategoriaSelecionadaLojas: String;
+    FProdutoSelecionado: TProduto;
+    FCarrinho: TObjectList<TItemCarrinho>;
+    FTaxaEntregaAtual: Currency;
 
     procedure SalvarDadosPessoais;
     procedure AlterarSenha;
@@ -393,10 +416,27 @@ TCardEventHandler = class
     procedure AtualizarCardsPrincipal;
     procedure OnCardEditarClick(Sender: TObject);
     procedure OnCardExcluirClick(Sender: TObject);
-  public
+
+    procedure AbrirTelaProduto(IdProduto: Integer; const NomeProduto: string; Preco: Currency);
+    procedure FecharTelaProduto;
+    procedure AtualizarSubtotalProduto;
+    procedure ValidarEstabelecimentoCarrinho(IdComercio: Integer; const NomeComercio: string);
+
+    procedure InicializarCarrinho;
+    procedure AdicionarAoCarrinho(IdProduto: Integer; const NomeProduto: string; Preco: Currency; Quantidade: Integer; const Observacao: string = '');
+    procedure RemoverDoCarrinho(IdProduto: Integer; const Observacao: String = '');
+    procedure AtualizarQuantidadeCarrinho(IdProduto: Integer; const Observacao: String; NovaQuantidade: Integer);
+    procedure OnCarrinhoItemChange(IdProduto: Integer; const Observacao: String; NovaQuantidade: Integer);
+    procedure OnCarrinhoItemRemover(IdProduto: Integer; const Observacao: String);
+    function ObterItemCarrinho(IdProduto: Integer; const Observacao: String = ''): TItemCarrinho;
+    procedure AtualizarCardCarrinho;
+    procedure AtualizarResumoCarrinho;
+    procedure CarregarItensCarrinho;
+    procedure LimparCarrinho;
+    public
     property IdUsuario: Integer read FIdUsuario write FIdUsuario;
     property NomeUsuario: String read FNomeUsuario write FNomeUsuario;
-  end;
+    end;
 
 var
   FormHomeC: TFormHomeC;
@@ -568,6 +608,15 @@ end;
 
 { TFormHomeC }
 
+procedure TFormHomeC.FecharTelaProduto;
+begin
+  if Assigned(FProdutoSelecionado) then
+    FreeAndNil(FProdutoSelecionado);
+
+  // Voltar para tela do comércio
+  pcMain.ActivePage := tsCommSelec;
+end;
+
 procedure TFormHomeC.FormCreate(Sender: TObject);
 begin
   FInicializado := False;
@@ -579,7 +628,10 @@ begin
   FIdComercioSelecionado := 0;
   FNomeComercioSelecionado := '';
   FCategoriaProdutoSelecionada := 'Todos';
-
+  FProdutoSelecionado := nil;
+  FCarrinho := nil;
+  FTaxaEntregaAtual := 0;
+  InicializarCarrinho;
   // ⭐ CRIAR CONTROLLERS
   FController := nil;
   FPerfilController := nil;
@@ -784,6 +836,16 @@ begin
 end;
 
 
+procedure TFormHomeC.InicializarCarrinho;
+begin
+  if not Assigned(FCarrinho) then
+    FCarrinho := TObjectList<TItemCarrinho>.Create(True);
+
+  FTaxaEntregaAtual := 0;
+  AtualizarResumoCarrinho;
+end;
+
+
 procedure TFormHomeC.InicializarController;
 begin
   if FInicializado then
@@ -849,6 +911,12 @@ begin
 
   if Assigned(FController) then
     FreeAndNil(FController);
+
+  if Assigned(FProdutoSelecionado) then
+    FreeAndNil(FProdutoSelecionado);
+
+  if Assigned(FCarrinho) then
+    FreeAndNil(FCarrinho);
 end;
 
 procedure TFormHomeC.FormShow(Sender: TObject);
@@ -945,6 +1013,16 @@ begin
       ExcluirEndereco(Card.IdEndereco);
     end;
   end;
+end;
+
+procedure TFormHomeC.OnCarrinhoItemChange(IdProduto: Integer; const Observacao: String; NovaQuantidade: Integer);
+begin
+  AtualizarQuantidadeCarrinho(IdProduto, Observacao, NovaQuantidade);
+end;
+
+procedure TFormHomeC.OnCarrinhoItemRemover(IdProduto: Integer; const Observacao: String);
+begin
+  RemoverDoCarrinho(IdProduto, Observacao);
 end;
 
 procedure TFormHomeC.OnCategoriaClick(const Categoria: string);
@@ -1143,51 +1221,8 @@ end;
 
 procedure TFormHomeC.OnProdutoCardClick(IdProduto: Integer;
   const NomeProduto: string; Preco: Currency);
-var
-  Quantidade: String;
-  QtdInt: Integer;
 begin
-  // Perguntar quantidade
-  Quantidade := InputBox('Adicionar ao Carrinho',
-                         'Quantas unidades de "' + NomeProduto + '"?' + #13#10 +
-                         'Preço unitário: R$ ' + FormatFloat('#,##0.00', Preco),
-                         '1');
-
-  // Validar quantidade
-  if not TryStrToInt(Quantidade, QtdInt) or (QtdInt <= 0) then
-  begin
-    ShowMessage('Quantidade inválida!');
-    Exit;
-  end;
-
-  // ⭐ AQUI você implementa a lógica de adicionar ao carrinho
-  ShowMessage(
-    'Produto adicionado ao carrinho:' + #13#10#13#10 +
-    'Nome: ' + NomeProduto + #13#10 +
-    'Quantidade: ' + IntToStr(QtdInt) + #13#10 +
-    'Preço unitário: R$ ' + FormatFloat('#,##0.00', Preco) + #13#10 +
-    'Subtotal: R$ ' + FormatFloat('#,##0.00', Preco * QtdInt) + #13#10#13#10 +
-    '✅ Item adicionado com sucesso!'
-  );
-
-  // TODO: Implementar lógica real de carrinho
-  // - Criar TObjectList<TItemCarrinho>
-  // - Incrementar contador lblItensCart
-  // - Atualizar lblTotalCart
-  // - Persistir na memória
-
-  // Exemplo básico:
-  // if not Assigned(FCarrinho) then
-  //   FCarrinho := TObjectList<TItemCarrinho>.Create(True);
-  //
-  // Item := TItemCarrinho.Create;
-  // Item.IdProduto := IdProduto;
-  // Item.NomeProduto := NomeProduto;
-  // Item.Preco := Preco;
-  // Item.Quantidade := QtdInt;
-  // FCarrinho.Add(Item);
-  //
-  // AtualizarResumoCarrinho;
+  AbrirTelaProduto(IdProduto, NomeProduto, Preco);
 end;
 
 procedure TFormHomeC.OnRestauranteClick(IdComercio: Integer;
@@ -1200,6 +1235,56 @@ procedure TFormHomeC.OnRestauranteClickLojas(IdComercio: Integer;
   const NomeComercio: string);
 begin
   AbrirCardapio(IdComercio, NomeComercio);
+end;
+
+procedure TFormHomeC.Panel1Click(Sender: TObject);
+var
+  Quantidade: Integer;
+  Observacao: String;
+begin
+  if not Assigned(FProdutoSelecionado) then
+  begin
+    ShowMessage('❌ Erro: Produto não carregado!');
+    Exit;
+  end;
+
+  // Validar quantidade
+  if not TryStrToInt(eQuantidadeProdutoSelec.Text, Quantidade) or (Quantidade < 1) then
+  begin
+    ShowMessage('⚠️ Quantidade inválida!');
+    eQuantidadeProdutoSelec.SetFocus;
+    Exit;
+  end;
+
+  Observacao := Trim(mObservacaoProdutoSelec.Text);
+
+  try
+    // Validar se pode adicionar (mesmo estabelecimento)
+    ValidarEstabelecimentoCarrinho(
+      FProdutoSelecionado.IdComercio,
+      FNomeComercioSelecionado
+    );
+
+    // Adicionar ao carrinho
+    AdicionarAoCarrinho(
+      FProdutoSelecionado.IdProduto,
+      FProdutoSelecionado.NomeProd,
+      FProdutoSelecionado.PrecoVenda,
+      Quantidade,
+      Observacao
+    );
+
+    // Fechar tela do produto
+    FecharTelaProduto;
+
+  except
+    on E: Exception do
+    begin
+      if E.Message <> 'CANCELADO' then
+        ShowMessage('❌ Erro ao adicionar: ' + E.Message);
+      // Se for CANCELADO, apenas não faz nada
+    end;
+  end;
 end;
 
 procedure TFormHomeC.pButtonAddEnderecoClick(Sender: TObject);
@@ -1631,6 +1716,32 @@ begin
   pcPerfil.ActivePageIndex:=0;
 end;
 
+procedure TFormHomeC.RemoverDoCarrinho(IdProduto: Integer; const Observacao: String = '');
+var
+  I: Integer;
+begin
+  if not Assigned(FCarrinho) then
+    Exit;
+
+  // ⭐ MUDANÇA: Remover considerando observação também
+  for I := FCarrinho.Count - 1 downto 0 do
+  begin
+    if FCarrinho[I].EhMesmoItem(IdProduto, Observacao) then
+    begin
+      FCarrinho.Delete(I);
+      Break;
+    end;
+  end;
+
+  // Recarregar visualização
+  CarregarItensCarrinho;
+  AtualizarResumoCarrinho;
+  AtualizarCardCarrinho;
+
+  ShowMessage('✅ Item removido do carrinho!');
+end;
+
+
 procedure TFormHomeC.CadastrarNovoEndereco;
 var
   Endereco: TEnderecoCliente;
@@ -2004,6 +2115,48 @@ begin
   end;
 end;
 
+procedure TFormHomeC.ValidarEstabelecimentoCarrinho(IdComercio: Integer;
+  const NomeComercio: string);
+var
+  Item: TItemCarrinho;
+begin
+  // Se o carrinho estiver vazio, pode adicionar
+  if not Assigned(FCarrinho) or (FCarrinho.Count = 0) then
+  begin
+    FIdComercioSelecionado := IdComercio;
+    FNomeComercioSelecionado := NomeComercio;
+    Exit;
+  end;
+
+  // Se já tem itens, verificar se são do mesmo comércio
+  Item := FCarrinho.First;
+
+  if Item.IdComercio <> IdComercio then
+  begin
+    // Comércios diferentes - perguntar se quer limpar
+    if MessageDlg(
+      '⚠️ Seu carrinho possui itens de outro estabelecimento!' + #13#10#13#10 +
+      'Estabelecimento atual: ' + Item.NomeComercio + #13#10 +
+      'Novo estabelecimento: ' + NomeComercio + #13#10#13#10 +
+      '⚠️ Se continuar, o carrinho será esvaziado.' + #13#10#13#10 +
+      'Deseja limpar o carrinho e adicionar este produto?',
+      mtWarning,
+      [mbYes, mbNo],
+      0) = mrYes then
+    begin
+      // Limpar carrinho e permitir adicionar
+      LimparCarrinho;
+      FIdComercioSelecionado := IdComercio;
+      FNomeComercioSelecionado := NomeComercio;
+    end
+    else
+    begin
+      // Cancelar operação
+      raise Exception.Create('CANCELADO');
+    end;
+  end;
+end;
+
 procedure TFormHomeC.VoltarParaLojas;
 begin
   // Limpar dados do comércio selecionado
@@ -2332,6 +2485,50 @@ begin
   if Assigned(cbEnderecos) then
     cbEnderecos.OnChange := cbEnderecosChange;
 end;
+
+procedure TFormHomeC.CarregarItensCarrinho;
+var
+  Item: TItemCarrinho;
+  Card: TCarrinhoItemCard;
+  Y, CardHeight, Spacing: Integer;
+  FormOwner: TComponent;
+begin
+  if not Assigned(scbxCarrinhoItems) then
+    Exit;
+
+  // Limpar cards existentes
+  TCarrinhoHelper.LimparCards(scbxCarrinhoItems);
+
+  if not Assigned(FCarrinho) or (FCarrinho.Count = 0) then
+  begin
+    // Exibir mensagem de carrinho vazio
+    ShowMessage('🛒 Seu carrinho está vazio!');
+    Exit;
+  end;
+
+  // Pegar Form como owner
+  FormOwner := Self;
+
+  CardHeight := 120;
+  Spacing := 10;
+  Y := Spacing;
+
+  for Item in FCarrinho do
+  begin
+    Card := TCarrinhoItemCard.CreateCard(FormOwner, Item);
+    Card.Parent := scbxCarrinhoItems;
+    Card.ConfigurarVisual;
+    Card.Top := Y;
+    Card.Left := 10;
+    Card.Width := scbxCarrinhoItems.ClientWidth - 20;
+    Card.Anchors := [akLeft, akTop, akRight];
+    Card.OnQuantidadeChange := OnCarrinhoItemChange;
+    Card.OnRemover := OnCarrinhoItemRemover;
+
+    Inc(Y, Card.Height + Spacing);
+  end;
+end;
+
 
 procedure TFormHomeC.CarregarPagamentos;
 var
@@ -2694,10 +2891,105 @@ begin
   scbxComerciosL.VertScrollBar.Position := 0;
 end;
 
+procedure TFormHomeC.LimparCarrinho;
+begin
+  if Assigned(FCarrinho) then
+    FCarrinho.Clear;
+
+  FTaxaEntregaAtual := 0;
+  FIdComercioSelecionado := 0;
+  FNomeComercioSelecionado := '';
+
+  AtualizarResumoCarrinho;
+end;
+
+
 procedure TFormHomeC.meCEPNovoDExit(Sender: TObject);
 begin
   if Trim(meCEPNovoD.Text) <> '' then
     BuscarCEPNovoEndereco;
+end;
+
+procedure TFormHomeC.AdicionarAoCarrinho(IdProduto: Integer; const NomeProduto: string;
+    Preco: Currency; Quantidade: Integer; const Observacao: string = '');
+var
+  ItemExistente: TItemCarrinho;
+  NovoItem: TItemCarrinho;
+  Qr: TFDQuery;
+  ObservacaoTrimmed: String;
+begin
+  if not Assigned(FCarrinho) then
+    InicializarCarrinho;
+
+  ObservacaoTrimmed := Trim(Observacao);
+
+  // ⭐ MUDANÇA: Buscar considerando observação também
+  ItemExistente := ObterItemCarrinho(IdProduto, ObservacaoTrimmed);
+
+  if Assigned(ItemExistente) then
+  begin
+    // ⭐ Item já existe (mesmo produto + mesma observação) - SOMAR quantidade
+    ItemExistente.Quantidade := ItemExistente.Quantidade + Quantidade;
+
+    ShowMessage(
+      '✅ Quantidade atualizada!' + #13#10#13#10 +
+      '📦 ' + NomeProduto + #13#10 +
+      '🔢 Nova quantidade: ' + IntToStr(ItemExistente.Quantidade) + #13#10 +
+      '💰 Subtotal: R$ ' + FormatFloat('#,##0.00', ItemExistente.Subtotal)
+    );
+  end
+  else
+  begin
+    // ⭐ Item novo (produto diferente OU observação diferente) - CRIAR novo
+
+    // Buscar informações do comércio (se ainda não tem)
+    if FIdComercioSelecionado > 0 then
+    begin
+      Qr := TFDQuery.Create(nil);
+      try
+        Qr.Connection := DM.FDConn;
+        Qr.SQL.Text :=
+          'SELECT nome_comercio, taxa_entrega_base ' +
+          'FROM comercios WHERE id_comercio = :id';
+        Qr.ParamByName('id').AsInteger := FIdComercioSelecionado;
+        Qr.Open;
+
+        if not Qr.IsEmpty then
+        begin
+          FTaxaEntregaAtual := Qr.FieldByName('taxa_entrega_base').AsCurrency;
+
+          // Atualizar nome do comércio se ainda não tiver
+          if Trim(FNomeComercioSelecionado) = '' then
+            FNomeComercioSelecionado := Qr.FieldByName('nome_comercio').AsString;
+        end;
+      finally
+        Qr.Free;
+      end;
+    end;
+
+    // Criar novo item
+    NovoItem := TItemCarrinho.Create;
+    NovoItem.IdProduto := IdProduto;
+    NovoItem.NomeProduto := NomeProduto;
+    NovoItem.Preco := Preco;
+    NovoItem.Quantidade := Quantidade;
+    NovoItem.IdComercio := FIdComercioSelecionado;
+    NovoItem.NomeComercio := FNomeComercioSelecionado;
+    NovoItem.Observacao := ObservacaoTrimmed;
+
+    FCarrinho.Add(NovoItem);
+
+    ShowMessage(
+      '✅ Item adicionado ao carrinho!' + #13#10#13#10 +
+      '📦 ' + NomeProduto + #13#10 +
+      '🔢 Quantidade: ' + IntToStr(Quantidade) + #13#10 +
+      '💰 Subtotal: R$ ' + FormatFloat('#,##0.00', NovoItem.Subtotal)
+    );
+  end;
+
+  // Atualizar resumo
+  AtualizarResumoCarrinho;
+  AtualizarCardCarrinho;
 end;
 
 procedure TFormHomeC.AdicionarCardComercio(Comercio: TComercio; EstaAberto: Boolean; Index: Integer);
@@ -2926,6 +3218,28 @@ begin
     Qr.Free;
 end;
 
+procedure TFormHomeC.AtualizarCardCarrinho;
+begin
+  if not Assigned(pCarrinhoComm) then
+    Exit;
+
+  // Atualizar resumo simples
+  TCarrinhoHelper.PopularResumoSimples(scbxCarrinhoItems, FCarrinho);
+
+  // Atualizar total
+  TCarrinhoHelper.AtualizarResumo(
+    lblItensCart,
+    nil,
+    nil,
+    lblTotalCart,
+    FTaxaEntregaAtual,
+    FCarrinho
+  );
+
+  // Mostrar/Ocultar card baseado no carrinho
+  pCarrinhoComm.Visible := Assigned(FCarrinho) and (FCarrinho.Count > 0);
+end;
+
 procedure TFormHomeC.AtualizarCardsPagamentoPrincipal;
 var
   I: Integer;
@@ -3008,6 +3322,111 @@ begin
     begin
       Card := TEnderecoCardPanel(scbxEnderecos.Controls[I]);
       Card.Principal := (Card.IdEndereco = IdPrincipal);
+    end;
+  end;
+end;
+
+procedure TFormHomeC.AtualizarQuantidadeCarrinho(IdProduto: Integer; const Observacao: String; NovaQuantidade: Integer);
+var
+  Item: TItemCarrinho;
+begin
+  // ⭐ Buscar considerando observação
+  Item := ObterItemCarrinho(IdProduto, Observacao);
+
+  if Assigned(Item) then
+  begin
+    Item.Quantidade := NovaQuantidade;
+    AtualizarResumoCarrinho;
+    AtualizarCardCarrinho;
+  end;
+end;
+
+procedure TFormHomeC.AtualizarResumoCarrinho;
+begin
+  // Atualizar contador no ícone do carrinho
+  if Assigned(lblQuantidadeCarrinho) and Assigned(FCarrinho) then
+  begin
+    if FCarrinho.Count > 0 then
+    begin
+      lblQuantidadeCarrinho.Caption := IntToStr(FCarrinho.Count);
+      lblQuantidadeCarrinho.Visible := True;
+    end
+    else
+    begin
+      lblQuantidadeCarrinho.Visible := False;
+    end;
+  end;
+
+  // Atualizar resumo na tela do carrinho
+  TCarrinhoHelper.AtualizarResumo(
+    lblItensCartCarrinho,
+    lblSubtotal,
+    lblTaxa,
+    lblTotal,
+    FTaxaEntregaAtual,
+    FCarrinho
+  );
+
+  // Atualizar também no card flutuante (se existir)
+  if Assigned(lblItensCart) and Assigned(lblTotalCart) then
+  begin
+    TCarrinhoHelper.AtualizarResumo(
+      lblItensCart,
+      nil, // Não tem subtotal no card flutuante
+      nil, // Não tem taxa no card flutuante
+      lblTotalCart,
+      FTaxaEntregaAtual,
+      FCarrinho
+    );
+  end;
+end;
+
+procedure TFormHomeC.AtualizarSubtotalProduto;
+var
+  Quantidade: Integer;
+  Subtotal: Currency;
+begin
+  if not Assigned(FProdutoSelecionado) then
+    Exit;
+
+  if not TryStrToInt(eQuantidadeProdutoSelec.Text, Quantidade) then
+    Quantidade := 1;
+
+  if Quantidade < 1 then
+    Quantidade := 1;
+
+  Subtotal := FProdutoSelecionado.PrecoVenda * Quantidade;
+
+  lblSubtotalProdutoSelec.Caption := 'R$ ' + FormatFloat('#,##0.00', Subtotal);
+end;
+
+
+procedure TFormHomeC.btnMaisQtdClick(Sender: TObject);
+var
+  Qtd: Integer;
+begin
+  if TryStrToInt(eQuantidadeProdutoSelec.Text, Qtd) then
+  begin
+    if Qtd < 99 then // Limite máximo
+    begin
+      Inc(Qtd);
+      eQuantidadeProdutoSelec.Text := IntToStr(Qtd);
+      AtualizarSubtotalProduto;
+    end;
+  end;
+end;
+
+procedure TFormHomeC.btnMenosQtdClick(Sender: TObject);
+var
+  Qtd: Integer;
+begin
+  if TryStrToInt(eQuantidadeProdutoSelec.Text, Qtd) then
+  begin
+    if Qtd > 1 then
+    begin
+      Dec(Qtd);
+      eQuantidadeProdutoSelec.Text := IntToStr(Qtd);
+      AtualizarSubtotalProduto;
     end;
   end;
 end;
@@ -3793,6 +4212,63 @@ begin
   pcMain.ActivePage := tsCommSelec;
 end;
 
+procedure TFormHomeC.AbrirTelaProduto(IdProduto: Integer;
+  const NomeProduto: string; Preco: Currency);
+var
+  Qr: TFDQuery;
+begin
+  // Buscar dados completos do produto
+  Qr := TFDQuery.Create(nil);
+  try
+    Qr.Connection := DM.FDConn;
+    Qr.SQL.Text :=
+      'SELECT p.id_produto, p.nome_prod, p.desc_prod, p.preco_prod, ' +
+      '       cp.nome_categoria, p.id_comercio ' +
+      'FROM produtos p ' +
+      'LEFT JOIN categorias_produtos cp ON p.id_categoria = cp.id_categoria ' +
+      'WHERE p.id_produto = :id_produto';
+    Qr.ParamByName('id_produto').AsInteger := IdProduto;
+    Qr.Open;
+
+    if Qr.IsEmpty then
+    begin
+      ShowMessage('❌ Produto não encontrado!');
+      Exit;
+    end;
+
+    // Criar objeto de produto
+    if Assigned(FProdutoSelecionado) then
+      FreeAndNil(FProdutoSelecionado);
+
+    FProdutoSelecionado := TProduto.Create;
+    FProdutoSelecionado.IdProduto := Qr.FieldByName('id_produto').AsInteger;
+    FProdutoSelecionado.NomeProd := Qr.FieldByName('nome_prod').AsString;
+    FProdutoSelecionado.DescProd := Qr.FieldByName('desc_prod').AsString;
+    FProdutoSelecionado.PrecoVenda := Qr.FieldByName('preco_prod').AsCurrency;
+    FProdutoSelecionado.Categoria := Qr.FieldByName('nome_categoria').AsString;
+    FProdutoSelecionado.IdComercio := Qr.FieldByName('id_comercio').AsInteger;
+
+  finally
+    Qr.Free;
+  end;
+
+  // Preencher campos da tela
+  lblNomeProdutoSelec.Caption := FProdutoSelecionado.NomeProd;
+  lblDescricaoProdutoSelec.Caption := FProdutoSelecionado.DescProd;
+  lblCategoriaProdutoSelec.Caption := '🏷️ ' + FProdutoSelecionado.Categoria;
+  lblPrecoProdutoSelec.Caption := 'R$ ' + FormatFloat('#,##0.00', FProdutoSelecionado.PrecoVenda);
+
+  // Resetar quantidade
+  eQuantidadeProdutoSelec.Text := '1';
+  mObservacaoProdutoSelec.Clear;
+
+  // Atualizar subtotal
+  AtualizarSubtotalProduto;
+
+  // Ir para tela do produto
+  pcMain.ActivePage := tsProdutoSelec;
+end;
+
 procedure TFormHomeC.eBuscaMainChange(Sender: TObject);
 begin
   if not FInicializado then
@@ -3808,6 +4284,26 @@ begin
   else
   begin
     FBuscaTimer.Enabled := True;
+  end;
+end;
+
+function TFormHomeC.ObterItemCarrinho(IdProduto: Integer; const Observacao: String = ''): TItemCarrinho;
+var
+  Item: TItemCarrinho;
+begin
+  Result := nil;
+
+  if not Assigned(FCarrinho) then
+    Exit;
+
+  for Item in FCarrinho do
+  begin
+    // ⭐ Usa o novo método que compara produto + observação
+    if Item.EhMesmoItem(IdProduto, Observacao) then
+    begin
+      Result := Item;
+      Break;
+    end;
   end;
 end;
 
@@ -4656,6 +5152,26 @@ begin
   end;
 end;
 
+procedure TFormHomeC.eQuantidadeProdutoSelecChange(Sender: TObject);
+var
+  Qtd: Integer;
+begin
+  if TryStrToInt(eQuantidadeProdutoSelec.Text, Qtd) then
+  begin
+    if (Qtd >= 1) and (Qtd <= 99) then
+      AtualizarSubtotalProduto
+    else if Qtd < 1 then
+      eQuantidadeProdutoSelec.Text := '1'
+    else if Qtd > 99 then
+      eQuantidadeProdutoSelec.Text := '99';
+  end
+  else
+  begin
+    eQuantidadeProdutoSelec.Text := '1';
+  end;
+end;
+
+
 procedure TFormHomeC.ExcluirEndereco(IdEndereco: Integer);
 begin
   try
@@ -4901,7 +5417,7 @@ end;
 
 procedure TFormHomeC.iButtonBackLojasClick(Sender: TObject);
 begin
-  pcMain.ActivePageIndex:=0;
+  FecharTelaProduto;
 end;
 
 procedure TFormHomeC.iButtonBackPerfilClick(Sender: TObject);

@@ -76,7 +76,8 @@ uses
   PagamentoCardPanel in 'Src\Utils\PagamentoCardPanel.pas',
   FormaPagamentoClienteController in 'Src\Controller\FormaPagamentoClienteController.pas',
   FormaPagamentoClienteService in 'Src\Service\FormaPagamentoClienteService.pas',
-  CarrinhoModel in 'Src\Model\CarrinhoModel.pas';
+  CarrinhoModel in 'Src\Model\CarrinhoModel.pas',
+  CarrinhoHelper in 'Src\Utils\CarrinhoHelper.pas';
 
 {$R *.res}
 

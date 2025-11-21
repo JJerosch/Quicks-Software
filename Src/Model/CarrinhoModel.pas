@@ -1,4 +1,4 @@
-unit CarrinhoModel;
+﻿unit CarrinhoModel;
 
 interface
 
@@ -23,10 +23,14 @@ type
 
     constructor Create;
     function Subtotal: Currency;
+
+    // ⭐ NOVO: Verificar se é o mesmo item (produto + observação)
+    function EhMesmoItem(IdProduto: Integer; const Observacao: String): Boolean;
   end;
 
 implementation
-
+uses
+SysUtils;
 { TItemCarrinho }
 
 constructor TItemCarrinho.Create;
@@ -44,6 +48,13 @@ end;
 function TItemCarrinho.Subtotal: Currency;
 begin
   Result := FPreco * FQuantidade;
+end;
+
+function TItemCarrinho.EhMesmoItem(IdProduto: Integer; const Observacao: String): Boolean;
+begin
+  // Compara ID do produto E observação (case-insensitive e trim)
+  Result := (FIdProduto = IdProduto) and
+            (AnsiUpperCase(Trim(FObservacao)) = AnsiUpperCase(Trim(Observacao)));
 end;
 
 end.
