@@ -121,7 +121,7 @@ begin
   lblPreco.Font.Color := $00666666;
   lblPreco.Transparent := True;
 
-  // Painel de controles (quantidade + botões)
+  // ⭐ Painel de controles (quantidade + botões)
   pControles := TPanel.Create(Self);
   pControles.Parent := Self;
   pControles.Left := 15;
@@ -132,7 +132,7 @@ begin
   pControles.Color := Self.Color;
   pControles.ParentBackground := False;
 
-  // Botão Menos
+  // ⭐ Botão Menos
   btnMenos := TButton.Create(pControles);
   btnMenos.Parent := pControles;
   btnMenos.Caption := '−';
@@ -140,12 +140,12 @@ begin
   btnMenos.Top := 0;
   btnMenos.Width := 35;
   btnMenos.Height := 30;
-  btnMenos.Font.Size := 12;
+  btnMenos.Font.Size := 14;
   btnMenos.Font.Style := [fsBold];
   btnMenos.Cursor := crHandPoint;
   btnMenos.OnClick := BtnMenosClick;
 
-  // Edit Quantidade
+  // ⭐ Edit Quantidade
   eQuantidade := TEdit.Create(pControles);
   eQuantidade.Parent := pControles;
   eQuantidade.Left := 40;
@@ -159,7 +159,7 @@ begin
   eQuantidade.Text := IntToStr(FQuantidade);
   eQuantidade.OnChange := QuantidadeChange;
 
-  // Botão Mais
+  // ⭐ Botão Mais
   btnMais := TButton.Create(pControles);
   btnMais.Parent := pControles;
   btnMais.Caption := '+';
@@ -167,7 +167,7 @@ begin
   btnMais.Top := 0;
   btnMais.Width := 35;
   btnMais.Height := 30;
-  btnMais.Font.Size := 12;
+  btnMais.Font.Size := 14;
   btnMais.Font.Style := [fsBold];
   btnMais.Cursor := crHandPoint;
   btnMais.OnClick := BtnMaisClick;
@@ -222,25 +222,43 @@ procedure TCarrinhoItemCard.BtnMenosClick(Sender: TObject);
 begin
   if FQuantidade > 1 then
   begin
+    // Se tiver mais de 1, apenas diminui
     Dec(FQuantidade);
     eQuantidade.Text := IntToStr(FQuantidade);
     AtualizarSubtotal;
 
     if Assigned(FOnQuantidadeChange) then
-      FOnQuantidadeChange(FIdProduto, FObservacao, FQuantidade); // ⭐ PASSA OBSERVAÇÃO
+      FOnQuantidadeChange(FIdProduto, FObservacao, FQuantidade);
+  end
+  else
+  begin
+    // ⭐ Se tiver apenas 1, REMOVE o item completamente
+    if MessageDlg(
+      'Remover "' + FNomeProduto + '" do carrinho?',
+      mtConfirmation,
+      [mbYes, mbNo],
+      0) = mrYes then
+    begin
+      if Assigned(FOnRemover) then
+        FOnRemover(FIdProduto, FObservacao);
+    end;
   end;
 end;
 
 procedure TCarrinhoItemCard.BtnMaisClick(Sender: TObject);
 begin
-  if FQuantidade < 99 then
+  if FQuantidade < 99 then // Limite máximo
   begin
     Inc(FQuantidade);
     eQuantidade.Text := IntToStr(FQuantidade);
     AtualizarSubtotal;
 
     if Assigned(FOnQuantidadeChange) then
-      FOnQuantidadeChange(FIdProduto, FObservacao, FQuantidade); // ⭐ PASSA OBSERVAÇÃO
+      FOnQuantidadeChange(FIdProduto, FObservacao, FQuantidade);
+  end
+  else
+  begin
+    ShowMessage('⚠️ Quantidade máxima atingida (99 unidades)');
   end;
 end;
 
@@ -261,25 +279,32 @@ procedure TCarrinhoItemCard.QuantidadeChange(Sender: TObject);
 var
   NovaQtd: Integer;
 begin
-  if TryStrToInt(eQuantidade.Text, NovaQtd) then
-  begin
-    if (NovaQtd > 0) and (NovaQtd <= 99) then
-    begin
-      FQuantidade := NovaQtd;
-      AtualizarSubtotal;
-
-      if Assigned(FOnQuantidadeChange) then
-        FOnQuantidadeChange(FIdProduto, FObservacao, FQuantidade); // ⭐ PASSA OBSERVAÇÃO
-    end
-    else
-    begin
-      eQuantidade.Text := IntToStr(FQuantidade);
-    end;
-  end
-  else
+  // Permitir apenas números
+  if not TryStrToInt(eQuantidade.Text, NovaQtd) then
   begin
     eQuantidade.Text := IntToStr(FQuantidade);
+    Exit;
   end;
+
+  // Validar limites
+  if NovaQtd < 1 then
+  begin
+    eQuantidade.Text := '1';
+    NovaQtd := 1;
+  end
+  else if NovaQtd > 99 then
+  begin
+    eQuantidade.Text := '99';
+    NovaQtd := 99;
+    ShowMessage('⚠️ Quantidade máxima: 99 unidades');
+  end;
+
+  // Atualizar
+  FQuantidade := NovaQtd;
+  AtualizarSubtotal;
+
+  if Assigned(FOnQuantidadeChange) then
+    FOnQuantidadeChange(FIdProduto, FObservacao, FQuantidade);
 end;
 
 procedure TCarrinhoItemCard.AtualizarSubtotal;

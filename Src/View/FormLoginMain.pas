@@ -297,6 +297,17 @@ begin
           FormHomeA.Show;
           Self.Hide;
         end;
+
+        tuEntregador:
+        begin
+          if not Assigned(FormHomeE) then
+            Application.CreateForm(TFormHomeE, FormHomeE);
+
+          FormHomeE.IdUsuario := LoginResponse.IdUsuario;
+          FormHomeE.NomeUsuario := LoginResponse.NomeUsuario;
+          FormHomeE.Show;
+          Self.Hide;
+        end;
       end;
     end
     else

@@ -281,6 +281,7 @@ TCardEventHandler = class
     lblSubtotalProdutoSelec: TLabel;
     Panel1: TPanel;
     lblSubtotalProdutoSelecD: TLabel;
+    pButtonLimparCarrinho: TPanel;
 
     procedure iButton1Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -320,6 +321,7 @@ TCardEventHandler = class
     procedure btnMaisQtdClick(Sender: TObject);
     procedure eQuantidadeProdutoSelecChange(Sender: TObject);
     procedure Panel1Click(Sender: TObject);
+    procedure pButtonLimparCarrinhoClick(Sender: TObject);
 
   private
     FIdUsuario: Integer;
@@ -938,7 +940,14 @@ begin
       CarregarEnderecos;
       CarregarEnderecosNoComboBox;
       CarregarPagamentos;
-      CarregarPagamentosNoComboBox; // ⭐ VERIFICAR SE ESTA LINHA EXISTE
+      CarregarPagamentosNoComboBox;
+
+      // ⭐ Se houver itens no carrinho, carregá-los
+      if Assigned(FCarrinho) and (FCarrinho.Count > 0) then
+      begin
+        CarregarItensCarrinho; // Cards completos
+        AtualizarResumoCarrinho;
+      end;
     end
     else
     begin
@@ -1549,6 +1558,11 @@ end;
 procedure TFormHomeC.pButtonEditarPagamentosClick(Sender: TObject);
 begin
   pcPerfil.ActivePageIndex:=4;
+end;
+
+procedure TFormHomeC.pButtonLimparCarrinhoClick(Sender: TObject);
+begin
+  LimparCarrinho;
 end;
 
 procedure TFormHomeC.pButtonSalvarDadosEClick(Sender: TObject);
@@ -2501,34 +2515,35 @@ begin
 
   if not Assigned(FCarrinho) or (FCarrinho.Count = 0) then
   begin
-    // Exibir mensagem de carrinho vazio
-    ShowMessage('🛒 Seu carrinho está vazio!');
+    // Painel de mensagem "carrinho vazio"
     Exit;
   end;
 
   // Pegar Form como owner
   FormOwner := Self;
 
-  CardHeight := 120;
+  CardHeight := 140; // ⭐ Aumentado para caber os botões
   Spacing := 10;
   Y := Spacing;
 
+  // ⭐ CRIAR CARDS COM BOTÕES +/-
   for Item in FCarrinho do
   begin
     Card := TCarrinhoItemCard.CreateCard(FormOwner, Item);
     Card.Parent := scbxCarrinhoItems;
-    Card.ConfigurarVisual;
+    Card.ConfigurarVisual; // ⭐ IMPORTANTE: Chamar DEPOIS de definir Parent
     Card.Top := Y;
     Card.Left := 10;
     Card.Width := scbxCarrinhoItems.ClientWidth - 20;
     Card.Anchors := [akLeft, akTop, akRight];
+
+    // ⭐ Conectar eventos
     Card.OnQuantidadeChange := OnCarrinhoItemChange;
     Card.OnRemover := OnCarrinhoItemRemover;
 
     Inc(Y, Card.Height + Spacing);
   end;
 end;
-
 
 procedure TFormHomeC.CarregarPagamentos;
 var
@@ -2893,14 +2908,35 @@ end;
 
 procedure TFormHomeC.LimparCarrinho;
 begin
-  if Assigned(FCarrinho) then
-    FCarrinho.Clear;
+  if not Assigned(FCarrinho) then
+    Exit;
 
+  // Perguntar confirmação se houver itens
+  if FCarrinho.Count > 0 then
+  begin
+    if MessageDlg(
+      '🗑️ Deseja realmente limpar o carrinho?' + #13#10#13#10 +
+      'Todos os ' + IntToStr(FCarrinho.Count) + ' itens serão removidos.',
+      mtConfirmation,
+      [mbYes, mbNo],
+      0) = mrNo then
+      Exit;
+  end;
+
+  // Limpar lista
+  FCarrinho.Clear;
+
+  // Resetar informações do comércio
   FTaxaEntregaAtual := 0;
   FIdComercioSelecionado := 0;
   FNomeComercioSelecionado := '';
 
+  // Atualizar visualizações
+  CarregarItensCarrinho;
   AtualizarResumoCarrinho;
+  AtualizarCardCarrinho;
+
+  ShowMessage('✅ Carrinho limpo com sucesso!');
 end;
 
 
@@ -3223,10 +3259,10 @@ begin
   if not Assigned(pCarrinhoComm) then
     Exit;
 
-  // Atualizar resumo simples
+  // ⭐ Card flutuante - pode usar resumo simples
   TCarrinhoHelper.PopularResumoSimples(scbxCarrinhoItems, FCarrinho);
 
-  // Atualizar total
+  // Atualizar total no card flutuante
   TCarrinhoHelper.AtualizarResumo(
     lblItensCart,
     nil,
@@ -3238,6 +3274,10 @@ begin
 
   // Mostrar/Ocultar card baseado no carrinho
   pCarrinhoComm.Visible := Assigned(FCarrinho) and (FCarrinho.Count > 0);
+
+  // ⭐ IMPORTANTE: Se estiver na tela do carrinho, recarregar com cards completos
+  if pcMain.ActivePage = tsCarrinho then
+    CarregarItensCarrinho; // Recria os cards com botões
 end;
 
 procedure TFormHomeC.AtualizarCardsPagamentoPrincipal;
@@ -3342,6 +3382,14 @@ begin
 end;
 
 procedure TFormHomeC.AtualizarResumoCarrinho;
+var
+  Pagamentos: TObjectList<TFormaPagamentoCliente>;
+  Pagamento: TFormaPagamentoCliente;
+  Enderecos: TObjectList<TEnderecoCliente>;
+  Endereco: TEnderecoCliente;
+  Qr: TFDQuery;
+  IdCliente: Integer;
+  DescricaoPagamento, DescricaoEndereco: String;
 begin
   // Atualizar contador no ícone do carrinho
   if Assigned(lblQuantidadeCarrinho) and Assigned(FCarrinho) then
@@ -3367,13 +3415,160 @@ begin
     FCarrinho
   );
 
+  // ⭐ Buscar id_clie (usado tanto para pagamento quanto endereço)
+  try
+    Qr := TFDQuery.Create(nil);
+    try
+      Qr.Connection := DM.FDConn;
+      Qr.SQL.Text := 'SELECT id_clie FROM clientes WHERE id_user = :id_user';
+      Qr.ParamByName('id_user').AsInteger := FIdUsuario;
+      Qr.Open;
+
+      if Qr.IsEmpty then
+        Exit;
+
+      IdCliente := Qr.FieldByName('id_clie').AsInteger;
+    finally
+      Qr.Free;
+    end;
+
+    // ⭐ BUSCAR E EXIBIR FORMA DE PAGAMENTO PRINCIPAL
+    if Assigned(lblFormaPagamento) and Assigned(FPagamentoController) then
+    begin
+      try
+        Pagamentos := FPagamentoController.ListarPagamentos(IdCliente);
+        try
+          if Assigned(Pagamentos) and (Pagamentos.Count > 0) then
+          begin
+            DescricaoPagamento := '';
+
+            // Procurar o principal
+            for Pagamento in Pagamentos do
+            begin
+              if Pagamento.Principal then
+              begin
+                // Criar descrição baseada no tipo
+                if Pagamento is TPagamentoCartao then
+                  DescricaoPagamento := Format('%s - %s **** %s',
+                    [Pagamento.Apelido,
+                     TPagamentoCartao(Pagamento).Bandeira,
+                     TPagamentoCartao(Pagamento).NumeroCartao])
+                else if Pagamento is TPagamentoPix then
+                  DescricaoPagamento := Format('%s - Pix: %s',
+                    [Pagamento.Apelido,
+                     Copy(TPagamentoPix(Pagamento).ChavePix, 1, 20)])
+                else if Pagamento is TPagamentoTransferencia then
+                  DescricaoPagamento := Format('%s - %s',
+                    [Pagamento.Apelido,
+                     TPagamentoTransferencia(Pagamento).Banco])
+                else
+                  DescricaoPagamento := Pagamento.Apelido;
+
+                Break;
+              end;
+            end;
+
+            // Se não encontrou principal, pega o primeiro
+            if DescricaoPagamento = '' then
+            begin
+              Pagamento := Pagamentos[0];
+              if Pagamento is TPagamentoCartao then
+                DescricaoPagamento := Format('%s - %s **** %s',
+                  [Pagamento.Apelido,
+                   TPagamentoCartao(Pagamento).Bandeira,
+                   TPagamentoCartao(Pagamento).NumeroCartao])
+              else if Pagamento is TPagamentoPix then
+                DescricaoPagamento := Format('%s - Pix',
+                  [Pagamento.Apelido])
+              else if Pagamento is TPagamentoTransferencia then
+                DescricaoPagamento := Format('%s - %s',
+                  [Pagamento.Apelido,
+                   TPagamentoTransferencia(Pagamento).Banco])
+              else
+                DescricaoPagamento := Pagamento.Apelido;
+            end;
+
+            lblFormaPagamento.Caption := DescricaoPagamento;
+          end
+          else
+          begin
+            lblFormaPagamento.Caption := '⚠️ Nenhuma forma cadastrada';
+          end;
+        finally
+          Pagamentos.Free;
+        end;
+      except
+        on E: Exception do
+          lblFormaPagamento.Caption := 'Erro ao carregar';
+      end;
+    end;
+
+    // ⭐ BUSCAR E EXIBIR ENDEREÇO PRINCIPAL
+    if Assigned(lblEnderecoAtualCarrinho) and Assigned(FEnderecoController) then
+    begin
+      try
+        Enderecos := FEnderecoController.ListarEnderecos(IdCliente);
+        try
+          if Assigned(Enderecos) and (Enderecos.Count > 0) then
+          begin
+            DescricaoEndereco := '';
+
+            // Procurar o principal
+            for Endereco in Enderecos do
+            begin
+              if Endereco.Principal then
+              begin
+                DescricaoEndereco := Format('%s - %s, %s',
+                  [Endereco.Apelido,
+                   Endereco.Logradouro,
+                   Endereco.Numero]);
+                Break;
+              end;
+            end;
+
+            // Se não encontrou principal, pega o primeiro
+            if DescricaoEndereco = '' then
+            begin
+              Endereco := Enderecos[0];
+              DescricaoEndereco := Format('%s - %s, %s',
+                [Endereco.Apelido,
+                 Endereco.Logradouro,
+                 Endereco.Numero]);
+            end;
+
+            lblEnderecoAtualCarrinho.Caption := DescricaoEndereco;
+          end
+          else
+          begin
+            lblEnderecoAtualCarrinho.Caption := '⚠️ Nenhum endereço cadastrado';
+          end;
+        finally
+          Enderecos.Free;
+        end;
+      except
+        on E: Exception do
+          lblEnderecoAtualCarrinho.Caption := 'Erro ao carregar endereço';
+      end;
+    end;
+
+  except
+    on E: Exception do
+    begin
+      // Erro geral
+      if Assigned(lblFormaPagamento) then
+        lblFormaPagamento.Caption := 'Erro';
+      if Assigned(lblEnderecoAtualCarrinho) then
+        lblEnderecoAtualCarrinho.Caption := 'Erro';
+    end;
+  end;
+
   // Atualizar também no card flutuante (se existir)
   if Assigned(lblItensCart) and Assigned(lblTotalCart) then
   begin
     TCarrinhoHelper.AtualizarResumo(
       lblItensCart,
-      nil, // Não tem subtotal no card flutuante
-      nil, // Não tem taxa no card flutuante
+      nil,
+      nil,
       lblTotalCart,
       FTaxaEntregaAtual,
       FCarrinho
@@ -5434,7 +5629,14 @@ end;
 
 procedure TFormHomeC.iCarrinhoClick(Sender: TObject);
 begin
-pcMain.ActivePageIndex:=4;
+  // Ir para aba do carrinho
+  pcMain.ActivePageIndex := 4; // tsCarrinho
+
+  // ⭐ IMPORTANTE: Recarregar itens com os cards completos
+  CarregarItensCarrinho; // Este método cria os cards com botões +/-
+
+  // Atualizar resumo
+  AtualizarResumoCarrinho;
 end;
 
 { TCardEventHandler }

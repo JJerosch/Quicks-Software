@@ -2,7 +2,7 @@ unit CadastroService;
 
 interface
 uses
-  CadastroModel, SysUtils, vcl.Dialogs, CadastroRepository;
+  FireDAC.Comp.Client, CadastroModel, SysUtils, vcl.Dialogs, CadastroRepository;
 
 type
   TCadastroService = class
