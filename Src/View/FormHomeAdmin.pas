@@ -10,7 +10,7 @@ uses
   System.Generics.Collections, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
   FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet, FireDAC.Comp.Client,
   UsuarioModelCRUDAdmin, CargosModelCRUDAdmin, UsuarioControllerCRUDAdmin,
-  UsuarioViewHelperCRUDAdmin, Vcl.WinXPickers;
+  UsuarioViewHelperCRUDAdmin, Vcl.WinXPickers, PerfilAdminService, uConn, LogSistema;
 
 type
   TFormHomeA = class(TForm)
@@ -100,9 +100,6 @@ type
     Label7: TLabel;
     lblUserNameHeader: TLabel;
     lblUserIdHeader: TLabel;
-    pDadosHeader: TPanel;
-    Label1: TLabel;
-    Label2: TLabel;
     pcPerfil: TPageControl;
     tsVisualizar: TTabSheet;
     scbxPerfilVisualizar: TScrollBox;
@@ -177,10 +174,21 @@ type
     procedure iButton5Click(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
 
+    // ⭐ NOVOS PROCEDIMENTOS PARA PERFIL
+    procedure pButtonEditarClick(Sender: TObject);
+    procedure pButtonAlterarSenhaClick(Sender: TObject);
+    procedure pButtonSalvarDadosEClick(Sender: TObject);
+    procedure pButtonCancelarEClick(Sender: TObject);
+    procedure pButtonAlterarSenhaEClick(Sender: TObject);
+    procedure iButtonBackAlterarSenhaClick(Sender: TObject);
+    procedure pButtonConfirmarAlterarSenhaClick(Sender: TObject);
+    procedure pButtonCancelarAlterarSenhaClick(Sender: TObject);
+
   private
     FIdUsuario: Integer;
     FNomeUsuario: String;
     FController: TUsuarioController;
+    FPerfilService: TPerfilAdminService;  // ⭐ ADICIONAR
     FIdUsuarioSelecionado: Integer;
     FMemTable: TFDMemTable;
     FDataSource: TDataSource;
@@ -194,6 +202,11 @@ type
     procedure CarregarCargosAtualizar;
     procedure CarregarDadosParaAtualizar(IdUsuario: Integer);
 
+    // ⭐ NOVOS MÉTODOS PARA PERFIL
+    procedure CarregarDadosPerfil;
+    procedure CarregarDadosPerfilEdicao;
+    procedure LimparCamposSenha;
+
   public
     property IdUsuario: Integer read FIdUsuario write FIdUsuario;
     property NomeUsuario: String read FNomeUsuario write FNomeUsuario;
@@ -206,8 +219,7 @@ implementation
 
 {$R *.dfm}
 
-uses
-  uConn;
+
 
 { TFormHomeA }
 
@@ -215,6 +227,7 @@ procedure TFormHomeA.FormCreate(Sender: TObject);
 begin
   // Criar controller
   FController := TUsuarioController.Create;
+  FPerfilService := TPerfilAdminService.Create;  // ⭐ ADICIONAR
   FIdUsuarioSelecionado := 0;
 
   // Criar MemTable e DataSource
@@ -230,6 +243,9 @@ begin
   if Assigned(pcButtons) then
     pcButtons.ActivePageIndex := 0;
 
+  if Assigned(pcPerfil) then
+    pcPerfil.ActivePageIndex := 0;
+
   // Configurar busca
   eBuscaMain.Clear;
   eBuscaMain.TextHint := 'Digite aqui para pesquisar.';
@@ -243,11 +259,37 @@ begin
 
   Self.BorderStyle := bsSingle;
   Self.WindowState := wsNormal;
+
+  // ⭐ Configurar eventos dos botões de perfil
+  if Assigned(pButtonEditar) then
+    pButtonEditar.OnClick := pButtonEditarClick;
+
+  if Assigned(pButtonAlterarSenha) then
+    pButtonAlterarSenha.OnClick := pButtonAlterarSenhaClick;
+
+  if Assigned(pButtonSalvarDadosE) then
+    pButtonSalvarDadosE.OnClick := pButtonSalvarDadosEClick;
+
+  if Assigned(pButtonCancelarE) then
+    pButtonCancelarE.OnClick := pButtonCancelarEClick;
+
+  if Assigned(pButtonAlterarSenhaE) then
+    pButtonAlterarSenhaE.OnClick := pButtonAlterarSenhaEClick;
+
+  if Assigned(iButtonBackAlterarSenha) then
+    iButtonBackAlterarSenha.OnClick := iButtonBackAlterarSenhaClick;
+
+  if Assigned(pButtonConfirmarAlterarSenha) then
+    pButtonConfirmarAlterarSenha.OnClick := pButtonConfirmarAlterarSenhaClick;
+
+  if Assigned(pButtonCancelarAlterarSenha) then
+    pButtonCancelarAlterarSenha.OnClick := pButtonCancelarAlterarSenhaClick;
 end;
 
 procedure TFormHomeA.FormDestroy(Sender: TObject);
 begin
   FController.Free;
+  FPerfilService.Free;  // ⭐ ADICIONAR
   FMemTable.Free;
   FDataSource.Free;
 end;
@@ -266,6 +308,12 @@ begin
     eBuscaMain.TextHint := 'Digite aqui para pesquisar.';
     eBuscaMain.Clear;
 
+    // ⭐ Carregar dados do perfil
+    CarregarDadosPerfil;
+
+    // ⭐ Registrar log de acesso
+    TLogSistema.RegistrarLogin(NomeUsuario);
+
   except
     on E: Exception do
       ShowMessage('Erro ao carregar dados: ' + E.Message);
@@ -280,6 +328,200 @@ begin
     pMainGrid.Width := 1013;
   end;
 end;
+
+// ============ PERFIL - CARREGAR DADOS ============
+
+procedure TFormHomeA.CarregarDadosPerfil;
+var
+  Nome, Email, CPF, Telefone: String;
+begin
+  if FPerfilService.ObterDadosPerfil(FIdUsuario, Nome, Email, CPF, Telefone) then
+  begin
+    // Atualizar labels de visualização
+    if Assigned(lblNAdminD) then
+      lblNAdminD.Caption := Nome;
+
+    if Assigned(lblEAdminD) then
+      lblEAdminD.Caption := Email;
+
+    if Assigned(lblCPFPCommD) then
+      lblCPFPCommD.Caption := CPF;
+
+    if Assigned(lblTCommD) then
+      lblTCommD.Caption := Telefone;
+  end;
+end;
+
+procedure TFormHomeA.CarregarDadosPerfilEdicao;
+var
+  Nome, Email, CPF, Telefone: String;
+begin
+  if FPerfilService.ObterDadosPerfil(FIdUsuario, Nome, Email, CPF, Telefone) then
+  begin
+    // Atualizar campos de edição
+    if Assigned(eNPCommDE) then
+      eNPCommDE.Text := Nome;
+
+    if Assigned(eEPCommDE) then
+      eEPCommDE.Text := Email;
+
+    if Assigned(meCPFPCommDE) then
+      meCPFPCommDE.Text := CPF;
+
+    if Assigned(MaskEdit1) then  // Telefone
+      MaskEdit1.Text := Telefone;
+  end;
+end;
+
+procedure TFormHomeA.LimparCamposSenha;
+begin
+  if Assigned(eSenhaAtual) then
+    eSenhaAtual.Clear;
+
+  if Assigned(eSenhaNova) then
+    eSenhaNova.Clear;
+
+  if Assigned(eSenhaConfirmacao) then
+    eSenhaConfirmacao.Clear;
+end;
+
+// ============ PERFIL - EVENTOS DOS BOTÕES ============
+
+procedure TFormHomeA.iButton5Click(Sender: TObject);
+begin
+  pcMain.ActivePage := pctab5Perfil;
+  pcPerfil.ActivePageIndex := 0;
+  CarregarDadosPerfil;
+end;
+
+procedure TFormHomeA.pButtonEditarClick(Sender: TObject);
+begin
+  pcPerfil.ActivePageIndex := 1; // tsEditar
+  CarregarDadosPerfilEdicao;
+
+  TLogSistema.RegistrarAcaoUsuario(NomeUsuario, 'Acessou edição de perfil');
+end;
+
+procedure TFormHomeA.pButtonAlterarSenhaClick(Sender: TObject);
+begin
+  pcPerfil.ActivePageIndex := 2; // tsAlterarSenha
+  LimparCamposSenha;
+
+  TLogSistema.RegistrarAcaoUsuario(NomeUsuario, 'Acessou alteração de senha');
+end;
+
+procedure TFormHomeA.pButtonAlterarSenhaEClick(Sender: TObject);
+begin
+  pcPerfil.ActivePageIndex := 2; // tsAlterarSenha
+  LimparCamposSenha;
+end;
+
+procedure TFormHomeA.iButtonBackAlterarSenhaClick(Sender: TObject);
+begin
+  LimparCamposSenha;
+  pcPerfil.ActivePageIndex := 0; // tsVisualizar
+end;
+
+procedure TFormHomeA.pButtonSalvarDadosEClick(Sender: TObject);
+var
+  Nome, Email, CPF, Telefone: String;
+begin
+  // Obter dados dos campos
+  Nome := '';
+  Email := '';
+  CPF := '';
+  Telefone := '';
+
+  if Assigned(eNPCommDE) then
+    Nome := Trim(eNPCommDE.Text);
+
+  if Assigned(eEPCommDE) then
+    Email := Trim(eEPCommDE.Text);
+
+  if Assigned(meCPFPCommDE) then
+    CPF := meCPFPCommDE.Text;
+
+  if Assigned(MaskEdit1) then
+    Telefone := MaskEdit1.Text;
+
+  // Atualizar no banco
+  if FPerfilService.AtualizarPerfil(FIdUsuario, Nome, Email, CPF, Telefone) then
+  begin
+    // Atualizar nome no header
+    FNomeUsuario := Nome;
+    lblUserNameHeader.Caption := Nome;
+
+    // Voltar para visualização
+    CarregarDadosPerfil;
+    pcPerfil.ActivePageIndex := 0;
+
+    TLogSistema.RegistrarAcaoUsuario(Nome, 'Perfil atualizado com sucesso');
+  end
+  else
+  begin
+    TLogSistema.RegistrarErro(FNomeUsuario, 'Atualizar Perfil', 'Falha ao salvar dados');
+  end;
+end;
+
+procedure TFormHomeA.pButtonCancelarEClick(Sender: TObject);
+begin
+  pcPerfil.ActivePageIndex := 0; // tsVisualizar
+  TLogSistema.RegistrarAcaoUsuario(NomeUsuario, 'Cancelou edição de perfil');
+end;
+
+procedure TFormHomeA.pButtonConfirmarAlterarSenhaClick(Sender: TObject);
+var
+  SenhaAtual, NovaSenha, Confirmacao: String;
+  MsgErro: String;
+begin
+  // Obter senhas
+  SenhaAtual := '';
+  NovaSenha := '';
+  Confirmacao := '';
+
+  if Assigned(eSenhaAtual) then
+    SenhaAtual := Trim(eSenhaAtual.Text);
+
+  if Assigned(eSenhaNova) then
+    NovaSenha := Trim(eSenhaNova.Text);
+
+  if Assigned(eSenhaConfirmacao) then
+    Confirmacao := Trim(eSenhaConfirmacao.Text);
+
+  // Validar confirmação
+  if NovaSenha <> Confirmacao then
+  begin
+    ShowMessage('A nova senha e a confirmação não coincidem.');
+    if Assigned(eSenhaConfirmacao) then
+      eSenhaConfirmacao.SetFocus;
+    Exit;
+  end;
+
+  // Tentar alterar senha
+  if FPerfilService.AlterarSenha(FIdUsuario, SenhaAtual, NovaSenha, MsgErro) then
+  begin
+    ShowMessage('Senha alterada com sucesso!');
+    LimparCamposSenha;
+    pcPerfil.ActivePageIndex := 0; // tsVisualizar
+
+    TLogSistema.RegistrarAcaoUsuario(NomeUsuario, 'Senha alterada com sucesso');
+  end
+  else
+  begin
+    ShowMessage(MsgErro);
+    TLogSistema.RegistrarErro(NomeUsuario, 'Alterar Senha', MsgErro);
+  end;
+end;
+
+procedure TFormHomeA.pButtonCancelarAlterarSenhaClick(Sender: TObject);
+begin
+  LimparCamposSenha;
+  pcPerfil.ActivePageIndex := 0; // tsVisualizar
+
+  TLogSistema.RegistrarAcaoUsuario(NomeUsuario, 'Cancelou alteração de senha');
+end;
+
+// ============ MÉTODOS ORIGINAIS (sem alteração) ============
 
 procedure TFormHomeA.CarregarGrid(ApenasAtivos: Boolean);
 var
@@ -441,14 +683,14 @@ begin
   end;
 end;
 
-// ============ EVENTOS DOS BOTÕES ============
+// ============ EVENTOS DOS BOTÕES (mantidos) ============
 
 procedure TFormHomeA.iButton1Click(Sender: TObject);
 begin
-  if pBarraMenuLeft.Width = 89 then
-    pBarraMenuLeft.Width := 200
+  if pBarraMenuLeft.Width = 97 then
+    pBarraMenuLeft.Width := 250
   else
-    pBarraMenuLeft.Width := 89;
+    pBarraMenuLeft.Width := 97;
 end;
 
 procedure TFormHomeA.iButton2Click(Sender: TObject);
@@ -466,16 +708,12 @@ begin
   pcMain.ActivePage := pctab4Usuarios;
 end;
 
-procedure TFormHomeA.iButton5Click(Sender: TObject);
-begin
-  pcMain.ActivePage := pctab5Perfil;
-end;
-
 procedure TFormHomeA.iButton6Click(Sender: TObject);
 begin
   if MessageDlg('Tem certeza que deseja fechar a aplicação?',
      mtConfirmation, [mbYes, mbNo], 0) = mrYes then
   begin
+    TLogSistema.RegistrarAcaoUsuario(NomeUsuario, 'Saiu do Sistema - Admin');
     Application.Terminate;
   end;
 end;
@@ -507,6 +745,8 @@ begin
       LimparCamposAdicionar;
       CarregarGrid(True);
       pcButtons.ActivePageIndex := 0;
+
+      TLogSistema.RegistrarAcaoUsuario(NomeUsuario, 'Cadastrou usuário: ' + Usuario.NomeUser);
     end;
   finally
     Usuario.Free;
@@ -540,6 +780,8 @@ begin
   begin
     CarregarGrid(True);
     pcButtons.ActivePageIndex := 0;
+
+    TLogSistema.RegistrarAcaoUsuario(Self.NomeUsuario, 'Desativou usuário: ' + NomeUsuario);
   end;
 end;
 
@@ -583,6 +825,8 @@ begin
       LimparCamposAtualizar;
       CarregarGrid(True);
       pcButtons.ActivePageIndex := 0;
+
+      TLogSistema.RegistrarAcaoUsuario(NomeUsuario, 'Atualizou usuário: ' + Usuario.NomeUser);
     end;
   finally
     Usuario.Free;
@@ -616,6 +860,8 @@ begin
   begin
     CarregarGrid(True);
     pcButtons.ActivePageIndex := 0;
+
+    TLogSistema.RegistrarAcaoUsuario(Self.NomeUsuario, 'Reativou usuário: ' + NomeUsuario);
   end;
 end;
 

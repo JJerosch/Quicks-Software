@@ -3,7 +3,7 @@
 interface
 
 uses
-  LoginModel, LoginRepository, System.SysUtils;
+  LoginModel, LoginRepository, System.SysUtils, LogSistema;
 
 type
   TLoginService = class
@@ -75,11 +75,17 @@ begin
     begin
       Result.Autenticado := True;
       Result.Mensagem := 'Login realizado com sucesso!';
+      TLogSistema.RegistrarLogin(Result.NomeUsuario);
     end
     else
     begin
       Result.Autenticado := False;
       Result.Mensagem := 'Email ou senha incorretos.';
+      TLogSistema.RegistrarErro(
+      LoginRequest.Email,
+      'Falha no Login',
+      Result.Mensagem
+    );
     end;
 
   except

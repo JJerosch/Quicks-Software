@@ -82,9 +82,8 @@ object FormHomeA: TFormHomeA
               Font.Name = 'Segoe UI'
               Font.Style = [fsBold]
               ParentFont = False
-              ExplicitLeft = -2
-              ExplicitTop = 125
-              ExplicitHeight = 588
+              ExplicitWidth = 414
+              ExplicitHeight = 30
             end
           end
         end
@@ -108,8 +107,6 @@ object FormHomeA: TFormHomeA
             Color = clWhite
             ParentBackground = False
             TabOrder = 0
-            ExplicitWidth = 1133
-            ExplicitHeight = 603
             object pMainGrid: TPanel
               AlignWithMargins = True
               Left = 61
@@ -802,7 +799,6 @@ object FormHomeA: TFormHomeA
                   Color = clWindow
                   ParentBackground = False
                   TabOrder = 0
-                  ExplicitLeft = -5
                   object pButtonEditar: TPanel
                     Left = 24
                     Top = 237
@@ -819,6 +815,7 @@ object FormHomeA: TFormHomeA
                     ParentBackground = False
                     ParentFont = False
                     TabOrder = 0
+                    OnClick = pButtonEditarClick
                   end
                   object pButtonAlterarSenha: TPanel
                     Left = 187
@@ -836,6 +833,7 @@ object FormHomeA: TFormHomeA
                     ParentBackground = False
                     ParentFont = False
                     TabOrder = 1
+                    OnClick = pButtonAlterarSenhaClick
                   end
                   object pInfoRestauranteP: TPanel
                     Left = 24
@@ -975,6 +973,8 @@ object FormHomeA: TFormHomeA
                   Color = clWindow
                   ParentBackground = False
                   TabOrder = 0
+                  ExplicitLeft = -5
+                  ExplicitTop = 3
                   object pButtonSalvarDadosE: TPanel
                     Left = 118
                     Top = 213
@@ -991,6 +991,7 @@ object FormHomeA: TFormHomeA
                     ParentBackground = False
                     ParentFont = False
                     TabOrder = 0
+                    OnClick = pButtonSalvarDadosEClick
                   end
                   object pButtonAlterarSenhaE: TPanel
                     Left = 13
@@ -1008,6 +1009,7 @@ object FormHomeA: TFormHomeA
                     ParentBackground = False
                     ParentFont = False
                     TabOrder = 1
+                    OnClick = pButtonAlterarSenhaEClick
                   end
                   object pInfoRestaurantePE: TPanel
                     Left = 13
@@ -1136,6 +1138,7 @@ object FormHomeA: TFormHomeA
                     ParentBackground = False
                     ParentFont = False
                     TabOrder = 3
+                    OnClick = pButtonCancelarEClick
                   end
                 end
               end
@@ -1273,6 +1276,7 @@ object FormHomeA: TFormHomeA
                   0010480000402001000081040000041200001048000040A0FF030801D62EB80B
                   0D7D0000000049454E44AE426082}
                 Proportional = True
+                OnClick = iButtonBackAlterarSenhaClick
               end
               object pAlterarSenha: TPanel
                 Left = 120
@@ -1365,6 +1369,7 @@ object FormHomeA: TFormHomeA
                   Height = 41
                   Caption = 'Confirmar'
                   TabOrder = 3
+                  OnClick = pButtonConfirmarAlterarSenhaClick
                 end
                 object pButtonCancelarAlterarSenha: TPanel
                   Left = 200
@@ -1373,6 +1378,7 @@ object FormHomeA: TFormHomeA
                   Height = 41
                   Caption = 'Cancelar'
                   TabOrder = 4
+                  OnClick = pButtonCancelarAlterarSenhaClick
                 end
               end
               object pDicas: TPanel
@@ -1436,7 +1442,6 @@ object FormHomeA: TFormHomeA
       Color = clCoral
       ParentBackground = False
       TabOrder = 0
-      ExplicitHeight = 636
       object iButton1: TImage
         Left = 17
         Top = 11
@@ -1897,6 +1902,7 @@ object FormHomeA: TFormHomeA
           000068900600001AA401008006690000A0411A000068900600001AA401008006
           690000A041FF1FA1EEC55B2FFA86940000000049454E44AE426082}
         Proportional = True
+        OnClick = iButton3Click
       end
       object iButton2: TImage
         Left = 17
@@ -2053,6 +2059,7 @@ object FormHomeA: TFormHomeA
           A285E3680B9323DB2B2CFF5F0085B5A00268E7A00268E7A00268E7A00268E7F8
           1F291C2FF9F07C83BF0000000049454E44AE426082}
         Proportional = True
+        OnClick = iButton2Click
       end
       object iButton6: TImage
         AlignWithMargins = True
@@ -2362,6 +2369,7 @@ object FormHomeA: TFormHomeA
           340000D0210D000074480300001DD200004087340000D0210D00007448030000
           1DFAFFD01FFE1E60B6E11C0000000049454E44AE426082}
         Proportional = True
+        OnClick = iButton6Click
         ExplicitLeft = 17
         ExplicitTop = 578
         ExplicitWidth = 54
@@ -3109,6 +3117,7 @@ object FormHomeA: TFormHomeA
           22A20231012022222A1013002222A20231012022222A1013002222A202FD3FBB
           5137C463C0FA390000000049454E44AE426082}
         Proportional = True
+        OnClick = iButton5Click
       end
       object lblButton5: TLabel
         Left = 88
@@ -3861,9 +3870,9 @@ object FormHomeA: TFormHomeA
     end
   end
   object pHeader: TPanel
-    Left = 88
+    Left = 77
     Top = 0
-    Width = 1184
+    Width = 1195
     Height = 55
     BevelOuter = bvNone
     Color = clCoral
@@ -3871,70 +3880,38 @@ object FormHomeA: TFormHomeA
     TabOrder = 1
     StyleName = 'Windows'
     object lblUserNameHeader: TLabel
-      Left = 62
-      Top = 9
+      AlignWithMargins = True
+      Left = 15
+      Top = 3
       Width = 6
-      Height = 30
+      Height = 49
+      Align = alLeft
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -22
       Font.Name = 'Segoe UI'
       Font.Style = []
       ParentFont = False
+      ExplicitLeft = 62
+      ExplicitTop = 9
+      ExplicitHeight = 30
     end
     object lblUserIdHeader: TLabel
-      Left = 4
-      Top = 9
+      AlignWithMargins = True
+      Left = 3
+      Top = 3
       Width = 6
-      Height = 30
+      Height = 49
+      Align = alLeft
       Font.Charset = DEFAULT_CHARSET
       Font.Color = clWindowText
       Font.Height = -22
       Font.Name = 'Segoe UI'
       Font.Style = []
       ParentFont = False
-    end
-    object pDadosHeader: TPanel
-      AlignWithMargins = True
-      Left = 4
-      Top = 13
-      Width = 573
-      Height = 36
-      Alignment = taLeftJustify
-      BevelOuter = bvNone
-      TabOrder = 0
-      object Label1: TLabel
-        AlignWithMargins = True
-        Left = 3
-        Top = 3
-        Width = 145
-        Height = 30
-        Align = alLeft
-        Caption = 'lblUserIdHeader'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -19
-        Font.Name = 'Segoe UI'
-        Font.Style = [fsBold]
-        ParentFont = False
-        ExplicitHeight = 25
-      end
-      object Label2: TLabel
-        AlignWithMargins = True
-        Left = 154
-        Top = 3
-        Width = 179
-        Height = 30
-        Align = alLeft
-        Caption = 'lblUserNameHeader'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -19
-        Font.Name = 'Segoe UI'
-        Font.Style = [fsBold]
-        ParentFont = False
-        ExplicitHeight = 25
-      end
+      ExplicitLeft = 4
+      ExplicitTop = 9
+      ExplicitHeight = 30
     end
   end
   object QueryUp: TFDQuery

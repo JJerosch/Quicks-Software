@@ -1,0 +1,16 @@
+[24/11/2025 03:15:26] - teste123 - Login Efetuado
+[24/11/2025 03:15:26] - teste123 - Login Efetuado
+[24/11/2025 03:15:38] - teste123 - Acessou edição de perfil
+[24/11/2025 03:15:47] - teste123 - Perfil atualizado com sucesso
+[24/11/2025 03:15:51] - teste123 - Acessou alteração de senha
+[24/11/2025 03:15:59] - teste123 - Senha alterada com sucesso
+[24/11/2025 03:18:11] - teste123 - Login Efetuado
+[24/11/2025 03:18:11] - teste123 - Login Efetuado
+[24/11/2025 03:18:17] - teste123 - Acessou edição de perfil
+[24/11/2025 03:19:32] - teste123 - Login Efetuado
+[24/11/2025 03:19:32] - teste123 - Login Efetuado
+[24/11/2025 03:20:16] - teste123 - Login Efetuado
+[24/11/2025 03:20:16] - teste123 - Login Efetuado
+[24/11/2025 03:20:57] - teste123 - Login Efetuado
+[24/11/2025 03:20:57] - teste123 - Login Efetuado
+[24/11/2025 03:21:13] - teste123 - Saiu do Sistema - Admin

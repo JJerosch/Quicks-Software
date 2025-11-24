@@ -79,7 +79,9 @@ uses
   EntregadorRepository in 'Src\Repository\EntregadorRepository.pas',
   EntregadorService in 'Src\Service\EntregadorService.pas',
   EntregadorController in 'Src\Controller\EntregadorController.pas',
-  LogSistema in 'Src\Utils\LogSistema.pas';
+  LogSistema in 'Src\Utils\LogSistema.pas',
+  PerfilAdminRepository in 'Src\Repository\PerfilAdminRepository.pas',
+  PerfilAdminService in 'Src\Service\PerfilAdminService.pas';
 
 {$R *.res}
 

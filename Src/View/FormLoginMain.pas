@@ -243,8 +243,8 @@ begin
               'Usuário ID: ' + IntToStr(AIdUsuario) + sLineBreak +
               'Nome: ' + ANomeUsuario);
 end;
+
 procedure TFormLogin.sbConfirmarClick(Sender: TObject);
-// No LoginController ou onde você redireciona após o login bem-sucedido
 var
   LoginRequest: TLoginRequest;
   LoginResponse: TLoginResponse;
@@ -260,19 +260,17 @@ begin
 
     if LoginResponse.Autenticado then
     begin
-    TLogSimples.Instancia.Registrar(LoginResponse.NomeUsuario, 'Login Efetuado');
+      // ✅ REMOVIDO: Não registra aqui, deixa o Controller fazer isso
+      // TLogSistema.RegistrarLogin(LoginResponse.NomeUsuario);
+
       case LoginResponse.TipoUsuario of
         tuCliente:
         begin
-          // ⭐ CRIAR O FORM CORRETAMENTE
           if not Assigned(FormHomeC) then
             Application.CreateForm(TFormHomeC, FormHomeC);
 
-          // ⭐ DEFINIR AS PROPRIEDADES **ANTES** DE MOSTRAR
           FormHomeC.IdUsuario := LoginResponse.IdUsuario;
           FormHomeC.NomeUsuario := LoginResponse.NomeUsuario;
-
-          // ⭐ MOSTRAR O FORM
           FormHomeC.Show;
           Self.Hide;
         end;
@@ -313,7 +311,8 @@ begin
     end
     else
     begin
-      TLogSimples.Instancia.RegistrarComDetalhes(LoginRequest.Email, 'Falha no Login', LoginResponse.Mensagem);
+      // ✅ REMOVIDO: Não registra aqui, deixa o Controller fazer isso
+      // TLogSistema.RegistrarErro(LoginRequest.Email, 'Falha no Login', LoginResponse.Mensagem);
       ShowMessage(LoginResponse.Mensagem);
     end;
 

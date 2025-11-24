@@ -1,1 +1,9 @@
 [23/11/2025 22:03:18] - testecliente - Login Efetuado
+[24/11/2025 05:09:39] - teste123 - Login Efetuado
+[24/11/2025 05:09:39] - teste123 - Login Efetuado
+[24/11/2025 05:16:00] - teste123 - Login Efetuado
+[24/11/2025 05:16:00] - teste123 - Login Efetuado
+[24/11/2025 05:18:22] - teste1234@gmail.com - Falha no Login - ERRO: Email ou senha incorretos.
+[24/11/2025 05:24:37] - e - Novo Cadastro - Email: e@gmail.com, Tipo: Cliente
+[24/11/2025 05:25:18] - e2 - Novo Cadastro - Email: e2gmail.com, Tipo: Cliente
+[24/11/2025 05:30:07] - teste - Novo Cadastro - Email: teste12345@gmail.com, Tipo: Cliente

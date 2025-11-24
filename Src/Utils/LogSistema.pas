@@ -1,4 +1,4 @@
-unit LogSistema;
+Ôªøunit LogSistema;
 
 interface
 
@@ -6,137 +6,272 @@ uses
   System.SysUtils, System.Classes, System.IOUtils;
 
 type
-  TLogSimples = class
+  TLogSistema = class
   private
-    { Campos de Inst‚ncia }
-    FCaminhoArquivo: string;
-    function GetCaminhoArquivoLog: string;
-  private
-    { Campos de Classe (Est·ticos) }
-    class var FInstancia: TLogSimples;
+    class var FLogPath: String;
+    class function GetLogPath: String; static;
+    class function GetLogFileName: String; static;
+    class function FormatarLog(const Usuario, Acao: String): String; static;
+    class function FormatarLogErro(const Usuario, Acao, Erro: String): String; static;
+    class procedure EscreverLog(const Texto: String); static;
   public
-    constructor Create;
-    destructor Destroy; override;
+    class procedure RegistrarAcessoPerfil(const Usuario: String); static;
+    class procedure RegistrarEdicaoPerfil(const Usuario: String); static;
+    class procedure RegistrarAlteracaoSenha(const Usuario: String); static;
+    class procedure RegistrarCancelamentoEdicao(const Usuario: String); static;
+    class procedure RegistrarLogin(const Usuario: String); static;
+    class procedure RegistrarLogout(const Usuario: String); static;
+    class procedure RegistrarAcaoUsuario(const Usuario, Acao: String); static;
+    class procedure RegistrarErro(const Usuario, Acao, MensagemErro: String); static;
+    class procedure RegistrarErroValidacao(const Usuario, Campo, Erro: String); static;
+    class procedure RegistrarErroSenha(const Usuario, Erro: String); static;
 
-    class function Instancia: TLogSimples;
-    class procedure LiberarInstancia;
-
-    procedure Registrar(AUsuario, AAcao: string);
-    procedure RegistrarComDetalhes(AUsuario, AAcao, ADetalhes: string);
-
-    function AbrirArquivoLog: Boolean;
-    function GetCaminhoCompleto: string;
-
-    property CaminhoArquivo: string read FCaminhoArquivo write FCaminhoArquivo;
+    class function LerUltimosLogs(Quantidade: Integer = 10): TStringList; static;
+    class function LerLogsDeHoje: TStringList; static;
+    class procedure LimparLogsAntigos(DiasParaManter: Integer = 30); static;
   end;
 
 implementation
 
-uses
-  Winapi.ShellAPI, Winapi.Windows;
+{ TLogSistema }
 
-{ TLogSimples }
-
-constructor TLogSimples.Create;
+class function TLogSistema.GetLogPath: String;
 begin
-  inherited;
-  // Define o caminho FIXO para o arquivo de log
-  FCaminhoArquivo := 'C:\Users\jpjer\Documents\Embarcadero\Studio\Projects\Quicks-Software\log';
+  if FLogPath = '' then
+  begin
+    // Caminho fixo conforme sua estrutura
+    FLogPath := 'C:\Users\jpjer\Documents\Embarcadero\Studio\Projects\Quicks-Software\log\';
 
-  // Cria o diretÛrio se n„o existir (isso continua funcionando)
-  if not TDirectory.Exists(FCaminhoArquivo) then
-    TDirectory.CreateDirectory(FCaminhoArquivo);
+    if not DirectoryExists(FLogPath) then
+      ForceDirectories(FLogPath);
+  end;
+
+  Result := FLogPath;
 end;
 
-destructor TLogSimples.Destroy;
+class function TLogSistema.GetLogFileName: String;
 begin
-  inherited;
+  // Nome fixo do arquivo
+  Result := GetLogPath + 'log_sistema.txt';
 end;
 
-class function TLogSimples.Instancia: TLogSimples;
+class function TLogSistema.FormatarLog(const Usuario, Acao: String): String;
 begin
-  if not Assigned(FInstancia) then
-    FInstancia := TLogSimples.Create;
-  Result := FInstancia;
+  Result := Format('[%s] - %s - %s',
+    [FormatDateTime('dd/mm/yyyy hh:nn:ss', Now), Usuario, Acao]);
 end;
 
-class procedure TLogSimples.LiberarInstancia;
+class function TLogSistema.FormatarLogErro(const Usuario, Acao, Erro: String): String;
 begin
-  if Assigned(FInstancia) then
-    FreeAndNil(FInstancia);
+  Result := Format('[%s] - %s - %s - ERRO: %s',
+    [FormatDateTime('dd/mm/yyyy hh:nn:ss', Now), Usuario, Acao, Erro]);
 end;
 
-function TLogSimples.GetCaminhoArquivoLog: string;
-begin
-  // Arquivo ˙nico: log_sistema.txt
-  Result := TPath.Combine(FCaminhoArquivo, 'log_sistema.txt');
-end;
-
-function TLogSimples.GetCaminhoCompleto: string;
-begin
-  Result := GetCaminhoArquivoLog;
-end;
-
-procedure TLogSimples.Registrar(AUsuario, AAcao: string);
-begin
-  RegistrarComDetalhes(AUsuario, AAcao, '');
-end;
-
-procedure TLogSimples.RegistrarComDetalhes(AUsuario, AAcao, ADetalhes: string);
+// M√©todo centralizado para escrever no log
+class procedure TLogSistema.EscreverLog(const Texto: String);
 var
-  LArquivo: TextFile;
-  LNomeArquivo: string;
-  LLinha: string;
+  LogFile: TextFile;
+  LogFileName: String;
 begin
-  LNomeArquivo := GetCaminhoArquivoLog;
+  try
+    LogFileName := GetLogFileName;
+
+    AssignFile(LogFile, LogFileName);
+
+    if FileExists(LogFileName) then
+      Append(LogFile)
+    else
+      Rewrite(LogFile);
+
+    try
+      WriteLn(LogFile, Texto);
+    finally
+      CloseFile(LogFile);
+    end;
+  except
+    on E: Exception do
+    begin
+      // Se quiser debugar, descomente a linha abaixo
+      // ShowMessage('Erro ao gravar log: ' + E.Message);
+    end;
+  end;
+end;
+
+class procedure TLogSistema.RegistrarAcessoPerfil(const Usuario: String);
+begin
+  EscreverLog(FormatarLog(Usuario, 'Acessou visualiza√ß√£o de perfil'));
+end;
+
+class procedure TLogSistema.RegistrarEdicaoPerfil(const Usuario: String);
+begin
+  EscreverLog(FormatarLog(Usuario, 'Perfil atualizado com sucesso'));
+end;
+
+class procedure TLogSistema.RegistrarAlteracaoSenha(const Usuario: String);
+begin
+  EscreverLog(FormatarLog(Usuario, 'Senha alterada com sucesso'));
+end;
+
+class procedure TLogSistema.RegistrarCancelamentoEdicao(const Usuario: String);
+begin
+  EscreverLog(FormatarLog(Usuario, 'Cancelou edi√ß√£o de perfil'));
+end;
+
+class procedure TLogSistema.RegistrarLogin(const Usuario: String);
+begin
+  EscreverLog(FormatarLog(Usuario, 'Login Efetuado'));
+end;
+
+class procedure TLogSistema.RegistrarLogout(const Usuario: String);
+begin
+  EscreverLog(FormatarLog(Usuario, 'Logout do sistema'));
+end;
+
+class procedure TLogSistema.RegistrarAcaoUsuario(const Usuario, Acao: String);
+begin
+  EscreverLog(FormatarLog(Usuario, Acao));
+end;
+
+class procedure TLogSistema.RegistrarErro(const Usuario, Acao, MensagemErro: String);
+begin
+  EscreverLog(FormatarLogErro(Usuario, Acao, MensagemErro));
+end;
+
+class procedure TLogSistema.RegistrarErroValidacao(const Usuario, Campo, Erro: String);
+begin
+  RegistrarErro(Usuario, Format('Valida√ß√£o do campo %s', [Campo]), Erro);
+end;
+
+class procedure TLogSistema.RegistrarErroSenha(const Usuario, Erro: String);
+begin
+  RegistrarErro(Usuario, 'Altera√ß√£o de Senha', Erro);
+end;
+
+class function TLogSistema.LerUltimosLogs(Quantidade: Integer): TStringList;
+var
+  LogFileName: String;
+  TodasLinhas: TStringList;
+  Inicio: Integer;
+  i: Integer;
+begin
+  Result := TStringList.Create;
 
   try
-    AssignFile(LArquivo, LNomeArquivo);
+    LogFileName := GetLogFileName;
 
-    if FileExists(LNomeArquivo) then
-      Append(LArquivo)
-    else
-      Rewrite(LArquivo);
+    if not FileExists(LogFileName) then
+      Exit;
 
-    // Formato simples: [Data/Hora] - Usu·rio - AÁ„o - Detalhes
-    if ADetalhes <> '' then
-      LLinha := Format('[%s] - %s - %s - %s', [
-        FormatDateTime('dd/mm/yyyy hh:nn:ss', Now),
-        AUsuario,
-        AAcao,
-        ADetalhes
-      ])
-    else
-      LLinha := Format('[%s] - %s - %s', [
-        FormatDateTime('dd/mm/yyyy hh:nn:ss', Now),
-        AUsuario,
-        AAcao
-      ]);
+    TodasLinhas := TStringList.Create;
+    try
+      TodasLinhas.LoadFromFile(LogFileName);
 
-    WriteLn(LArquivo, LLinha);
-  finally
-    CloseFile(LArquivo);
+      if TodasLinhas.Count > Quantidade then
+        Inicio := TodasLinhas.Count - Quantidade
+      else
+        Inicio := 0;
+
+      for i := Inicio to TodasLinhas.Count - 1 do
+        Result.Add(TodasLinhas[i]);
+
+    finally
+      TodasLinhas.Free;
+    end;
+  except
+    // Retorna lista vazia em caso de erro
   end;
 end;
 
-function TLogSimples.AbrirArquivoLog: Boolean;
+class function TLogSistema.LerLogsDeHoje: TStringList;
 var
-  LCaminho: string;
+  LogFileName: String;
+  TodasLinhas: TStringList;
+  Linha: String;
+  DataHoje: String;
 begin
-  Result := False;
-  LCaminho := GetCaminhoArquivoLog;
+  Result := TStringList.Create;
+  LogFileName := GetLogFileName;
 
-  if FileExists(LCaminho) then
-  begin
-    // Abre o arquivo com o aplicativo padr„o do Windows (Bloco de Notas)
-    ShellExecute(0, 'open', PChar(LCaminho), nil, nil, SW_SHOWNORMAL);
-    Result := True;
+  try
+    if not FileExists(LogFileName) then
+      Exit;
+
+    DataHoje := FormatDateTime('dd/mm/yyyy', Date);
+    TodasLinhas := TStringList.Create;
+    try
+      TodasLinhas.LoadFromFile(LogFileName);
+
+      // Filtra apenas os logs de hoje
+      for Linha in TodasLinhas do
+      begin
+        if Pos('[' + DataHoje, Linha) = 1 then
+          Result.Add(Linha);
+      end;
+    finally
+      TodasLinhas.Free;
+    end;
+  except
+    // Retorna lista vazia em caso de erro
   end;
 end;
 
-initialization
+class procedure TLogSistema.LimparLogsAntigos(DiasParaManter: Integer);
+var
+  LogFileName: String;
+  TodasLinhas: TStringList;
+  NovasLinhas: TStringList;
+  Linha: String;
+  DataLimite: TDateTime;
+  DataLinha: TDateTime;
+  DataStr: String;
+  PosInicio, PosFim: Integer;
+begin
+  try
+    LogFileName := GetLogFileName;
 
-finalization
-  TLogSimples.LiberarInstancia;
+    if not FileExists(LogFileName) then
+      Exit;
+
+    DataLimite := Date - DiasParaManter;
+    TodasLinhas := TStringList.Create;
+    NovasLinhas := TStringList.Create;
+    try
+      TodasLinhas.LoadFromFile(LogFileName);
+
+      for Linha in TodasLinhas do
+      begin
+        // Extrai a data da linha: [dd/mm/yyyy hh:nn:ss]
+        PosInicio := Pos('[', Linha);
+        PosFim := Pos(']', Linha);
+
+        if (PosInicio > 0) and (PosFim > PosInicio) then
+        begin
+          DataStr := Copy(Linha, PosInicio + 1, 10); // Pega apenas dd/mm/yyyy
+
+          try
+            DataLinha := StrToDate(DataStr);
+
+            // Mant√©m apenas logs recentes
+            if DataLinha >= DataLimite then
+              NovasLinhas.Add(Linha);
+          except
+            // Se n√£o conseguir ler a data, mant√©m a linha
+            NovasLinhas.Add(Linha);
+          end;
+        end
+        else
+          NovasLinhas.Add(Linha);
+      end;
+
+      // Salva o arquivo atualizado
+      NovasLinhas.SaveToFile(LogFileName);
+    finally
+      TodasLinhas.Free;
+      NovasLinhas.Free;
+    end;
+  except
+    // Ignora erros
+  end;
+end;
 
 end.

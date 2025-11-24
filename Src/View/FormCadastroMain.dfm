@@ -20293,6 +20293,7 @@ object FormCadastro: TFormCadastro
           Color = clCream
           ParentBackground = False
           TabOrder = 0
+          OnClick = lblConfirmarClick
           object shConfirmar: TShape
             Left = 0
             Top = 0

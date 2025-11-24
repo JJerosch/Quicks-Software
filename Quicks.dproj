@@ -203,6 +203,8 @@
         <DCCReference Include="Src\Service\EntregadorService.pas"/>
         <DCCReference Include="Src\Controller\EntregadorController.pas"/>
         <DCCReference Include="Src\Utils\LogSistema.pas"/>
+        <DCCReference Include="Src\Repository\PerfilAdminRepository.pas"/>
+        <DCCReference Include="Src\Service\PerfilAdminService.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

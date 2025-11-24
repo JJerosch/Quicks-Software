@@ -1,4 +1,4 @@
-unit FormCadastroMain;
+﻿unit FormCadastroMain;
 
 interface
 
@@ -86,17 +86,22 @@ begin
     Cadastro.Senha := meSenha.Text;
     Cadastro.NPhone := meNPhone.Text;
     Cadastro.TipoUsuario := cbOpcoes.Text;
+
     if Controller.ProcessoCadastro(Cadastro) then
     begin
-      TLogSimples.Instancia.RegistrarComDetalhes(Cadastro.Nome,'Novo Cadastro Efetuado','Email: ' + Cadastro.Email + ', Tipo: ' + Cadastro.TipoUsuario);
+      // ✅ REMOVIDO: Não registra aqui, deixa o Controller fazer isso
+      // TLogSistema.RegistrarAcaoUsuario(...);
+
+      // Limpar campos
       eNome.Clear;
       eEmail.Clear;
       meCPF.Clear;
       meSenha.Clear;
       meNPhone.Clear;
       cbOpcoes.ItemIndex := 0;
-    end else
-    TLogSimples.Instancia.RegistrarComDetalhes(Cadastro.Email,'Falha no Cadastro','Email: ' + Cadastro.Email + ', Nome: ' + Cadastro.Nome);
+    end;
+    // ✅ REMOVIDO: else com registro de erro
+
   finally
     Cadastro.Free;
     Controller.Free;
@@ -119,7 +124,7 @@ end;
 
 procedure TFormCadastro.lblTrocaClick(Sender: TObject);
 begin
-FormCadastro.Close;
+  FormCadastro.Close;
 end;
 
 procedure TFormCadastro.lblTrocaMouseEnter(Sender: TObject);
@@ -134,7 +139,7 @@ end;
 
 procedure TFormCadastro.pSairClick(Sender: TObject);
 begin
-FormCadastro.Close;
+  FormCadastro.Close;
 end;
 
 procedure TFormCadastro.shConfirmarMouseLeave(Sender: TObject);
@@ -158,7 +163,7 @@ end;
 
 procedure TFormCadastro.FormCreate(Sender: TObject);
 begin
-iCadastroLeft.Stretch:=True;
+  iCadastroLeft.Stretch:=True;
   iCadastroLeft.Proportional:=True;
   iCadastroLeft.Center:=True;
   if WindowState = wsMaximized then begin
@@ -170,7 +175,7 @@ end;
 
 procedure TFormCadastro.FormResize(Sender: TObject);
 begin
-if WindowState = wsMaximized then begin
+  if WindowState = wsMaximized then begin
     lblQuicks.Margins.Top := 250;
   end else begin
     lblQuicks.Margins.Top := 50;
