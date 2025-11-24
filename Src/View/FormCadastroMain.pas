@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Imaging.pngimage, Vcl.ExtCtrls,Vcl.StdCtrls,
-  Vcl.Mask, CadastroModel, CadastroController;
+  Vcl.Mask, CadastroModel, CadastroController, LogSistema;
 
 type
   TFormCadastro = class(TForm)
@@ -88,13 +88,15 @@ begin
     Cadastro.TipoUsuario := cbOpcoes.Text;
     if Controller.ProcessoCadastro(Cadastro) then
     begin
+      TLogSimples.Instancia.RegistrarComDetalhes(Cadastro.Nome,'Novo Cadastro Efetuado','Email: ' + Cadastro.Email + ', Tipo: ' + Cadastro.TipoUsuario);
       eNome.Clear;
       eEmail.Clear;
       meCPF.Clear;
       meSenha.Clear;
       meNPhone.Clear;
       cbOpcoes.ItemIndex := 0;
-    end;
+    end else
+    TLogSimples.Instancia.RegistrarComDetalhes(Cadastro.Email,'Falha no Cadastro','Email: ' + Cadastro.Email + ', Nome: ' + Cadastro.Nome);
   finally
     Cadastro.Free;
     Controller.Free;

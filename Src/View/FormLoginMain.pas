@@ -7,7 +7,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls,
   Vcl.Imaging.pngimage, Vcl.Imaging.jpeg, Vcl.Mask, Vcl.Buttons, LoginModel, LoginController,
   RedirectController, FormCadastroMain, FormHomeAdmin, FormHomeClientes, FormHomeDono, FormHomeEntregador, uConn
-  , bcrypt;
+  , bcrypt, LogSistema;
 
 type
   TFormLogin = class(TForm)
@@ -260,6 +260,7 @@ begin
 
     if LoginResponse.Autenticado then
     begin
+    TLogSimples.Instancia.Registrar(LoginResponse.NomeUsuario, 'Login Efetuado');
       case LoginResponse.TipoUsuario of
         tuCliente:
         begin
@@ -312,6 +313,7 @@ begin
     end
     else
     begin
+      TLogSimples.Instancia.RegistrarComDetalhes(LoginRequest.Email, 'Falha no Login', LoginResponse.Mensagem);
       ShowMessage(LoginResponse.Mensagem);
     end;
 

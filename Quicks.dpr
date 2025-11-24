@@ -62,8 +62,6 @@ uses
   EntregadorModel in 'Src\Model\EntregadorModel.pas',
   ClientePerfilRepository in 'Src\Repository\ClientePerfilRepository.pas',
   ClientePerfilService in 'Src\Service\ClientePerfilService.pas',
-  EntregadorPerfilService in 'Src\Service\EntregadorPerfilService.pas',
-  EntregadorPerfilRepository in 'Src\Repository\EntregadorPerfilRepository.pas',
   ClientePerfilController in 'Src\Controller\ClientePerfilController.pas',
   EnderecoClienteModel in 'Src\Model\EnderecoClienteModel.pas',
   EnderecoClienteRepository in 'Src\Repository\EnderecoClienteRepository.pas',
@@ -77,7 +75,11 @@ uses
   FormaPagamentoClienteController in 'Src\Controller\FormaPagamentoClienteController.pas',
   FormaPagamentoClienteService in 'Src\Service\FormaPagamentoClienteService.pas',
   CarrinhoModel in 'Src\Model\CarrinhoModel.pas',
-  CarrinhoHelper in 'Src\Utils\CarrinhoHelper.pas';
+  CarrinhoHelper in 'Src\Utils\CarrinhoHelper.pas',
+  EntregadorRepository in 'Src\Repository\EntregadorRepository.pas',
+  EntregadorService in 'Src\Service\EntregadorService.pas',
+  EntregadorController in 'Src\Controller\EntregadorController.pas',
+  LogSistema in 'Src\Utils\LogSistema.pas';
 
 {$R *.res}
 

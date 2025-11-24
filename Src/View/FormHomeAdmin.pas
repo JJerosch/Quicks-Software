@@ -10,7 +10,7 @@ uses
   System.Generics.Collections, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
   FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet, FireDAC.Comp.Client,
   UsuarioModelCRUDAdmin, CargosModelCRUDAdmin, UsuarioControllerCRUDAdmin,
-  UsuarioViewHelperCRUDAdmin;
+  UsuarioViewHelperCRUDAdmin, Vcl.WinXPickers;
 
 type
   TFormHomeA = class(TForm)
@@ -100,7 +100,56 @@ type
     Label7: TLabel;
     lblUserNameHeader: TLabel;
     lblUserIdHeader: TLabel;
-    Image1: TImage;
+    pDadosHeader: TPanel;
+    Label1: TLabel;
+    Label2: TLabel;
+    pcPerfil: TPageControl;
+    tsVisualizar: TTabSheet;
+    scbxPerfilVisualizar: TScrollBox;
+    pMainPerfilVisualizar: TPanel;
+    pButtonEditar: TPanel;
+    pButtonAlterarSenha: TPanel;
+    pInfoRestauranteP: TPanel;
+    lblProprietario: TLabel;
+    lblNAdmin: TLabel;
+    lblEAdmin: TLabel;
+    lblCPFPAdmin: TLabel;
+    lblNAdminD: TLabel;
+    lblEAdminD: TLabel;
+    lblCPFPCommD: TLabel;
+    tsEditar: TTabSheet;
+    tsAlterarSenha: TTabSheet;
+    iButtonBackAlterarSenha: TImage;
+    pAlterarSenha: TPanel;
+    lblAlterarSenha: TLabel;
+    lblSenhaAtual: TLabel;
+    lblNovaSenha: TLabel;
+    lblDigiteNovamente: TLabel;
+    eSenhaAtual: TEdit;
+    eSenhaNova: TEdit;
+    eSenhaConfirmacao: TEdit;
+    pButtonConfirmarAlterarSenha: TPanel;
+    pButtonCancelarAlterarSenha: TPanel;
+    pDicas: TPanel;
+    lblDicasTitle: TLabel;
+    lblDicas: TLabel;
+    scbxMainEditar: TScrollBox;
+    pMainPerfilEditar: TPanel;
+    pButtonSalvarDadosE: TPanel;
+    pButtonAlterarSenhaE: TPanel;
+    pInfoRestaurantePE: TPanel;
+    Label30: TLabel;
+    Label31: TLabel;
+    Label32: TLabel;
+    Label33: TLabel;
+    Label3: TLabel;
+    eNPCommDE: TEdit;
+    eEPCommDE: TEdit;
+    meCPFPCommDE: TMaskEdit;
+    MaskEdit1: TMaskEdit;
+    pButtonCancelarE: TPanel;
+    lblTAdmin: TLabel;
+    lblTCommD: TLabel;
 
     procedure iButton1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);

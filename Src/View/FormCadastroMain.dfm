@@ -24,6 +24,8 @@ object FormCadastro: TFormCadastro
     Color = clBlack
     ParentBackground = False
     TabOrder = 0
+    ExplicitWidth = 1204
+    ExplicitHeight = 634
     object iCadastroLeft: TImage
       AlignWithMargins = True
       Left = 0
@@ -20144,6 +20146,8 @@ object FormCadastro: TFormCadastro
       Color = clCoral
       ParentBackground = False
       TabOrder = 0
+      ExplicitLeft = 692
+      ExplicitHeight = 634
       object lblQuicks: TLabel
         AlignWithMargins = True
         Left = 4
@@ -20404,6 +20408,7 @@ object FormCadastro: TFormCadastro
         ParentBackground = False
         TabOrder = 1
         OnClick = pSairClick
+        ExplicitTop = 588
         object shSair: TShape
           Left = 0
           Top = 0

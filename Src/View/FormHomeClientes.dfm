@@ -18,7 +18,7 @@ object FormHomeC: TFormHomeC
     Top = 0
     Width = 410
     Height = 644
-    ActivePage = tsPerfil
+    ActivePage = tsMain
     Align = alClient
     TabOrder = 1
     ExplicitWidth = 408
@@ -67,7 +67,7 @@ object FormHomeC: TFormHomeC
               AlignWithMargins = True
               Left = 3
               Top = 3
-              Width = 74
+              Width = 396
               Height = 20
               Align = alTop
               Caption = 'Categorias'
@@ -79,6 +79,7 @@ object FormHomeC: TFormHomeC
               Font.Style = [fsBold]
               ParentColor = False
               ParentFont = False
+              ExplicitWidth = 74
             end
             object scbxCategorias: TScrollBox
               AlignWithMargins = True
@@ -206,7 +207,7 @@ object FormHomeC: TFormHomeC
               AlignWithMargins = True
               Left = 3
               Top = 3
-              Width = 181
+              Width = 396
               Height = 20
               Align = alTop
               Caption = 'Restaurantes e Com'#233'rcios'
@@ -218,6 +219,7 @@ object FormHomeC: TFormHomeC
               Font.Style = [fsBold]
               ParentColor = False
               ParentFont = False
+              ExplicitWidth = 181
             end
             object scbxRestaurantes: TScrollBox
               AlignWithMargins = True
@@ -274,7 +276,7 @@ object FormHomeC: TFormHomeC
           object lblCategoriasL: TLabel
             Left = 0
             Top = 0
-            Width = 81
+            Width = 398
             Height = 21
             Align = alTop
             Caption = 'Categorias'
@@ -284,6 +286,7 @@ object FormHomeC: TFormHomeC
             Font.Name = 'Segoe UI'
             Font.Style = [fsBold]
             ParentFont = False
+            ExplicitWidth = 81
           end
           object scbxCategoriasL: TScrollBox
             AlignWithMargins = True
@@ -474,7 +477,7 @@ object FormHomeC: TFormHomeC
           object lblComerciosL: TLabel
             Left = 1
             Top = 1
-            Width = 80
+            Width = 396
             Height = 21
             Align = alTop
             Caption = 'Com'#233'rcios'
@@ -484,6 +487,7 @@ object FormHomeC: TFormHomeC
             Font.Name = 'Segoe UI'
             Font.Style = [fsBold]
             ParentFont = False
+            ExplicitWidth = 80
           end
           object scbxComerciosL: TScrollBox
             Left = 1
@@ -2594,7 +2598,6 @@ object FormHomeC: TFormHomeC
           Align = alClient
           BevelOuter = bvNone
           TabOrder = 2
-          ExplicitHeight = 350
           object scbxCarrinhoItems: TScrollBox
             Left = 0
             Top = 0
@@ -2606,7 +2609,6 @@ object FormHomeC: TFormHomeC
             BorderStyle = bsNone
             TabOrder = 0
             UseWheelForScrolling = True
-            ExplicitHeight = 350
           end
         end
         object pResumoPedido: TPanel
@@ -2807,7 +2809,7 @@ object FormHomeC: TFormHomeC
             AlignWithMargins = True
             Left = 3
             Top = 3
-            Width = 81
+            Width = 392
             Height = 21
             Align = alTop
             Caption = 'Categorias'
@@ -2817,6 +2819,7 @@ object FormHomeC: TFormHomeC
             Font.Name = 'Segoe UI'
             Font.Style = [fsBold]
             ParentFont = False
+            ExplicitWidth = 81
           end
           object scbxCategoriasProdutosComm: TScrollBox
             AlignWithMargins = True
@@ -3081,7 +3084,7 @@ object FormHomeC: TFormHomeC
             AlignWithMargins = True
             Left = 3
             Top = 3
-            Width = 69
+            Width = 392
             Height = 21
             Align = alTop
             Caption = 'Produtos'
@@ -3091,6 +3094,7 @@ object FormHomeC: TFormHomeC
             Font.Name = 'Segoe UI'
             Font.Style = [fsBold]
             ParentFont = False
+            ExplicitWidth = 69
           end
           object scbxProdutosComm: TScrollBox
             Left = 0
@@ -3596,7 +3600,7 @@ object FormHomeC: TFormHomeC
               Left = 54
               Top = 120
               Width = 33
-              Height = 33
+              Height = 23
               TabOrder = 3
               OnChange = eQuantidadeProdutoSelecChange
             end
@@ -3628,7 +3632,6 @@ object FormHomeC: TFormHomeC
           Color = clWhite
           ParentBackground = False
           TabOrder = 1
-          ExplicitTop = 35
           object lblNomeProdutoSelec: TLabel
             Left = 53
             Top = 13
@@ -3828,16 +3831,25 @@ object FormHomeC: TFormHomeC
       end
     end
     object eBuscaMain: TEdit
-      Left = 210
-      Top = 17
+      AlignWithMargins = True
+      Left = 219
+      Top = 15
       Width = 186
-      Height = 23
+      Height = 25
+      Margins.Left = 0
+      Margins.Top = 15
+      Margins.Right = 20
+      Margins.Bottom = 15
+      Align = alRight
       BevelInner = bvNone
       BevelOuter = bvNone
       TabOrder = 0
       TextHint = 'Pesquise um restaurante ou loja ...'
       Visible = False
       StyleName = 'Windows'
+      ExplicitLeft = 210
+      ExplicitTop = 17
+      ExplicitHeight = 23
     end
   end
   object pBarraMenuLeft: TPanel

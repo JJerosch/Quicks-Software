@@ -758,7 +758,7 @@
             Top = 0
             Width = 1135
             Height = 611
-            ActivePage = tsEditar
+            ActivePage = tsVisualizar
             Align = alClient
             TabOrder = 0
             ExplicitWidth = 1133
@@ -1445,16 +1445,6 @@
                       TabOrder = 3
                       Time = 45966.617643831020000000
                       TimeFormat = 'hh:nn'
-                    end
-                    object meHFCommDE: TMaskEdit
-                      Left = 311
-                      Top = 96
-                      Width = 55
-                      Height = 23
-                      EditMask = '!90:00;1;_'
-                      MaxLength = 5
-                      TabOrder = 4
-                      Text = '  :  '
                     end
                   end
                   object pButtonSalvarDadosE: TPanel

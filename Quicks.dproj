@@ -185,8 +185,6 @@
         <DCCReference Include="Src\Model\EntregadorModel.pas"/>
         <DCCReference Include="Src\Repository\ClientePerfilRepository.pas"/>
         <DCCReference Include="Src\Service\ClientePerfilService.pas"/>
-        <DCCReference Include="Src\Service\EntregadorPerfilService.pas"/>
-        <DCCReference Include="Src\Repository\EntregadorPerfilRepository.pas"/>
         <DCCReference Include="Src\Controller\ClientePerfilController.pas"/>
         <DCCReference Include="Src\Model\EnderecoClienteModel.pas"/>
         <DCCReference Include="Src\Repository\EnderecoClienteRepository.pas"/>
@@ -201,6 +199,10 @@
         <DCCReference Include="Src\Service\FormaPagamentoClienteService.pas"/>
         <DCCReference Include="Src\Model\CarrinhoModel.pas"/>
         <DCCReference Include="Src\Utils\CarrinhoHelper.pas"/>
+        <DCCReference Include="Src\Repository\EntregadorRepository.pas"/>
+        <DCCReference Include="Src\Service\EntregadorService.pas"/>
+        <DCCReference Include="Src\Controller\EntregadorController.pas"/>
+        <DCCReference Include="Src\Utils\LogSistema.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

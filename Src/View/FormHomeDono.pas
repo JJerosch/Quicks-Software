@@ -139,7 +139,6 @@ type
     eTECommDE: TEdit;
     tpHACommDE: TTimePicker;
     tpHFCommDE: TTimePicker;
-    meHFCommDE: TMaskEdit;
     pButtonSalvarDadosE: TPanel;
     pInfoRestauranteCE: TPanel;
     Label20: TLabel;
