@@ -13,7 +13,7 @@ uses
   ViaCepHelper, EnderecoCardHelper, EnderecoClienteModel, EnderecoClienteController, EnderecoCardPanel,
   ProdutoModel, ProdutoViewHelper, BCrypt, CarrinhoModel, CarrinhoHelper,
   FormaPagamentoClienteModel, FormaPagamentoClienteController, PagamentoCardPanel,
-  PedidoModel, PedidoController;
+  PedidoModel, PedidoController, PedidoCardHelper;
 
 type
 TCardEventHandler = class
@@ -121,11 +121,6 @@ TCardEventHandler = class
     lblMeusPedidos: TLabel;
     iButtonBackPedidos: TImage;
     pFiltrosPedidos: TPanel;
-    lblFiltrosPedidos: TLabel;
-    pBTodosFiltrosPedidos: TPanel;
-    pBCanceladosFiltrosPedidos: TPanel;
-    pBPendentesPedidos: TPanel;
-    pBConcluidosPedidos: TPanel;
     pMainPedidos: TPanel;
     scbxPedidos: TScrollBox;
     pHeaderMenuPrincipal: TPanel;
@@ -242,7 +237,6 @@ TCardEventHandler = class
     meCEPDE: TMaskEdit;
     cbEstadoDE: TComboBox;
     pUserHeader: TPanel;
-    lblUserId: TLabel;
     lblUserName: TLabel;
     lblCategoriasProdutos: TLabel;
     scbxCategoriasProdutosComm: TScrollBox;
@@ -283,6 +277,9 @@ TCardEventHandler = class
     lblSubtotalProdutoSelecD: TLabel;
     pButtonLimparCarrinho: TPanel;
     eBuscaMain: TEdit;
+    scbxFiltros: TScrollBox;
+    lblFiltrosPedidos: TLabel;
+    Label5: TLabel;
 
     procedure iButton1Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -351,6 +348,7 @@ TCardEventHandler = class
     FPedidoController: TPedidoController;
     FIdComercioCarrinho: Integer;
     FIdTipoPagamentoSelecionado: Integer;
+    FFiltroStatusSelecionado: Integer;
 
     procedure SalvarDadosPessoais;
     procedure AlterarSenha;
@@ -445,6 +443,12 @@ TCardEventHandler = class
     function EnderecoPrincipal(IdCliente: Integer): Integer;
     function ObterDadosComercio(IdProduto: Integer; out IdComercio: Integer; out TaxaEntrega: Currency; out NomeComercio: String): Boolean;
     procedure FinalizarPedido;
+
+    procedure CarregarFiltrosPedidos;
+    procedure CarregarPedidosCliente;
+    procedure OnFiltroStatusClick(IdFiltro: Integer; const NomeFiltro: String);
+    procedure OnPedidoCancelar(IdPedido: Integer);
+    procedure OnPedidoVerDetalhes(IdPedido: Integer);
     public
     property IdUsuario: Integer read FIdUsuario write FIdUsuario;
     property NomeUsuario: String read FNomeUsuario write FNomeUsuario;
@@ -817,6 +821,7 @@ begin
   FCarrinho := nil;
   FTaxaEntregaAtual := 0;
   FPedidoController := nil;
+  FFiltroStatusSelecionado := -1;
   InicializarCarrinho;
   // ⭐ CRIAR CONTROLLERS
   FController := nil;
@@ -1152,7 +1157,6 @@ begin
     if FIdUsuario > 0 then
     begin
       lblUserName.Caption := FNomeUsuario;
-      lblUserId.Caption := 'ID: ' + IntToStr(FIdUsuario);
 
       CarregarEnderecos;
       CarregarEnderecosNoComboBox;
@@ -1169,7 +1173,6 @@ begin
     else
     begin
       lblUserName.Caption := 'Visitante';
-      lblUserId.Caption := '';
     end;
 
     PopularCategorias;
@@ -1331,6 +1334,20 @@ begin
   cbEnderecos.OnChange := Self.OnComboBoxEnderecosChange;
 end;
 
+procedure TFormHomeC.OnFiltroStatusClick(IdFiltro: Integer;
+  const NomeFiltro: String);
+begin
+  // Atualizar filtro selecionado
+  FFiltroStatusSelecionado := IdFiltro;
+
+  // Atualizar visual dos chips
+  TPedidoCardHelper.DeselecionarTodosFiltros(scbxFiltros);
+  TPedidoCardHelper.SelecionarFiltro(scbxFiltros, IdFiltro);
+
+  // Recarregar pedidos com novo filtro
+  CarregarPedidosCliente;
+end;
+
 procedure TFormHomeC.OnPagamentoCardDefinirPrincipal(Sender: TObject);
 var
   Card: TPagamentoCardPanel;
@@ -1442,6 +1459,240 @@ begin
     end;
 
     ExcluirPagamento(Card.IdPagamento);
+  end;
+end;
+
+procedure TFormHomeC.OnPedidoCancelar(IdPedido: Integer);
+var
+  I: Integer;
+  Card: TPedidoCardCliente;
+begin
+  try
+    // Cancelar no banco
+    if TPedidoCardHelper.CancelarPedido(DM.FDConn, IdPedido) then
+    begin
+      ShowMessage('✅ Pedido #' + IntToStr(IdPedido) + ' cancelado com sucesso!');
+
+      // Atualizar o card visualmente (sem recarregar tudo)
+      for I := 0 to scbxPedidos.ControlCount - 1 do
+      begin
+        if scbxPedidos.Controls[I] is TPedidoCardCliente then
+        begin
+          Card := TPedidoCardCliente(scbxPedidos.Controls[I]);
+          if Card.IdPedido = IdPedido then
+          begin
+            Card.AtualizarStatus(6, 'Cancelado');
+            Card.OcultarBotaoCancelar;
+            Break;
+          end;
+        end;
+      end;
+    end
+    else
+    begin
+      ShowMessage('❌ Erro ao cancelar pedido!');
+    end;
+  except
+    on E: Exception do
+      ShowMessage('Erro: ' + E.Message);
+  end;
+end;
+
+procedure TFormHomeC.OnPedidoVerDetalhes(IdPedido: Integer);
+var
+  Qr, QrItens: TFDQuery;
+  Detalhes: String;
+  SubtotalItens, TaxaEntrega, ValorTotal: Currency;
+  NomeComercio, EnderecoEntrega, FormaPagamento, NomeEntregador, TelefoneEntregador: String;
+  DataPedido: TDateTime;
+  NomeStatus: String;
+  IdStatusPedido: Integer;
+begin
+  // ========== BUSCAR DADOS PRINCIPAIS DO PEDIDO ==========
+  Qr := TFDQuery.Create(nil);
+  try
+    Qr.Connection := DM.FDConn;
+    Qr.SQL.Text :=
+    'SELECT ' +
+    '  p.id_pedido, p.data_pedido, p.valor_total_pedido, p.taxa_entrega, ' +
+    '  p.endereco_entrega, p.id_status_pedido, ' +
+    '  c.nome_comercio, ' +
+    '  fp.nome_estado AS nome_status, ' +
+    '  u.nome_user AS nome_entregador, ' +
+    '  u.nphone_user, ' +
+    '  CASE ' +
+    '    WHEN fpc.tipo_pagamento = ''Cartão'' THEN CONCAT(''Cartão '', pc.bandeira, '' **** '', pc.numero_cartao) ' +
+    '    WHEN fpc.tipo_pagamento = ''Pix'' THEN CONCAT(''Pix - '', pp.chave_pix) ' +
+    '    WHEN fpc.tipo_pagamento = ''Transferência'' THEN CONCAT(''Transferência - '', pt.banco) ' +
+    '    ELSE ''Não especificado'' ' +
+    '  END AS forma_pagamento ' +
+    'FROM pedidos p ' +
+    'INNER JOIN comercios c ON p.id_comercio = c.id_comercio ' +
+    'LEFT JOIN filtros_pedidos fp ON p.id_status_pedido = fp.id_estado ' +
+    'LEFT JOIN entregadores e ON p.id_entregador = e.id_entregador ' +
+    'LEFT JOIN usuarios u ON e.id_user = u.id_user ' +
+    'LEFT JOIN formas_pagamento_clientes fpc ON p.id_tipo_pagamento = fpc.id_pagamento ' +
+    'LEFT JOIN pagamentos_cartao pc ON fpc.id_pagamento = pc.id_pagamento ' +
+    'LEFT JOIN pagamentos_pix pp ON fpc.id_pagamento = pp.id_pagamento ' +
+    'LEFT JOIN pagamentos_transferencia pt ON fpc.id_pagamento = pt.id_pagamento ' +
+    'WHERE p.id_pedido = :id_pedido';
+    Qr.ParamByName('id_pedido').AsInteger := IdPedido;
+    Qr.Open;
+
+    if Qr.IsEmpty then
+    begin
+      ShowMessage('❌ Pedido não encontrado!');
+      Exit;
+    end;
+
+    // Obter dados principais
+    DataPedido := Qr.FieldByName('data_pedido').AsDateTime;
+    NomeComercio := Qr.FieldByName('nome_comercio').AsString;
+    EnderecoEntrega := Qr.FieldByName('endereco_entrega').AsString;
+    TaxaEntrega := Qr.FieldByName('taxa_entrega').AsCurrency;
+    ValorTotal := Qr.FieldByName('valor_total_pedido').AsCurrency;
+    IdStatusPedido := Qr.FieldByName('id_status_pedido').AsInteger;
+    NomeStatus := Qr.FieldByName('nome_status').AsString;
+
+    // Forma de pagamento
+    if not Qr.FieldByName('forma_pagamento').IsNull then
+      FormaPagamento := Qr.FieldByName('forma_pagamento').AsString
+    else
+      FormaPagamento := 'Não especificado';
+
+if not Qr.FieldByName('nome_entregador').IsNull then
+  NomeEntregador := Qr.FieldByName('nome_entregador').AsString
+else
+  NomeEntregador := '';
+
+if not Qr.FieldByName('nphone_user').IsNull then
+  TelefoneEntregador := Qr.FieldByName('nphone_user').AsString
+else
+  TelefoneEntregador := '';
+  finally
+    Qr.Free;
+  end;
+
+  // ========== BUSCAR ITENS DO PEDIDO ==========
+  QrItens := TFDQuery.Create(nil);
+  try
+    QrItens.Connection := DM.FDConn;
+    QrItens.SQL.Text :=
+    'SELECT ' +
+    '  p.nome_prod, ' +
+    '  ip.quantidade_item, ' +
+    '  ip.preco_prod, ' +
+    '  ip.valor_total, ' +
+    '  ip.observacoes ' +
+    'FROM itens_pedido ip ' +
+    'INNER JOIN produtos p ON ip.id_produto = p.id_produto ' +
+    'WHERE ip.id_pedido = :id_pedido ' +
+    'ORDER BY ip.id_item_pedido';
+    QrItens.ParamByName('id_pedido').AsInteger := IdPedido;
+    QrItens.Open;
+
+    if QrItens.IsEmpty then
+    begin
+      ShowMessage('❌ Nenhum item encontrado para este pedido.');
+      Exit;
+    end;
+
+    // ========== MONTAR MENSAGEM DE DETALHES ==========
+    Detalhes := '';
+    Detalhes := Detalhes + '╔══════════════════════════════════════╗' + #13#10;
+    Detalhes := Detalhes + '║     📋 DETALHES DO PEDIDO #' + IntToStr(IdPedido) + '     ║' + #13#10;
+    Detalhes := Detalhes + '╚══════════════════════════════════════╝' + #13#10#13#10;
+
+    // ========== INFORMAÇÕES GERAIS ==========
+    Detalhes := Detalhes + '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━' + #13#10;
+    Detalhes := Detalhes + '📌 INFORMAÇÕES GERAIS' + #13#10;
+    Detalhes := Detalhes + '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━' + #13#10#13#10;
+
+    Detalhes := Detalhes + '🏪 Estabelecimento:' + #13#10;
+    Detalhes := Detalhes + '   ' + NomeComercio + #13#10#13#10;
+
+    Detalhes := Detalhes + '📅 Data do Pedido:' + #13#10;
+    Detalhes := Detalhes + '   ' + FormatDateTime('dd/mm/yyyy "às" hh:nn', DataPedido) + #13#10#13#10;
+
+    Detalhes := Detalhes + '🎯 Status Atual:' + #13#10;
+    Detalhes := Detalhes + '   ' + NomeStatus + #13#10#13#10;
+
+    Detalhes := Detalhes + '📍 Endereço de Entrega:' + #13#10;
+    Detalhes := Detalhes + '   ' + EnderecoEntrega + #13#10#13#10;
+
+    Detalhes := Detalhes + '💳 Forma de Pagamento:' + #13#10;
+    Detalhes := Detalhes + '   ' + FormaPagamento + #13#10#13#10;
+
+    // ⭐ DADOS DO ENTREGADOR
+    if Trim(NomeEntregador) <> '' then
+    begin
+      Detalhes := Detalhes + '🚴 Entregador:' + #13#10;
+      Detalhes := Detalhes + '   ' + NomeEntregador;
+
+      if Trim(TelefoneEntregador) <> '' then
+        Detalhes := Detalhes + ' - 📞 ' + TelefoneEntregador;
+
+      Detalhes := Detalhes + #13#10#13#10;
+    end
+    else if IdStatusPedido >= 3 then // Pronto para entrega ou posterior
+    begin
+      Detalhes := Detalhes + '🚴 Entregador:' + #13#10;
+      Detalhes := Detalhes + '   Aguardando designação' + #13#10#13#10;
+    end;
+
+    // ========== ITENS DO PEDIDO ==========
+    Detalhes := Detalhes + '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━' + #13#10;
+    Detalhes := Detalhes + '📦 ITENS DO PEDIDO' + #13#10;
+    Detalhes := Detalhes + '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━' + #13#10#13#10;
+
+    SubtotalItens := 0;
+
+    while not QrItens.Eof do
+    begin
+      Detalhes := Detalhes + '• ' + QrItens.FieldByName('nome_prod').AsString + #13#10;
+
+      Detalhes := Detalhes + '  Quantidade: ' + QrItens.FieldByName('quantidade_item').AsString;
+      Detalhes := Detalhes + '  |  Preço Unit.: R$ ' + FormatFloat('#,##0.00', QrItens.FieldByName('preco_prod').AsCurrency);
+      Detalhes := Detalhes + '  →  R$ ' + FormatFloat('#,##0.00', QrItens.FieldByName('valor_total').AsCurrency) + #13#10;
+
+      // Observações (se houver)
+      if Trim(QrItens.FieldByName('observacoes').AsString) <> '' then
+        Detalhes := Detalhes + '  📝 Obs: ' + QrItens.FieldByName('observacoes').AsString + #13#10;
+
+      Detalhes := Detalhes + #13#10;
+
+      SubtotalItens := SubtotalItens + QrItens.FieldByName('valor_total').AsCurrency;
+      QrItens.Next;
+    end;
+
+    // ========== RESUMO FINANCEIRO ==========
+    Detalhes := Detalhes + '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━' + #13#10;
+    Detalhes := Detalhes + '💰 RESUMO FINANCEIRO' + #13#10;
+    Detalhes := Detalhes + '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━' + #13#10#13#10;
+
+    Detalhes := Detalhes + 'Subtotal (Itens):    R$ ' + FormatFloat('#,##0.00', SubtotalItens) + #13#10;
+    Detalhes := Detalhes + 'Taxa de Entrega:     R$ ' + FormatFloat('#,##0.00', TaxaEntrega) + #13#10;
+    Detalhes := Detalhes + '─────────────────────────────────────' + #13#10;
+    Detalhes := Detalhes + 'VALOR TOTAL:         R$ ' + FormatFloat('#,##0.00', ValorTotal) + #13#10#13#10;
+
+    // ========== OBSERVAÇÕES FINAIS ==========
+    case IdStatusPedido of
+      0: Detalhes := Detalhes + '⏳ Seu pedido está sendo processado.' + #13#10;
+      1: Detalhes := Detalhes + '✅ Pedido confirmado! Aguarde o preparo.' + #13#10;
+      2: Detalhes := Detalhes + '👨‍🍳 Seu pedido está sendo preparado.' + #13#10;
+      3: Detalhes := Detalhes + '📦 Pedido pronto! Aguardando entregador.' + #13#10;
+      4: Detalhes := Detalhes + '🚚 Pedido a caminho! Entregador: ' + NomeEntregador + #13#10;
+      5: Detalhes := Detalhes + '🎉 Pedido entregue com sucesso!' + #13#10;
+      6: Detalhes := Detalhes + '❌ Pedido cancelado.' + #13#10;
+    end;
+
+    Detalhes := Detalhes + #13#10 + '═════════════════════════════════════════' + #13#10;
+
+    // ========== EXIBIR DETALHES ==========
+    ShowMessage(Detalhes);
+
+  finally
+    QrItens.Free;
   end;
 end;
 
@@ -2739,6 +2990,23 @@ begin
     cbEnderecos.OnChange := cbEnderecosChange;
 end;
 
+procedure TFormHomeC.CarregarFiltrosPedidos;
+begin
+  if not Assigned(scbxFiltros) then
+    Exit;
+
+  try
+    TPedidoCardHelper.PopularFiltros(
+      scbxFiltros,
+      DM.FDConn,
+      OnFiltroStatusClick
+    );
+  except
+    on E: Exception do
+      ShowMessage('Erro ao carregar filtros: ' + E.Message);
+  end;
+end;
+
 procedure TFormHomeC.CarregarItensCarrinho;
 var
   Item: TItemCarrinho;
@@ -2999,6 +3267,42 @@ begin
   end;
 
   cbPagamentosPerfil.OnChange := cbPagamentosPerfilChange;
+end;
+
+procedure TFormHomeC.CarregarPedidosCliente;
+var
+  IdCliente: Integer;
+begin
+  if not Assigned(scbxPedidos) then
+    Exit;
+
+  // Obter ID do cliente
+  IdCliente := ObterIdCliente(FIdUsuario);
+
+  if IdCliente <= 0 then
+  begin
+    ShowMessage('Cliente não identificado!');
+    Exit;
+  end;
+
+  try
+    Screen.Cursor := crHourGlass;
+
+    TPedidoCardHelper.PopularPedidos(
+      scbxPedidos,
+      DM.FDConn,
+      IdCliente,
+      FFiltroStatusSelecionado,
+      OnPedidoCancelar,
+      OnPedidoVerDetalhes
+    );
+
+  except
+    on E: Exception do
+      ShowMessage('Erro ao carregar pedidos: ' + E.Message);
+  end;
+
+  Screen.Cursor := crDefault;
 end;
 
 procedure TFormHomeC.CarregarProdutosComercio(const Categoria: String);
@@ -5890,6 +6194,8 @@ end;
 procedure TFormHomeC.iButton3Click(Sender: TObject);
 begin
   pcMain.ActivePageIndex:=3;
+  CarregarFiltrosPedidos;
+  CarregarPedidosCliente;
 end;
 
 procedure TFormHomeC.iButton4Click(Sender: TObject);
@@ -5921,7 +6227,7 @@ end;
 
 procedure TFormHomeC.iButtonBackLojasClick(Sender: TObject);
 begin
-  FecharTelaProduto;
+  pcMain.ActivePageIndex:=0;
 end;
 
 procedure TFormHomeC.iButtonBackPerfilClick(Sender: TObject);

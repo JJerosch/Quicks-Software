@@ -271,6 +271,8 @@ object FormHomeC: TFormHomeC
         Align = alClient
         TabOrder = 0
         UseWheelForScrolling = True
+        ExplicitWidth = 400
+        ExplicitHeight = 606
         object pCategoriasL: TPanel
           AlignWithMargins = True
           Left = 0
@@ -284,10 +286,11 @@ object FormHomeC: TFormHomeC
           Align = alTop
           BevelOuter = bvNone
           TabOrder = 0
+          ExplicitWidth = 375
           object lblCategoriasL: TLabel
             Left = 0
             Top = 0
-            Width = 398
+            Width = 81
             Height = 21
             Align = alTop
             Caption = 'Categorias'
@@ -297,7 +300,6 @@ object FormHomeC: TFormHomeC
             Font.Name = 'Segoe UI'
             Font.Style = [fsBold]
             ParentFont = False
-            ExplicitWidth = 81
           end
           object scbxCategoriasL: TScrollBox
             AlignWithMargins = True
@@ -315,6 +317,7 @@ object FormHomeC: TFormHomeC
             BorderStyle = bsNone
             TabOrder = 0
             UseWheelForScrolling = True
+            ExplicitWidth = 375
           end
         end
         object pHeaderLojas: TPanel
@@ -332,6 +335,7 @@ object FormHomeC: TFormHomeC
           Color = clWhite
           ParentBackground = False
           TabOrder = 1
+          ExplicitWidth = 375
           object lblRestaurantesLojas: TLabel
             Left = 53
             Top = 13
@@ -485,10 +489,11 @@ object FormHomeC: TFormHomeC
           Height = 452
           Align = alTop
           TabOrder = 2
+          ExplicitWidth = 375
           object lblComerciosL: TLabel
             Left = 1
             Top = 1
-            Width = 396
+            Width = 80
             Height = 21
             Align = alTop
             Caption = 'Com'#233'rcios'
@@ -498,7 +503,6 @@ object FormHomeC: TFormHomeC
             Font.Name = 'Segoe UI'
             Font.Style = [fsBold]
             ParentFont = False
-            ExplicitWidth = 80
           end
           object scbxComerciosL: TScrollBox
             Left = 1
@@ -511,6 +515,7 @@ object FormHomeC: TFormHomeC
             BorderStyle = bsNone
             TabOrder = 0
             UseWheelForScrolling = True
+            ExplicitWidth = 373
           end
         end
       end
@@ -2148,8 +2153,8 @@ object FormHomeC: TFormHomeC
             ParentFont = False
           end
           object iButtonBackPedidos: TImage
-            Left = 7
-            Top = 8
+            Left = 2
+            Top = 10
             Width = 30
             Height = 30
             Center = True
@@ -2285,7 +2290,7 @@ object FormHomeC: TFormHomeC
           Left = 0
           Top = 73
           Width = 398
-          Height = 46
+          Height = 88
           Margins.Left = 0
           Margins.Top = 0
           Margins.Right = 0
@@ -2296,10 +2301,11 @@ object FormHomeC: TFormHomeC
           ParentBackground = False
           TabOrder = 1
           object lblFiltrosPedidos: TLabel
-            Left = 13
-            Top = 13
+            Left = 0
+            Top = 0
             Width = 39
             Height = 17
+            Align = alTop
             Caption = 'Filtros'
             Font.Charset = DEFAULT_CHARSET
             Font.Color = clWindowText
@@ -2308,62 +2314,52 @@ object FormHomeC: TFormHomeC
             Font.Style = [fsBold]
             ParentFont = False
           end
-          object pBTodosFiltrosPedidos: TPanel
-            Left = 69
-            Top = 10
-            Width = 74
-            Height = 25
-            BevelOuter = bvNone
-            Caption = 'Todos'
+          object scbxFiltros: TScrollBox
+            Left = 0
+            Top = 17
+            Width = 398
+            Height = 71
+            Align = alClient
             TabOrder = 0
-          end
-          object pBCanceladosFiltrosPedidos: TPanel
-            Left = 151
-            Top = 10
-            Width = 74
-            Height = 25
-            BevelOuter = bvNone
-            Caption = 'Cancelados'
-            TabOrder = 1
-          end
-          object pBPendentesPedidos: TPanel
-            Left = 233
-            Top = 10
-            Width = 74
-            Height = 25
-            BevelOuter = bvNone
-            Caption = 'Pendentes'
-            TabOrder = 2
-          end
-          object pBConcluidosPedidos: TPanel
-            Left = 316
-            Top = 10
-            Width = 74
-            Height = 25
-            BevelOuter = bvNone
-            Caption = 'Conclu'#237'dos'
-            TabOrder = 3
           end
         end
         object pMainPedidos: TPanel
           AlignWithMargins = True
           Left = 0
-          Top = 119
+          Top = 161
           Width = 398
-          Height = 491
+          Height = 449
           Margins.Left = 0
           Margins.Top = 0
           Margins.Right = 0
           Margins.Bottom = 0
           Align = alClient
           BevelOuter = bvNone
+          Color = clWhite
+          ParentBackground = False
           TabOrder = 2
+          object Label5: TLabel
+            Left = 0
+            Top = 0
+            Width = 49
+            Height = 17
+            Align = alTop
+            Caption = 'Pedidos'
+            Color = clWhite
+            Font.Charset = DEFAULT_CHARSET
+            Font.Color = clWindowText
+            Font.Height = -13
+            Font.Name = 'Segoe UI'
+            Font.Style = [fsBold]
+            ParentColor = False
+            ParentFont = False
+          end
           object scbxPedidos: TScrollBox
             AlignWithMargins = True
             Left = 0
-            Top = 0
+            Top = 17
             Width = 398
-            Height = 491
+            Height = 432
             Margins.Left = 0
             Margins.Top = 0
             Margins.Right = 0
@@ -2814,7 +2810,7 @@ object FormHomeC: TFormHomeC
             AlignWithMargins = True
             Left = 3
             Top = 3
-            Width = 392
+            Width = 81
             Height = 21
             Align = alTop
             Caption = 'Categorias'
@@ -2824,7 +2820,6 @@ object FormHomeC: TFormHomeC
             Font.Name = 'Segoe UI'
             Font.Style = [fsBold]
             ParentFont = False
-            ExplicitWidth = 81
           end
           object scbxCategoriasProdutosComm: TScrollBox
             AlignWithMargins = True
@@ -3089,7 +3084,7 @@ object FormHomeC: TFormHomeC
             AlignWithMargins = True
             Left = 3
             Top = 3
-            Width = 392
+            Width = 69
             Height = 21
             Align = alTop
             Caption = 'Produtos'
@@ -3099,7 +3094,6 @@ object FormHomeC: TFormHomeC
             Font.Name = 'Segoe UI'
             Font.Style = [fsBold]
             ParentFont = False
-            ExplicitWidth = 69
           end
           object scbxProdutosComm: TScrollBox
             Left = 0
@@ -3804,23 +3798,8 @@ object FormHomeC: TFormHomeC
       Alignment = taLeftJustify
       BevelOuter = bvNone
       TabOrder = 0
-      object lblUserId: TLabel
-        Left = 0
-        Top = 0
-        Width = 75
-        Height = 27
-        Align = alLeft
-        Caption = 'lblUserId'
-        Font.Charset = DEFAULT_CHARSET
-        Font.Color = clWindowText
-        Font.Height = -19
-        Font.Name = 'Segoe UI'
-        Font.Style = []
-        ParentFont = False
-        ExplicitHeight = 25
-      end
       object lblUserName: TLabel
-        Left = 75
+        Left = 0
         Top = 0
         Width = 109
         Height = 27

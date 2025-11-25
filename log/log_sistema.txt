@@ -28,3 +28,83 @@
 [24/11/2025 22:43:59] - testecliente - Login Efetuado
 [24/11/2025 22:49:47] - testecliente - Login Efetuado
 [24/11/2025 23:06:39] - testecliente - Login Efetuado
+[25/11/2025 00:36:46] - testecliente - Login Efetuado
+[25/11/2025 00:37:59] - testecliente - Login Efetuado
+[25/11/2025 02:07:48] - teste1234@gmail.com - Falha no Login - ERRO: Email ou senha incorretos.
+[25/11/2025 02:07:51] - teste123 - Login Efetuado
+[25/11/2025 02:07:51] - teste123 - Login Efetuado
+[25/11/2025 02:08:34] - teste123 - Login Efetuado
+[25/11/2025 02:08:34] - teste123 - Login Efetuado
+[25/11/2025 02:10:27] - teste123 - Login Efetuado
+[25/11/2025 02:10:27] - teste123 - Login Efetuado
+[25/11/2025 02:11:29] - teste123 - Login Efetuado
+[25/11/2025 02:11:29] - teste123 - Login Efetuado
+[25/11/2025 02:12:36] - teste123 - Login Efetuado
+[25/11/2025 02:12:36] - teste123 - Login Efetuado
+[25/11/2025 02:12:48] - teste123 - Saiu do Sistema - Admin
+[25/11/2025 02:13:26] - teste123 - Login Efetuado
+[25/11/2025 02:13:26] - teste123 - Login Efetuado
+[25/11/2025 02:13:45] - teste123 - Acessou edição de perfil
+[25/11/2025 02:13:47] - teste123 - Cancelou edição de perfil
+[25/11/2025 02:13:49] - teste123 - Acessou alteração de senha
+[25/11/2025 02:13:51] - teste123 - Acessou edição de perfil
+[25/11/2025 02:13:52] - teste123 - Cancelou edição de perfil
+[25/11/2025 02:14:00] - teste123 - Saiu do Sistema - Admin
+[25/11/2025 02:15:45] - teste123 - Login Efetuado
+[25/11/2025 02:15:46] - teste123 - Login Efetuado
+[25/11/2025 02:17:11] - teste123 - Login Efetuado
+[25/11/2025 02:17:11] - teste123 - Login Efetuado
+[25/11/2025 02:18:19] - teste123 - Login Efetuado
+[25/11/2025 02:18:19] - teste123 - Login Efetuado
+[25/11/2025 02:23:39] - teste123 - Login Efetuado
+[25/11/2025 02:23:39] - teste123 - Login Efetuado
+[25/11/2025 04:26:25] - teste123 - Login Efetuado
+[25/11/2025 04:26:25] - teste123 - Login Efetuado
+[25/11/2025 04:27:55] - teste123 - Login Efetuado
+[25/11/2025 04:27:55] - teste123 - Login Efetuado
+[25/11/2025 04:28:41] - teste123 - Login Efetuado
+[25/11/2025 04:28:41] - teste123 - Login Efetuado
+[25/11/2025 04:29:38] - teste123 - Login Efetuado
+[25/11/2025 04:29:38] - teste123 - Login Efetuado
+[25/11/2025 04:31:43] - teste123 - Login Efetuado
+[25/11/2025 04:31:43] - teste123 - Login Efetuado
+[25/11/2025 04:33:17] - teste123 - Login Efetuado
+[25/11/2025 04:33:17] - teste123 - Login Efetuado
+[25/11/2025 04:38:49] - teste123 - Login Efetuado
+[25/11/2025 04:38:50] - teste123 - Login Efetuado
+[25/11/2025 04:41:18] - teste123 - Login Efetuado
+[25/11/2025 04:41:18] - teste123 - Login Efetuado
+[25/11/2025 04:42:30] - testedono - Login Efetuado
+[25/11/2025 04:44:24] - testedono - Login Efetuado
+[25/11/2025 04:46:08] - testedono - Login Efetuado
+[25/11/2025 04:47:45] - testedono - Login Efetuado
+[25/11/2025 04:48:34] - testeclie@gmail.com - Falha no Login - ERRO: Email ou senha incorretos.
+[25/11/2025 04:48:37] - testeclie@gmail.com - Falha no Login - ERRO: Email ou senha incorretos.
+[25/11/2025 04:48:41] - testecliente - Login Efetuado
+[25/11/2025 04:49:28] - testedono@gmail.com - Falha no Login - ERRO: Email ou senha incorretos.
+[25/11/2025 04:49:32] - testedono - Login Efetuado
+[25/11/2025 04:59:30] - testecliente - Login Efetuado
+[25/11/2025 05:24:54] - e@gmail.com - Falha no Login - ERRO: Email ou senha incorretos.
+[25/11/2025 05:24:56] - e - Login Efetuado
+[25/11/2025 05:25:53] - entrega - Login Efetuado
+[25/11/2025 05:26:42] - testecliente - Login Efetuado
+[25/11/2025 05:28:02] - testeclie@gmail.com - Falha no Login - ERRO: Email ou senha incorretos.
+[25/11/2025 05:28:05] - testecliente - Login Efetuado
+[25/11/2025 05:35:20] - testecliente - Login Efetuado
+[25/11/2025 05:57:25] - testecliente - Login Efetuado
+[25/11/2025 06:00:59] - testecliente - Login Efetuado
+[25/11/2025 06:01:35] - testecliente - Login Efetuado
+[25/11/2025 06:02:36] - testecliente - Login Efetuado
+[25/11/2025 06:03:30] - testecliente - Login Efetuado
+[25/11/2025 06:04:20] - testecliente - Login Efetuado
+[25/11/2025 06:05:09] - testecliente - Login Efetuado
+[25/11/2025 06:06:16] - testecliente - Login Efetuado
+[25/11/2025 11:26:31] - testecliente - Login Efetuado
+[25/11/2025 11:28:26] - testecliente - Login Efetuado
+[25/11/2025 11:40:12] - testecliente - Login Efetuado
+[25/11/2025 11:41:59] - testecliente - Login Efetuado
+[25/11/2025 11:42:43] - entrega - Login Efetuado
+[25/11/2025 11:46:52] - entrega@gmail.com - Falha no Login - ERRO: Email ou senha incorretos.
+[25/11/2025 11:46:56] - entrega - Login Efetuado
+[25/11/2025 11:49:41] - entrega - Login Efetuado
+[25/11/2025 11:50:09] - testecliente - Login Efetuado

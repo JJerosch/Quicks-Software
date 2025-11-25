@@ -85,7 +85,10 @@ uses
   PedidoModel in 'Src\Model\PedidoModel.pas',
   PedidoRepository in 'Src\Repository\PedidoRepository.pas',
   PedidoService in 'Src\Service\PedidoService.pas',
-  PedidoController in 'Src\Controller\PedidoController.pas';
+  PedidoController in 'Src\Controller\PedidoController.pas',
+  PedidoCardHelper in 'Src\Utils\PedidoCardHelper.pas',
+  PedidoCardHelperDono in 'Src\Utils\PedidoCardHelperDono.pas',
+  PedidoCardHelperEntregador in 'Src\Utils\PedidoCardHelperEntregador.pas';
 
 {$R *.res}
 

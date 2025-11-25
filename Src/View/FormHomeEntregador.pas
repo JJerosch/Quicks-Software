@@ -5,9 +5,8 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls,
-  Vcl.ComCtrls, Vcl.Imaging.pngimage, Vcl.Mask,
-  // ⭐ Units do sistema de perfil
-  EntregadorModel, EntregadorController, ViaCEPHelper;
+  Vcl.ComCtrls, Vcl.Imaging.pngimage, Vcl.Mask, PedidoCardHelperEntregador,
+  EntregadorModel, EntregadorController, ViaCEPHelper, uConn, FireDAC.Comp.Client;
 
 type
   TFormHomeE = class(TForm)
@@ -110,7 +109,7 @@ type
     pDicas: TPanel;
     lblDicasTitle: TLabel;
     lblDicas: TLabel;
-    TabSheet1: TTabSheet;
+    tsPedidos: TTabSheet;
     scbxMain: TScrollBox;
     pHeaderMenuPrincipal: TPanel;
     lblMenuPrincipal: TLabel;
@@ -124,15 +123,20 @@ type
     pHeaderRelatorios: TPanel;
     lblRelatorios: TLabel;
     iButtonBackRelatorios: TImage;
-    scbxMainPedidos: TScrollBox;
-    pHeaderPedidos: TPanel;
-    lblPedidos: TLabel;
-    iButtonbackPedidos: TImage;
     iButton4: TImage;
     lblButton4: TLabel;
     pUserHeader: TPanel;
-    lblUserId: TLabel;
     lblUserName: TLabel;
+    scbxMainPedidos: TScrollBox;
+    pHeaderPedidos: TPanel;
+    lblMeusPedidos: TLabel;
+    iButtonBackPedidos: TImage;
+    pFiltrosPedidos: TPanel;
+    lblFiltrosPedidos: TLabel;
+    scbxFiltros: TScrollBox;
+    pMainPedidos: TPanel;
+    Label5: TLabel;
+    scbxPedidos: TScrollBox;
 
     // ⭐ Eventos
     procedure FormCreate(Sender: TObject);
@@ -153,13 +157,16 @@ type
     procedure lblButton1Click(Sender: TObject);
     procedure iButton4Click(Sender: TObject);
     procedure pButtonSalvarClick(Sender: TObject);
-    procedure meCEPDEExit(Sender: TObject); // ⭐ NOVO - Buscar CEP via ViaCEP
+    procedure meCEPDEExit(Sender: TObject);
+    procedure iButton2Click(Sender: TObject);
+    procedure iButtonBackPedidosClick(Sender: TObject); // ⭐ NOVO - Buscar CEP via ViaCEP
 
 
   private
     FIdUsuario: Integer;
     FNomeUsuario: String;
-
+    FIdEntregador: Integer;
+    FFiltroStatusPedido: Integer;
     // ⭐ Novos campos para o sistema de perfil
     FController: TEntregadorController;
     FEntregador: TEntregador;
@@ -174,6 +181,15 @@ type
     procedure AtualizarHeaderUsuario;
     procedure BuscarEnderecoPorCEP; // ⭐ NOVO - Buscar endereço via ViaCEP
 
+    procedure CarregarFiltrosPedidos;
+    procedure CarregarPedidosEntregador;
+    procedure OnFiltroStatusClick(IdFiltro: Integer; const NomeFiltro: String);
+    procedure OnPedidoAceitarEntrega(IdPedido: Integer);
+    procedure OnPedidoACaminho(IdPedido: Integer);
+    procedure OnPedidoEntregue(IdPedido: Integer);
+    procedure OnPedidoVerDetalhes(IdPedido: Integer);
+    procedure AtualizarCardPedido(IdPedido: Integer; NovoStatus: Integer);
+    function ObterIdEntregador: Integer;
   public
     property IdUsuario: Integer read FIdUsuario write FIdUsuario;
     property NomeUsuario: String read FNomeUsuario write FNomeUsuario;
@@ -201,7 +217,8 @@ begin
   // Criar controller
   FController := TEntregadorController.Create;
   FEntregador := nil;
-
+  FFiltroStatusPedido := -1;
+  FIdEntregador := 0;
   // Popular combo de estados
   PopularComboEstados;
 
@@ -238,6 +255,12 @@ begin
   // ⭐ Atualizar header com ID e Nome do usuário
   AtualizarHeaderUsuario;
 
+  FIdEntregador := TPedidoCardHelperEntregador.ObterIdEntregador(DM.FDConn, FIdUsuario);
+
+  if FIdEntregador <= 0 then
+  begin
+    ShowMessage('Entregador não encontrado para este usuário!');
+  end;
   // ⭐ NOVO: Se FEntregador não foi carregado ainda, carregar agora
   if not Assigned(FEntregador) and (FIdUsuario > 0) then
   begin
@@ -273,17 +296,35 @@ begin
   AtualizarStatusExpediente;
 end;
 
+procedure TFormHomeE.AtualizarCardPedido(IdPedido, NovoStatus: Integer);
+var
+  I: Integer;
+  Card: TPedidoCardEntregador;
+begin
+  for I := 0 to scbxPedidos.ControlCount - 1 do
+  begin
+    if scbxPedidos.Controls[I] is TPedidoCardEntregador then
+    begin
+      Card := TPedidoCardEntregador(scbxPedidos.Controls[I]);
+      if Card.IdPedido = IdPedido then
+      begin
+        Card.AtualizarStatus(NovoStatus);
+        Break;
+      end;
+    end;
+  end;
+end;
+
+
 // ⭐ NOVO - Atualizar header com informações do usuário
 procedure TFormHomeE.AtualizarHeaderUsuario;
 begin
   if FIdUsuario > 0 then
   begin
-    lblUserId.Caption := 'ID: ' + IntToStr(FIdUsuario);
     lblUserName.Caption := FNomeUsuario;
   end
   else
   begin
-    lblUserId.Caption := 'ID: --';
     lblUserName.Caption := 'Usuário';
   end;
 end;
@@ -297,6 +338,56 @@ procedure TFormHomeE.lblButton3Click(Sender: TObject);
 begin
   pcMain.ActivePageIndex := 1;
 end;
+
+procedure TFormHomeE.CarregarFiltrosPedidos;
+begin
+  if not Assigned(scbxFiltros) then
+    Exit;
+
+  try
+    TPedidoCardHelperEntregador.PopularFiltros(
+      scbxFiltros,
+      OnFiltroStatusClick
+    );
+  except
+    on E: Exception do
+      ShowMessage('Erro ao carregar filtros: ' + E.Message);
+  end;
+end;
+
+procedure TFormHomeE.CarregarPedidosEntregador;
+begin
+  if not Assigned(scbxPedidos) then
+    Exit;
+
+  if FIdEntregador <= 0 then
+  begin
+    ShowMessage('Entregador não identificado!');
+    Exit;
+  end;
+
+  try
+    Screen.Cursor := crHourGlass;
+
+    TPedidoCardHelperEntregador.PopularPedidos(
+      scbxPedidos,
+      DM.FDConn,
+      FIdEntregador,
+      FFiltroStatusPedido,
+      OnPedidoAceitarEntrega,
+      OnPedidoACaminho,
+      OnPedidoEntregue,
+      OnPedidoVerDetalhes
+    );
+
+  except
+    on E: Exception do
+      ShowMessage('Erro ao carregar pedidos: ' + E.Message);
+  end;
+
+  Screen.Cursor := crDefault;
+end;
+
 
 procedure TFormHomeE.CarregarPerfil;
 begin
@@ -426,15 +517,18 @@ begin
   pcMain.ActivePageIndex := 1;
 end;
 
+procedure TFormHomeE.iButtonBackPedidosClick(Sender: TObject);
+begin
+  pcMain.ActivePageIndex := 0;
+end;
+
 procedure TFormHomeE.iButtonBackPerfilClick(Sender: TObject);
 begin
-  // Voltar para aba principal
   pcMain.ActivePage := tsMain;
 end;
 
 procedure TFormHomeE.pButtonEditarClick(Sender: TObject);
 begin
-  // Ir para edição
   pcPerfil.ActivePage := tsEditarPerfil;
 end;
 
@@ -478,21 +572,18 @@ end;
 
 procedure TFormHomeE.iButtonBackPerfilEClick(Sender: TObject);
 begin
-  // Voltar para visualização sem salvar
   pcPerfil.ActivePage := tsVisualizarPefil;
 end;
 
 procedure TFormHomeE.pButtonAlterarSenhaVClick(Sender: TObject);
 begin
-  // Ir para alteração de senha
   pcPerfil.ActivePage := tsAtualizarSenhaPerfil;
   LimparCamposSenha;
 end;
 
 procedure TFormHomeE.iButtonBackAlterarSenhaClick(Sender: TObject);
 begin
-  // Voltar para visualização
-  pcPerfil.ActivePage := tsVisualizarPefil;
+  pcPerfil.ActivePageIndex := 0;
   LimparCamposSenha;
 end;
 
@@ -643,6 +734,15 @@ begin
   end;
 end;
 
+procedure TFormHomeE.iButton2Click(Sender: TObject);
+begin
+    pcMain.ActivePage := tsPedidos;
+
+  // Carregar filtros e pedidos
+  CarregarFiltrosPedidos;
+  CarregarPedidosEntregador;
+end;
+
 // ========== ⭐ INTEGRAÇÃO COM VIACEP ==========
 
 procedure TFormHomeE.BuscarEnderecoPorCEP;
@@ -692,6 +792,158 @@ begin
   // Buscar endereço automaticamente quando sair do campo CEP
   if Trim(meCEPDE.Text) <> '' then
     BuscarEnderecoPorCEP;
+end;
+
+function TFormHomeE.ObterIdEntregador: Integer;
+begin
+  Result := TPedidoCardHelperEntregador.ObterIdEntregador(DM.FDConn, FIdUsuario);
+end;
+
+procedure TFormHomeE.OnFiltroStatusClick(IdFiltro: Integer;
+  const NomeFiltro: String);
+begin
+  // Atualizar filtro selecionado
+  FFiltroStatusPedido := IdFiltro;
+
+  // Atualizar visual dos chips
+  TPedidoCardHelperEntregador.DeselecionarTodosFiltros(scbxFiltros);
+  TPedidoCardHelperEntregador.SelecionarFiltro(scbxFiltros, IdFiltro);
+
+  // Recarregar pedidos com novo filtro
+  CarregarPedidosEntregador;
+end;
+
+
+procedure TFormHomeE.OnPedidoACaminho(IdPedido: Integer);
+begin
+  try
+    if TPedidoCardHelperEntregador.MarcarACaminho(DM.FDConn, IdPedido) then
+    begin
+      ShowMessage('🚗 Entrega #' + IntToStr(IdPedido) + ' - A CAMINHO!' + #13#10#13#10 +
+                  'Boa entrega!');
+
+      // Atualizar o card visualmente
+      AtualizarCardPedido(IdPedido, 4);
+    end
+    else
+    begin
+      ShowMessage('❌ Erro ao atualizar status!');
+    end;
+  except
+    on E: Exception do
+      ShowMessage('Erro: ' + E.Message);
+  end;
+end;
+
+procedure TFormHomeE.OnPedidoAceitarEntrega(IdPedido: Integer);
+begin
+  // Verificar se está em expediente ANTES de aceitar
+  if not TPedidoCardHelperEntregador.EntregadorEmExpediente(DM.FDConn, FIdEntregador) then
+  begin
+    ShowMessage('⚠️ Você precisa estar EM EXPEDIENTE para aceitar entregas!' + #13#10#13#10 +
+                'Ative seu expediente antes de continuar.');
+    Exit;
+  end;
+
+  try
+    if TPedidoCardHelperEntregador.AceitarEntrega(DM.FDConn, IdPedido, FIdEntregador) then
+    begin
+      ShowMessage('✅ Entrega #' + IntToStr(IdPedido) + ' ACEITA!' + #13#10#13#10 +
+                  'Dirija-se ao estabelecimento para retirar o pedido.');
+
+      // Recarregar para atualizar os botões
+      CarregarPedidosEntregador;
+    end
+    else
+    begin
+      ShowMessage('❌ Não foi possível aceitar a entrega.' + #13#10 +
+                  'Outro entregador pode ter aceitado primeiro.');
+      CarregarPedidosEntregador;
+    end;
+  except
+    on E: Exception do
+      ShowMessage('Erro: ' + E.Message);
+  end;
+end;
+
+procedure TFormHomeE.OnPedidoEntregue(IdPedido: Integer);
+begin
+  try
+    if TPedidoCardHelperEntregador.MarcarEntregue(DM.FDConn, IdPedido) then
+    begin
+      ShowMessage('🏁 Entrega #' + IntToStr(IdPedido) + ' CONCLUÍDA!' + #13#10#13#10 +
+                  'Parabéns pela entrega!');
+
+      // Atualizar o card visualmente
+      AtualizarCardPedido(IdPedido, 5);
+    end
+    else
+    begin
+      ShowMessage('❌ Erro ao finalizar entrega!');
+    end;
+  except
+    on E: Exception do
+      ShowMessage('Erro: ' + E.Message);
+  end;
+end;
+
+procedure TFormHomeE.OnPedidoVerDetalhes(IdPedido: Integer);
+var
+  Qr: TFDQuery;
+  Detalhes: String;
+  SubtotalItens: Currency;
+begin
+  Qr := TFDQuery.Create(nil);
+  try
+    Qr.Connection := DM.FDConn;
+    Qr.SQL.Text :=
+      'SELECT ' +
+      '  p.nome_prod, ' +
+      '  ip.quantidade_item, ' +
+      '  ip.preco_prod, ' +
+      '  ip.valor_total, ' +
+      '  ip.observacoes ' +
+      'FROM itens_pedido ip ' +
+      'INNER JOIN produtos p ON ip.id_produto = p.id_produto ' +
+      'WHERE ip.id_pedido = :id_pedido';
+    Qr.ParamByName('id_pedido').AsInteger := IdPedido;
+    Qr.Open;
+
+    if Qr.IsEmpty then
+    begin
+      ShowMessage('Nenhum item encontrado para este pedido.');
+      Exit;
+    end;
+
+    Detalhes := '📦 ITENS DA ENTREGA #' + IntToStr(IdPedido) + #13#10;
+    Detalhes := Detalhes + '═══════════════════════════════════════' + #13#10#13#10;
+
+    SubtotalItens := 0;
+
+    while not Qr.Eof do
+    begin
+      Detalhes := Detalhes + '• ' + Qr.FieldByName('nome_prod').AsString + #13#10;
+      Detalhes := Detalhes + '   Qtd: ' + Qr.FieldByName('quantidade_item').AsString;
+      Detalhes := Detalhes + '  ×  R$ ' + FormatFloat('#,##0.00', Qr.FieldByName('preco_prod').AsCurrency);
+      Detalhes := Detalhes + '  =  R$ ' + FormatFloat('#,##0.00', Qr.FieldByName('valor_total').AsCurrency) + #13#10;
+
+      if Trim(Qr.FieldByName('observacoes').AsString) <> '' then
+        Detalhes := Detalhes + '   📝 Obs: ' + Qr.FieldByName('observacoes').AsString + #13#10;
+
+      SubtotalItens := SubtotalItens + Qr.FieldByName('valor_total').AsCurrency;
+
+      Detalhes := Detalhes + #13#10;
+      Qr.Next;
+    end;
+
+    Detalhes := Detalhes + '═══════════════════════════════════════' + #13#10;
+    Detalhes := Detalhes + '💰 SUBTOTAL DOS ITENS: R$ ' + FormatFloat('#,##0.00', SubtotalItens);
+
+    ShowMessage(Detalhes);
+
+  finally
+    Qr.Free;
+  end;
 end;
 
 end.

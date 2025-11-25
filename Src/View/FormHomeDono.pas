@@ -8,7 +8,7 @@ uses
   Vcl.ComCtrls, Vcl.Imaging.pngimage, Data.DB, Vcl.Mask, Vcl.Grids, Vcl.DBGrids,
   uConn, FireDAC.Comp.Client, System.Generics.Collections,
   ProdutoModel, ProdutoController, ProdutoViewHelper,
-  ComercioModel, ComercioController, ComercioViewHelper, Vcl.WinXPickers, ViaCEPHelper;
+  ComercioModel, ComercioController, ComercioViewHelper, Vcl.WinXPickers, ViaCEPHelper, PedidoCardHelperDono;
 
 type
   TFormHomeD = class(TForm)
@@ -30,14 +30,10 @@ type
     ts1Selecione: TTabSheet;
     pText: TPanel;
     lblText: TLabel;
-    pBusca: TPanel;
     ts2Relatorios: TTabSheet;
     ts3Pedidos: TTabSheet;
     ts4Produtos: TTabSheet;
     ts5Perfil: TTabSheet;
-    pDadosHeader: TPanel;
-    lblUserIdHeader: TLabel;
-    lblUserNameHeader: TLabel;
     pMainProdutos: TPanel;
     pMainGrid: TPanel;
     DBGridProdutos: TDBGrid;
@@ -89,7 +85,6 @@ type
     cbDisponivelUp: TCheckBox;
     mDescAdd: TMemo;
     ePrecoVendaAdd: TEdit;
-    lblNomeComercio: TLabel;
     mDescUp: TMemo;
     ePrecoVendaUp: TEdit;
     pcPerfil: TPageControl;
@@ -213,6 +208,20 @@ type
     lblEPCommD: TLabel;
     lblCPFPCommD: TLabel;
     lblButton6: TLabel;
+    pBusca: TPanel;
+    pDadosHeader: TPanel;
+    lblUserNameHeader: TLabel;
+    lblNomeComercio: TLabel;
+    scbxMainPedidos: TScrollBox;
+    pHeaderPedidos: TPanel;
+    lblMeusPedidos: TLabel;
+    iButtonBackPedidos: TImage;
+    pFiltrosPedidos: TPanel;
+    lblFiltrosPedidos: TLabel;
+    scbxFiltros: TScrollBox;
+    pMainPedidos: TPanel;
+    Label23: TLabel;
+    scbxPedidos: TScrollBox;
 
     procedure iButton1Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -249,6 +258,7 @@ type
     procedure ePrecoCustoAddExit(Sender: TObject);
     procedure iButtonBackAlterarSenhaClick(Sender: TObject);
     procedure meCEPCommDEExit(Sender: TObject);
+    procedure iButtonBackPedidosClick(Sender: TObject);
 
   private
     FIdUsuario: Integer;
@@ -260,6 +270,7 @@ type
     FIdProdutoSelecionado: Integer;
     FMemTable: TFDMemTable;
     FDataSource: TDataSource;
+    FFiltroStatusPedido: Integer;
 
     procedure CarregarGrid(ApenasDisponiveis: Boolean);
     procedure OrganizarGrid;
@@ -274,6 +285,13 @@ type
     procedure CarregarDadosPerfilEdicao(Comercio: TComercio);
     procedure LimparCamposAlterarSenha;
 
+    procedure CarregarFiltrosPedidos;
+    procedure CarregarPedidosComercio;
+    procedure OnFiltroStatusClick(IdFiltro: Integer; const NomeFiltro: String);
+    procedure OnPedidoStatusChange(IdPedido: Integer; NovoStatus: Integer);
+    procedure OnPedidoRecusar(IdPedido: Integer);
+    procedure OnPedidoVerDetalhes(IdPedido: Integer);
+    procedure AtualizarCardPedido(IdPedido: Integer; NovoStatus: Integer);
   public
     property IdUsuario: Integer read FIdUsuario write FIdUsuario;
     property NomeUsuario: String read FNomeUsuario write FNomeUsuario;
@@ -297,6 +315,7 @@ begin
   FProdutoController := TProdutoController.Create;
   FComercioController := TComercioController.Create;
   FIdProdutoSelecionado := 0;
+  FFiltroStatusPedido := -1;
 
   // Criar MemTable e DataSource
   FMemTable := TFDMemTable.Create(Self);
@@ -346,7 +365,6 @@ var
   Qr: TFDQuery;
 begin
   try
-    // Buscar informações do comércio do dono logado
     Qr := TFDQuery.Create(nil);
     try
       Qr.Connection := DM.FDConn;
@@ -356,12 +374,10 @@ begin
 
       if not Qr.IsEmpty then
       begin
-        FIdComercio := Qr.FieldByName('id_comercio').AsInteger;
+        FIdComercio := Qr.FieldByName('id_comercio').AsInteger;  // ← ADICIONE ESTA LINHA!
         FNomeComercio := Qr.FieldByName('nome_comercio').AsString;
 
-        // Atualizar header com informações
         lblUserNameHeader.Caption := FNomeUsuario;
-        lblUserIdHeader.Caption := 'ID: ' + IntToStr(FIdUsuario);
 
         if Assigned(lblNomeComercio) then
           lblNomeComercio.Caption := FNomeComercio;
@@ -375,7 +391,6 @@ begin
       Qr.Free;
     end;
 
-    // Carregar produtos se encontrou o comércio
     if FIdComercio > 0 then
       CarregarGrid(True);
 
@@ -384,7 +399,6 @@ begin
       ShowMessage('Erro ao carregar informações: ' + E.Message);
   end;
 end;
-
 // ============ PRODUTOS (MANTIDO IGUAL) ============
 
 procedure TFormHomeD.CarregarGrid(ApenasDisponiveis: Boolean);
@@ -411,27 +425,180 @@ begin
   end;
 end;
 
+procedure TFormHomeD.CarregarPedidosComercio;
+begin
+  if not Assigned(scbxPedidos) then
+    Exit;
+
+  if FIdComercio <= 0 then
+  begin
+    ShowMessage('Comércio não identificado!');
+    Exit;
+  end;
+
+  try
+    Screen.Cursor := crHourGlass;
+
+    TPedidoCardHelperDono.PopularPedidos(
+      scbxPedidos,
+      DM.FDConn,
+      FIdComercio,
+      FFiltroStatusPedido,
+      OnPedidoStatusChange,
+      OnPedidoRecusar,
+      OnPedidoVerDetalhes
+    );
+
+  except
+    on E: Exception do
+      ShowMessage('Erro ao carregar pedidos: ' + E.Message);
+  end;
+
+  Screen.Cursor := crDefault;
+end;
+
+procedure TFormHomeD.OnFiltroStatusClick(IdFiltro: Integer;
+  const NomeFiltro: String);
+begin
+  FFiltroStatusPedido := IdFiltro;
+
+  TPedidoCardHelperDono.DeselecionarTodosFiltros(scbxFiltros);
+  TPedidoCardHelperDono.SelecionarFiltro(scbxFiltros, IdFiltro);
+
+  CarregarPedidosComercio;
+end;
+
+
+procedure TFormHomeD.OnPedidoRecusar(IdPedido: Integer);
+begin
+  try
+    if TPedidoCardHelperDono.RecusarPedido(DM.FDConn, IdPedido) then
+    begin
+      ShowMessage('⚠️ Pedido #' + IntToStr(IdPedido) + ' foi RECUSADO!');
+
+      AtualizarCardPedido(IdPedido, 6);
+    end
+    else
+    begin
+      ShowMessage('❌ Erro ao recusar pedido!');
+    end;
+  except
+    on E: Exception do
+      ShowMessage('Erro: ' + E.Message);
+  end;
+end;
+
+procedure TFormHomeD.OnPedidoStatusChange(IdPedido, NovoStatus: Integer);
+var
+  NomeStatus: String;
+begin
+  case NovoStatus of
+    1: NomeStatus := 'CONFIRMADO';
+    2: NomeStatus := 'PREPARANDO';
+    3: NomeStatus := 'PRONTO PARA ENTREGA';
+  else
+    NomeStatus := 'ATUALIZADO';
+  end;
+
+  try
+    if TPedidoCardHelperDono.AlterarStatusPedido(DM.FDConn, IdPedido, NovoStatus) then
+    begin
+      ShowMessage('✅ Pedido #' + IntToStr(IdPedido) + ' - ' + NomeStatus + '!');
+
+      AtualizarCardPedido(IdPedido, NovoStatus);
+    end
+    else
+    begin
+      ShowMessage('❌ Erro ao atualizar status do pedido!');
+    end;
+  except
+    on E: Exception do
+      ShowMessage('Erro: ' + E.Message);
+  end;
+end;
+
+
+procedure TFormHomeD.OnPedidoVerDetalhes(IdPedido: Integer);
+var
+  Qr: TFDQuery;
+  Detalhes: String;
+  SubtotalItens: Currency;
+begin
+  Qr := TFDQuery.Create(nil);
+  try
+    Qr.Connection := DM.FDConn;
+    Qr.SQL.Text :=
+      'SELECT ' +
+      '  p.nome_prod, ' +
+      '  ip.quantidade_item, ' +
+      '  ip.preco_prod, ' +
+      '  ip.valor_total, ' +
+      '  ip.observacoes ' +
+      'FROM itens_pedido ip ' +
+      'INNER JOIN produtos p ON ip.id_produto = p.id_produto ' +
+      'WHERE ip.id_pedido = :id_pedido';
+    Qr.ParamByName('id_pedido').AsInteger := IdPedido;
+    Qr.Open;
+
+    if Qr.IsEmpty then
+    begin
+      ShowMessage('Nenhum item encontrado para este pedido.');
+      Exit;
+    end;
+
+    Detalhes := '📋 ITENS DO PEDIDO #' + IntToStr(IdPedido) + #13#10;
+    Detalhes := Detalhes + '═══════════════════════════════════════' + #13#10#13#10;
+
+    SubtotalItens := 0;
+
+    while not Qr.Eof do
+    begin
+      Detalhes := Detalhes + '• ' + Qr.FieldByName('nome_prod').AsString + #13#10;
+      Detalhes := Detalhes + '   Qtd: ' + Qr.FieldByName('quantidade_item').AsString;
+      Detalhes := Detalhes + '  ×  R$ ' + FormatFloat('#,##0.00', Qr.FieldByName('preco_prod').AsCurrency);
+      Detalhes := Detalhes + '  =  R$ ' + FormatFloat('#,##0.00', Qr.FieldByName('valor_total').AsCurrency) + #13#10;
+
+      if Trim(Qr.FieldByName('observacoes').AsString) <> '' then
+        Detalhes := Detalhes + '   📝 Obs: ' + Qr.FieldByName('observacoes').AsString + #13#10;
+
+      SubtotalItens := SubtotalItens + Qr.FieldByName('valor_total').AsCurrency;
+
+      Detalhes := Detalhes + #13#10;
+      Qr.Next;
+    end;
+
+    Detalhes := Detalhes + '═══════════════════════════════════════' + #13#10;
+    Detalhes := Detalhes + '💰 SUBTOTAL DOS ITENS: R$ ' + FormatFloat('#,##0.00', SubtotalItens);
+
+    ShowMessage(Detalhes);
+
+  finally
+    Qr.Free;
+  end;
+end;
+
+
 procedure TFormHomeD.OrganizarGrid;
 begin
   if DBGridProdutos.Columns.Count > 0 then
   begin
-    DBGridProdutos.Columns[0].Width := 40;   // ID
-    DBGridProdutos.Columns[1].Width := 180;  // Nome
-    DBGridProdutos.Columns[2].Width := 250;  // Descrição
-    DBGridProdutos.Columns[3].Width := 100;  // Categoria ⭐ NOVO
-    DBGridProdutos.Columns[4].Width := 90;   // Preço Custo ⭐ NOVO
-    DBGridProdutos.Columns[5].Width := 90;   // Preço Venda ⭐ NOVO
-    DBGridProdutos.Columns[6].Width := 70;   // Disponível
+    DBGridProdutos.Columns[0].Width := 40;
+    DBGridProdutos.Columns[1].Width := 180;
+    DBGridProdutos.Columns[2].Width := 250;
+    DBGridProdutos.Columns[3].Width := 100;
+    DBGridProdutos.Columns[4].Width := 90;
+    DBGridProdutos.Columns[5].Width := 90;
+    DBGridProdutos.Columns[6].Width := 70;
 
     if DBGridProdutos.Columns.Count > 7 then
-      DBGridProdutos.Columns[7].Visible := False; // id_comercio
+      DBGridProdutos.Columns[7].Visible := False;
 
     DBGridProdutos.Columns[0].Title.Caption := 'ID';
     DBGridProdutos.Columns[1].Title.Caption := 'Nome do Produto';
     DBGridProdutos.Columns[2].Title.Caption := 'Descrição';
-    DBGridProdutos.Columns[3].Title.Caption := 'Categoria';           // ⭐ NOVO
-    DBGridProdutos.Columns[4].Title.Caption := 'Preço Custo';         // ⭐ NOVO
-    DBGridProdutos.Columns[5].Title.Caption := 'Preço Venda';         // ⭐ NOVO
+    DBGridProdutos.Columns[3].Title.Caption := 'Categoria';
+    DBGridProdutos.Columns[4].Title.Caption := 'Preço Custo';
+    DBGridProdutos.Columns[5].Title.Caption := 'Preço Venda';
     DBGridProdutos.Columns[6].Title.Caption := 'Disponível';
   end;
 end;
@@ -520,6 +687,25 @@ begin
       eComplementoCommDE,
       cbEstadoCommDE
     );
+  end;
+end;
+
+procedure TFormHomeD.AtualizarCardPedido(IdPedido, NovoStatus: Integer);
+var
+  I: Integer;
+  Card: TPedidoCardDono;
+begin
+  for I := 0 to scbxPedidos.ControlCount - 1 do
+  begin
+    if scbxPedidos.Controls[I] is TPedidoCardDono then
+    begin
+      Card := TPedidoCardDono(scbxPedidos.Controls[I]);
+      if Card.IdPedido = IdPedido then
+      begin
+        Card.AtualizarStatus(NovoStatus);
+        Break;
+      end;
+    end;
   end;
 end;
 
@@ -878,16 +1064,12 @@ begin
 
   // Localização
   meCEPCommDE.Text := TComercioViewHelper.FormatarCEP(Comercio.CEP);
-  eRuaCommDE.Text := Comercio.Logradouro;              // ← USA LOGRADOURO AGORA
+  eRuaCommDE.Text := Comercio.Logradouro;
   eNumeroEnderecoCommDE.Text := Comercio.Numero;
   eComplementoCommDE.Text := Comercio.Complemento;
   eBairroCommDE.Text := Comercio.Bairro;
   eCidadeCommDE.Text := Comercio.Cidade;
-  // ⚠️ TROQUE eEstadoCOmmDE (Edit) por ComboUF (ComboBox):
-  // eEstadoCOmmDE.Text := Comercio.UF;  ← REMOVA ISSO
-  // ComboUF.Text := Comercio.UF;        ← ADICIONE ISSO (se tiver ComboUF)
-  // OU se for manter o Edit:
-  cbEstadoCOmmDE.Text := Comercio.UF;  // ← Mas mude de Estado para UF
+  cbEstadoCOmmDE.Text := Comercio.UF;
 
   // Proprietário
   eNPCommDE.Text := Comercio.NomeProprietario;
@@ -897,6 +1079,23 @@ begin
   eNPCommDE.ReadOnly := True;
   eEPCommDE.ReadOnly := True;
   meCPFPCommDE.ReadOnly := True;
+end;
+
+procedure TFormHomeD.CarregarFiltrosPedidos;
+begin
+  if not Assigned(scbxFiltros) then
+    Exit;
+
+  try
+    TPedidoCardHelperDono.PopularFiltros(
+      scbxFiltros,
+      DM.FDConn,
+      OnFiltroStatusClick
+    );
+  except
+    on E: Exception do
+      ShowMessage('Erro ao carregar filtros: ' + E.Message);
+  end;
 end;
 
 procedure TFormHomeD.pButtonEditarClick(Sender: TObject);
@@ -1161,6 +1360,8 @@ end;
 procedure TFormHomeD.iButton3Click(Sender: TObject);
 begin
   pcMain.ActivePageIndex := 2; // Pedidos
+  CarregarFiltrosPedidos;
+  CarregarPedidosComercio;
 end;
 
 procedure TFormHomeD.iButton4Click(Sender: TObject);
@@ -1187,6 +1388,11 @@ end;
 procedure TFormHomeD.iButtonBackAlterarSenhaClick(Sender: TObject);
 begin
   pcPErfil.ActivePageIndex:=0;
+end;
+
+procedure TFormHomeD.iButtonBackPedidosClick(Sender: TObject);
+begin
+  pcMain.ActivePageIndex := 0;
 end;
 
 procedure TFormHomeD.lblButton1Click(Sender: TObject);
