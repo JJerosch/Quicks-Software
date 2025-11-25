@@ -484,9 +484,14 @@ begin
 
   // ⭐ CRÍTICO: Definir Width ANTES de usar Self.Width
   Self.Width := CardWidth;
-  Self.Height := 100;
+  Self.Height := 140;
   Self.ParentBackground := False;
-  Self.Align := alLeft;
+  Self.Align := alTop;
+  Self.AlignWithMargins := True;
+  Self.Margins.Left := 20;      // Margem esquerda
+  Self.Margins.Right := 20;     // Margem direita
+  Self.Margins.Top := 5;        // Espaço acima
+  Self.Margins.Bottom := 10;    // Espaço abaixo (entre cards)
   Self.BevelOuter := bvNone;
   Self.Color := clWhite;
   Self.Cursor := crHandPoint;
@@ -903,12 +908,13 @@ begin
   end;
 
   // ⭐ scbxRestaurantes HORIZONTAL (igual categorias)
+  // ⭐ scbxRestaurantes VERTICAL
   if Assigned(scbxRestaurantes) then
   begin
     scbxRestaurantes.Align := alClient;
-    scbxRestaurantes.VertScrollBar.Visible := False;    // ⭐ SEM scroll vertical
-    scbxRestaurantes.HorzScrollBar.Visible := True;     // ⭐ COM scroll horizontal
-    scbxRestaurantes.HorzScrollBar.Tracking := True;
+    scbxRestaurantes.VertScrollBar.Visible := True;     // ⭐ COM scroll vertical
+    scbxRestaurantes.VertScrollBar.Tracking := True;
+    scbxRestaurantes.HorzScrollBar.Visible := False;    // ⭐ SEM scroll horizontal
     scbxRestaurantes.BorderStyle := bsNone;
     scbxRestaurantes.Color := $00517CFF;
   end;
@@ -923,7 +929,7 @@ begin
     scbxMainLojas.VertScrollBar.Tracking := True;
     scbxMainLojas.HorzScrollBar.Visible := False;
     scbxMainLojas.BorderStyle := bsNone;
-    scbxMainLojas.Color := $00517CFF;
+    scbxMainLojas.Color := clWhite;
   end;
 
   // ⭐ Ordem dos painéis em Lojas
@@ -941,20 +947,28 @@ begin
     scbxCategoriasL.Align := alClient;
     scbxCategoriasL.HorzScrollBar.Visible := True;
     scbxCategoriasL.VertScrollBar.Visible := False;
+    scbxCategoriasL.Height:=70;
   end;
 
-  // ⭐ scbxComerciosL - Scroll VERTICAL (diferente do Main)
+  // ⭐ pComerciosL - container dos cards
+  if Assigned(pComerciosL) then
+  begin
+    pComerciosL.Align := alClient;
+    pComerciosL.BevelOuter := bvNone;
+    pComerciosL.Color := $00517CFF;
+  end;
+
+  // ⭐ scbxComerciosL - Scroll VERTICAL (igual ao main)
   if Assigned(scbxComerciosL) then
   begin
     scbxComerciosL.Align := alClient;
-    scbxComerciosL.VertScrollBar.Visible := True;     // ⭐ COM scroll vertical
-    scbxComerciosL.HorzScrollBar.Visible := False;    // ⭐ SEM scroll horizontal
+    scbxComerciosL.VertScrollBar.Visible := True;      // ⭐ COM scroll vertical
     scbxComerciosL.VertScrollBar.Tracking := True;
+    scbxComerciosL.HorzScrollBar.Visible := False;     // ⭐ SEM scroll horizontal
     scbxComerciosL.BorderStyle := bsNone;
-    scbxComerciosL.Color := $00517CFF;
+    scbxComerciosL.Color := clWhite;
   end;
 end;
-
 
 procedure TFormHomeC.DefinirEnderecoPrincipal(IdEndereco: Integer);
 var
@@ -2168,8 +2182,8 @@ begin
           Exit;
         end;
 
-        // Calcular largura do card
-        CardWidth := scbxComerciosL.ClientWidth - (FMargemLateral * 2);
+        // ⭐ Calcular largura descontando margens
+        CardWidth := scbxComerciosL.ClientWidth - 40;
         if CardWidth < 200 then
           CardWidth := 200;
 
@@ -2192,6 +2206,8 @@ begin
           ExibirMensagemNenhumResultadoLojas
         else
         begin
+          // ⭐ Forçar atualização do layout
+          scbxComerciosL.Realign;
           scbxComerciosL.Invalidate;
           Application.ProcessMessages;
         end;
@@ -2212,7 +2228,6 @@ begin
     end;
   end;
 end;
-
 
 procedure TFormHomeC.pSalvarClick(Sender: TObject);
 begin
@@ -3575,27 +3590,23 @@ procedure TFormHomeC.AdicionarCardComercio(Comercio: TComercio; EstaAberto: Bool
 var
   Card: TCardComercioPanel;
   Horario, Taxa: String;
-  PosY: Integer;
   LarguraCard: Integer;
 begin
   if not Assigned(Comercio) then
     Exit;
 
-  LarguraCard := scbxRestaurantes.ClientWidth - (FMargemLateral * 2);
+  LarguraCard := scbxRestaurantes.ClientWidth - 40; // Desconta margens
   if LarguraCard < 200 then
     LarguraCard := 200;
-
-  PosY := FCardSpacing + (Index * (FCardHeight + FCardSpacing));
 
   Horario := FormatDateTime('hh:nn', Comercio.HorarioAbertura) + ' - ' +
              FormatDateTime('hh:nn', Comercio.HorarioFechamento);
   Taxa := FormatFloat('R$ #,##0.00', Comercio.TaxaEntregaBase);
 
-  // ⭐ MUDANÇA: Passar largura no construtor
   Card := TCardComercioPanel.CreateCard(
     Self,
     Comercio.IdComercio,
-    LarguraCard,  // ⭐ NOVO PARÂMETRO
+    LarguraCard,
     Comercio.NomeComercio,
     Comercio.Categoria,
     Taxa,
@@ -3603,23 +3614,20 @@ begin
     Comercio.Descricao,
     EstaAberto
   );
-  Card.OnRestauranteClick := OnRestauranteClick;
-  Card.Left := FMargemLateral;
-  Card.Top := PosY;
+
   Card.Parent := scbxRestaurantes;
+  Card.OnRestauranteClick := OnRestauranteClick;
   Card.Visible := True;
+
 end;
 
 procedure TFormHomeC.AdicionarCardComercioLojas(Comercio: TComercio; EstaAberto: Boolean; Index: Integer; CardWidth: Integer);
 var
   Card: TCardComercioPanel;
   Horario, Taxa: String;
-  PosY: Integer;
 begin
   if not Assigned(Comercio) then
     Exit;
-
-  PosY := FCardSpacing + (Index * (FCardHeight + FCardSpacing));
 
   Horario := FormatDateTime('hh:nn', Comercio.HorarioAbertura) + ' - ' +
              FormatDateTime('hh:nn', Comercio.HorarioFechamento);
@@ -3637,13 +3645,11 @@ begin
     EstaAberto
   );
 
-  Card.OnRestauranteClick := OnRestauranteClickLojas; // ⭐ USAR EVENTO DE LOJAS
-  Card.Left := FMargemLateral;
-  Card.Top := PosY;
-  Card.Parent := scbxComerciosL; // ⭐ PARENT É scbxComerciosL
+  Card.Parent := scbxComerciosL;
+  Card.OnRestauranteClick := OnRestauranteClickLojas;
   Card.Visible := True;
-end;
 
+end;
 
 procedure TFormHomeC.AlterarSenha;
 var
@@ -6187,8 +6193,19 @@ end;
 procedure TFormHomeC.iButton2Click(Sender: TObject);
 begin
   pcMain.ActivePageIndex := 1; // tsLojas
+
+  // ⭐ Forçar atualização do layout
+  ConfigurarLayoutLojas;
+
   PopularCategoriasLojas;
   PopularRestaurantesLojas(FCategoriaSelecionadaLojas);
+
+  // ⭐ Forçar realinhamento após carregar
+  if Assigned(scbxComerciosL) then
+  begin
+    scbxComerciosL.Realign;
+    Application.ProcessMessages;
+  end;
 end;
 
 procedure TFormHomeC.iButton3Click(Sender: TObject);

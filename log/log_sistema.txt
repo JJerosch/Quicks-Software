@@ -108,3 +108,19 @@
 [25/11/2025 11:46:56] - entrega - Login Efetuado
 [25/11/2025 11:49:41] - entrega - Login Efetuado
 [25/11/2025 11:50:09] - testecliente - Login Efetuado
+[25/11/2025 11:57:29] - testecliente - Login Efetuado
+[25/11/2025 12:00:04] - testecliente - Login Efetuado
+[25/11/2025 12:00:39] - testecliente - Login Efetuado
+[25/11/2025 12:01:36] - testecliente - Login Efetuado
+[25/11/2025 12:03:28] - testecliente - Login Efetuado
+[25/11/2025 12:04:07] - testecliente - Login Efetuado
+[25/11/2025 12:04:51] - testecliente - Login Efetuado
+[25/11/2025 12:05:41] - testecliente - Login Efetuado
+[25/11/2025 12:10:19] - testecliente - Login Efetuado
+[25/11/2025 12:12:01] - testecliente - Login Efetuado
+[25/11/2025 12:12:37] - testecliente - Login Efetuado
+[25/11/2025 12:13:07] - testeclie@gmail.com - Falha no Login - ERRO: Email ou senha incorretos.
+[25/11/2025 12:13:09] - testecliente - Login Efetuado
+[25/11/2025 12:13:39] - testecliente - Login Efetuado
+[25/11/2025 12:15:09] - testecliente - Login Efetuado
+[25/11/2025 12:16:37] - testecliente - Login Efetuado
