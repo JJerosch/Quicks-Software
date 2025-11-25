@@ -1,7 +1,8 @@
 ﻿unit CarrinhoModel;
 
 interface
-
+uses
+ProdutoModel;
 type
   TItemCarrinho = class
   private
@@ -12,6 +13,7 @@ type
     FIdComercio: Integer;
     FNomeComercio: String;
     FObservacao: String;
+    FProduto: TProduto;
   public
     property IdProduto: Integer read FIdProduto write FIdProduto;
     property NomeProduto: String read FNomeProduto write FNomeProduto;
@@ -20,12 +22,12 @@ type
     property IdComercio: Integer read FIdComercio write FIdComercio;
     property NomeComercio: String read FNomeComercio write FNomeComercio;
     property Observacao: String read FObservacao write FObservacao;
-
+    property Produto: TProduto read FProduto write FProduto;
     constructor Create;
     function Subtotal: Currency;
 
     // ⭐ NOVO: Verificar se é o mesmo item (produto + observação)
-    function EhMesmoItem(IdProduto: Integer; const Observacao: String): Boolean;
+    function MesmoItem(IdProduto: Integer; const Observacao: String): Boolean;
   end;
 
 implementation
@@ -50,7 +52,7 @@ begin
   Result := FPreco * FQuantidade;
 end;
 
-function TItemCarrinho.EhMesmoItem(IdProduto: Integer; const Observacao: String): Boolean;
+function TItemCarrinho.MesmoItem(IdProduto: Integer; const Observacao: String): Boolean;
 begin
   // Compara ID do produto E observação (case-insensitive e trim)
   Result := (FIdProduto = IdProduto) and

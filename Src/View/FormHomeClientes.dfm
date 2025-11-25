@@ -35,6 +35,8 @@ object FormHomeC: TFormHomeC
         Color = clWhite
         ParentBackground = False
         TabOrder = 0
+        ExplicitWidth = 400
+        ExplicitHeight = 606
         object scbxMain: TScrollBox
           Left = 0
           Top = 0
@@ -48,6 +50,8 @@ object FormHomeC: TFormHomeC
           BorderStyle = bsNone
           TabOrder = 0
           UseWheelForScrolling = True
+          ExplicitWidth = 400
+          ExplicitHeight = 606
           object pCategorias: TPanel
             AlignWithMargins = True
             Left = 0
@@ -63,6 +67,7 @@ object FormHomeC: TFormHomeC
             Color = clWhite
             ParentBackground = False
             TabOrder = 0
+            ExplicitWidth = 400
             object lblCategorias: TLabel
               AlignWithMargins = True
               Left = 3
@@ -101,6 +106,7 @@ object FormHomeC: TFormHomeC
               ParentFont = False
               TabOrder = 0
               UseWheelForScrolling = True
+              ExplicitWidth = 400
             end
           end
           object pEndereco: TPanel
@@ -113,6 +119,7 @@ object FormHomeC: TFormHomeC
             Color = clWindow
             ParentBackground = False
             TabOrder = 1
+            ExplicitWidth = 400
             object lblEnderecoTitle: TLabel
               Left = 6
               Top = 9
@@ -174,6 +181,7 @@ object FormHomeC: TFormHomeC
             Color = clWhite
             ParentBackground = False
             TabOrder = 2
+            ExplicitWidth = 400
             object lblMenuPrincipal: TLabel
               Left = 6
               Top = 13
@@ -203,6 +211,8 @@ object FormHomeC: TFormHomeC
             Color = clWhite
             ParentBackground = False
             TabOrder = 3
+            ExplicitWidth = 400
+            ExplicitHeight = 366
             object lblRestaurantes: TLabel
               AlignWithMargins = True
               Left = 3
@@ -239,6 +249,7 @@ object FormHomeC: TFormHomeC
               BorderStyle = bsNone
               TabOrder = 0
               UseWheelForScrolling = True
+              ExplicitWidth = 400
             end
           end
         end
@@ -520,8 +531,6 @@ object FormHomeC: TFormHomeC
         ActivePage = tsEnderecosE
         Align = alClient
         TabOrder = 0
-        ExplicitWidth = 400
-        ExplicitHeight = 606
         object tsVisualizarPefil: TTabSheet
           Caption = 'tsVisualizarPefil'
           object scbxMainPerfil: TScrollBox
@@ -1647,8 +1656,6 @@ object FormHomeC: TFormHomeC
             BorderStyle = bsNone
             TabOrder = 0
             UseWheelForScrolling = True
-            ExplicitWidth = 392
-            ExplicitHeight = 576
             object pEnderecosE: TPanel
               AlignWithMargins = True
               Left = 0
@@ -1664,7 +1671,6 @@ object FormHomeC: TFormHomeC
               Color = clWhite
               ParentBackground = False
               TabOrder = 0
-              ExplicitWidth = 371
               object scbxEnderecosE: TScrollBox
                 AlignWithMargins = True
                 Left = 0
@@ -1680,7 +1686,6 @@ object FormHomeC: TFormHomeC
                 BorderStyle = bsNone
                 TabOrder = 0
                 UseWheelForScrolling = True
-                ExplicitWidth = 371
                 object lblEnderecosTitle: TLabel
                   Left = 9
                   Top = 14
@@ -1948,7 +1953,6 @@ object FormHomeC: TFormHomeC
               Color = clWhite
               ParentBackground = False
               TabOrder = 1
-              ExplicitWidth = 371
               object lblPerfilTitleEnderecosE: TLabel
                 Left = 53
                 Top = 13
@@ -2590,7 +2594,7 @@ object FormHomeC: TFormHomeC
           Left = 0
           Top = 114
           Width = 398
-          Height = 334
+          Height = 342
           Margins.Left = 0
           Margins.Top = 0
           Margins.Right = 0
@@ -2602,7 +2606,7 @@ object FormHomeC: TFormHomeC
             Left = 0
             Top = 0
             Width = 398
-            Height = 334
+            Height = 342
             Align = alClient
             BevelInner = bvNone
             BevelOuter = bvNone
@@ -2614,9 +2618,9 @@ object FormHomeC: TFormHomeC
         object pResumoPedido: TPanel
           AlignWithMargins = True
           Left = 0
-          Top = 448
+          Top = 456
           Width = 398
-          Height = 162
+          Height = 154
           Margins.Left = 0
           Margins.Top = 0
           Margins.Right = 0
@@ -2626,7 +2630,7 @@ object FormHomeC: TFormHomeC
           TabOrder = 3
           object lblResumo: TLabel
             Left = 7
-            Top = 6
+            Top = 3
             Width = 147
             Height = 21
             Caption = 'Resumo do Pedido:'
@@ -2639,63 +2643,63 @@ object FormHomeC: TFormHomeC
           end
           object lblSubtotal: TLabel
             Left = 333
-            Top = 35
+            Top = 32
             Width = 57
             Height = 15
             Caption = 'lblSubtotal'
           end
           object lblSubtotalDesc: TLabel
             Left = 7
-            Top = 35
+            Top = 32
             Width = 47
             Height = 15
             Caption = 'Subtotal:'
           end
           object lblTaxa: TLabel
             Left = 333
-            Top = 56
+            Top = 53
             Width = 36
             Height = 15
             Caption = 'lblTaxa'
           end
           object lblTaxaDesc: TLabel
             Left = 7
-            Top = 56
+            Top = 53
             Width = 85
             Height = 15
             Caption = 'Taxa de Entrega:'
           end
           object lblTotalDesc: TLabel
             Left = 7
-            Top = 77
+            Top = 74
             Width = 29
             Height = 15
             Caption = 'Total:'
           end
           object lblTotal: TLabel
             Left = 333
-            Top = 77
+            Top = 74
             Width = 39
             Height = 15
             Caption = 'lblTotal'
           end
           object lblFormaPDesc: TLabel
             Left = 7
-            Top = 96
+            Top = 93
             Width = 120
             Height = 15
             Caption = 'Forma de Pagamento: '
           end
           object lblFormaPagamento: TLabel
             Left = 133
-            Top = 96
+            Top = 93
             Width = 108
             Height = 15
             Caption = 'lblFormaPagamento'
           end
           object pButtonFinalizarPedido: TPanel
             Left = 288
-            Top = 118
+            Top = 115
             Width = 102
             Height = 32
             Caption = 'Finalizar Pedido'
@@ -2708,10 +2712,11 @@ object FormHomeC: TFormHomeC
             ParentBackground = False
             ParentFont = False
             TabOrder = 0
+            OnClick = pButtonFinalizarPedidoClick
           end
           object pButtonLimparCarrinho: TPanel
             Left = 7
-            Top = 118
+            Top = 115
             Width = 98
             Height = 32
             Caption = 'Limpar Carrinho'
@@ -3798,7 +3803,7 @@ object FormHomeC: TFormHomeC
       Height = 27
       Alignment = taLeftJustify
       BevelOuter = bvNone
-      TabOrder = 1
+      TabOrder = 0
       object lblUserId: TLabel
         Left = 0
         Top = 0
@@ -3843,12 +3848,10 @@ object FormHomeC: TFormHomeC
       Align = alRight
       BevelInner = bvNone
       BevelOuter = bvNone
-      TabOrder = 0
+      TabOrder = 1
       TextHint = 'Pesquise um restaurante ou loja ...'
       Visible = False
       StyleName = 'Windows'
-      ExplicitLeft = 210
-      ExplicitTop = 17
       ExplicitHeight = 23
     end
   end

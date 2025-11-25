@@ -205,6 +205,10 @@
         <DCCReference Include="Src\Utils\LogSistema.pas"/>
         <DCCReference Include="Src\Repository\PerfilAdminRepository.pas"/>
         <DCCReference Include="Src\Service\PerfilAdminService.pas"/>
+        <DCCReference Include="Src\Model\PedidoModel.pas"/>
+        <DCCReference Include="Src\Repository\PedidoRepository.pas"/>
+        <DCCReference Include="Src\Service\PedidoService.pas"/>
+        <DCCReference Include="Src\Controller\PedidoController.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

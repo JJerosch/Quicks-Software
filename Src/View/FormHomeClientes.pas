@@ -12,7 +12,8 @@ uses
   uConn, ComercioModel, ClienteController, CategoriaHelper, ClientePerfilController, ClienteModel,
   ViaCepHelper, EnderecoCardHelper, EnderecoClienteModel, EnderecoClienteController, EnderecoCardPanel,
   ProdutoModel, ProdutoViewHelper, BCrypt, CarrinhoModel, CarrinhoHelper,
-  FormaPagamentoClienteModel, FormaPagamentoClienteController, PagamentoCardPanel;
+  FormaPagamentoClienteModel, FormaPagamentoClienteController, PagamentoCardPanel,
+  PedidoModel, PedidoController;
 
 type
 TCardEventHandler = class
@@ -76,7 +77,6 @@ TCardEventHandler = class
     tsPedidos: TTabSheet;
     tsCarrinho: TTabSheet;
     pBusca: TPanel;
-    eBuscaMain: TEdit;
     tsCommSelec: TTabSheet;
     scbxMainCommSelec: TScrollBox;
     pCarrinhoComm: TPanel;
@@ -282,6 +282,7 @@ TCardEventHandler = class
     Panel1: TPanel;
     lblSubtotalProdutoSelecD: TLabel;
     pButtonLimparCarrinho: TPanel;
+    eBuscaMain: TEdit;
 
     procedure iButton1Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -322,6 +323,7 @@ TCardEventHandler = class
     procedure eQuantidadeProdutoSelecChange(Sender: TObject);
     procedure Panel1Click(Sender: TObject);
     procedure pButtonLimparCarrinhoClick(Sender: TObject);
+    procedure pButtonFinalizarPedidoClick(Sender: TObject);
 
   private
     FIdUsuario: Integer;
@@ -346,6 +348,9 @@ TCardEventHandler = class
     FProdutoSelecionado: TProduto;
     FCarrinho: TObjectList<TItemCarrinho>;
     FTaxaEntregaAtual: Currency;
+    FPedidoController: TPedidoController;
+    FIdComercioCarrinho: Integer;
+    FIdTipoPagamentoSelecionado: Integer;
 
     procedure SalvarDadosPessoais;
     procedure AlterarSenha;
@@ -435,9 +440,16 @@ TCardEventHandler = class
     procedure AtualizarResumoCarrinho;
     procedure CarregarItensCarrinho;
     procedure LimparCarrinho;
+    function ObterIdCliente(IdUsuario: Integer): Integer;
+    function PagamentoPrincipal(IdCliente: Integer): Integer;
+    function EnderecoPrincipal(IdCliente: Integer): Integer;
+    function ObterDadosComercio(IdProduto: Integer; out IdComercio: Integer; out TaxaEntrega: Currency; out NomeComercio: String): Boolean;
+    procedure FinalizarPedido;
     public
     property IdUsuario: Integer read FIdUsuario write FIdUsuario;
     property NomeUsuario: String read FNomeUsuario write FNomeUsuario;
+    property PagamentoSelecionado: Integer read FIdTipoPagamentoSelecionado write FIdTipoPagamentoSelecionado;
+    property EnderecoSelecionado: Integer read FIdEnderecoSelecionado write FIdEnderecoSelecionado;
     end;
 
 var
@@ -619,6 +631,177 @@ begin
   pcMain.ActivePage := tsCommSelec;
 end;
 
+procedure TFormHomeC.FinalizarPedido;
+var
+  Pedido: TPedido;
+  Item: TItemPedido;
+  IdPedido: Integer;
+  MsgErro: String;
+  IdComercio: Integer;
+  TaxaEntrega: Currency;
+  NomeComercio: String;
+  IdCliente: Integer;
+  EnderecoCompleto: String;
+  I: Integer;
+  ProdutoAtual: TItemCarrinho; // Ajuste conforme sua estrutura
+begin
+  // ===== VALIDAÇÃO 1: CARRINHO =====
+
+  if not Assigned(FCarrinho) or (FCarrinho.Count = 0) then
+  begin
+    ShowMessage('⚠️ Seu carrinho está vazio!' + #13#10 + 'Adicione produtos antes de finalizar.');
+    Exit;
+  end;
+
+  // ===== VALIDAÇÃO 2: IDENTIFICAR COMÉRCIO E TAXA =====
+
+  // ⭐ Pegar o ID do primeiro produto do carrinho
+  ProdutoAtual := FCarrinho[0]; // Ajuste conforme sua estrutura
+
+  // ⭐ Buscar dados do comércio (ID, taxa de entrega, nome)
+  if not ObterDadosComercio(ProdutoAtual.IdProduto, IdComercio, TaxaEntrega, NomeComercio) then
+  begin
+    ShowMessage('❌ Erro ao identificar o comércio dos produtos!' + #13#10 + 'Tente novamente.');
+    Exit;
+  end;
+
+  if IdComercio <= 0 then
+  begin
+    ShowMessage('⚠️ Comércio não identificado!' + #13#10 + 'Erro interno. Contate o suporte.');
+    Exit;
+  end;
+
+  // ===== VALIDAÇÃO 3: CLIENTE LOGADO =====
+
+  IdCliente := ObterIdCliente(IdUsuario); // ⭐ AJUSTE CONFORME SEU CÓDIGO
+  PagamentoSelecionado := PagamentoPrincipal(IdUsuario);
+  EnderecoSelecionado := EnderecoPrincipal(IdUsuario);
+  if IdCliente <= 0 then
+  begin
+    ShowMessage('⚠️ Cliente não identificado!' + #13#10 + 'Faça login novamente.');
+    // Pode redirecionar para tela de login aqui
+    Exit;
+  end;
+
+  // ===== VALIDAÇÃO 4: FORMA DE PAGAMENTO =====
+  if PagamentoSelecionado <= 0 then
+  begin
+    ShowMessage('⚠️ Selecione uma forma de pagamento!');
+    Exit;
+  end;
+
+  // ===== VALIDAÇÃO 5: ENDEREÇO DE ENTREGA =====
+
+  EnderecoCompleto := Trim(cbEnderecos.Text);
+
+  if EnderecoCompleto = '' then
+  begin
+    ShowMessage('⚠️ Endereço de entrega inválido!');
+    Exit;
+  end;
+
+  // ===== CONFIRMAR COM O CLIENTE =====
+
+  if MessageDlg(
+    'Confirmar pedido?' + #13#10#13#10 +
+    '🏪 Estabelecimento: ' + NomeComercio + #13#10 +
+    '📦 Itens: ' + IntToStr(FCarrinho.Count) + #13#10 +
+    '🚚 Taxa de entrega: R$ ' + FormatFloat('#,##0.00', TaxaEntrega) + #13#10 +
+    '💰 Total: R$ ' + lblTotal.Caption, // ⭐ AJUSTE conforme seu label
+    mtConfirmation,
+    [mbYes, mbNo],
+    0) = mrNo then
+    Exit;
+
+  // ===== CRIAR E ENVIAR PEDIDO =====
+
+  try
+    Screen.Cursor := crHourGlass;
+
+    Pedido := TPedido.Create;
+    try
+      // ⭐ DADOS PRINCIPAIS DO PEDIDO
+      Pedido.IdClie := IdCliente;
+      Pedido.IdComercio := IdComercio; // ⭐ ID DO COMÉRCIO (identificado)
+      Pedido.IdTipoPagamento := PagamentoSelecionado;
+      Pedido.EnderecoEntrega := EnderecoCompleto;
+      Pedido.TaxaEntrega := TaxaEntrega; // ⭐ TAXA ESPECÍFICA DO COMÉRCIO
+
+      // ⭐ Status inicial sempre 0 (Pendente)
+      Pedido.IdStatusPedido := 0;
+
+      // ⭐ Entregador sempre NULL no início
+      Pedido.IdEntregador := 0;
+
+      // ⭐ Não entregue ainda
+      Pedido.Entregado := False;
+
+      // ⭐ ADICIONAR ITENS DO CARRINHO
+      for I := 0 to FCarrinho.Count - 1 do
+      begin
+        ProdutoAtual := FCarrinho[I];
+
+        Item := TItemPedido.Create;
+        Item.IdProduto := ProdutoAtual.IdProduto;
+        Item.QuantidadeItem := ProdutoAtual.Quantidade; // ⭐ AJUSTE conforme estrutura
+        Item.PrecoProd := ProdutoAtual.Preco;
+
+        // ⭐ OBSERVAÇÕES DO ITEM (se houver)
+        if Assigned(ProdutoAtual) then
+          Item.Observacoes := ProdutoAtual.Observacao
+        else
+          Item.Observacoes := '';
+
+        Pedido.AdicionarItem(Item);
+      end;
+
+      // ⭐ CALCULAR VALOR TOTAL (Soma dos itens + Taxa de entrega)
+      Pedido.CalcularValorTotal;
+
+      // ⭐ ENVIAR PEDIDO PARA O BANCO
+      if FPedidoController.CriarPedido(Pedido, IdPedido, MsgErro) then
+      begin
+        ShowMessage(
+          '✅ Pedido realizado com sucesso!' + #13#10#13#10 +
+          '📋 Número do pedido: #' + IntToStr(IdPedido) + #13#10 +
+          '🏪 Estabelecimento: ' + NomeComercio + #13#10 +
+          '📍 Endereço: ' + EnderecoCompleto + #13#10#13#10 +
+          'Acompanhe o status na aba "Meus Pedidos".'
+        );
+
+        // ⭐ LIMPAR CARRINHO
+        LimparCarrinho;
+
+        // ⭐ VOLTAR PARA TELA INICIAL OU IR PARA MEUS PEDIDOS
+        // Você pode chamar:
+        // - VoltarTelaInicial;
+        // - AbrirMeusPedidos;
+        // - Fechar o frame de finalização
+
+      end
+      else
+      begin
+        ShowMessage(
+          '❌ Erro ao finalizar pedido!' + #13#10#13#10 +
+          MsgErro + #13#10#13#10 +
+          'Tente novamente ou contate o suporte.'
+        );
+      end;
+
+    finally
+      Pedido.Free;
+    end;
+
+  except
+    on E: Exception do
+    begin
+      ShowMessage('❌ Erro inesperado ao finalizar pedido:' + #13#10 + E.Message);
+    end;
+  end;
+
+  Screen.Cursor := crDefault;
+end;
+
 procedure TFormHomeC.FormCreate(Sender: TObject);
 begin
   FInicializado := False;
@@ -633,6 +816,7 @@ begin
   FProdutoSelecionado := nil;
   FCarrinho := nil;
   FTaxaEntregaAtual := 0;
+  FPedidoController := nil;
   InicializarCarrinho;
   // ⭐ CRIAR CONTROLLERS
   FController := nil;
@@ -838,6 +1022,33 @@ begin
 end;
 
 
+function TFormHomeC.ObterIdCliente(IdUsuario: Integer): Integer;
+var
+  Qr: TFDQuery;
+begin
+  Result := 0;
+
+  if IdUsuario <= 0 then
+    Exit;
+
+  Qr := TFDQuery.Create(nil);
+  try
+    Qr.Connection := DM.FDConn;
+
+    Qr.SQL.Text :=
+      'SELECT id_clie FROM clientes WHERE id_user = :id_user';
+
+    Qr.ParamByName('id_user').AsInteger := IdUsuario;
+    Qr.Open;
+
+    if not Qr.IsEmpty then
+      Result := Qr.FieldByName('id_clie').AsInteger;
+
+  finally
+    Qr.Free;
+  end;
+end;
+
 procedure TFormHomeC.InicializarCarrinho;
 begin
   if not Assigned(FCarrinho) then
@@ -873,8 +1084,11 @@ begin
     if not Assigned(FEnderecoController) then
       FEnderecoController := TEnderecoClienteController.Create;
 
-    if not Assigned(FPagamentoController) then // ⭐ ADICIONAR
+    if not Assigned(FPagamentoController) then
       FPagamentoController := TFormaPagamentoClienteController.Create;
+
+    if not Assigned(FPedidoController) then
+      FPedidoController := TPedidoController.Create;
 
     FInicializado := True;
 
@@ -919,6 +1133,9 @@ begin
 
   if Assigned(FCarrinho) then
     FreeAndNil(FCarrinho);
+
+  if Assigned(FPedidoController) then
+    FreeAndNil(FPedidoController);
 end;
 
 procedure TFormHomeC.FormShow(Sender: TObject);
@@ -1246,6 +1463,23 @@ begin
   AbrirCardapio(IdComercio, NomeComercio);
 end;
 
+function TFormHomeC.PagamentoPrincipal(IdCliente: Integer): Integer;
+begin
+  try
+    DM.FDQr.Close;
+    DM.FDQr.SQL.Clear;
+    DM.FDQr.SQL.Add(
+      'SELECT id_pagamento FROM formas_pagamento_clientes WHERE id_cliente = :id_cliente AND principal = TRUE AND ativo = TRUe LIMIT 1;');
+    DM.FDQr.ParamByName('id_cliente').AsInteger := IdCliente;
+    DM.FDQr.Open;
+
+    if not DM.FDQr.IsEmpty then
+      Result := DM.FDQr.FieldByName('id_pagamento').AsInteger
+  finally
+  end;
+end;
+
+
 procedure TFormHomeC.Panel1Click(Sender: TObject);
 var
   Quantidade: Integer;
@@ -1560,6 +1794,11 @@ begin
   pcPerfil.ActivePageIndex:=4;
 end;
 
+procedure TFormHomeC.pButtonFinalizarPedidoClick(Sender: TObject);
+begin
+  FinalizarPedido;
+end;
+
 procedure TFormHomeC.pButtonLimparCarrinhoClick(Sender: TObject);
 begin
   LimparCarrinho;
@@ -1740,7 +1979,7 @@ begin
   // ⭐ MUDANÇA: Remover considerando observação também
   for I := FCarrinho.Count - 1 downto 0 do
   begin
-    if FCarrinho[I].EhMesmoItem(IdProduto, Observacao) then
+    if FCarrinho[I].MesmoItem(IdProduto, Observacao) then
     begin
       FCarrinho.Delete(I);
       Break;
@@ -4482,6 +4721,54 @@ begin
   end;
 end;
 
+function TFormHomeC.ObterDadosComercio(IdProduto: Integer;
+  out IdComercio: Integer; out TaxaEntrega: Currency;
+  out NomeComercio: String): Boolean;
+begin
+  var
+  Qr: TFDQuery;
+begin
+  Result := False;
+  IdComercio := 0;
+  TaxaEntrega := 0;
+  NomeComercio := '';
+
+  if IdProduto <= 0 then
+    Exit;
+
+  Qr := TFDQuery.Create(nil);
+  try
+    Qr.Connection := DM.FDConn;
+
+    // ⭐ BUSCAR COMÉRCIO E TAXA DE ENTREGA DO PRODUTO
+    Qr.SQL.Text :=
+      'SELECT c.id_comercio, c.nome_comercio, c.taxa_entrega_base ' +
+      'FROM produtos p ' +
+      'INNER JOIN comercios c ON p.id_comercio = c.id_comercio ' +
+      'WHERE p.id_produto = :id_produto';
+
+    Qr.ParamByName('id_produto').AsInteger := IdProduto;
+    Qr.Open;
+
+    if not Qr.IsEmpty then
+    begin
+      IdComercio := Qr.FieldByName('id_comercio').AsInteger;
+      NomeComercio := Qr.FieldByName('nome_comercio').AsString;
+
+      if not Qr.FieldByName('taxa_entrega_base').IsNull then
+        TaxaEntrega := Qr.FieldByName('taxa_entrega_base').AsCurrency
+      else
+        TaxaEntrega := 0;
+
+      Result := True;
+    end;
+
+  finally
+    Qr.Free;
+  end;
+end;
+end;
+
 function TFormHomeC.ObterItemCarrinho(IdProduto: Integer; const Observacao: String = ''): TItemCarrinho;
 var
   Item: TItemCarrinho;
@@ -4494,7 +4781,7 @@ begin
   for Item in FCarrinho do
   begin
     // ⭐ Usa o novo método que compara produto + observação
-    if Item.EhMesmoItem(IdProduto, Observacao) then
+    if Item.MesmoItem(IdProduto, Observacao) then
     begin
       Result := Item;
       Break;
@@ -5346,6 +5633,28 @@ begin
     FormEdicao.Free;
   end;
 end;
+
+function TFormHomeC.EnderecoPrincipal(IdCliente: Integer): Integer;
+begin
+  DM.FDQr.Close;
+  DM.FDQr.SQL.Clear;
+  DM.FDQr.SQL.Add(
+    'SELECT id_endereco ' +
+    'FROM enderecos_clientes ' +
+    'WHERE id_cliente = :id_cliente ' +
+    'AND principal = TRUE ' +
+    'LIMIT 1'
+  );
+
+  DM.FDQr.ParamByName('id_cliente').AsInteger := IdCliente;
+  DM.FDQr.Open;
+
+  if not DM.FDQr.IsEmpty then
+    Result := DM.FDQr.FieldByName('id_endereco').AsInteger
+  else
+    Result := 0; // nenhum endereço principal cadastrado
+end;
+
 
 procedure TFormHomeC.eQuantidadeProdutoSelecChange(Sender: TObject);
 var

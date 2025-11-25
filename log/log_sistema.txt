@@ -7,3 +7,24 @@
 [24/11/2025 05:24:37] - e - Novo Cadastro - Email: e@gmail.com, Tipo: Cliente
 [24/11/2025 05:25:18] - e2 - Novo Cadastro - Email: e2gmail.com, Tipo: Cliente
 [24/11/2025 05:30:07] - teste - Novo Cadastro - Email: teste12345@gmail.com, Tipo: Cliente
+[24/11/2025 15:28:25] - testecliente - Login Efetuado
+[24/11/2025 16:22:12] - testeclie@gmail.com - Falha no Login - ERRO: Email ou senha incorretos.
+[24/11/2025 16:22:16] - testecliente - Login Efetuado
+[24/11/2025 16:24:24] - testecliente - Login Efetuado
+[24/11/2025 16:25:05] - testecliente - Login Efetuado
+[24/11/2025 16:27:50] - testecliente - Login Efetuado
+[24/11/2025 16:29:02] - testecliente - Login Efetuado
+[24/11/2025 16:31:15] - testecliente - Login Efetuado
+[24/11/2025 16:51:03] - testecliente - Login Efetuado
+[24/11/2025 16:52:07] - testecliente - Login Efetuado
+[24/11/2025 16:54:10] - testecliente - Login Efetuado
+[24/11/2025 17:14:36] - testecliente - Login Efetuado
+[24/11/2025 17:18:09] - testecliente - Login Efetuado
+[24/11/2025 17:19:58] - testecliente - Login Efetuado
+[24/11/2025 17:24:59] - testecliente - Login Efetuado
+[24/11/2025 19:11:28] - testecliente - Login Efetuado
+[24/11/2025 20:29:39] - testecliente - Login Efetuado
+[24/11/2025 22:36:34] - testecliente - Login Efetuado
+[24/11/2025 22:43:59] - testecliente - Login Efetuado
+[24/11/2025 22:49:47] - testecliente - Login Efetuado
+[24/11/2025 23:06:39] - testecliente - Login Efetuado

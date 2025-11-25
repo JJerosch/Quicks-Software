@@ -260,9 +260,6 @@ begin
 
     if LoginResponse.Autenticado then
     begin
-      // ✅ REMOVIDO: Não registra aqui, deixa o Controller fazer isso
-      // TLogSistema.RegistrarLogin(LoginResponse.NomeUsuario);
-
       case LoginResponse.TipoUsuario of
         tuCliente:
         begin
@@ -311,8 +308,6 @@ begin
     end
     else
     begin
-      // ✅ REMOVIDO: Não registra aqui, deixa o Controller fazer isso
-      // TLogSistema.RegistrarErro(LoginRequest.Email, 'Falha no Login', LoginResponse.Mensagem);
       ShowMessage(LoginResponse.Mensagem);
     end;
 

@@ -81,7 +81,11 @@ uses
   EntregadorController in 'Src\Controller\EntregadorController.pas',
   LogSistema in 'Src\Utils\LogSistema.pas',
   PerfilAdminRepository in 'Src\Repository\PerfilAdminRepository.pas',
-  PerfilAdminService in 'Src\Service\PerfilAdminService.pas';
+  PerfilAdminService in 'Src\Service\PerfilAdminService.pas',
+  PedidoModel in 'Src\Model\PedidoModel.pas',
+  PedidoRepository in 'Src\Repository\PedidoRepository.pas',
+  PedidoService in 'Src\Service\PedidoService.pas',
+  PedidoController in 'Src\Controller\PedidoController.pas';
 
 {$R *.res}
 
