@@ -9,7 +9,7 @@ uses
   FireDAC.Stan.Intf, FireDAC.Stan.Option, FireDAC.Stan.Param, FireDAC.Stan.Error,
   System.Generics.Collections, FireDAC.DatS, FireDAC.Phys.Intf, FireDAC.DApt.Intf,
   FireDAC.Stan.Async, FireDAC.DApt, FireDAC.Comp.DataSet, FireDAC.Comp.Client,
-  UsuarioModelCRUDAdmin, CargosModelCRUDAdmin, UsuarioControllerCRUDAdmin,
+  UsuarioModelCRUDAdmin, CargosModelCRUDAdmin, UsuarioControllerCRUDAdmin, PedidoCardHelperAdmin,
   UsuarioViewHelperCRUDAdmin, Vcl.WinXPickers, PerfilAdminService, uConn, LogSistema;
 
 type
@@ -99,7 +99,6 @@ type
     Panel3: TPanel;
     Label7: TLabel;
     lblUserNameHeader: TLabel;
-    lblUserIdHeader: TLabel;
     pcPerfil: TPageControl;
     tsVisualizar: TTabSheet;
     scbxPerfilVisualizar: TScrollBox;
@@ -147,6 +146,44 @@ type
     pButtonCancelarE: TPanel;
     lblTAdmin: TLabel;
     lblTCommD: TLabel;
+    scbxMainPedidos: TScrollBox;
+    pHeaderPedidos: TPanel;
+    lblMeusPedidos: TLabel;
+    iButtonBackPedidos: TImage;
+    pFiltrosPedidos: TPanel;
+    lblFiltrosPedidos: TLabel;
+    scbxFiltros: TScrollBox;
+    pMainPedidos: TPanel;
+    Label23: TLabel;
+    scbxPedidos: TScrollBox;
+    scbxMainRelatorios: TScrollBox;
+    pHeaderRelatorios: TPanel;
+    lblRelatorios: TLabel;
+    iButtonBackRelatorios: TImage;
+    Panel1: TPanel;
+    Label24: TLabel;
+    lblAdminFaturamento: TLabel;
+    Label29: TLabel;
+    lblAdminTotalPedidos: TLabel;
+    Panel2: TPanel;
+    Label34: TLabel;
+    Label35: TLabel;
+    dtpAdminInicio: TDateTimePicker;
+    dtpAdminFim: TDateTimePicker;
+    btnAdminGerarRelGeral: TPanel;
+    btnAdminGerarRelLojas: TPanel;
+    Label1: TLabel;
+    cbAdminComercios: TComboBox;
+    pRestaurantes: TPanel;
+    lblRestaurantes: TLabel;
+    scbxComercios: TScrollBox;
+    Label2: TLabel;
+    Label4: TLabel;
+    Label5: TLabel;
+    Label6: TLabel;
+    Label8: TLabel;
+    Label9: TLabel;
+    Label10: TLabel;
 
     procedure iButton1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -183,6 +220,11 @@ type
     procedure iButtonBackAlterarSenhaClick(Sender: TObject);
     procedure pButtonConfirmarAlterarSenhaClick(Sender: TObject);
     procedure pButtonCancelarAlterarSenhaClick(Sender: TObject);
+    procedure pButtonAtualizarDadosClick(Sender: TObject);
+    procedure btnAdminGerarRelGeralClick(Sender: TObject);
+    procedure btnAdminGerarRelLojasClick(Sender: TObject);
+    procedure cbAdminComerciosChange(Sender: TObject);
+    procedure iButtonBackRelatoriosClick(Sender: TObject);
 
   private
     FIdUsuario: Integer;
@@ -192,6 +234,8 @@ type
     FIdUsuarioSelecionado: Integer;
     FMemTable: TFDMemTable;
     FDataSource: TDataSource;
+    FIdStatusSelecionado: Integer;
+    FIdComercioSelecionado: Integer;
 
     procedure CarregarGrid(ApenasAtivos: Boolean);
     procedure OrganizarGrid;
@@ -207,6 +251,15 @@ type
     procedure CarregarDadosPerfilEdicao;
     procedure LimparCamposSenha;
 
+    procedure CarregarComercios;
+    procedure AtualizarAdminKPI;
+    function GetIdComercioSelecionado: Integer;
+
+    procedure OnStatusClick(IdFiltro: Integer; const NomeFiltro: String);
+    procedure OnComercioClick(IdComercio: Integer; const NomeComercio: String);
+    procedure CarregarFiltros;
+    procedure AtualizarPedidos;
+    procedure OnPedidoVerDetalhes(IdPedido: Integer);
   public
     property IdUsuario: Integer read FIdUsuario write FIdUsuario;
     property NomeUsuario: String read FNomeUsuario write FNomeUsuario;
@@ -297,27 +350,33 @@ end;
 procedure TFormHomeA.FormShow(Sender: TObject);
 begin
   try
-    // Carregar apenas usuários ativos
     CarregarGrid(True);
-
-    // Exibir informações do usuário logado
+    CarregarFiltros;
     lblUserNameHeader.Caption := NomeUsuario;
-    lblUserIdHeader.Caption := IdUsuario.ToString;
-
-    // Configurar hint de busca
     eBuscaMain.TextHint := 'Digite aqui para pesquisar.';
     eBuscaMain.Clear;
-
-    // ⭐ Carregar dados do perfil
     CarregarDadosPerfil;
-
-    // ⭐ Registrar log de acesso
     TLogSistema.RegistrarLogin(NomeUsuario);
+    dtpAdminInicio.Date := Date;
+    dtpAdminFim.Date := Date;
+    FIdStatusSelecionado := -1;
+    FIdComercioSelecionado := 0;
+    CarregarFiltros;
 
+    CarregarComercios;
+    AtualizarAdminKPI;
   except
     on E: Exception do
       ShowMessage('Erro ao carregar dados: ' + E.Message);
   end;
+end;
+
+function TFormHomeA.GetIdComercioSelecionado: Integer;
+begin
+  if cbAdminComercios.ItemIndex >= 0 then
+    Result := Integer(cbAdminComercios.Items.Objects[cbAdminComercios.ItemIndex])
+  else
+    Result := 0;
 end;
 
 procedure TFormHomeA.FormResize(Sender: TObject);
@@ -373,6 +432,12 @@ begin
   end;
 end;
 
+procedure TFormHomeA.CarregarFiltros;
+begin
+  TAdminPedidoCardHelper.PopularFiltrosStatus(scbxFiltros, DM.FDConn, OnStatusClick);
+  TAdminPedidoCardHelper.PopularFiltrosComercios(scbxComercios, DM.FDConn, OnComercioClick);
+end;
+
 procedure TFormHomeA.LimparCamposSenha;
 begin
   if Assigned(eSenhaAtual) then
@@ -416,10 +481,20 @@ begin
   LimparCamposSenha;
 end;
 
+procedure TFormHomeA.pButtonAtualizarDadosClick(Sender: TObject);
+begin
+  AtualizarAdminKPI;
+end;
+
 procedure TFormHomeA.iButtonBackAlterarSenhaClick(Sender: TObject);
 begin
   LimparCamposSenha;
   pcPerfil.ActivePageIndex := 0; // tsVisualizar
+end;
+
+procedure TFormHomeA.iButtonBackRelatoriosClick(Sender: TObject);
+begin
+  pcMain.ActivePageIndex:=0;
 end;
 
 procedure TFormHomeA.pButtonSalvarDadosEClick(Sender: TObject);
@@ -541,6 +616,33 @@ begin
   end;
 end;
 
+procedure TFormHomeA.cbAdminComerciosChange(Sender: TObject);
+begin
+  AtualizarAdminKPI;
+end;
+
+procedure TFormHomeA.OnComercioClick(IdComercio: Integer;
+  const NomeComercio: String);
+begin
+  FIdComercioSelecionado := IdComercio;
+  TAdminPedidoCardHelper.DeselecionarTodosFiltrosComercios(scbxPedidos);
+  TAdminPedidoCardHelper.SelecionarFiltroComercio(scbxPedidos, IdComercio);
+  AtualizarPedidos;
+end;
+
+procedure TFormHomeA.OnPedidoVerDetalhes(IdPedido: Integer);
+begin
+
+end;
+
+procedure TFormHomeA.OnStatusClick(IdFiltro: Integer; const NomeFiltro: String);
+begin
+  FIdStatusSelecionado := IdFiltro;
+  TAdminPedidoCardHelper.DeselecionarTodosFiltrosStatus(scbxFiltros);
+  TAdminPedidoCardHelper.SelecionarFiltroStatus(scbxFiltros, IdFiltro);
+  AtualizarPedidos;
+end;
+
 procedure TFormHomeA.OrganizarGrid;
 begin
   if DBGridUsuarios.Columns.Count > 0 then
@@ -653,6 +755,36 @@ begin
   end;
 end;
 
+procedure TFormHomeA.CarregarComercios;
+var
+  qComercios: TFDQuery;
+begin
+  cbAdminComercios.Items.Clear;
+  cbAdminComercios.Items.AddObject('Todos os Comércios', TObject(0));
+
+  qComercios := TFDQuery.Create(nil);
+  try
+    qComercios.Connection := DM.FDConn;
+    qComercios.SQL.Text := 'SELECT id_comercio, nome_comercio FROM comercios WHERE ativo = true ORDER BY nome_comercio';
+    qComercios.Open;
+
+    while not qComercios.Eof do
+    begin
+      cbAdminComercios.Items.AddObject(
+        qComercios.FieldByName('nome_comercio').AsString,
+        TObject(qComercios.FieldByName('id_comercio').AsInteger)
+      );
+      qComercios.Next;
+    end;
+
+    qComercios.Close;
+  finally
+    qComercios.Free;
+  end;
+
+  cbAdminComercios.ItemIndex := 0; // Seleciona "Todos os Comércios"
+end;
+
 procedure TFormHomeA.CarregarDadosParaAtualizar(IdUsuario: Integer);
 var
   Usuario: TUsuario;
@@ -696,6 +828,7 @@ end;
 procedure TFormHomeA.iButton2Click(Sender: TObject);
 begin
   pcMain.ActivePage := pctab2Relatorios;
+  AtualizarAdminKPI;
 end;
 
 procedure TFormHomeA.iButton3Click(Sender: TObject);
@@ -725,6 +858,26 @@ begin
   LimparCamposAdicionar;
 end;
 
+procedure TFormHomeA.AtualizarAdminKPI;
+begin
+  DM.CarregarAdminKPI(dtpAdminInicio.Date, dtpAdminFim.Date, GetIdComercioSelecionado);
+
+  lblAdminTotalPedidos.Caption := DM.qAdminKPI.FieldByName('TotalPedidos').AsString;
+  lblAdminFaturamento.Caption := FormatFloat('R$ #,##0.00',
+    DM.qAdminKPI.FieldByName('Faturamento').AsFloat);
+end;
+
+procedure TFormHomeA.AtualizarPedidos;
+begin
+  TAdminPedidoCardHelper.PopularPedidos(
+    scbxPedidos,
+    DM.FDConn,
+    FIdStatusSelecionado,
+    FIdComercioSelecionado,
+    OnPedidoVerDetalhes
+  );
+end;
+
 procedure TFormHomeA.bCadastroClick(Sender: TObject);
 var
   Usuario: TUsuario;
@@ -751,6 +904,16 @@ begin
   finally
     Usuario.Free;
   end;
+end;
+
+procedure TFormHomeA.btnAdminGerarRelGeralClick(Sender: TObject);
+begin
+  DM.GerarAdminRelatorioGeral(dtpAdminInicio.Date, dtpAdminFim.Date, GetIdComercioSelecionado);
+end;
+
+procedure TFormHomeA.btnAdminGerarRelLojasClick(Sender: TObject);
+begin
+  DM.GerarAdminRelatorioLojas(dtpAdminInicio.Date, dtpAdminFim.Date);
 end;
 
 procedure TFormHomeA.pButton2ExcluirClick(Sender: TObject);

@@ -18,7 +18,7 @@ object FormHomeC: TFormHomeC
     Top = 0
     Width = 410
     Height = 644
-    ActivePage = tsMain
+    ActivePage = tsProdutoSelec
     Align = alClient
     TabOrder = 1
     ExplicitWidth = 408
@@ -249,7 +249,7 @@ object FormHomeC: TFormHomeC
               TabOrder = 0
               UseWheelForScrolling = True
               ExplicitWidth = 400
-              ExplicitHeight = 175
+              ExplicitHeight = 340
             end
           end
         end
@@ -297,8 +297,7 @@ object FormHomeC: TFormHomeC
             Font.Name = 'Segoe UI'
             Font.Style = [fsBold]
             ParentFont = False
-            ExplicitLeft = 1
-            ExplicitTop = -2
+            ExplicitWidth = 81
           end
           object scbxCategoriasL: TScrollBox
             AlignWithMargins = True
@@ -316,7 +315,6 @@ object FormHomeC: TFormHomeC
             BorderStyle = bsNone
             TabOrder = 0
             UseWheelForScrolling = True
-            ExplicitHeight = 57
           end
         end
         object pHeaderLojas: TPanel
@@ -487,7 +485,6 @@ object FormHomeC: TFormHomeC
           Height = 452
           Align = alTop
           TabOrder = 2
-          ExplicitTop = 151
           object lblComerciosL: TLabel
             Left = 1
             Top = 1
@@ -514,7 +511,6 @@ object FormHomeC: TFormHomeC
             BorderStyle = bsNone
             TabOrder = 0
             UseWheelForScrolling = True
-            ExplicitHeight = 192
           end
         end
       end
@@ -3794,7 +3790,7 @@ object FormHomeC: TFormHomeC
     TabOrder = 2
     StyleName = 'Windows'
     object pUserHeader: TPanel
-      Left = 55
+      Left = 66
       Top = 14
       Width = 149
       Height = 27
@@ -3814,7 +3810,7 @@ object FormHomeC: TFormHomeC
         Font.Name = 'Segoe UI'
         Font.Style = []
         ParentFont = False
-        ExplicitHeight = 25
+        ExplicitLeft = 12
       end
     end
     object eBuscaMain: TEdit
@@ -5950,10 +5946,10 @@ object FormHomeC: TFormHomeC
       OnClick = iButtonLeaveClick
     end
     object iButton1: TImage
-      Left = -1
-      Top = -2
-      Width = 57
-      Height = 57
+      Left = -2
+      Top = -6
+      Width = 63
+      Height = 62
       Center = True
       Picture.Data = {
         0954506E67496D61676589504E470D0A1A0A0000000D49484452000002000000

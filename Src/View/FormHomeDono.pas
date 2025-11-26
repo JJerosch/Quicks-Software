@@ -7,8 +7,8 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls,
   Vcl.ComCtrls, Vcl.Imaging.pngimage, Data.DB, Vcl.Mask, Vcl.Grids, Vcl.DBGrids,
   uConn, FireDAC.Comp.Client, System.Generics.Collections,
-  ProdutoModel, ProdutoController, ProdutoViewHelper,
-  ComercioModel, ComercioController, ComercioViewHelper, Vcl.WinXPickers, ViaCEPHelper, PedidoCardHelperDono;
+  ProdutoModel, ProdutoController, ProdutoViewHelper, ComercioModel,
+  ComercioController, ComercioViewHelper, Vcl.WinXPickers, ViaCEPHelper, PedidoCardHelperDono;
 
 type
   TFormHomeD = class(TForm)
@@ -222,6 +222,23 @@ type
     pMainPedidos: TPanel;
     Label23: TLabel;
     scbxPedidos: TScrollBox;
+    scbxMainRelatorios: TScrollBox;
+    pHeaderRelatorios: TPanel;
+    lblRelatorios: TLabel;
+    iButtonBackRelatorios: TImage;
+    Panel1: TPanel;
+    Label24: TLabel;
+    lblDonoFaturamento: TLabel;
+    Label29: TLabel;
+    lblDonoTotalPedidos: TLabel;
+    Panel2: TPanel;
+    Label34: TLabel;
+    Label35: TLabel;
+    dtpDonoInicio: TDateTimePicker;
+    dtpDonoFim: TDateTimePicker;
+    btnDonoGerarVendas: TPanel;
+    btnDonoGerarProdutos: TPanel;
+    pButtonAtualizarDados: TPanel;
 
     procedure iButton1Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -259,6 +276,10 @@ type
     procedure iButtonBackAlterarSenhaClick(Sender: TObject);
     procedure meCEPCommDEExit(Sender: TObject);
     procedure iButtonBackPedidosClick(Sender: TObject);
+    procedure iButtonBackRelatoriosClick(Sender: TObject);
+    procedure pButtonAtualizarDadosClick(Sender: TObject);
+    procedure btnDonoGerarVendasClick(Sender: TObject);
+    procedure btnDonoGerarProdutosClick(Sender: TObject);
 
   private
     FIdUsuario: Integer;
@@ -292,6 +313,8 @@ type
     procedure OnPedidoRecusar(IdPedido: Integer);
     procedure OnPedidoVerDetalhes(IdPedido: Integer);
     procedure AtualizarCardPedido(IdPedido: Integer; NovoStatus: Integer);
+
+    procedure AtualizarDonoKPI;
   public
     property IdUsuario: Integer read FIdUsuario write FIdUsuario;
     property NomeUsuario: String read FNomeUsuario write FNomeUsuario;
@@ -364,6 +387,9 @@ procedure TFormHomeD.FormShow(Sender: TObject);
 var
   Qr: TFDQuery;
 begin
+  dtpDonoInicio.Date := Date;
+  dtpDonoFim.Date := Date;
+  AtualizarDonoKPI;
   try
     Qr := TFDQuery.Create(nil);
     try
@@ -707,6 +733,24 @@ begin
       end;
     end;
   end;
+end;
+
+procedure TFormHomeD.AtualizarDonoKPI;
+begin
+  DM.CarregarDonoKPI(dtpDonoInicio.Date, dtpDonoFim.Date, FIdComercio);
+  lblDonoTotalPedidos.Caption := DM.qDonoKPI.FieldByName('TotalPedidos').AsString;
+  lblDonoFaturamento.Caption := FormatFloat('R$ #,##0.00',
+  DM.qDonoKPI.FieldByName('Faturamento').AsFloat);
+end;
+
+procedure TFormHomeD.btnDonoGerarProdutosClick(Sender: TObject);
+begin
+  DM.GerarDonoRelatorioProdutos(dtpDonoInicio.Date, dtpDonoFim.Date, FIdComercio);
+end;
+
+procedure TFormHomeD.btnDonoGerarVendasClick(Sender: TObject);
+begin
+  DM.GerarDonoRelatorioVendas(dtpDonoInicio.Date, dtpDonoFim.Date, FIdComercio);
 end;
 
 procedure TFormHomeD.CarregarDadosParaAtualizar(IdProduto: Integer);
@@ -1263,6 +1307,11 @@ begin
   pcPerfil.ActivePageIndex := 2; // Tab Alterar Senha
 end;
 
+procedure TFormHomeD.pButtonAtualizarDadosClick(Sender: TObject);
+begin
+  AtualizarDonoKPI;
+end;
+
 procedure TFormHomeD.pButtonConfirmarAlterarSenhaClick(Sender: TObject);
 var
   Request: TAlterarSenhaRequest;
@@ -1393,6 +1442,11 @@ end;
 procedure TFormHomeD.iButtonBackPedidosClick(Sender: TObject);
 begin
   pcMain.ActivePageIndex := 0;
+end;
+
+procedure TFormHomeD.iButtonBackRelatoriosClick(Sender: TObject);
+begin
+  pcMain.ActivePageIndex:=0;
 end;
 
 procedure TFormHomeD.lblButton1Click(Sender: TObject);

@@ -88,7 +88,8 @@ uses
   PedidoController in 'Src\Controller\PedidoController.pas',
   PedidoCardHelper in 'Src\Utils\PedidoCardHelper.pas',
   PedidoCardHelperDono in 'Src\Utils\PedidoCardHelperDono.pas',
-  PedidoCardHelperEntregador in 'Src\Utils\PedidoCardHelperEntregador.pas';
+  PedidoCardHelperEntregador in 'Src\Utils\PedidoCardHelperEntregador.pas',
+  PedidoCardHelperAdmin in 'Src\Utils\PedidoCardHelperAdmin.pas';
 
 {$R *.res}
 

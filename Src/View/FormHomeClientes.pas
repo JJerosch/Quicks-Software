@@ -276,10 +276,10 @@ TCardEventHandler = class
     Panel1: TPanel;
     lblSubtotalProdutoSelecD: TLabel;
     pButtonLimparCarrinho: TPanel;
-    eBuscaMain: TEdit;
     scbxFiltros: TScrollBox;
     lblFiltrosPedidos: TLabel;
     Label5: TLabel;
+    eBuscaMain: TEdit;
 
     procedure iButton1Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
@@ -939,7 +939,7 @@ begin
   if Assigned(pCategoriasL) then
   begin
     pCategoriasL.Align := alTop;
-    pCategoriasL.Height := 70;
+    pCategoriasL.Height := 80;
   end;
 
   if Assigned(scbxCategoriasL) then

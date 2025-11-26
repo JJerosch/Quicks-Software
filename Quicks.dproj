@@ -212,6 +212,7 @@
         <DCCReference Include="Src\Utils\PedidoCardHelper.pas"/>
         <DCCReference Include="Src\Utils\PedidoCardHelperDono.pas"/>
         <DCCReference Include="Src\Utils\PedidoCardHelperEntregador.pas"/>
+        <DCCReference Include="Src\Utils\PedidoCardHelperAdmin.pas"/>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
         </BuildConfiguration>

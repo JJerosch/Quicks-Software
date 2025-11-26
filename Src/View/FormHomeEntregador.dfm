@@ -35,7 +35,7 @@ object FormHomeE: TFormHomeE
       Margins.Top = 0
       Margins.Right = 0
       Margins.Bottom = 0
-      ActivePage = tsPedidos
+      ActivePage = tsRelatorios
       Align = alClient
       TabOrder = 1
       ExplicitWidth = 410
@@ -1751,6 +1751,8 @@ object FormHomeE: TFormHomeE
           Margins.Right = 0
           Margins.Bottom = 0
           Align = alClient
+          Color = clWhite
+          ParentColor = False
           TabOrder = 0
           object pHeaderRelatorios: TPanel
             AlignWithMargins = True
@@ -1911,6 +1913,106 @@ object FormHomeE: TFormHomeE
                 0D7D0000000049454E44AE426082}
               Proportional = True
             end
+          end
+          object Panel1: TPanel
+            Left = 0
+            Top = 129
+            Width = 400
+            Height = 90
+            Align = alTop
+            BevelOuter = bvNone
+            Color = clWhite
+            ParentBackground = False
+            TabOrder = 1
+            object Label24: TLabel
+              Left = 16
+              Top = 17
+              Width = 218
+              Height = 15
+              Caption = 'Meu faturamento total no per'#237'odo(taxas):'
+            end
+            object lblEntregadorFaturamento: TLabel
+              Left = 240
+              Top = 17
+              Width = 139
+              Height = 15
+              Caption = 'lblEntregadorFaturamento'
+            end
+            object Label29: TLabel
+              Left = 16
+              Top = 55
+              Width = 121
+              Height = 15
+              Caption = 'Total de entregas feitas'
+            end
+            object lblEntregadorTotalEntregas: TLabel
+              Left = 143
+              Top = 55
+              Width = 142
+              Height = 15
+              Caption = 'lblEntregadorTotalEntregas'
+            end
+          end
+          object Panel2: TPanel
+            Left = 0
+            Top = 73
+            Width = 400
+            Height = 56
+            Align = alTop
+            BevelOuter = bvNone
+            Color = clWhite
+            ParentBackground = False
+            TabOrder = 2
+            object Label34: TLabel
+              Left = 16
+              Top = 21
+              Width = 44
+              Height = 15
+              Caption = 'Per'#237'odo:'
+            end
+            object Label35: TLabel
+              Left = 156
+              Top = 21
+              Width = 16
+              Height = 15
+              Caption = 'at'#233
+            end
+            object dtpEntregadorInicio: TDateTimePicker
+              Left = 61
+              Top = 17
+              Width = 89
+              Height = 23
+              Date = 45986.000000000000000000
+              Time = 0.601036388885404400
+              TabOrder = 0
+            end
+            object dtpEntregadorFIm: TDateTimePicker
+              Left = 179
+              Top = 17
+              Width = 89
+              Height = 23
+              Date = 45986.000000000000000000
+              Time = 0.601036388885404400
+              TabOrder = 1
+            end
+            object pButtonAtualizarDados: TPanel
+              Left = 274
+              Top = 9
+              Width = 97
+              Height = 41
+              Caption = 'Atualizar dados'
+              TabOrder = 2
+              OnClick = pButtonAtualizarDadosClick
+            end
+          end
+          object btnEntregadorGerarExtrato: TPanel
+            Left = 16
+            Top = 225
+            Width = 97
+            Height = 41
+            Caption = 'Relat'#243'rio Extrato'
+            TabOrder = 3
+            OnClick = btnEntregadorGerarExtratoClick
           end
         end
       end
@@ -3637,6 +3739,7 @@ object FormHomeE: TFormHomeE
         A285E3680B9323DB2B2CFF5F0085B5A00268E7A00268E7A00268E7A00268E7F8
         1F291C2FF9F07C83BF0000000049454E44AE426082}
       Proportional = True
+      OnClick = iButton4Click
     end
     object lblButton4: TLabel
       Left = 88

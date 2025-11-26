@@ -15,8 +15,6 @@ object FormLogin: TFormLogin
   Position = poScreenCenter
   OnClick = sbConfirmarClick
   OnCreate = FormCreate
-  OnMouseEnter = lblConfirmarMouseEnter
-  OnMouseLeave = lblConfirmarMouseLeave
   OnResize = FormResize
   TextHeight = 15
   object pRight: TPanel
@@ -146,7 +144,7 @@ object FormLogin: TFormLogin
         Height = 40
         BevelOuter = bvNone
         Caption = 'Confirmar'
-        Color = clCream
+        Color = clCoral
         ParentBackground = False
         TabOrder = 0
         object shConfirmar: TShape
@@ -158,8 +156,6 @@ object FormLogin: TFormLogin
           Brush.Color = clCoral
           Pen.Color = clCoral
           Shape = stRoundRect
-          OnMouseEnter = lblConfirmarMouseEnter
-          OnMouseLeave = lblConfirmarMouseLeave
           ExplicitLeft = 16
           ExplicitTop = 16
         end
@@ -170,8 +166,6 @@ object FormLogin: TFormLogin
           Height = 40
           Align = alClient
           OnClick = sbConfirmarClick
-          OnMouseEnter = lblConfirmarMouseEnter
-          OnMouseLeave = lblConfirmarMouseLeave
           ExplicitLeft = -48
           ExplicitTop = -25
         end
@@ -182,8 +176,6 @@ object FormLogin: TFormLogin
           Height = 15
           Caption = 'Confirmar'
           OnClick = sbConfirmarClick
-          OnMouseEnter = lblConfirmarMouseEnter
-          OnMouseLeave = lblConfirmarMouseLeave
         end
       end
       object eEmail: TEdit
@@ -20366,7 +20358,6 @@ object FormLogin: TFormLogin
         34B00AC84692CA92045C4215C751A74F48FF1F51785DC81E4A2D4A0000000049
         454E44AE426082}
       ExplicitLeft = 1
-      ExplicitWidth = 824
     end
   end
 end

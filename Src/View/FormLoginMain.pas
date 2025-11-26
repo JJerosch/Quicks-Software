@@ -37,10 +37,8 @@ type
     procedure lblTrocaClick(Sender: TObject);
     procedure FormResize(Sender: TObject);
     procedure pSairResize(Sender: TObject);
-    procedure lblConfirmarMouseEnter(Sender: TObject);
     procedure lblSairMouseEnter(Sender: TObject);
     procedure lblSairMouseLeave(Sender: TObject);
-    procedure lblConfirmarMouseLeave(Sender: TObject);
     procedure lblTrocaMouseLeave(Sender: TObject);
     procedure lblTrocaMouseEnter(Sender: TObject);
     procedure sbConfirmarClick(Sender: TObject);
@@ -117,20 +115,6 @@ begin
   end else begin
     lblLogin.Margins.Top := 50;
   end;
-end;
-
-procedure TFormLogin.lblConfirmarMouseEnter(Sender: TObject);
-begin
-  shConfirmar.Brush.Color := $00003AD5;
-  lblConfirmar.Font.Color := clWhite;
-  lblConfirmar.Font.Style := [fsBold];
-end;
-
-procedure TFormLogin.lblConfirmarMouseLeave(Sender: TObject);
-begin
-  shConfirmar.Brush.Color := $005383FF;
-  lblConfirmar.Font.Color := clBlack;
-  lblConfirmar.Font.Style := [];
 end;
 
 procedure TFormLogin.lblSairMouseEnter(Sender: TObject);
