@@ -18,8 +18,6 @@ type
     pListViewMain: TPanel;
     pcMain: TPageControl;
     pctab1Selecione: TTabSheet;
-    pText: TPanel;
-    lblText: TLabel;
     pctab2Relatorios: TTabSheet;
     pBarraMenuLeft: TPanel;
     iButton1: TImage;
@@ -177,13 +175,13 @@ type
     pRestaurantes: TPanel;
     lblRestaurantes: TLabel;
     scbxComercios: TScrollBox;
+    ScrollBox1: TScrollBox;
+    Panel4: TPanel;
     Label2: TLabel;
-    Label4: TLabel;
-    Label5: TLabel;
-    Label6: TLabel;
-    Label8: TLabel;
-    Label9: TLabel;
-    Label10: TLabel;
+    Panel6: TPanel;
+    scbxLog: TScrollBox;
+    MemoLog: TMemo;
+    Image1: TImage;
 
     procedure iButton1Click(Sender: TObject);
     procedure FormCreate(Sender: TObject);
@@ -225,6 +223,7 @@ type
     procedure btnAdminGerarRelLojasClick(Sender: TObject);
     procedure cbAdminComerciosChange(Sender: TObject);
     procedure iButtonBackRelatoriosClick(Sender: TObject);
+    procedure Image1Click(Sender: TObject);
 
   private
     FIdUsuario: Integer;
@@ -260,6 +259,8 @@ type
     procedure CarregarFiltros;
     procedure AtualizarPedidos;
     procedure OnPedidoVerDetalhes(IdPedido: Integer);
+
+    procedure CarregarLog;
   public
     property IdUsuario: Integer read FIdUsuario write FIdUsuario;
     property NomeUsuario: String read FNomeUsuario write FNomeUsuario;
@@ -291,7 +292,8 @@ begin
 
   // Configurar páginas iniciais
   if Assigned(pcMain) then
-    pcMain.ActivePageIndex := 3;
+    pcMain.ActivePageIndex := 0;
+    CarregarLog;
 
   if Assigned(pcButtons) then
     pcButtons.ActivePageIndex := 0;
@@ -383,7 +385,7 @@ procedure TFormHomeA.FormResize(Sender: TObject);
 begin
   if Self.WindowState = wsMaximized then
   begin
-    pHeader.Width := 1920;
+    pHeader.Width := 3000;
     pMainGrid.Width := 1013;
   end;
 end;
@@ -493,6 +495,11 @@ begin
 end;
 
 procedure TFormHomeA.iButtonBackRelatoriosClick(Sender: TObject);
+begin
+  pcMain.ActivePageIndex:=0;
+end;
+
+procedure TFormHomeA.Image1Click(Sender: TObject);
 begin
   pcMain.ActivePageIndex:=0;
 end;
@@ -613,6 +620,37 @@ begin
   except
     on E: Exception do
       ShowMessage('Erro ao carregar grid: ' + E.Message);
+  end;
+end;
+
+procedure TFormHomeA.CarregarLog;
+var
+  LinhasLog: TStringList;
+  CaminhoLog: string;
+begin
+  LinhasLog := TStringList.Create;
+  try
+    CaminhoLog := 'C:\Users\jpjer\Documents\Embarcadero\Studio\Projects\Quicks-Software\log\log_sistema.txt';
+
+    if FileExists(CaminhoLog) then
+    begin
+      LinhasLog.LoadFromFile(CaminhoLog);
+
+      // Assumindo que você tem um TMemo chamado MemoLog
+      MemoLog.Lines.Assign(LinhasLog);
+      MemoLog.ScrollBars := ssVertical;
+      MemoLog.WordWrap := False; // Garante uma linha por registro
+      MemoLog.ReadOnly := True;  // Impede edição
+
+      // Opcional: rola para o final (últimas entradas)
+      MemoLog.Perform(EM_LINESCROLL, 0, MemoLog.Lines.Count);
+    end
+    else
+    begin
+      ShowMessage('Arquivo de log não encontrado!');
+    end;
+  finally
+    LinhasLog.Free;
   end;
 end;
 
@@ -819,10 +857,10 @@ end;
 
 procedure TFormHomeA.iButton1Click(Sender: TObject);
 begin
-  if pBarraMenuLeft.Width = 97 then
+  if pBarraMenuLeft.Width = 110 then
     pBarraMenuLeft.Width := 250
   else
-    pBarraMenuLeft.Width := 97;
+    pBarraMenuLeft.Width := 110;
 end;
 
 procedure TFormHomeA.iButton2Click(Sender: TObject);

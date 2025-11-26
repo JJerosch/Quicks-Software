@@ -283,7 +283,7 @@ begin
   lblNumeroPedido.Font.Name := 'Segoe UI';
   lblNumeroPedido.Font.Size := 12;
   lblNumeroPedido.Font.Style := [fsBold];
-  lblNumeroPedido.Font.Color := $00333333;
+  lblNumeroPedido.Font.Color := clBlack;
   lblNumeroPedido.Transparent := True;
 
   // ========== CORPO DO CARD ==========
@@ -297,7 +297,7 @@ begin
   lblNomeComercio.Caption := '🏪 ' + FDados.NomeComercio;
   lblNomeComercio.Font.Name := 'Segoe UI';
   lblNomeComercio.Font.Size := 10;
-  lblNomeComercio.Font.Color := $00666666;
+  lblNomeComercio.Font.Color := clBlack;
   lblNomeComercio.Transparent := True;
 
   // Data do Pedido
@@ -308,7 +308,7 @@ begin
   lblDataPedido.Caption := '📅 ' + FormatDateTime('dd/mm/yyyy hh:nn', FDados.DataPedido);
   lblDataPedido.Font.Name := 'Segoe UI';
   lblDataPedido.Font.Size := 9;
-  lblDataPedido.Font.Color := $00888888;
+  lblDataPedido.Font.Color := clBlack;
   lblDataPedido.Transparent := True;
 
   // Quantidade de Itens
@@ -320,7 +320,7 @@ begin
     IfThen(FDados.QtdItens = 1, 'item', 'itens');
   lblQtdItens.Font.Name := 'Segoe UI';
   lblQtdItens.Font.Size := 9;
-  lblQtdItens.Font.Color := $00888888;
+  lblQtdItens.Font.Color := clBlack;
   lblQtdItens.Transparent := True;
 
   // ⭐ NOVO: Nome do Entregador (se houver)
@@ -339,7 +339,7 @@ begin
     lblEntregador.Font.Name := 'Segoe UI';
     lblEntregador.Font.Size := 9;
     lblEntregador.Font.Style := [fsBold];
-    lblEntregador.Font.Color := $00FF6600;
+    lblEntregador.Font.Color := clBlack;
     lblEntregador.Transparent := True;
   end;
 
@@ -358,7 +358,7 @@ begin
   lblValorTotal.Font.Name := 'Segoe UI';
   lblValorTotal.Font.Size := 11;
   lblValorTotal.Font.Style := [fsBold];
-  lblValorTotal.Font.Color := $00FF6600;
+  lblValorTotal.Font.Color := clGreen;
   lblValorTotal.Transparent := True;
 
   // Tempo Estimado (se aplicável)
@@ -377,7 +377,7 @@ begin
     lblTempoEstimado.Caption := '⏱️ ' + FDados.TempoEstimado;
     lblTempoEstimado.Font.Name := 'Segoe UI';
     lblTempoEstimado.Font.Size := 9;
-    lblTempoEstimado.Font.Color := $00666666;
+    lblTempoEstimado.Font.Color := clBlack;
     lblTempoEstimado.Transparent := True;
   end;
 

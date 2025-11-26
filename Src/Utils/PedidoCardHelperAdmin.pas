@@ -29,6 +29,8 @@ type
     EnderecoEntrega: String;
     QtdItens: Integer;
     NomeEntregador: String;
+    TelefoneEntregador: String;
+    TempoEstimado: String;
   end;
 
   // ========== CHIP DE FILTRO STATUS ==========
@@ -77,7 +79,6 @@ type
     // Componentes visuais
     pHeader: TPanel;
     pStatus: TPanel;
-    pBarraLateral: TPanel;
     lblNumeroPedido: TLabel;
     lblNomeComercio: TLabel;
     lblNomeCliente: TLabel;
@@ -87,8 +88,10 @@ type
     lblQtdItens: TLabel;
     lblEntregador: TLabel;
     lblEndereco: TLabel;
+    lblTempoEstimado: TLabel;
 
     function ObterCorStatus(IdStatus: Integer): TColor;
+    function ObterEmojiStatus(IdStatus: Integer): String;
   public
     constructor CreateCard(AOwner: TComponent; const Dados: TDadosPedidoAdmin);
     procedure ConfigurarVisual;
@@ -177,7 +180,7 @@ begin
   lblTexto.Font.Name := 'Segoe UI';
   lblTexto.Font.Size := 9;
   lblTexto.Font.Style := [fsBold];
-  lblTexto.Font.Color := $005178FF; // Laranja
+  lblTexto.Font.Color := $00517CFF;
   lblTexto.Cursor := crHandPoint;
   lblTexto.OnClick := ChipClick;
   lblTexto.Transparent := True;
@@ -212,7 +215,7 @@ begin
 
   if FSelecionado then
   begin
-    Self.Color := $005178FF; // Laranja
+    Self.Color := $00517CFF;
     for i := 0 to Self.ControlCount - 1 do
     begin
       if Self.Controls[i] is TLabel then
@@ -230,7 +233,7 @@ begin
       if Self.Controls[i] is TLabel then
       begin
         lbl := TLabel(Self.Controls[i]);
-        lbl.Font.Color := $005178FF;
+        lbl.Font.Color := $00517CFF;
       end;
     end;
   end;
@@ -271,7 +274,7 @@ begin
   lblTexto.Font.Name := 'Segoe UI';
   lblTexto.Font.Size := 9;
   lblTexto.Font.Style := [fsBold];
-  lblTexto.Font.Color := $005178FF;
+  lblTexto.Font.Color := $00517CFF;
   lblTexto.Cursor := crHandPoint;
   lblTexto.OnClick := ChipClick;
   lblTexto.Transparent := True;
@@ -305,7 +308,7 @@ begin
 
   if FSelecionado then
   begin
-    Self.Color := $005178FF;
+    Self.Color := $00517CFF;
     for i := 0 to Self.ControlCount - 1 do
     begin
       if Self.Controls[i] is TLabel then
@@ -323,7 +326,7 @@ begin
       if Self.Controls[i] is TLabel then
       begin
         lbl := TLabel(Self.Controls[i]);
-        lbl.Font.Color := $005178FF;
+        lbl.Font.Color := $00517CFF;
       end;
     end;
   end;
@@ -338,36 +341,27 @@ begin
   FIdPedido := Dados.IdPedido;
   FDados := Dados;
 
-  Self.Height := 160;
+  // Altura similar ao card de clientes
+  Self.Height := 180;
   Self.Width := 100;
 end;
 
 procedure TAdminPedidoCard.ConfigurarVisual;
 var
-  CorStatus: TColor;
+  Emoji: String;
 begin
+  // Painel principal
   Self.ParentBackground := False;
   Self.BevelOuter := bvNone;
   Self.Color := clWhite;
   Self.BorderStyle := bsSingle;
   Self.ParentColor := False;
 
-  CorStatus := ObterCorStatus(FDados.IdStatusPedido);
-
-  // ========== BARRA LATERAL COLORIDA ==========
-  pBarraLateral := TPanel.Create(Self);
-  pBarraLateral.Parent := Self;
-  pBarraLateral.Align := alLeft;
-  pBarraLateral.Width := 8;
-  pBarraLateral.BevelOuter := bvNone;
-  pBarraLateral.Color := CorStatus;
-  pBarraLateral.ParentBackground := False;
-
-  // ========== HEADER ==========
+  // ========== HEADER COM STATUS ==========
   pHeader := TPanel.Create(Self);
   pHeader.Parent := Self;
   pHeader.Align := alTop;
-  pHeader.Height := 40;
+  pHeader.Height := 45;
   pHeader.BevelOuter := bvNone;
   pHeader.Color := clWhite;
   pHeader.ParentBackground := False;
@@ -375,13 +369,13 @@ begin
   // Badge de Status
   pStatus := TPanel.Create(pHeader);
   pStatus.Parent := pHeader;
-  pStatus.Width := 120;
-  pStatus.Height := 26;
-  pStatus.Top := 7;
+  pStatus.Width := 130;
+  pStatus.Height := 28;
+  pStatus.Top := 8;
   pStatus.Left := pHeader.Width - pStatus.Width - 15;
   pStatus.Anchors := [akTop, akRight];
   pStatus.BevelOuter := bvNone;
-  pStatus.Color := CorStatus;
+  pStatus.Color := ObterCorStatus(FDados.IdStatusPedido);
   pStatus.Font.Name := 'Segoe UI';
   pStatus.Font.Size := 8;
   pStatus.Font.Style := [fsBold];
@@ -392,59 +386,60 @@ begin
   lblNumeroPedido := TLabel.Create(pHeader);
   lblNumeroPedido.Parent := pHeader;
   lblNumeroPedido.Left := 15;
-  lblNumeroPedido.Top := 10;
+  lblNumeroPedido.Top := 12;
   lblNumeroPedido.Caption := '📋 Pedido #' + IntToStr(FDados.IdPedido);
   lblNumeroPedido.Font.Name := 'Segoe UI';
-  lblNumeroPedido.Font.Size := 11;
+  lblNumeroPedido.Font.Size := 12;
   lblNumeroPedido.Font.Style := [fsBold];
-  lblNumeroPedido.Font.Color := $00333333;
+  lblNumeroPedido.Font.Color := clBlack;
   lblNumeroPedido.Transparent := True;
 
   // ========== CORPO DO CARD ==========
 
   // Nome do Comércio
+  Emoji := ObterEmojiStatus(FDados.IdStatusPedido);
   lblNomeComercio := TLabel.Create(Self);
   lblNomeComercio.Parent := Self;
   lblNomeComercio.Left := 15;
-  lblNomeComercio.Top := 45;
+  lblNomeComercio.Top := 50;
   lblNomeComercio.Caption := '🏪 ' + FDados.NomeComercio;
   lblNomeComercio.Font.Name := 'Segoe UI';
-  lblNomeComercio.Font.Size := 9;
-  lblNomeComercio.Font.Color := $00666666;
+  lblNomeComercio.Font.Size := 10;
+  lblNomeComercio.Font.Color := clBlack;
   lblNomeComercio.Transparent := True;
 
   // Nome do Cliente
   lblNomeCliente := TLabel.Create(Self);
   lblNomeCliente.Parent := Self;
   lblNomeCliente.Left := 15;
-  lblNomeCliente.Top := 65;
+  lblNomeCliente.Top := 72;
   lblNomeCliente.Caption := '👤 Cliente: ' + FDados.NomeCliente;
   lblNomeCliente.Font.Name := 'Segoe UI';
   lblNomeCliente.Font.Size := 9;
-  lblNomeCliente.Font.Color := $00666666;
+  lblNomeCliente.Font.Color := clBlack;
   lblNomeCliente.Transparent := True;
 
   // Data do Pedido
   lblDataPedido := TLabel.Create(Self);
   lblDataPedido.Parent := Self;
   lblDataPedido.Left := 250;
-  lblDataPedido.Top := 45;
+  lblDataPedido.Top := 50;
   lblDataPedido.Caption := '📅 ' + FormatDateTime('dd/mm/yyyy hh:nn', FDados.DataPedido);
   lblDataPedido.Font.Name := 'Segoe UI';
   lblDataPedido.Font.Size := 9;
-  lblDataPedido.Font.Color := $00888888;
+  lblDataPedido.Font.Color := clBlack;
   lblDataPedido.Transparent := True;
 
   // Quantidade de Itens
   lblQtdItens := TLabel.Create(Self);
   lblQtdItens.Parent := Self;
   lblQtdItens.Left := 250;
-  lblQtdItens.Top := 65;
+  lblQtdItens.Top := 72;
   lblQtdItens.Caption := '📦 ' + IntToStr(FDados.QtdItens) + ' ' +
     IfThen(FDados.QtdItens = 1, 'item', 'itens');
   lblQtdItens.Font.Name := 'Segoe UI';
   lblQtdItens.Font.Size := 9;
-  lblQtdItens.Font.Color := $00888888;
+  lblQtdItens.Font.Color := clBlack;
   lblQtdItens.Transparent := True;
 
   // Entregador (se houver)
@@ -453,12 +448,17 @@ begin
     lblEntregador := TLabel.Create(Self);
     lblEntregador.Parent := Self;
     lblEntregador.Left := 15;
-    lblEntregador.Top := 85;
+    lblEntregador.Top := 94;
     lblEntregador.Caption := '🚴 Entregador: ' + FDados.NomeEntregador;
+
+    // Adicionar telefone se houver
+    if Trim(FDados.TelefoneEntregador) <> '' then
+      lblEntregador.Caption := lblEntregador.Caption + ' - 📞 ' + FDados.TelefoneEntregador;
+
     lblEntregador.Font.Name := 'Segoe UI';
     lblEntregador.Font.Size := 9;
     lblEntregador.Font.Style := [fsBold];
-    lblEntregador.Font.Color := $00FF6600;
+    lblEntregador.Font.Color := clBlack;
     lblEntregador.Transparent := True;
   end;
 
@@ -466,33 +466,59 @@ begin
   lblValorTotal := TLabel.Create(Self);
   lblValorTotal.Parent := Self;
   lblValorTotal.Left := 15;
+
   if Trim(FDados.NomeEntregador) <> '' then
-    lblValorTotal.Top := 105
+    lblValorTotal.Top := 116
   else
-    lblValorTotal.Top := 90;
+    lblValorTotal.Top := 95;
+
   lblValorTotal.Caption := '💰 Total: R$ ' + FormatFloat('#,##0.00', FDados.ValorTotal);
   lblValorTotal.Font.Name := 'Segoe UI';
   lblValorTotal.Font.Size := 11;
   lblValorTotal.Font.Style := [fsBold];
-  lblValorTotal.Font.Color := $0000AA00;
+  lblValorTotal.Font.Color := clGreen;
   lblValorTotal.Transparent := True;
 
-  // Endereço
+  // Tempo Estimado (se aplicável)
+  if Trim(FDados.TempoEstimado) <> '' then
+  begin
+    lblTempoEstimado := TLabel.Create(Self);
+    lblTempoEstimado.Parent := Self;
+    lblTempoEstimado.Left := 250;
+
+    if Trim(FDados.NomeEntregador) <> '' then
+      lblTempoEstimado.Top := 116
+    else
+      lblTempoEstimado.Top := 95;
+
+    lblTempoEstimado.Caption := '⏱️ ' + FDados.TempoEstimado;
+    lblTempoEstimado.Font.Name := 'Segoe UI';
+    lblTempoEstimado.Font.Size := 9;
+    lblTempoEstimado.Font.Color := clBlack;
+    lblTempoEstimado.Transparent := True;
+  end;
+
+  // Endereço de Entrega
   lblEndereco := TLabel.Create(Self);
   lblEndereco.Parent := Self;
   lblEndereco.Left := 15;
+
   if Trim(FDados.NomeEntregador) <> '' then
-    lblEndereco.Top := 125
+    lblEndereco.Top := 140
   else
-    lblEndereco.Top := 115;
-  if Length(FDados.EnderecoEntrega) > 50 then
-    lblEndereco.Caption := '📍 ' + Copy(FDados.EnderecoEntrega, 1, 50) + '...'
+    lblEndereco.Top := 120;
+
+  if Length(FDados.EnderecoEntrega) > 60 then
+    lblEndereco.Caption := '📍 ' + Copy(FDados.EnderecoEntrega, 1, 60) + '...'
   else
     lblEndereco.Caption := '📍 ' + FDados.EnderecoEntrega;
+
   lblEndereco.Font.Name := 'Segoe UI';
   lblEndereco.Font.Size := 8;
-  lblEndereco.Font.Color := $00888888;
+  lblEndereco.Font.Color := clRed;
   lblEndereco.Transparent := True;
+  lblEndereco.ShowHint := True;
+  lblEndereco.Hint := FDados.EnderecoEntrega;
 end;
 
 function TAdminPedidoCard.ObterCorStatus(IdStatus: Integer): TColor;
@@ -507,6 +533,21 @@ begin
     6: Result := $000000CC;  // Vermelho - Cancelado
   else
     Result := $00808080;     // Cinza - Desconhecido
+  end;
+end;
+
+function TAdminPedidoCard.ObterEmojiStatus(IdStatus: Integer): String;
+begin
+  case IdStatus of
+    0: Result := '⏳';  // Pendente
+    1: Result := '✅';  // Confirmado
+    2: Result := '👨‍🍳'; // Preparando
+    3: Result := '📦';  // Pronto p/Entrega
+    4: Result := '🚚';  // A Caminho
+    5: Result := '🎉';  // Entregue
+    6: Result := '❌';  // Cancelado
+  else
+    Result := '❓';
   end;
 end;
 
@@ -714,10 +755,11 @@ begin
     Qr.SQL.Add('SELECT ');
     Qr.SQL.Add('  p.id_pedido, p.id_status_pedido, p.valor_total_pedido,');
     Qr.SQL.Add('  p.data_pedido, p.taxa_entrega, p.endereco_entrega,');
-    Qr.SQL.Add('  c.nome_comercio,');
+    Qr.SQL.Add('  c.nome_comercio, c.tempo_preparo_medio,');
     Qr.SQL.Add('  u.nome_user AS nome_cliente,');
     Qr.SQL.Add('  fp.nome_estado AS nome_status,');
     Qr.SQL.Add('  ue.nome_user AS nome_entregador,');
+    Qr.SQL.Add('  ue.nphone_user AS telefone_entregador,');
     Qr.SQL.Add('  (SELECT COUNT(*) FROM itens_pedido ip WHERE ip.id_pedido = p.id_pedido) AS qtd_itens');
     Qr.SQL.Add('FROM pedidos p');
     Qr.SQL.Add('INNER JOIN comercios c ON p.id_comercio = c.id_comercio');
@@ -756,10 +798,27 @@ begin
       Dados.EnderecoEntrega := Qr.FieldByName('endereco_entrega').AsString;
       Dados.QtdItens := Qr.FieldByName('qtd_itens').AsInteger;
 
+      // Dados do entregador
       if not Qr.FieldByName('nome_entregador').IsNull then
         Dados.NomeEntregador := Qr.FieldByName('nome_entregador').AsString
       else
         Dados.NomeEntregador := '';
+
+      if not Qr.FieldByName('telefone_entregador').IsNull then
+        Dados.TelefoneEntregador := Qr.FieldByName('telefone_entregador').AsString
+      else
+        Dados.TelefoneEntregador := '';
+
+      // Tempo estimado baseado no status
+      case Dados.IdStatusPedido of
+        0, 1, 2: Dados.TempoEstimado := 'Preparo: ~' + Qr.FieldByName('tempo_preparo_medio').AsString + ' min';
+        3: Dados.TempoEstimado := 'Aguardando entregador';
+        4: Dados.TempoEstimado := 'Em entrega';
+        5: Dados.TempoEstimado := 'Entregue';
+        6: Dados.TempoEstimado := 'Cancelado';
+      else
+        Dados.TempoEstimado := '';
+      end;
 
       Result.Add(Dados);
       Qr.Next;
@@ -813,7 +872,7 @@ begin
       Exit;
     end;
 
-    CardHeight := 160;
+    CardHeight := 180;
     Spacing := 10;
     Y := Spacing;
 

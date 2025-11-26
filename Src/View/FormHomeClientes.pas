@@ -79,10 +79,6 @@ TCardEventHandler = class
     pBusca: TPanel;
     tsCommSelec: TTabSheet;
     scbxMainCommSelec: TScrollBox;
-    pCarrinhoComm: TPanel;
-    lblItensCart: TLabel;
-    lblTotalCart: TLabel;
-    pButtonCartComm: TPanel;
     pCategoriasProdutosComm: TPanel;
     pInfoComm: TPanel;
     lblNomeComm: TLabel;
@@ -274,19 +270,17 @@ TCardEventHandler = class
     eQuantidadeProdutoSelec: TEdit;
     lblSubtotalProdutoSelec: TLabel;
     Panel1: TPanel;
-    lblSubtotalProdutoSelecD: TLabel;
     pButtonLimparCarrinho: TPanel;
     scbxFiltros: TScrollBox;
     lblFiltrosPedidos: TLabel;
     Label5: TLabel;
-    eBuscaMain: TEdit;
+    Panel2: TPanel;
 
     procedure iButton1Click(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure FormDestroy(Sender: TObject);
     procedure eBuscaMainChange(Sender: TObject);
-    procedure eBuscaMainKeyPress(Sender: TObject; var Key: Char);
     procedure iButton2Click(Sender: TObject);
     procedure iButton3Click(Sender: TObject);
     procedure iButton4Click(Sender: TObject);
@@ -353,46 +347,72 @@ TCardEventHandler = class
     FFiltroStatusSelecionado: Integer;
     FIdCliente: Integer;
 
+    //perfil
+
     procedure SalvarDadosPessoais;
     procedure AlterarSenha;
+    procedure ExibirDadosPerfilVisualizacao(Cliente: TCliente);
+    procedure CarregarDadosPerfilEdicao;
+    procedure LimparCamposAlterarSenha;
 
+    //pagamentos
+
+    //abrir cadastro
     procedure AbrirCadastroCartao(IdCliente: Integer);
     procedure AbrirCadastroPix(IdCliente: Integer);
     procedure AbrirCadastroTransferencia(IdCliente: Integer);
 
-    procedure CarregarPagamentos;
-    procedure OnPagamentoCardEditar(Sender: TObject);
+    // editar
     procedure EditarCartao(Cartao: TPagamentoCartao);
-    procedure CarregarPagamentosNoComboBox;
     procedure EditarPix(Pix: TPagamentoPix);
     procedure EditarTransferencia(Transferencia: TPagamentoTransferencia);
+
+    // botões dos cards de pagamento
+    procedure OnPagamentoCardEditar(Sender: TObject);
     procedure OnPagamentoCardExcluir(Sender: TObject);
     procedure OnPagamentoCardDefinirPrincipal(Sender: TObject);
+
+    //procedures dos cards de pagamento
     procedure ExcluirPagamento(IdPagamento: Integer);
     procedure DefinirPagamentoPrincipal(IdPagamento: Integer);
     procedure ExibirMensagemSemPagamentos;
     procedure AtualizarCardsPagamentoPrincipal;
 
+    //listagem e controllers
+
     procedure InicializarController;
+    procedure CarregarDadosPerfil;
+    procedure CarregarPagamentos;
+    procedure CarregarPagamentosNoComboBox;
     procedure PopularCategorias;
     procedure PopularRestaurantes(const Categoria: String = '');
+    procedure PopularCategoriasLojas;
+    procedure PopularRestaurantesLojas(const Categoria: String = '');
+    procedure CarregarProdutosComercio(const Categoria: String = '');
+    procedure CarregarEnderecos;
+    procedure CarregarEnderecosNoComboBox;
+    procedure ConfigurarLayout;
+    procedure InicializarCarrinho;
+    procedure CarregarFiltrosPedidos;
+    procedure CarregarPedidosCliente;
+
+    //restaurantes e comercios
+
     procedure OnCategoriaClick(const Categoria: string);
     procedure OnRestauranteClick(IdComercio: Integer; const NomeComercio: string);
-    procedure OnBuscaTimer(Sender: TObject);
-    procedure ConfigurarLayout;
     procedure AbrirCardapio(IdComercio: Integer; const NomeComercio: String);
     procedure AdicionarCardComercio(Comercio: TComercio; EstaAberto: Boolean; Index: Integer);
     procedure BuscarComercios(const Termo: string);
     function ComercioEstaAberto(HorarioAbertura, HorarioFechamento: TTime): Boolean;
     procedure ExibirMensagemNenhumResultado;
-    procedure LimparBusca;
     procedure LimparCardsRestaurantes;
-    procedure CarregarProdutosComercio(const Categoria: String = '');
     procedure OnCategoriaProdutoClick(Sender: TObject);
     procedure OnProdutoCardClick(IdProduto: Integer; const NomeProduto: string; Preco: Currency);
+
+    //lojas(mesma coisa que o menu, só que sem definir endereço principal nele)
+
     procedure VoltarParaLojas;
-    procedure PopularCategoriasLojas;
-    procedure PopularRestaurantesLojas(const Categoria: String = '');
+
     procedure OnCategoriaClickLojas(const Categoria: string);
     procedure OnRestauranteClickLojas(IdComercio: Integer; const NomeComercio: string);
     procedure LimparCardsRestaurantesLojas;
@@ -400,12 +420,8 @@ TCardEventHandler = class
     procedure AdicionarCardComercioLojas(Comercio: TComercio; EstaAberto: Boolean; Index: Integer; CardWidth: Integer);
     procedure ConfigurarLayoutLojas;
 
-    procedure CarregarDadosPerfil;
-    procedure ExibirDadosPerfilVisualizacao(Cliente: TCliente);
-    procedure CarregarDadosPerfilEdicao;
-    procedure LimparCamposAlterarSenha;
+    //endereços
 
-    procedure CarregarEnderecos;
     procedure OnEnderecoCardClick(IdEndereco: Integer);
     procedure CarregarDadosEnderecoParaEdicao(IdEndereco: Integer);
     procedure LimparCamposEndereco;
@@ -413,11 +429,14 @@ TCardEventHandler = class
     procedure CancelarEdicaoEndereco;
     procedure ExibirMensagemSemEnderecos;
 
+    //novo endereço
+
     procedure CadastrarNovoEndereco;
     procedure LimparCamposNovoEndereco;
     procedure BuscarCEPNovoEndereco;
 
-    procedure CarregarEnderecosNoComboBox;
+    //procedures cards de endereço e endereço principal
+
     procedure OnComboBoxEnderecosChange(Sender: TObject);
     procedure DefinirEnderecoPrincipal(IdEndereco: Integer);
     procedure ExcluirEndereco(IdEndereco: Integer);
@@ -425,30 +444,34 @@ TCardEventHandler = class
     procedure OnCardEditarClick(Sender: TObject);
     procedure OnCardExcluirClick(Sender: TObject);
 
+    //produto selecionado
     procedure AbrirTelaProduto(IdProduto: Integer; const NomeProduto: string; Preco: Currency);
     procedure FecharTelaProduto;
     procedure AtualizarSubtotalProduto;
+
+    //carrinho
+
     procedure ValidarEstabelecimentoCarrinho(IdComercio: Integer; const NomeComercio: string);
 
-    procedure InicializarCarrinho;
     procedure AdicionarAoCarrinho(IdProduto: Integer; const NomeProduto: string; Preco: Currency; Quantidade: Integer; const Observacao: string = '');
     procedure RemoverDoCarrinho(IdProduto: Integer; const Observacao: String = '');
     procedure AtualizarQuantidadeCarrinho(IdProduto: Integer; const Observacao: String; NovaQuantidade: Integer);
+
     procedure OnCarrinhoItemChange(IdProduto: Integer; const Observacao: String; NovaQuantidade: Integer);
     procedure OnCarrinhoItemRemover(IdProduto: Integer; const Observacao: String);
     function ObterItemCarrinho(IdProduto: Integer; const Observacao: String = ''): TItemCarrinho;
-    procedure AtualizarCardCarrinho;
     procedure AtualizarResumoCarrinho;
     procedure CarregarItensCarrinho;
     procedure LimparCarrinho;
+
+    //pedido
+
     function ObterIdCliente(IdUsuario: Integer): Integer;
     function PagamentoPrincipal(IdCliente: Integer): Integer;
     function EnderecoPrincipal(IdCliente: Integer): Integer;
     function ObterDadosComercio(IdProduto: Integer; out IdComercio: Integer; out TaxaEntrega: Currency; out NomeComercio: String): Boolean;
     procedure FinalizarPedido;
 
-    procedure CarregarFiltrosPedidos;
-    procedure CarregarPedidosCliente;
     procedure OnFiltroStatusClick(IdFiltro: Integer; const NomeFiltro: String);
     procedure OnPedidoCancelar(IdPedido: Integer);
     procedure OnPedidoVerDetalhes(IdPedido: Integer);
@@ -849,12 +872,6 @@ begin
   FBuscaTimer := TTimer.Create(Self);
   FBuscaTimer.Enabled := False;
   FBuscaTimer.Interval := 500;
-  FBuscaTimer.OnTimer := OnBuscaTimer;
-
-  // Configurar edit de busca
-  eBuscaMain.TextHint := '🔍 Pesquise restaurantes, lojas, categorias...';
-  eBuscaMain.Text := '';
-  eBuscaMain.Font.Size := 10;
 
   // Configurar layout
   ConfigurarLayout;
@@ -863,6 +880,9 @@ begin
   FCardHeight := 120;
   FCardSpacing := 10;
   FMargemLateral := 20;
+
+  pcMain.ActivePageIndex:=0;
+  pcPerfil.ActivePageIndex:=0;
 end;
 procedure TFormHomeC.ConfigurarLayout;
 begin
@@ -1040,7 +1060,6 @@ begin
   try
     if FPagamentoController.DefinirComoPrincipal(IdPagamento, IdCliente) then
     begin
-      ShowMessage('✅ Forma de pagamento definida como PRINCIPAL!');
       AtualizarCardsPagamentoPrincipal; // Atualizar visual
     end
     else
@@ -1187,7 +1206,7 @@ begin
       CarregarEnderecosNoComboBox;
       CarregarPagamentos;
       CarregarPagamentosNoComboBox;
-
+      CarregarDadosPerfil;
       // ⭐ Se houver itens no carrinho, carregá-los
       if Assigned(FCarrinho) and (FCarrinho.Count > 0) then
       begin
@@ -1624,14 +1643,10 @@ else
 
     // ========== MONTAR MENSAGEM DE DETALHES ==========
     Detalhes := '';
-    Detalhes := Detalhes + '╔══════════════════════════════════════╗' + #13#10;
-    Detalhes := Detalhes + '║     📋 DETALHES DO PEDIDO #' + IntToStr(IdPedido) + '     ║' + #13#10;
-    Detalhes := Detalhes + '╚══════════════════════════════════════╝' + #13#10#13#10;
+    Detalhes := Detalhes + '     📋 DETALHES DO PEDIDO #' + IntToStr(IdPedido) + '     ' + #13#10;
 
     // ========== INFORMAÇÕES GERAIS ==========
-    Detalhes := Detalhes + '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━' + #13#10;
     Detalhes := Detalhes + '📌 INFORMAÇÕES GERAIS' + #13#10;
-    Detalhes := Detalhes + '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━' + #13#10#13#10;
 
     Detalhes := Detalhes + '🏪 Estabelecimento:' + #13#10;
     Detalhes := Detalhes + '   ' + NomeComercio + #13#10#13#10;
@@ -1644,9 +1659,6 @@ else
 
     Detalhes := Detalhes + '📍 Endereço de Entrega:' + #13#10;
     Detalhes := Detalhes + '   ' + EnderecoEntrega + #13#10#13#10;
-
-    Detalhes := Detalhes + '💳 Forma de Pagamento:' + #13#10;
-    Detalhes := Detalhes + '   ' + FormaPagamento + #13#10#13#10;
 
     // ⭐ DADOS DO ENTREGADOR
     if Trim(NomeEntregador) <> '' then
@@ -1666,9 +1678,7 @@ else
     end;
 
     // ========== ITENS DO PEDIDO ==========
-    Detalhes := Detalhes + '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━' + #13#10;
     Detalhes := Detalhes + '📦 ITENS DO PEDIDO' + #13#10;
-    Detalhes := Detalhes + '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━' + #13#10#13#10;
 
     SubtotalItens := 0;
 
@@ -1677,8 +1687,8 @@ else
       Detalhes := Detalhes + '• ' + QrItens.FieldByName('nome_prod').AsString + #13#10;
 
       Detalhes := Detalhes + '  Quantidade: ' + QrItens.FieldByName('quantidade_item').AsString;
-      Detalhes := Detalhes + '  |  Preço Unit.: R$ ' + FormatFloat('#,##0.00', QrItens.FieldByName('preco_prod').AsCurrency);
-      Detalhes := Detalhes + '  →  R$ ' + FormatFloat('#,##0.00', QrItens.FieldByName('valor_total').AsCurrency) + #13#10;
+      Detalhes := Detalhes + '    Preço Unit.: R$ ' + FormatFloat('#,##0.00', QrItens.FieldByName('preco_prod').AsCurrency);
+      Detalhes := Detalhes + '    R$ ' + FormatFloat('#,##0.00', QrItens.FieldByName('valor_total').AsCurrency) + #13#10;
 
       // Observações (se houver)
       if Trim(QrItens.FieldByName('observacoes').AsString) <> '' then
@@ -1691,13 +1701,10 @@ else
     end;
 
     // ========== RESUMO FINANCEIRO ==========
-    Detalhes := Detalhes + '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━' + #13#10;
     Detalhes := Detalhes + '💰 RESUMO FINANCEIRO' + #13#10;
-    Detalhes := Detalhes + '━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━' + #13#10#13#10;
 
     Detalhes := Detalhes + 'Subtotal (Itens):    R$ ' + FormatFloat('#,##0.00', SubtotalItens) + #13#10;
     Detalhes := Detalhes + 'Taxa de Entrega:     R$ ' + FormatFloat('#,##0.00', TaxaEntrega) + #13#10;
-    Detalhes := Detalhes + '─────────────────────────────────────' + #13#10;
     Detalhes := Detalhes + 'VALOR TOTAL:         R$ ' + FormatFloat('#,##0.00', ValorTotal) + #13#10#13#10;
 
     // ========== OBSERVAÇÕES FINAIS ==========
@@ -1710,8 +1717,6 @@ else
       5: Detalhes := Detalhes + '🎉 Pedido entregue com sucesso!' + #13#10;
       6: Detalhes := Detalhes + '❌ Pedido cancelado.' + #13#10;
     end;
-
-    Detalhes := Detalhes + #13#10 + '═════════════════════════════════════════' + #13#10;
 
     // ========== EXIBIR DETALHES ==========
     ShowMessage(Detalhes);
@@ -2294,7 +2299,6 @@ begin
   // Recarregar visualização
   CarregarItensCarrinho;
   AtualizarResumoCarrinho;
-  AtualizarCardCarrinho;
 
   ShowMessage('✅ Item removido do carrinho!');
 end;
@@ -2727,7 +2731,7 @@ begin
   scbxProdutosComm.DestroyComponents;
 
   // Voltar para tsLojas
-  pcMain.ActivePage := tsLojas;
+  pcMain.ActivePage := tsMain;
 end;
 
 procedure TFormHomeC.CarregarDadosPerfil;
@@ -3531,7 +3535,6 @@ begin
   // Atualizar visualizações
   CarregarItensCarrinho;
   AtualizarResumoCarrinho;
-  AtualizarCardCarrinho;
 
   ShowMessage('✅ Carrinho limpo com sucesso!');
 end;
@@ -3622,7 +3625,6 @@ begin
 
   // Atualizar resumo
   AtualizarResumoCarrinho;
-  AtualizarCardCarrinho;
 end;
 
 procedure TFormHomeC.AdicionarCardComercio(Comercio: TComercio; EstaAberto: Boolean; Index: Integer);
@@ -3842,32 +3844,6 @@ begin
     Qr.Free;
 end;
 
-procedure TFormHomeC.AtualizarCardCarrinho;
-begin
-  if not Assigned(pCarrinhoComm) then
-    Exit;
-
-  // ⭐ Card flutuante - pode usar resumo simples
-  TCarrinhoHelper.PopularResumoSimples(scbxCarrinhoItems, FCarrinho);
-
-  // Atualizar total no card flutuante
-  TCarrinhoHelper.AtualizarResumo(
-    lblItensCart,
-    nil,
-    nil,
-    lblTotalCart,
-    FTaxaEntregaAtual,
-    FCarrinho
-  );
-
-  // Mostrar/Ocultar card baseado no carrinho
-  pCarrinhoComm.Visible := Assigned(FCarrinho) and (FCarrinho.Count > 0);
-
-  // ⭐ IMPORTANTE: Se estiver na tela do carrinho, recarregar com cards completos
-  if pcMain.ActivePage = tsCarrinho then
-    CarregarItensCarrinho; // Recria os cards com botões
-end;
-
 procedure TFormHomeC.AtualizarCardsPagamentoPrincipal;
 var
   I: Integer;
@@ -3965,7 +3941,6 @@ begin
   begin
     Item.Quantidade := NovaQuantidade;
     AtualizarResumoCarrinho;
-    AtualizarCardCarrinho;
   end;
 end;
 
@@ -4148,19 +4123,6 @@ begin
       if Assigned(lblEnderecoAtualCarrinho) then
         lblEnderecoAtualCarrinho.Caption := 'Erro';
     end;
-  end;
-
-  // Atualizar também no card flutuante (se existir)
-  if Assigned(lblItensCart) and Assigned(lblTotalCart) then
-  begin
-    TCarrinhoHelper.AtualizarResumo(
-      lblItensCart,
-      nil,
-      nil,
-      lblTotalCart,
-      FTaxaEntregaAtual,
-      FCarrinho
-    );
   end;
 end;
 
@@ -5057,17 +5019,6 @@ begin
   if not FInicializado then
     Exit;
 
-  FBuscaTimer.Enabled := False;
-
-  if Trim(eBuscaMain.Text) = '' then
-  begin
-    FUltimaBusca := '';
-    PopularRestaurantes(FCategoriaSelecionada);
-  end
-  else
-  begin
-    FBuscaTimer.Enabled := True;
-  end;
 end;
 
 function TFormHomeC.ObterDadosComercio(IdProduto: Integer;
@@ -5157,33 +5108,6 @@ begin
       Result := Qry.FieldByName('media').AsFloat;
   finally
     Qry.Free;
-  end;
-end;
-
-procedure TFormHomeC.OnBuscaTimer(Sender: TObject);
-var
-  TermoBusca: String;
-begin
-  FBuscaTimer.Enabled := False;
-  TermoBusca := Trim(eBuscaMain.Text);
-
-  if TermoBusca = FUltimaBusca then
-    Exit;
-
-  FUltimaBusca := TermoBusca;
-
-  if TermoBusca <> '' then
-    BuscarComercios(TermoBusca);
-end;
-
-procedure TFormHomeC.eBuscaMainKeyPress(Sender: TObject; var Key: Char);
-begin
-  if Key = #13 then
-  begin
-    Key := #0;
-    FBuscaTimer.Enabled := False;
-    if Trim(eBuscaMain.Text) <> '' then
-      BuscarComercios(Trim(eBuscaMain.Text));
   end;
 end;
 
@@ -5290,14 +5214,6 @@ begin
   end;
 end;
 
-procedure TFormHomeC.LimparBusca;
-begin
-  eBuscaMain.Text := '';
-  FUltimaBusca := '';
-  FBuscaTimer.Enabled := False;
-  eBuscaMain.SetFocus;
-  PopularRestaurantes(FCategoriaSelecionada);
-end;
 
 procedure TFormHomeC.EditarCartao(Cartao: TPagamentoCartao);
 var

@@ -47,12 +47,14 @@ type
     FIdUsuario: Integer;
     FNomeUsuario: String;
   public
-    function DeterminarTela(ATipoUsuario: TTipoUsuario): String;
     constructor Create(AOwner: TComponent); override;
     destructor Destroy; override;
+
     property TipoUsuario: String read FTipoUsuario;
     property IdUsuario: Integer read FIdUsuario;
     property NomeUsuario: String read FNomeUsuario;
+
+    function DeterminarTela(ATipoUsuario: TTipoUsuario): String;
     procedure RealizarProcessoRedirecionamento(LoginResponse: TLoginResponse);
     procedure RedirecionarParaTela(ATipoUsuario: TTipoUsuario; AIdUsuario: Integer; ANomeUsuario: String);
   end;

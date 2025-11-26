@@ -214,3 +214,32 @@
 [26/11/2025 09:47:08] - testecliente - Login Efetuado
 [26/11/2025 09:50:00] - testecliente - Login Efetuado
 [26/11/2025 09:52:54] - testecliente - Login Efetuado
+[26/11/2025 10:02:21] - teste123 - Login Efetuado
+[26/11/2025 10:02:22] - teste123 - Login Efetuado
+[26/11/2025 10:41:03] - teste123 - Login Efetuado
+[26/11/2025 10:41:03] - teste123 - Login Efetuado
+[26/11/2025 10:42:07] - teste123 - Login Efetuado
+[26/11/2025 10:42:08] - teste123 - Login Efetuado
+[26/11/2025 10:42:42] - teste123 - Login Efetuado
+[26/11/2025 10:42:42] - teste123 - Login Efetuado
+[26/11/2025 10:44:31] - testecliente - Login Efetuado
+[26/11/2025 10:47:57] - testecliente - Login Efetuado
+[26/11/2025 10:53:04] - testecliente - Login Efetuado
+[26/11/2025 11:16:35] - testecliente - LOGIN - Acesso ao sistema
+[26/11/2025 11:30:57] - teste123 - LOGIN - Acesso ao sistema
+[26/11/2025 11:30:57] - teste123 - LOGIN - Acesso ao sistema
+[26/11/2025 11:33:02] - teste123 - LOGIN - Acesso ao sistema
+[26/11/2025 11:33:02] - teste123 - LOGIN - Acesso ao sistema
+[26/11/2025 11:35:58] - teste123 - LOGIN - Acesso ao sistema
+[26/11/2025 11:35:58] - teste123 - LOGIN - Acesso ao sistema
+[26/11/2025 11:36:47] - teste123 - LOGIN - Acesso ao sistema
+[26/11/2025 11:36:47] - teste123 - LOGIN - Acesso ao sistema
+[26/11/2025 11:40:54] - teste1234@gmail.com - Falha no Login - ERRO: Email ou senha incorretos.
+[26/11/2025 11:40:57] - teste123 - LOGIN - Acesso ao sistema
+[26/11/2025 11:40:57] - teste123 - LOGIN - Acesso ao sistema
+[26/11/2025 12:27:02] - testecliente - LOGIN - Acesso ao sistema
+[26/11/2025 12:29:13] - testecliente - LOGIN - Acesso ao sistema
+[26/11/2025 12:33:52] - testecliente - LOGIN - Acesso ao sistema
+[26/11/2025 12:36:42] - testecliente - LOGIN - Acesso ao sistema
+[26/11/2025 12:44:44] - testecliente - LOGIN - Acesso ao sistema
+[26/11/2025 12:53:28] - testecliente - LOGIN - Acesso ao sistema

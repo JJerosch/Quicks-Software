@@ -122,7 +122,7 @@ begin
   if FSelecionado then
   begin
     // Estilo selecionado - laranja
-    Self.Color := $00517CFF;
+    Self.Color := clWhite;
 
     // Atualizar cor da label
     for i := 0 to Self.ControlCount - 1 do
@@ -130,7 +130,7 @@ begin
       if Self.Controls[i] is TLabel then
       begin
         lbl := TLabel(Self.Controls[i]);
-        lbl.Font.Color := clWhite;
+        lbl.Font.Color := $00517CFF;
       end;
     end;
   end

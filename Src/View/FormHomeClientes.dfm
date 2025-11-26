@@ -18,7 +18,7 @@ object FormHomeC: TFormHomeC
     Top = 0
     Width = 410
     Height = 644
-    ActivePage = tsCommSelec
+    ActivePage = tsProdutoSelec
     Align = alClient
     TabOrder = 1
     ExplicitWidth = 408
@@ -1724,7 +1724,7 @@ object FormHomeC: TFormHomeC
                   OnClick = pButtonSalvarEnderecoClick
                 end
                 object pInfoRestauranteLE: TPanel
-                  Left = 9
+                  Left = 3
                   Top = 52
                   Width = 344
                   Height = 245
@@ -2731,54 +2731,6 @@ object FormHomeC: TFormHomeC
         Align = alClient
         TabOrder = 0
         UseWheelForScrolling = True
-        object pCarrinhoComm: TPanel
-          AlignWithMargins = True
-          Left = 0
-          Top = 572
-          Width = 398
-          Height = 38
-          Margins.Left = 0
-          Margins.Top = 0
-          Margins.Right = 0
-          Margins.Bottom = 0
-          Align = alBottom
-          BevelOuter = bvNone
-          Color = clCoral
-          ParentBackground = False
-          TabOrder = 0
-          object lblItensCart: TLabel
-            Left = 15
-            Top = 12
-            Width = 60
-            Height = 15
-            Caption = 'lblItensCart'
-          end
-          object lblTotalCart: TLabel
-            Left = 99
-            Top = 12
-            Width = 61
-            Height = 15
-            Caption = 'lblTotalCart'
-          end
-          object pButtonCartComm: TPanel
-            Left = 284
-            Top = 6
-            Width = 111
-            Height = 28
-            BevelOuter = bvNone
-            Caption = 'Ver Carrinho >'
-            Color = clCream
-            Font.Charset = DEFAULT_CHARSET
-            Font.Color = clCoral
-            Font.Height = -15
-            Font.Name = 'Segoe UI'
-            Font.Style = [fsBold]
-            ParentBackground = False
-            ParentFont = False
-            TabOrder = 0
-            OnClick = pButtonCartCommClick
-          end
-        end
         object pCategoriasProdutosComm: TPanel
           AlignWithMargins = True
           Left = 0
@@ -2791,7 +2743,7 @@ object FormHomeC: TFormHomeC
           Margins.Bottom = 0
           Align = alTop
           BevelOuter = bvNone
-          TabOrder = 1
+          TabOrder = 0
           object lblCategoriasProdutos: TLabel
             AlignWithMargins = True
             Left = 3
@@ -2839,7 +2791,7 @@ object FormHomeC: TFormHomeC
           Margins.Bottom = 0
           Align = alTop
           BevelOuter = bvNone
-          TabOrder = 2
+          TabOrder = 1
           object lblNomeComm: TLabel
             Left = 43
             Top = 14
@@ -3060,14 +3012,15 @@ object FormHomeC: TFormHomeC
           Left = 0
           Top = 228
           Width = 398
-          Height = 344
+          Height = 382
           Margins.Left = 0
           Margins.Top = 0
           Margins.Right = 0
           Margins.Bottom = 0
           Align = alClient
           BevelOuter = bvNone
-          TabOrder = 3
+          TabOrder = 2
+          ExplicitHeight = 344
           object lblProdutosComm: TLabel
             AlignWithMargins = True
             Left = 3
@@ -3088,13 +3041,14 @@ object FormHomeC: TFormHomeC
             Left = 0
             Top = 27
             Width = 398
-            Height = 317
+            Height = 355
             Align = alClient
             BevelInner = bvNone
             BevelOuter = bvNone
             BorderStyle = bsNone
             TabOrder = 0
             UseWheelForScrolling = True
+            ExplicitHeight = 317
           end
         end
       end
@@ -3274,7 +3228,6 @@ object FormHomeC: TFormHomeC
           MaxLength = 9
           TabOrder = 5
           Text = '     -   '
-          OnExit = meCEPNovoDExit
         end
         object cbEstadoNovoD: TComboBox
           Left = 71
@@ -3289,6 +3242,24 @@ object FormHomeC: TFormHomeC
           Width = 176
           Height = 23
           TabOrder = 7
+        end
+        object Panel2: TPanel
+          Left = 216
+          Top = 24
+          Width = 89
+          Height = 31
+          BevelOuter = bvNone
+          Caption = 'Pesquisar CEP'
+          Color = clWhite
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWhite
+          Font.Height = -12
+          Font.Name = 'Segoe UI'
+          Font.Style = [fsBold]
+          ParentBackground = False
+          ParentFont = False
+          TabOrder = 8
+          OnClick = meCEPNovoDExit
         end
       end
       object pButtonSalvarDadosE: TPanel
@@ -3552,13 +3523,6 @@ object FormHomeC: TFormHomeC
               Height = 15
               Caption = 'Subtotal:'
             end
-            object lblSubtotalProdutoSelecD: TLabel
-              Left = 188
-              Top = 129
-              Width = 135
-              Height = 15
-              Caption = 'lblSubtotalProdutoSelecD'
-            end
             object btnMenosQtd: TPanel
               Left = 12
               Top = 120
@@ -3809,25 +3773,6 @@ object FormHomeC: TFormHomeC
         ParentFont = False
         ExplicitHeight = 25
       end
-    end
-    object eBuscaMain: TEdit
-      AlignWithMargins = True
-      Left = 219
-      Top = 15
-      Width = 186
-      Height = 25
-      Margins.Left = 0
-      Margins.Top = 15
-      Margins.Right = 20
-      Margins.Bottom = 15
-      Align = alRight
-      BevelInner = bvNone
-      BevelOuter = bvNone
-      TabOrder = 1
-      TextHint = 'Pesquise um restaurante ou loja ...'
-      Visible = False
-      StyleName = 'Windows'
-      ExplicitHeight = 23
     end
   end
   object pBarraMenuLeft: TPanel
