@@ -18,7 +18,7 @@ object FormHomeC: TFormHomeC
     Top = 0
     Width = 410
     Height = 644
-    ActivePage = tsProdutoSelec
+    ActivePage = tsCommSelec
     Align = alClient
     TabOrder = 1
     ExplicitWidth = 408
@@ -35,8 +35,6 @@ object FormHomeC: TFormHomeC
         Color = clWhite
         ParentBackground = False
         TabOrder = 0
-        ExplicitWidth = 400
-        ExplicitHeight = 606
         object scbxMain: TScrollBox
           Left = 0
           Top = 0
@@ -50,8 +48,6 @@ object FormHomeC: TFormHomeC
           BorderStyle = bsNone
           TabOrder = 0
           UseWheelForScrolling = True
-          ExplicitWidth = 400
-          ExplicitHeight = 606
           object pCategorias: TPanel
             AlignWithMargins = True
             Left = 0
@@ -67,7 +63,6 @@ object FormHomeC: TFormHomeC
             Color = clWhite
             ParentBackground = False
             TabOrder = 0
-            ExplicitWidth = 400
             object lblCategorias: TLabel
               AlignWithMargins = True
               Left = 3
@@ -106,7 +101,6 @@ object FormHomeC: TFormHomeC
               ParentFont = False
               TabOrder = 0
               UseWheelForScrolling = True
-              ExplicitWidth = 400
             end
           end
           object pEndereco: TPanel
@@ -119,7 +113,6 @@ object FormHomeC: TFormHomeC
             Color = clWindow
             ParentBackground = False
             TabOrder = 1
-            ExplicitWidth = 400
             object lblEnderecoTitle: TLabel
               Left = 6
               Top = 9
@@ -181,7 +174,6 @@ object FormHomeC: TFormHomeC
             Color = clWhite
             ParentBackground = False
             TabOrder = 2
-            ExplicitWidth = 400
             object lblMenuPrincipal: TLabel
               Left = 6
               Top = 13
@@ -211,8 +203,6 @@ object FormHomeC: TFormHomeC
             Color = clWhite
             ParentBackground = False
             TabOrder = 3
-            ExplicitWidth = 400
-            ExplicitHeight = 366
             object lblRestaurantes: TLabel
               AlignWithMargins = True
               Left = 3
@@ -248,8 +238,6 @@ object FormHomeC: TFormHomeC
               BorderStyle = bsNone
               TabOrder = 0
               UseWheelForScrolling = True
-              ExplicitWidth = 400
-              ExplicitHeight = 340
             end
           end
         end
@@ -2788,6 +2776,7 @@ object FormHomeC: TFormHomeC
             ParentBackground = False
             ParentFont = False
             TabOrder = 0
+            OnClick = pButtonCartCommClick
           end
         end
         object pCategoriasProdutosComm: TPanel
@@ -3063,6 +3052,7 @@ object FormHomeC: TFormHomeC
             ParentBackground = False
             ParentFont = False
             TabOrder = 0
+            OnClick = pButtonAvalienosClick
           end
         end
         object pProdutosComm: TPanel
@@ -3498,6 +3488,8 @@ object FormHomeC: TFormHomeC
         Color = clWhite
         ParentColor = False
         TabOrder = 0
+        ExplicitWidth = 400
+        ExplicitHeight = 606
         object pProdutoSelecInfo: TPanel
           Left = 0
           Top = 73
@@ -3507,6 +3499,8 @@ object FormHomeC: TFormHomeC
           Color = clWhite
           ParentBackground = False
           TabOrder = 0
+          ExplicitWidth = 396
+          ExplicitHeight = 529
           object lblPrecoProdutoSelec: TLabel
             AlignWithMargins = True
             Left = 4
@@ -3549,6 +3543,8 @@ object FormHomeC: TFormHomeC
             Color = clWhite
             ParentBackground = False
             TabOrder = 0
+            ExplicitTop = 360
+            ExplicitWidth = 394
             object lblSubtotalProdutoSelec: TLabel
               Left = 135
               Top = 129
@@ -3630,6 +3626,7 @@ object FormHomeC: TFormHomeC
           Color = clWhite
           ParentBackground = False
           TabOrder = 1
+          ExplicitWidth = 396
           object lblNomeProdutoSelec: TLabel
             Left = 53
             Top = 13
@@ -3810,7 +3807,7 @@ object FormHomeC: TFormHomeC
         Font.Name = 'Segoe UI'
         Font.Style = []
         ParentFont = False
-        ExplicitLeft = 12
+        ExplicitHeight = 25
       end
     end
     object eBuscaMain: TEdit

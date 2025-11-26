@@ -89,7 +89,12 @@ uses
   PedidoCardHelper in 'Src\Utils\PedidoCardHelper.pas',
   PedidoCardHelperDono in 'Src\Utils\PedidoCardHelperDono.pas',
   PedidoCardHelperEntregador in 'Src\Utils\PedidoCardHelperEntregador.pas',
-  PedidoCardHelperAdmin in 'Src\Utils\PedidoCardHelperAdmin.pas';
+  PedidoCardHelperAdmin in 'Src\Utils\PedidoCardHelperAdmin.pas',
+  Avaliacao in 'Src\Utils\Avaliacao.pas',
+  CardAvaliacao in 'Src\Utils\CardAvaliacao.pas',
+  frxClass,
+  frxDBSet,
+  frxExportPDF;
 
 {$R *.res}
 

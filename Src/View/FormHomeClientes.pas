@@ -11,7 +11,7 @@ uses
   Data.DB, FireDAC.Comp.Client, FireDAC.Comp.DataSet, FireDAC.Stan.Param, FireDAC.Stan.Intf,
   uConn, ComercioModel, ClienteController, CategoriaHelper, ClientePerfilController, ClienteModel,
   ViaCepHelper, EnderecoCardHelper, EnderecoClienteModel, EnderecoClienteController, EnderecoCardPanel,
-  ProdutoModel, ProdutoViewHelper, BCrypt, CarrinhoModel, CarrinhoHelper,
+  ProdutoModel, ProdutoViewHelper, BCrypt, CarrinhoModel, CarrinhoHelper, Avaliacao, CardAvaliacao,
   FormaPagamentoClienteModel, FormaPagamentoClienteController, PagamentoCardPanel,
   PedidoModel, PedidoController, PedidoCardHelper;
 
@@ -321,6 +321,8 @@ TCardEventHandler = class
     procedure Panel1Click(Sender: TObject);
     procedure pButtonLimparCarrinhoClick(Sender: TObject);
     procedure pButtonFinalizarPedidoClick(Sender: TObject);
+    procedure pButtonCartCommClick(Sender: TObject);
+    procedure pButtonAvalienosClick(Sender: TObject);
 
   private
     FIdUsuario: Integer;
@@ -349,6 +351,7 @@ TCardEventHandler = class
     FIdComercioCarrinho: Integer;
     FIdTipoPagamentoSelecionado: Integer;
     FFiltroStatusSelecionado: Integer;
+    FIdCliente: Integer;
 
     procedure SalvarDadosPessoais;
     procedure AlterarSenha;
@@ -449,11 +452,19 @@ TCardEventHandler = class
     procedure OnFiltroStatusClick(IdFiltro: Integer; const NomeFiltro: String);
     procedure OnPedidoCancelar(IdPedido: Integer);
     procedure OnPedidoVerDetalhes(IdPedido: Integer);
+
+    procedure AtualizarNotaComercio;
+    function ObterMediaAvaliacao(AIdComercio: Integer): Double;
+
     public
+
     property IdUsuario: Integer read FIdUsuario write FIdUsuario;
     property NomeUsuario: String read FNomeUsuario write FNomeUsuario;
     property PagamentoSelecionado: Integer read FIdTipoPagamentoSelecionado write FIdTipoPagamentoSelecionado;
     property EnderecoSelecionado: Integer read FIdEnderecoSelecionado write FIdEnderecoSelecionado;
+    property IdComercioSelecionado: Integer read FIdComercioSelecionado write FIdComercioSelecionado;
+    property NomeComercioSelecionado: String read FNomeComercioSelecionado write FNomeComercioSelecionado;
+    property IdCliente: Integer read FIdCliente write FIdCliente;
     end;
 
 var
@@ -2008,6 +2019,29 @@ begin
   pcPerfil.ActivePageIndex:=2;
 end;
 
+procedure TFormHomeC.pButtonAvalienosClick(Sender: TObject);
+begin
+  TfrmAvaliacaoRapida.Mostrar(
+    IdCliente,
+    IdComercioSelecionado,
+    NomeComercioSelecionado
+  );
+
+  AtualizarNotaComercio;
+end;
+
+procedure TFormHomeC.AtualizarNotaComercio;
+var
+  Media: Double;
+begin
+  Media := ObterMediaAvaliacao(IdComercioSelecionado);
+
+  if Media > 0 then
+    lblNota.Caption := FormatFloat('0.0', Media) + ' ★'
+  else
+    lblNota.Caption := 'Sem avaliações';
+end;
+
 procedure TFormHomeC.pButtonCancelarAlterarSenhaClick(Sender: TObject);
 begin
   pcPerfil.ActivePageIndex := 0; // tsVisualizarPefil
@@ -2024,6 +2058,11 @@ begin
 
   // Voltar para visualização
   pcPerfil.ActivePageIndex := 0; // tsVisualizarPefil
+end;
+
+procedure TFormHomeC.pButtonCartCommClick(Sender: TObject);
+begin
+  pcMain.ActivePage:=tsCarrinho;
 end;
 
 procedure TFormHomeC.pButtonConfirmarAlterarSenhaClick(Sender: TObject);
@@ -5096,6 +5135,28 @@ begin
       Result := Item;
       Break;
     end;
+  end;
+end;
+
+function TFormHomeC.ObterMediaAvaliacao(AIdComercio: Integer): Double;
+var
+  Qry: TFDQuery;
+begin
+  Result := 0;
+  Qry := TFDQuery.Create(nil);
+  try
+    Qry.Connection := DM.FDConn;  // Ajuste para sua conexão
+    Qry.SQL.Text :=
+      'SELECT COALESCE(AVG(nota::DECIMAL), 0) as media ' +
+      'FROM avaliacoes ' +
+      'WHERE id_comercio = :id';
+    Qry.ParamByName('id').AsInteger := AIdComercio;
+    Qry.Open;
+
+    if not Qry.IsEmpty then
+      Result := Qry.FieldByName('media').AsFloat;
+  finally
+    Qry.Free;
   end;
 end;
 

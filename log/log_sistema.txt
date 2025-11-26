@@ -202,3 +202,15 @@
 [26/11/2025 04:08:05] - teste123 - Login Efetuado
 [26/11/2025 05:33:50] - teste123 - Login Efetuado
 [26/11/2025 05:33:50] - teste123 - Login Efetuado
+[26/11/2025 08:37:33] - testecliente - Login Efetuado
+[26/11/2025 09:30:06] - testecliente - Login Efetuado
+[26/11/2025 09:30:38] - testecliente - Login Efetuado
+[26/11/2025 09:35:02] - testecliente - Login Efetuado
+[26/11/2025 09:38:56] - testecliente - Login Efetuado
+[26/11/2025 09:40:09] - testecliente - Login Efetuado
+[26/11/2025 09:43:42] - testecliente - Login Efetuado
+[26/11/2025 09:45:20] - testecliente - Login Efetuado
+[26/11/2025 09:46:29] - testecliente - Login Efetuado
+[26/11/2025 09:47:08] - testecliente - Login Efetuado
+[26/11/2025 09:50:00] - testecliente - Login Efetuado
+[26/11/2025 09:52:54] - testecliente - Login Efetuado
